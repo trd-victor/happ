@@ -8,33 +8,55 @@
 
 import UIKit
 
-class RegisterController: UIViewController {
+class RegisterController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate  {
 
     
-    /*setting up the UI variable...*/
-    @IBOutlet var txtEmail: UITextField!
-    @IBOutlet var txtpass: UITextField!
-    @IBOutlet var txtrepeatpas: UITextField!
+    /*setting up the UITextField variable...*/
+
+    @IBOutlet var userEmail: UITextField!
+    @IBOutlet var userPassword: UITextField!
+    @IBOutlet var userName: UITextField!
+    @IBOutlet var userMessage: UITextField!
+    @IBOutlet var imageView: UIImageView!
+    @IBOutlet var browseImage: UIButton!
+    
+    
+    //skills swithcUIButton..dfv  vbgtewh0110899
     
     @IBOutlet var frontEndSwitch: UISwitch!
     @IBOutlet var backEndSwitch: UISwitch!
     @IBOutlet var iosSwitch: UISwitch!
-    
-    /*setting up varaibles*/
-    var setState: String = ""
-    var frontEndState: String = ""
-    var backEndState: String = ""
-    var IOSstate: String = ""
+    @IBOutlet var AndroidSwitch: UISwitch!
+    @IBOutlet var appdesignSwitch: UISwitch!
+    @IBOutlet var webdesignSwitch: UISwitch!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    }
+    
+    @IBAction func browseImage(sender: AnyObject) {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = false
+        imagePicker.sourceType = .PhotoLibrary
+        
+        presentViewController(imagePicker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+                imageView.contentMode = .ScaleAspectFit
+                imageView.image = pickedImage
+        }
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
 
@@ -43,96 +65,207 @@ class RegisterController: UIViewController {
     }
     
     func registerUser() {
+        //setting up the textbox...
+        let email = userEmail.text!
+        let pass = userPassword.text!
+        let name = userName.text!
+        let message = userMessage.text!
         
-        //unwrapped textfields..
-        let userEmail = txtEmail.text!
-        let userPass  = txtpass.text!
-        let userRepeatPass = txtrepeatpas.text!
-        let fronEndSkill = getFrontEndState()
-        let backEndSkill = getBackEndState()
-        let iosSkill = getIOSState()
         
-        //check empty fields..
-        if userEmail == "" || userPass == "" || userRepeatPass == "" {
-            displayMyAlertMessage("All Fields Required!")
-        }
-        else if userPass != userRepeatPass {
-            displayMyAlertMessage("Password does not match!")
+        if email == "" || pass == "" || name == "" || message == "" {
+            displayMyAlertMessage("All Fields Required")
         } else {
+            //created NSURL
+            let URL_SAVE_TEAM = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
             
-            print(fronEndSkill)
-            print(backEndSkill)
-            print(iosSkill)
-            //save it locally instiate NSUDefaults..
-            let defaults = NSUserDefaults.standardUserDefaults()
+            //created NSURL
+            let requestURL = NSURL(string: URL_SAVE_TEAM)
             
-            //store data..
-            defaults.setObject(userEmail, forKey: "username")
-            defaults.setObject(userPass, forKey: "password")
-            defaults.setObject(fronEndSkill, forKey: "Front_end")
-            defaults.setObject(backEndSkill, forKey: "Back_end")
-            defaults.setObject(iosSkill, forKey: "Ios_end")
-            defaults.synchronize()
+            //creating NSMutableURLRequest
+            let request = NSMutableURLRequest(URL: requestURL!)
             
-            //show pop up box successfully registered..
-            let myAlert = UIAlertController(title: "Happ Message", message: "Successfully Registered!", preferredStyle: UIAlertControllerStyle.Alert)
-            let saveAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default
-                , handler: nil)
-            myAlert.addAction(saveAction)
-            self.presentViewController(myAlert, animated: true, completion: nil)
+            //set boundary string..
+            let boundary = generateBoundaryString()
             
-            //clear all fields..
-            txtEmail.text = ""
-            txtpass.text = ""
-            txtrepeatpas.text = ""
+            //set value for image upload
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            
+            //setting the method to post
+            request.HTTPMethod = "POST"
+            
+            //declaring button state
+            let frontEndSkill   = frontEndSwitch
+            let backEndSkill    = backEndSwitch
+            let iosSkill        = iosSwitch
+            let androidSkill    = AndroidSwitch
+            let appDesignSkill  = appdesignSwitch
+            let webDesignSkill  = webdesignSwitch
+            
+            //get state
+            let frontEndState   = switchButtonCheck(frontEndSkill)
+            let backEndState    = switchButtonCheck(backEndSkill)
+            let iosState        = switchButtonCheck(iosSkill)
+            let androidState    = switchButtonCheck(androidSkill)
+            let appDesignState  = switchButtonCheck(appDesignSkill)
+            let webDesignState  = switchButtonCheck(webDesignSkill)
+            
+            let skills: [Int: String] = [
+                1  : "\(frontEndState)",
+                2  : "\(backEndState)",
+                3  : "\(iosState)",
+                4  : "\(androidState)",
+                5  : "\(appDesignState)",
+                6  : "\(webDesignState)"
+            ]
+            
+            //set skill into variable and targets...
+            let keyskill = returnSkillValue(skills)
+            let targetedData: String = "email,passwd,name,skills,mess,change_lang"
+            
+            
+            //set parameters...
+            let param = [
+                "sercret"     : "jo8nefamehisd",
+                "action"      : "api",
+                "ac"          : "user_update",
+                "d"           : "1",
+                "lang"        : "jp",
+                "user_id"     : "2",
+                "email"       : "\(email)",
+                "passwd"      : "\(pass)",
+                "name"        : "\(name)",
+                "mess"        : "\(message)",
+                "skills"      : "\(keyskill)",
+                "change_lang" : "",
+                "targets"     : "\(targetedData)"
+            ]
+            
+            //set image Data
+            let imageData = UIImageJPEGRepresentation(imageView.image!, 1)
+            
+            //check imageData
+            if (imageData == nil) { return;  }
+            
+            //adding the parameters to request body
+            request.HTTPBody = createBodyWithParameters(param, filePathKey: "file", imageDataKey: imageData!, boundary: boundary)
+            
+            
+            
+            let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+                data, response, error  in
+                    
+                    if error != nil{
+                        print("error is \(error)")
+                        return;
+                    }
+                
+                    do {
+                        
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    
+                        print(json)
+                        
+                    } catch {
+                        print(error)
+                    }
+                
+            }
+            task.resume()
+            
+            //display message when user data updated
+            displayMyAlertMessage("User Data Updated")
+            
+            
         }
-        
     }
-  
-    //switch button action
-    @IBAction func frontEndSwitch(sender: UISwitch) {
-        self.frontEndState = clickSwitchButton(frontEndSwitch)
-        
-    }
-    @IBAction func backEndSwitch(sender: UISwitch) {
-        self.backEndState = clickSwitchButton(backEndSwitch)
-    }
-    @IBAction func iosSwitch(sender: UISwitch) {
-        self.IOSstate = clickSwitchButton(iosSwitch)
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().UUIDString)"
     }
 
-    //check button state...
-    func clickSwitchButton(switchButton : UISwitch) -> String {
-        var SwitchState = ""
-        
-        if switchButton.on {
-            SwitchState = "On"
-        }else {
-           SwitchState = "Off"
+
+    func createBodyWithParameters(parameters: [String: String]?, filePathKey: String?, imageDataKey: NSData, boundary: String) -> NSData {
+        let body = NSMutableData();
+      
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString("\(value)\r\n")
+            }
         }
-        return SwitchState
+        
+        let filename = "user-profile.jpg"
+        let mimetype = "image/jpg"
+        
+        body.appendString("--\(boundary)\r\n")
+        body.appendString("Content-Disposition: form-data; name=\"\(filePathKey!)\"; filename=\"\(filename)\"\r\n")
+        body.appendString("Content-Type: \(mimetype)\r\n\r\n")
+        body.appendData(imageDataKey)
+        body.appendString("\r\n")
+        
+        
+        
+        body.appendString("--\(boundary)--\r\n")
+        
+        return body
     }
     
-    //getters...
-    func getFrontEndState() -> String {
-        return self.frontEndState
-    }
-    func getBackEndState() -> String {
-        return self.frontEndState
+    //check state..
+    func switchButtonCheck(switchButton : UISwitch) -> String {
+        var State: String = ""
+        if switchButton.on {
+            State = "On"
+        } else {
+            State = "Off"
+        }
+        return State
     }
     
-    func getIOSState() -> String {
-        return self.IOSstate
+    //return skill value
+    func returnSkillValue(parameters : [Int : String]?) -> String {
+        var retString: String = "";
+        if parameters != nil {
+            for(key, value) in parameters! {
+                if value != "On" { continue }
+                retString += "\(key),"
+            }
+        }
+        return retString
     }
     
     //display aler message box...
     func displayMyAlertMessage(userMessage:String){
-        let myAlert = UIAlertController(title: "Happ Message", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
+        let myAlert = UIAlertController(title: "Happ", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
 
-    
-   
 }
+extension NSMutableData {
+    
+    func appendString(string: String) {
+        let data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+        appendData(data!)
+    }
+}
+
+
+/*DON'T DELETE, THIS IS TEST CONNECTION CODE*/
+//    func testconnection() {
+//        let myURLString = "http://happ.timeriverdesign.com/wp-content/plugins/happ/scripts/insert_user.php"
+//
+//        if let myURL = NSURL(string: myURLString) {
+//
+//            do {
+//                let myHTMLString = try String(contentsOfURL: myURL, encoding: NSUTF8StringEncoding)
+//                print("HTML : \(myHTMLString)")
+//            } catch {
+//                print("Error : \(error)")
+//            }
+//        } else {
+//            print("Error: \(myURLString) doesn't  URL")
+//        }
+//    }
+
