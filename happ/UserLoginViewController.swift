@@ -8,28 +8,49 @@
 
 import UIKit
 
-class UserLoginViewController: UIViewController {
+class UserLoginViewController: UIViewController, UISearchBarDelegate {
 
+    
+    
+    @IBOutlet var mysearchbar: UISearchBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        //remove back button title 
+        self.removeBackButtonTitle()
+        
+        mysearchbar.delegate = self
+        
+        self.searchBarShouldEndEditing(mysearchbar)
+        self.searchBarShouldEndEditing(mysearchbar)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(animated: Bool) {
+        self.navigationItem.backBarButtonItem?.action = Selector("dismissController:")
+        
+        self.navigationController?.setNavigationBarHidden(false
+            , animated: animated)
     }
-    */
-
+    
+    func removeBackButtonTitle () {
+        self.navigationController?.navigationBar.topItem!.title = ""
+        self.navigationController?.navigationBar.tintColor = UIColor.whiteColor()
+        self.navigationController?.navigationBar.barTintColor = UIColor.blueColor()
+    }
+    
+    func dismissController(sender: UIBarButtonItem) ->() {
+            print("TEST")
+    }
+    
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        self.navigationController?.navigationBarHidden = true
+    }
+    
+    func searchBarShouldEndEditing(searchBar: UISearchBar) -> Bool {
+        self.navigationController?.navigationBarHidden = false
+        return true
+    }
+    
+   
 }

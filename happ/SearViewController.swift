@@ -8,12 +8,12 @@
 
 import UIKit
 
-class SearViewController: UIViewController {
+class SearViewController: UIViewController, UISearchBarDelegate {
 
+    @IBOutlet var navigation: UINavigationBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
@@ -21,15 +21,16 @@ class SearViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    func searchBarShouldBeginEditing(searchBar: UISearchBar) -> Bool {
+        self.navigation.hidden = true
+        return true
     }
-    */
+    
+    func searchBarShouldEndEditing(searchBar: UISearchBar) -> Bool {
+        self.navigation.hidden = false
+        return true
+    }
+    
+    
 
 }

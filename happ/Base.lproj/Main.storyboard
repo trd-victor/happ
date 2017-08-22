@@ -1560,6 +1560,7 @@
         <!--Root View Controller-->
         <scene sceneID="OiE-4Z-Q7c">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DjQ-Ai-nYL" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="bMP-Wx-mgK" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="j3H-MJ-etc">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
@@ -1585,12 +1586,12 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Root View Controller" id="WAs-6q-uDc"/>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="DjQ-Ai-nYL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="F2h-qo-eFb">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VtL-73-o5v" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController id="J0i-Za-s9P" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="jgE-Ni-dya">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -1601,23 +1602,22 @@
                         <segue destination="bMP-Wx-mgK" kind="relationship" relationship="rootViewController" id="WbI-Nm-KDO"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="VtL-73-o5v" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
         </scene>
     </scenes>
     <resources>
         <image name="Image" width="29" height="29"/>
         <image name="fill1" width="13" height="13"/>
-        <image name="messageIcon" width="13" height="13"/>
-        <image name="reservationIcon" width="13" height="13"/>
+        <image name="messageIcon" width="25" height="25"/>
+        <image name="reservationIcon" width="25" height="25"/>
         <image name="right-icon" width="29" height="29"/>
-        <image name="rushIcon" width="13" height="13"/>
-        <image name="timelineIcon" width="13" height="13"/>
+        <image name="rushIcon" width="25" height="25"/>
+        <image name="timelineIcon" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="ZXn-fA-PxB"/>
-        <segue reference="oJK-sn-Fzk"/>
         <segue reference="Puh-i1-etE"/>
+        <segue reference="Hwu-WS-O1F"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
 </document>

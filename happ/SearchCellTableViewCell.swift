@@ -10,6 +10,17 @@ import UIKit
 
 class SearchCellTableViewCell: UITableViewCell {
 
+    @IBOutlet var username: UILabel!
+    @IBOutlet var userImage: UIImageView!
+    
+    @IBOutlet var imageuser: UIImageView!
+    
+    @IBOutlet var nameuser: UILabel!
+    
+    @IBOutlet var skills: UILabel!
+    @IBOutlet var secondname: UILabel!
+    
+    @IBOutlet var userID: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
