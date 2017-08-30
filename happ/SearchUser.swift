@@ -15,4 +15,5 @@ struct SearchUser {
     let skills : String
     let image  : String
     let userID : Int
+    let email  : String
 }

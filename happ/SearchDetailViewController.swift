@@ -7,6 +7,13 @@
 //
 
 import UIKit
+import Firebase
+
+struct firebaseId {
+    static var userId : String = ""
+    static var userName: String = ""
+    static var indicator: String = ""
+}
 
 class SearchDetailViewController: UIViewController, UITabBarDelegate {
 
@@ -43,6 +50,7 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
     var user_id: String!
     var stringName: String!
     var language: String!
+    var useEmail : String!
     
     var detailUser: SearchUser? {
         didSet {
@@ -72,6 +80,11 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
         
         //load user information
         self.loadUserinfo(self.user_id)
+//        print(self.user_id)
+        
+        self.useEmail = SearchDetailsView.userEmail
+        
+//        print(self.useEmail)
         
         //set text button 
         btnMessage.setTitle(arrText["\(language)"]!["Message"], forState: .Normal)
@@ -80,6 +93,23 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
         
         //remov back title 
         self.navigationController?.navigationBar.topItem?.title = " "
+        
+        
+        let db = FIRDatabase.database().reference().child("users")
+        
+        // GET CURRENT USER ID KEY
+        let queryFirebase = db.queryOrderedByChild("email").queryEqualToValue("\(self.useEmail)")
+        queryFirebase.observeSingleEventOfType(.Value, withBlock: { (snapshot)   in
+            for snap in snapshot.children {
+                let userSnap = snap as! FIRDataSnapshot
+                let uid = userSnap.key //the uid of each user
+                dispatch_async(dispatch_get_main_queue(), {() -> Void in
+//                  print("\(uid)")
+                    firebaseId.userId = uid
+//                    print(uid)
+                })
+            }
+        })
         
     }
     
@@ -162,6 +192,9 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
                         self.userSkills.text = skills
                         self.userDesription.text = message
                         self.userHID.text = happID
+                        
+                        //pass the name of the user to send teh message
+                        firebaseId.userName = name
                         
                                         
                         if data != nil {

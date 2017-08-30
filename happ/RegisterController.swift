@@ -29,9 +29,13 @@ class RegisterController: UIViewController,UIImagePickerControllerDelegate, UINa
     @IBOutlet var AndroidSwitch: UISwitch!
     @IBOutlet var appdesignSwitch: UISwitch!
     @IBOutlet var webdesignSwitch: UISwitch!
+    var language: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //load language
+        language = setLanguage.appLanguage
     }
 
     override func didReceiveMemoryWarning() {
@@ -61,7 +65,14 @@ class RegisterController: UIViewController,UIImagePickerControllerDelegate, UINa
     
 
     @IBAction func registerBtn(sender: UIButton) {
-        registerUser()
+        //registerUser()
+        //returnLanguage()
+        let language =  NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode)!
+        let defaults = NSUserDefaults.standardUserDefaults()
+        defaults.removeObjectForKey("AppleLanguage")
+        defaults.setObject(language, forKey: "AppleLanguage")
+        defaults.synchronize()
+//        print(language)
     }
     
     func registerUser() {
@@ -128,7 +139,7 @@ class RegisterController: UIViewController,UIImagePickerControllerDelegate, UINa
                 "sercret"     : "jo8nefamehisd",
                 "action"      : "api",
                 "ac"          : "user_update",
-                "d"           : "1",
+                "d"           : "0",
                 "lang"        : "jp",
                 "user_id"     : "2",
                 "email"       : "\(email)",
@@ -243,13 +254,13 @@ class RegisterController: UIViewController,UIImagePickerControllerDelegate, UINa
     }
 
 }
-extension NSMutableData {
-    
-    func appendString(string: String) {
-        let data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
-        appendData(data!)
-    }
-}
+//extension NSMutableData {
+//    
+//    func appendString(string: String) {
+//        let data = string.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+//        appendData(data!)
+//    }
+//}
 
 
 /*DON'T DELETE, THIS IS TEST CONNECTION CODE*/

@@ -10,10 +10,17 @@ import UIKit
 
 class FirstLaunchLanguage: UIViewController {
 
+
+    @IBOutlet var langja: UIButton!
+    @IBOutlet var langeng: UIButton!
+    @IBOutlet var skip: UIBarButtonItem!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        self.skip.action = Selector("skip:")
+    }
+    
+    override func viewWillAppear(animated: Bool) {
     }
 
     override func didReceiveMemoryWarning() {
@@ -21,15 +28,27 @@ class FirstLaunchLanguage: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    func skip(sender: UIBarButtonItem) -> () {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
-    */
+    
+    func saveLanguage(sender: String) {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.setValue(sender, forKey: "AppLanguage")
+        userDefaults.synchronize()
+    }
+    
+    @IBAction func langja(sender: UIButton) {
+        globalvar.APP_LANGUANGE = "ja"
+        self.saveLanguage(globalvar.APP_LANGUANGE)
+    }
+    
+    @IBAction func langen(sender: UIButton) {
+        globalvar.APP_LANGUANGE = "en"
+        self.saveLanguage(globalvar.APP_LANGUANGE)
+    }
+    
 
+    
 }
+

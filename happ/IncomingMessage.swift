@@ -10,4 +10,8 @@ import UIKit
 
 class IncomingMessage: UICollectionViewCell {
     
+    @IBOutlet var userimage: UIImageView!
+    @IBOutlet var usetmessge: UITextField!
+    @IBOutlet var date: UILabel!
+    
 }

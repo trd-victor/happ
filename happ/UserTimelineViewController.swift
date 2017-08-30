@@ -120,11 +120,18 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     var roundButton = UIButton()
     var refreshControl: UIRefreshControl!
+    var myTimer: NSTimer!
+    
     
     @IBOutlet var searchIcon: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //refresh every 60 seconds..
+        self.myTimer = NSTimer(timeInterval: 60.0, target: self, selector: "refreshTimelineTable", userInfo: nil, repeats: true)
+        NSRunLoop.mainRunLoop().addTimer(self.myTimer, forMode: NSDefaultRunLoopMode)
+        
         
         self.mytableview.backgroundColor = UIColor.clearColor()
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
@@ -167,6 +174,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
      
     }
     
+   
+    
     override func viewWillLayoutSubviews() {
         
         roundButton.layer.cornerRadius = roundButton.layer.frame.size.width/2
@@ -193,6 +202,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
 //        self.getTimelineUser(self.getTimeline)
 //        self.getUserinfo(self.userDataImage)
         
+    }
+    
+    func refreshTimelineTable() {
+       self.mytableview.reloadData()
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -281,8 +294,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
     }
     
-    
-    
+
     @IBAction func freetimeStatus(sender: UISwitch) {
         let statust = switchButtonCheck(freetimeStatus)
         let defaults = NSUserDefaults.standardUserDefaults()
@@ -352,47 +364,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         task.resume()
     }
     
-    
-//    func getUserinfo(parameters: [String: String]?) {
-//        var name: String!
-//        
-//        let request1 = NSMutableURLRequest(URL: self.baseUrl)
-//        let boundary1 = generateBoundaryString()
-//        request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
-//        request1.HTTPMethod = "POST"
-//        
-//        
-//        request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
-//        let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
-//            data1, response1, error1 in
-//            
-//            if error1 != nil{
-//                print("\(error1)")
-//                return;
-//            }
-//            do {
-//                let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-//                
-//                let results = json2!["result"] as! NSDictionary
-//                name = results["name"] as! String
-//                
-//                if let image = results["icon"] as? NSNull {
-//                    self.imgURL = "" as? String
-//                } else {
-//                    self.imgURL = results["icon"] as? String
-//                }
-//                
-//                dispatch_async(dispatch_get_main_queue()) {
-//                   // self.username = name
-//                }
-//                
-//            } catch {
-//                print(error)
-//            }
-//        }
-//        task2.resume()
-//    }
-    
     func getAllUserInfo(userID: [String]?) {
        
         for var i = 0; i < userID!.count; i++ {
@@ -423,9 +394,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 }
                 do {
                     let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
+
                     self.testName = json2!["result"]!["name"] as! String
-                    
                     
                     if let imageuser = json2!["result"]!["icon"] as? NSNull {
                         self.urlImage = "" as? String
@@ -434,10 +404,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     }
                     
                     dispatch_async(dispatch_get_main_queue()) {
-                        
                         self.userEachImage.append(self.urlImage)
                         self.realImage = self.userEachImage.map{ $0 ?? ""}
-                        self.username.append(self.testName)
+                        if self.testName != nil {
+                            self.username.append(self.testName)
+                        }
                         self.mytableview.reloadData()
                     }
                     
@@ -474,7 +445,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         //referre to custom cell created
         let cell = self.mytableview.dequeueReusableCellWithIdentifier("RowCell", forIndexPath: indexPath) as! CustomCell
     
-        
         let radius = min(cell.uesrImage!.frame.width/2 , cell.uesrImage!.frame.height/2)
         cell.uesrImage.layer.cornerRadius = radius
         cell.uesrImage.clipsToBounds = true

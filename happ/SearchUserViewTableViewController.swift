@@ -7,10 +7,15 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseAuth
 
 struct SearchDetailsView {
     static var searchIDuser: String!
     static var stringName : String!
+    static var userEmail  : String!
+    static var username : String!
+    static var indicator: String!
 }
 
 class SearchUserViewTableViewController: UITableViewController, UISearchResultsUpdating {
@@ -42,7 +47,9 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
     var realImage = [String]()
     var userSearch = [SearchUser]()
     var filterName = [SearchUser]()
-    
+    var FIRuserName = [String]()
+    var nameForUser : String!
+    var FIRID = [String]()
     var searchLang = [
         
         "en": [
@@ -71,9 +78,9 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
         definesPresentationContext = true
         tableView.tableHeaderView = searchController.searchBar
         
+        //load the data...
+//        self.getAllUser(self.getAllUserData)
         
-        self.getAllUser(self.getAllUserData)
-            
         self.navigationController?.navigationBar.barTintColor = UIColor.blackColor()
         self.navigationController?.navigationBar.translucent = true
         self.navigationController?.navigationItem.title = "Search"
@@ -86,56 +93,140 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
 //        let titleDict = [NSForegroundColorAttributeName: UIColor.whiteColor()]
 //        self.navigationController?.navigationBar.titleTextAttributes = titleDict
         
+//        self.getFirebaseuser()
+         self.getFirebaseuser()
+        
     }
+    func getFirebaseuser() {
+        
+        let userDB = FIRDatabase.database().reference().child("users")
+        userDB.observeEventType(.ChildAdded, withBlock: { (snapshot) in
+            if let result = snapshot.value {
+//                let name = result.objectForKey("name") as? String ?? ""
+                let userID = result.objectForKey("id") as! Int
+                let x: Int = userID
+                let idUser = String(x)
+      
 
-    
-    func getAllUser(parameters : [String: String] ) {
-        let request = NSMutableURLRequest(URL: globalvar.API_URL)
-        let boundary = generateBoundaryString()
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.HTTPMethod = "POST"
-        request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
-        
-        
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-            data, response, error  in
-            
-            
-            if error != nil{
-                print("\(error)")
-                return;
-            }
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if let resultArray = json!.valueForKey("result") as? NSArray {
-                    
-                    for item in resultArray {
-                        
-                        
-                        let userDetails :
-                        SearchUser = SearchUser (
-                            name   :  (item.objectForKey("name")) as! String,
-                            HappID :  (item.objectForKey("h_id")) as? String ?? "",
-                            skills :  (item.objectForKey("skills")) as? String ?? "",
-                            image  :  (item.objectForKey("icon")) as? String ?? "",
-                            userID :  ((item.objectForKey("user_id")) as? Int)!
-                        )
-                        
-                        self.userSearch.append(userDetails)
-                        
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.tableView.reloadData()
-                        }
+                if idUser != "" {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.FIRID.append(idUser)
+                        print(self.FIRID.last!)
+                        self.getAllUserInfo(self.FIRID.last!)
+                        self.tableView.reloadData()
                     }
                 }
-            } catch {
-                print(error)
+            }
+        })
+      
+ 
+        
+    
+    }
+    
+    func getAllUserInfo(userID: String) {
+        
+//        for var i = 0; i < userID!.count; i++ {
+        
+            let request1 = NSMutableURLRequest(URL: globalvar.API_URL)
+            let boundary1 = generateBoundaryString()
+            request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
+            request1.HTTPMethod = "POST"
+            
+            let parameters = [
+                "sercret"     : "jo8nefamehisd",
+                "action"      : "api",
+                "ac"          : "get_userinfo",
+                "d"           : "0",
+                "lang"        : "en",
+                "user_id"     : "\(userID)"
+            ]
+            
+            request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
+            let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
+                data1, response1, error1 in
+                
+                if error1 != nil{
+                    print("\(error1)")
+                    return;
+                }
+                do {
+                    let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    
+                    let skills = json2!["result"]!["skills"] as? String ?? ""
+                    let happID = json2!["result"]!["h_id"] as? String ?? ""
+                    let userID = json2!["result"]!["user_id"] as! Int
+                    let name = json2!["result"]!["name"] as? String ?? ""
+                    let email = json2!["result"]!["email"] as? String ?? ""
+                    let image = json2!["result"]!["icon"] as? String ?? ""
+                    
+                    let userDetails :
+                    SearchUser = SearchUser (
+                         name : name,
+                         HappID: happID,
+                         skills:  skills,
+                         image:  image,
+                         userID:  userID,
+                         email: email
+                    )
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.userSearch.append(userDetails)
+                        self.tableView.reloadData()
+                    }
+                    
+                } catch {
+                    print(error)
+                }
             }
             
-        }
-        task.resume()
+            task2.resume()
+//        }
+        
     }
+    
+//    func getAllUser(parameters : [String: String] ) {
+//        
+//        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+//            data, response, error  in
+//            
+//            
+//            if error != nil{
+//                print("\(error)")
+//                return;
+//            }
+//            do {
+//                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+//                
+//                if let resultArray = json!.valueForKey("result") as? NSArray {
+//                    
+//                    for item in resultArray {
+//                        
+//                        
+//                        let userDetails :
+//                        SearchUser = SearchUser (
+//                            name   :  (item.objectForKey("name")) as? String ?? "",
+//                            HappID :  (item.objectForKey("h_id")) as? String ?? "",
+//                            skills :  (item.objectForKey("skills")) as? String ?? "",
+//                            image  :  (item.objectForKey("icon")) as? String ?? "",
+//                            userID :  ((item.objectForKey("user_id")) as? Int)!,
+//                            email :  (item.objectForKey("email")) as? String ?? ""
+//                        )
+//                        
+//                        self.userSearch.append(userDetails)
+//                        
+//                        dispatch_async(dispatch_get_main_queue()) {
+//                            self.tableView.reloadData()
+//                        }
+//                    }
+//                }
+//            } catch {
+//                print(error)
+//            }
+//            
+//        }
+//        task.resume()
+//    }
     func filterContentForSearchText(searchText: String) {
         self.filterName = self.userSearch.filter { SearchUser in
             return SearchUser.name.lowercaseString.containsString(searchText.lowercaseString)
@@ -174,22 +265,19 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
         
         let displayUser: SearchUser
         
-        
         if searchController.active && searchController.searchBar.text != "" {
             displayUser = self.filterName[indexPath.row]
             cell.hidden = false
-//            SearchDetailsView.searchIDuser = self.filterName[indexPath.row]
         } else {
             displayUser = self.userSearch[indexPath.row]
         }
         
-      
-//        SearchDetailsView.searchIDuser = displayUser.name
         cell.nameuser.text = displayUser.name
         cell.secondname.text = displayUser.HappID
         cell.skills.text = displayUser.skills
-//        cell.userID.text = idUser
+
      
+        
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
             
@@ -221,8 +309,13 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
         }
         let x: Int = displayUser.userID
         let idUser = String(x)
-        SearchDetailsView.searchIDuser = idUser
         
+        SearchDetailsView.searchIDuser = idUser
+        SearchDetailsView.userEmail = displayUser.email
+        SearchDetailsView.username  = displayUser.name
+        chatVar.Indicator = "Search"
+        
+        globalvar.userTitle = displayUser.name
     }
 
 

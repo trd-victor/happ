@@ -7,89 +7,135 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseAuth
+
+struct chatVar {
+    static var name : String = ""
+    static var RoomID : String = ""
+    static var UserKey: String = ""
+    static var Indicator: String = ""
+}
+
+
+class MessageCellDisp : UITableViewCell {
+    
+    @IBOutlet var userImage: UIImageView!
+    @IBOutlet var username: UILabel!
+    @IBOutlet var userMessage: UILabel!
+    @IBOutlet var userTime: UILabel!
+    
+}
+
 
 class MessageTableViewController: UITableViewController {
+    
+    var userID: String!
+    var curID: String!
+    var USERUID: String!
+    
+    @IBOutlet var mytableview: UITableView!
+    var animals = ["test", "test1"]
+    
+    //set variables.. 
+    var chatRoom = [String]()
+    var chatName = [String]()
+    var chatMessage = [String]()
+    var chatImage = [String]()
+    var chatKey = [String]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
+        //remove border in messages
+        self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
+        
+        self.title = "Messages"
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTable:", name: "refresh", object: nil)
+        
+         NSNotificationCenter.defaultCenter().addObserver(self, selector: "showTabBarMenu:", name: "tabBarShow", object: nil)
+        
+        self.getUserMessage()
     }
+    
+    func getUserMessage() {
+        
+        let details = FIRDatabase.database().reference().child("chat").child("last-message").child(globalUserId.FirID)
+        
+        //start of retrieving messages on every user
+        details.observeEventType(.ChildAdded, withBlock: { (snap) in
+            
+            if let result = snap.value {
+                
+                let userimage = result.objectForKey("photoUrl") as! String
+                let name = result.objectForKey("name") as! String
+                let message = result.objectForKey("lastMessage") as! String
+                let chatRoomID = result.objectForKey("chatroomId") as! String
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.chatImage.append(userimage)
+                    self.chatName.append(name)
+                    self.chatMessage.append(message)
+                    self.chatRoom.append(chatRoomID)
+                    
+                    self.mytableview.reloadData()
+                }
+            }
+        })
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-
-    // MARK: - Table view data source
-
+    
+    func refreshTable(notification: NSNotification) {
+        self.chatImage.removeAll()
+        self.chatName.removeAll()
+        self.chatMessage.removeAll()
+        self.chatRoom.removeAll()
+        self.getUserMessage()
+    }
+    
+    
+    func showTabBarMenu (notification: NSNotification) {
+        //hide tabbar controller in swift
+        self.tabBarController?.tabBar.hidden = false
+    }
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
-
+    
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return self.chatName.count
     }
 
-    /*
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
-
-        // Configure the cell...
+        
+        let cell = self.mytableview.dequeueReusableCellWithIdentifier("CellDisplay", forIndexPath: indexPath) as! MessageCellDisp
+        
+        
+        let radius = min(cell.userImage!.frame.width/2 , cell.userImage!.frame.height/2)
+        cell.userImage.layer.cornerRadius = radius
+        cell.userImage.clipsToBounds = true
+        
+        if self.chatImage[indexPath.row] == "null" {
+            cell.userImage.image = UIImage(named: "photo")
+        }
+        
+        cell.username.text = self.chatName[indexPath.row]
+        cell.userMessage.text = self.chatMessage[indexPath.row]
 
         return cell
     }
-    */
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        chatVar.name = self.chatName[indexPath.row]
+        chatVar.RoomID = self.chatRoom[indexPath.row]
+        chatVar.UserKey = self.chatRoom[indexPath.row]
+        chatVar.Indicator = "MessageTable"
+        globalvar.userTitle = chatVar.name
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
+
+

@@ -6,6 +6,13 @@
 //  Copyright © 2017 H-FUKUOKA. All rights reserved.
 //
 import UIKit
+import Firebase
+import FirebaseAuth
+
+struct globalUserId {
+    static var userID: String = ""
+    static var FirID: String = ""
+}
 
 
 class SignupViewController: UIViewController, UITextFieldDelegate {
@@ -17,8 +24,14 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var labelUserEmail: UILabel!
     @IBOutlet var labelPassword: UILabel!
     
-    @IBOutlet var forgotPass: UIButton!
-    @IBOutlet var navBack: UIBarButtonItem!
+    @IBOutlet var backLogin: UIBarButtonItem!
+    @IBOutlet var forgetPass: UIButton!
+    
+
+    
+    
+    
+//    @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var navTitle: UINavigationItem!
     
     //set up static param
@@ -32,6 +45,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             "labelPassword": "Password",
             "userPasswordPlaceholder": "Enter Password",
             "loginButton": "Log-in",
+            "emtpyFields": "All Fields Required",
             "forgotPass":"Click here if you have forgotten your password"
         ],
         
@@ -43,12 +57,20 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             "labelPassword": "パスワード",
             "userPasswordPlaceholder": "半角英数字4文字以上",
             "loginButton": "ログインする",
-            "forgotPass": "パスワードをお忘れの方はこちら"
+            "forgotPass": "パスワードをお忘れの方はこちら",
+            "emtpyFields": "必要なすべてのフィールド"
         ]
     ]
-
+    
+    
+    
     //set up language as global variable...
     var language: String!
+    var real_userID: String!
+    var emptyFields: String!
+    var realID: String!
+    //Create Activity Indicator
+    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,17 +79,25 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         userEmailField.delegate = self
         userPasswordField.delegate = self
         
+        //set border for textbox...
+        setBorder(userEmailField)
+        setBorder(userPasswordField)
+        
         //get the system language..
         //get system language..
-        let systemLang =  NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode)!
-        if systemLang as! String == "ja" {
-            language = systemLang as! String
-        }else{
-            language = "en"
-        }
+//        let systemLang =  NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode)!
+//        if systemLang as! String == "ja" {
+//            language = systemLang as! String
+//        }else{
+//            language = "en"
+//        }
+//        
+        
+        //set language 
+        language = setLanguage.appLanguage
         
         navTitle.title = loginParam["\(language)"]!["navTitle"]
-        navBack.title = loginParam["\(language)"]!["navBack"]
+//        navBack.title = loginParam["\(language)"]!["navBack"]
         labelUserEmail.text = loginParam["\(language)"]!["labelUserEmail"]
         userEmailField.placeholder = loginParam["\(language)"]!["userEmailPlaceholder"]
         labelPassword.text = loginParam["\(language)"]!["labelPassword"]
@@ -75,11 +105,36 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
         //setTitle
         btnLogin.setTitle(loginParam["\(language)"]!["loginButton"], forState: .Normal)
-        forgotPass.setTitle(loginParam["\(language)"]!["forgotPass"], forState: .Normal)
+        forgetPass.setTitle(loginParam["\(language)"]!["forgotPass"], forState: .Normal)
         
         //set button action...
         btnLogin.addTarget(self, action: "loginButton:", forControlEvents: .TouchUpInside)
         
+        //dismiss view login controller..
+        self.backLogin.action = Selector("backHome:")
+        
+        
+        // Position Activity Indicator in the center of the main view
+        myActivityIndicator.center = view.center
+        
+        //set corner radius
+        btnLogin.layer.cornerRadius = 5
+        btnLogin.layer.borderWidth = 1
+        
+        
+        myActivityIndicator.frame = CGRect(x: 0, y: 0, width: 300, height: 300)
+        myActivityIndicator.transform = CGAffineTransformMakeScale(1.5, 1.5)
+        view.addSubview(myActivityIndicator)
+        view.endEditing(true)
+        
+        let config = SYSTEM_CONFIG()
+        print(config.getSYS_VAL("SYSTM_VAL"))
+
+       
+    }
+    
+    func backHome(sender: UIBarButtonItem) ->() {
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -87,87 +142,123 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func loginButton(sender: AnyObject) {
-        let userEmail = userEmailField.text
-        let userPass = userPasswordField.text
+        let userEmail = userEmailField.text!
+        let userPass = userPasswordField.text!
         
-        if userEmail == "" || userPass == "" {
-            displayMyAlertMessage("All Fields Required!")
-        } else {
-            let loginUrl = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
-            
-            //created NSURL
-            let requestURL = NSURL(string: loginUrl)
-            
-            //creating NSMutableURLRequest
-            let request = NSMutableURLRequest(URL: requestURL!)
-            
-            //set boundary string..
-            let boundary = generateBoundaryString()
-            
-            //set value for image upload
-            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            
-            //setting the method to post
-            request.HTTPMethod = "POST"
-            
-            //get data from texttfield..
-            let email = userEmailField.text!
-            let pass  = userPasswordField.text!
-            
+        let error = Error()
+        
+        if userEmail == ""  {
+            displayMyAlertMessage(error.ErrorList["\(self.language)"]!["empty_username"]!)
+        }else if userPass == "" {
+            displayMyAlertMessage(error.ErrorList["\(self.language)"]!["empty_passwd"]!)
+        }
+        else {
 
             if language == "ja" {
                 language = "jp"
             }
-            //set parameters...
+            
             let param = [
                 "sercret"     : "jo8nefamehisd",
                 "action"      : "api",
-                "ac"          : "user_login",
-                "d"           : "1",
-                "lang"        : "\(language)",
-                "user_id"     : "",
-                "email"       : "\(email)",
-                "passwd"      : "\(pass)"
+                "ac"          : "\(globalvar.LOGIN_ACTION)",
+                "d"           : "0",
+                "lang"        : "jp",
+                "email"       : "\(userEmail)",
+                "passwd"      : "\(userPass)"
             ]
             
+            let httpRequest = HttpDataRequest(postData: param)
+            let request = httpRequest.requestGet()
             
-            //adding the parameters to request body
-            request.HTTPBody = createBodyWithParameters(param, boundary: boundary)
+            self.myActivityIndicator.startAnimating()
             
             let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
                 data, response, error  in
                 
                 var mess: String = ""
                 var user_id: NSNumber
+                var value: Int
+                
                 if error != nil{
                     print("\(error)")
                     return;
                 }
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    
                     if json!["message"] != nil {
                         mess = json!["message"] as! String
                     }
                     if json!["result"] != nil {
                         if json!["result"]!["user_id"] != nil {
-                            let value = json!["result"]!["user_id"] as! Int
+                            value = json!["result"]!["user_id"] as! Int
                             user_id = value
                             mess = user_id.stringValue
+                            globalUserId.userID = mess
                         }
                     }
+                    
                     dispatch_async(dispatch_get_main_queue()) {
-                        self.displayMyAlertMessage(mess)
+                        self.myActivityIndicator.stopAnimating()
+                        self.myActivityIndicator.hidesWhenStopped = true
+                        let loginError = Error()
+                        
+                        var errorMessage : Bool
+                        if json!["error"] != nil {
+                            errorMessage = json!["error"] as! Bool
+                            if errorMessage == true {
+                                self.displayMyAlertMessage(loginError.ErrorList["\(self.language)"]!["login_fail"]!)
+                            }
+                        } else {
+                            self.loginFirebase(userEmail, pass: userPass)
+                            self.redirectLogin()
+                        }
                     }
-                                        
+                    
                     } catch {
                     print(error)
                 }
                 
             }
             task.resume()
-            
         }
         
+        
+    }
+    
+    func loginFirebase(email: String, pass : String ) {
+        FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
+            if error == nil {
+                self.redirectLogin()
+                print("I am successfully login!")
+                globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
+            } else {
+                self.displayMyAlertMessage("Don't have Account!")
+            }
+        
+        }
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+//        if 	(segue.identifier == "LoginBoard") {
+//            
+//            let dst = segue.destinationViewController as! UITabBarController
+//            let vc = dst.viewControllers![0] as! MenuViewController
+//            vc.userObject = self.userObject
+//            
+//        }
+    }
+
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    func redirectLogin() {
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as!
+            MenuViewController
+        self.presentViewController(userTimeLineController, animated:true, completion:nil)
         
     }
     
@@ -176,7 +267,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
-        
         textField.resignFirstResponder()
         return true
     }
@@ -197,7 +287,18 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
         return body
     }
-
+    
+    func setBorder(textField: UITextField) {
+        textField.layer.backgroundColor = UIColor.whiteColor().CGColor
+        textField.layer.borderColor = UIColor.grayColor().CGColor
+        textField.layer.borderWidth = 0.0
+        textField.layer.cornerRadius = 1
+        textField.layer.masksToBounds = false
+        textField.layer.shadowRadius = 1.0
+        textField.layer.shadowColor = UIColor.lightGrayColor().CGColor
+        textField.layer.shadowOffset = CGSizeMake(1.0, 1.0)
+        textField.layer.shadowOpacity = 0.3
+    }
     
     func displayMyAlertMessage(userMessage:String){ 
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)

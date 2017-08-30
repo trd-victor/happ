@@ -10,6 +10,10 @@ import UIKit
 
 class MyCustomTableViewCell: UITableViewCell {
 
+    @IBOutlet var id: UIButton!
+    @IBOutlet var delte: UIButton!
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

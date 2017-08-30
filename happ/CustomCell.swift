@@ -8,17 +8,25 @@
 
 import UIKit
 
+
 class CustomCell: UITableViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
+    
+    //@IBOutlet var postUserImage: UIImageView!
+   // @IBOutlet var mmylba: UILabel!
+    //@IBOutlet var date: UILabel!
+   // @IBOutlet var content: UILabel!
+   // @IBOutlet var more: UIImageView!
+   // @IBOutlet var morebutton: UIButton!
+   // @IBOutlet var postIDUSER: UILabel!
+   //// @IBOutlet var moreimg: UIButton!
+   // @IBOutlet var delete: UIButton!
+   // @IBOutlet var postid: UIButton!
+    
+    //@IBOutlet var title: UIButton!
+    @IBOutlet var uesrImage: UIImageView!
+    @IBOutlet var username: UILabel!
+    @IBOutlet var postDate: UILabel!
+    @IBOutlet var userContent: UITextView!
+    @IBOutlet var delet: UIButton!
+    
 }
