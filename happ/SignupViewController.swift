@@ -27,6 +27,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var backLogin: UIBarButtonItem!
     @IBOutlet var forgetPass: UIButton!
     
+    @IBOutlet var underline_jp: UIView!
 
     
     
@@ -82,30 +83,9 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         //set border for textbox...
         setBorder(userEmailField)
         setBorder(userPasswordField)
-        
-        //get the system language..
-        //get system language..
-//        let systemLang =  NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode)!
-//        if systemLang as! String == "ja" {
-//            language = systemLang as! String
-//        }else{
-//            language = "en"
-//        }
-//        
-        
-        //set language 
+
+        //set language
         language = setLanguage.appLanguage
-        
-        navTitle.title = loginParam["\(language)"]!["navTitle"]
-//        navBack.title = loginParam["\(language)"]!["navBack"]
-        labelUserEmail.text = loginParam["\(language)"]!["labelUserEmail"]
-        userEmailField.placeholder = loginParam["\(language)"]!["userEmailPlaceholder"]
-        labelPassword.text = loginParam["\(language)"]!["labelPassword"]
-        userPasswordField.placeholder = loginParam["\(language)"]!["userPasswordPlaceholder"]
-        
-        //setTitle
-        btnLogin.setTitle(loginParam["\(language)"]!["loginButton"], forState: .Normal)
-        forgetPass.setTitle(loginParam["\(language)"]!["forgotPass"], forState: .Normal)
         
         //set button action...
         btnLogin.addTarget(self, action: "loginButton:", forControlEvents: .TouchUpInside)
@@ -126,12 +106,30 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         myActivityIndicator.transform = CGAffineTransformMakeScale(1.5, 1.5)
         view.addSubview(myActivityIndicator)
         view.endEditing(true)
+    
         
-        let config = SYSTEM_CONFIG()
-        print(config.getSYS_VAL("SYSTM_VAL"))
-
+        //load settings
+        self.loadConfigure()
        
     }
+    
+    func loadConfigure(){
+        let config = SYSTEM_CONFIG()
+        
+      //  config.translate("button_regist")
+        // Set Translations
+        navTitle.title = config.translate("title_login")
+        labelUserEmail.text = config.translate("label_email_address")
+    
+        userEmailField.placeholder = config.translate("holder_ex.@xx.com")
+        labelPassword.text = config.translate("label_Password")
+        userPasswordField.placeholder = config.translate("holder_4/more_char")
+        
+        //setTitle
+        btnLogin.setTitle(config.translate("title_login"), forState: .Normal)
+        forgetPass.setTitle(config.translate("label_forgot_password"), forState: .Normal)
+    }
+    
     
     func backHome(sender: UIBarButtonItem) ->() {
         self.dismissViewControllerAnimated(true, completion: nil)
@@ -144,13 +142,15 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     func loginButton(sender: AnyObject) {
         let userEmail = userEmailField.text!
         let userPass = userPasswordField.text!
+        let config = SYSTEM_CONFIG()
         
-        let error = Error()
+        
+//        let error = Error()
         
         if userEmail == ""  {
-            displayMyAlertMessage(error.ErrorList["\(self.language)"]!["empty_username"]!)
+            displayMyAlertMessage(config.translate("empty_email"))
         }else if userPass == "" {
-            displayMyAlertMessage(error.ErrorList["\(self.language)"]!["empty_passwd"]!)
+            displayMyAlertMessage(config.translate("empty_passwd"))
         }
         else {
 
@@ -202,17 +202,15 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                     dispatch_async(dispatch_get_main_queue()) {
                         self.myActivityIndicator.stopAnimating()
                         self.myActivityIndicator.hidesWhenStopped = true
-                        let loginError = Error()
                         
                         var errorMessage : Bool
                         if json!["error"] != nil {
                             errorMessage = json!["error"] as! Bool
                             if errorMessage == true {
-                                self.displayMyAlertMessage(loginError.ErrorList["\(self.language)"]!["login_fail"]!)
+                                self.displayMyAlertMessage(config.translate("login_fail"))
                             }
                         } else {
                             self.loginFirebase(userEmail, pass: userPass)
-                            self.redirectLogin()
                         }
                     }
                     
@@ -223,16 +221,16 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             }
             task.resume()
         }
-        
-        
     }
     
     func loginFirebase(email: String, pass : String ) {
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
-                self.redirectLogin()
-                print("I am successfully login!")
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
+                let userDefaults = NSUserDefaults.standardUserDefaults()
+                let fireabaseID = userDefaults.setValue(globalUserId.FirID, forKey: "FirebaseID")
+                userDefaults.synchronize()
+                self.redirectLogin()
             } else {
                 self.displayMyAlertMessage("Don't have Account!")
             }
@@ -240,16 +238,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-//        if 	(segue.identifier == "LoginBoard") {
-//            
-//            let dst = segue.destinationViewController as! UITabBarController
-//            let vc = dst.viewControllers![0] as! MenuViewController
-//            vc.userObject = self.userObject
-//            
-//        }
-    }
-
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)
     }

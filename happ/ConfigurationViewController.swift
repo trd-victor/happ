@@ -72,26 +72,8 @@ class ConfigurationViewController: UIViewController {
         //load language set.
         language = setLanguage.appLanguage
         
-        //set label text..
-        navTitle.title = arrText["\(language)"]!["navTitle"]
-        labelLogout.text = arrText["\(language)"]!["Logout"]
-        labelBasicInfo.text = arrText["\(language)"]!["labelBasicInfo"]
-        labelLogout.text = arrText["\(language)"]!["labelLogout"]
-        
-//        Timeline.text = arrText["\(language)"]!["Timeline"]
-//        Message.text = arrText["\(language)"]!["Message"]
-//        Reservation.text = arrText["\(language)"]!["Reservation"]
-//        Situation.text = arrText["\(language)"]!["Situation"]
-//        Configuration.text = arrText["\(language)"]!["Configuration"]
-        
-        
-        //set button text
-        btnEditProfile.setTitle(arrText["\(language)"]!["EditProfile"], forState: .Normal)
-        btnMailAddressChange.setTitle(arrText["\(language)"]!["EmailAddressChange"], forState: .Normal)
-        btnChangePass.setTitle(arrText["\(language)"]!["ChangePassword"], forState: .Normal)
-        btnLanguageSettings.setTitle(arrText["\(language)"]!["LangSettings"], forState: .Normal)
-        btnLogout.setTitle(arrText["\(language)"]!["ToLogOut"], forState: .Normal)
-        
+        self.loadConfigure()
+
         //set action 
          btnEditProfile.addTarget(self, action: "viewtoEditProfile:", forControlEvents: .TouchUpInside)
         
@@ -101,6 +83,24 @@ class ConfigurationViewController: UIViewController {
         
          btnLanguageSettings.addTarget(self, action: "viewChangeLanguage:", forControlEvents: .TouchUpInside)
     
+    }
+    
+    func loadConfigure() {
+        
+        let config = SYSTEM_CONFIG()
+        
+        //set label text..
+        navTitle.title = config.translate("menu_configuration")
+        labelLogout.text = config.translate("label_logout")
+        labelBasicInfo.text = config.translate("subtitle_basic_information")
+        labelLogout.text = config.translate("label_logout")
+        
+        btnEditProfile.setTitle(config.translate("title_edit_profile"), forState: .Normal)
+        btnMailAddressChange.setTitle(config.translate("label_e-mail_address_change"), forState: .Normal)
+        btnChangePass.setTitle(config.translate("label_change-password"), forState: .Normal)
+        btnLanguageSettings.setTitle(config.translate("title_language_settings"), forState: .Normal)
+        btnLogout.setTitle(config.translate("btn_logout"), forState: .Normal)
+        
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {

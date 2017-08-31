@@ -34,27 +34,37 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     ]
     
+    //get usertimeline parameters...
+    var getTimeline = [
+        "sercret"     : "jo8nefamehisd",
+        "action"      : "api",
+        "ac"          : "get_timeline",
+        "d"           : "0",
+        "lang"        : "en",
+        "user_id"     : "\(globalUserId.userID)",
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //load language set.
         language = setLanguage.appLanguage
         
-        //set text 
-         saveItem.title = arrText["\(language)"]!["post"]
          content.delegate = self
-         content.text = arrText["\(language)"]!["contentPlacehoder"]
          content.textColor = UIColor.lightGrayColor()
         
         //set navback transition...
         self.navBack.action = Selector("dismissMe:")
         
         content.delegate = self
-        
+        self.loadConfigure()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+    func loadConfigure() {
+        let config = SYSTEM_CONFIG()
+        //set text
+        saveItem.title = config.translate("button_post")
+        content.text = config.translate("holder_post_content")
     }
 
     func dismissMe(sender: UIBarButtonItem) -> () {
@@ -74,6 +84,8 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         ]
         //save post data
         self.savePost(postTimeline)
+        
+       
     }
     
     func textViewDidBeginEditing(textView: UITextView) {
@@ -90,11 +102,6 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         }
     }
     
-//    func textFieldShouldReturn(textView: UITextView) -> Bool {
-//        textView.resignFirstResponder()
-//        return true
-//    }
-    
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         if(text == "\n") {
             textView.resignFirstResponder()
@@ -109,6 +116,8 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     func savePost(parameters: [String: String]?) {
         var mess: Bool!
+        let config = SYSTEM_CONFIG()
+        
         
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()
@@ -130,10 +139,11 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
                 if json3!["success"] != nil {
                     mess = json3!["success"] as! Bool
                 }
+                NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
                 dispatch_async(dispatch_get_main_queue()) {
                     if mess == true {
-                        self.displayMyAlertMessage("Saved Post")
-                        self.content.text = self.arrText["\(self.language)"]!["contentPlacehoder"]
+                        self.displayMyAlertMessage(config.translate("saved_post"))
+                        self.content.text = config.translate("holder_post_content")
                     }
                 }
                 
@@ -144,6 +154,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         }
         task2.resume()
         
+       
     }
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
@@ -167,7 +178,10 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     func displayMyAlertMessage(userMessage:String){
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
-        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
+        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default) {
+            UIAlertAction in
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
         myAlert.addAction(okAction)
         self.presentViewController(myAlert, animated: true, completion: nil)
     }

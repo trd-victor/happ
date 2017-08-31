@@ -18,7 +18,6 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var navBackLogin: UIBarButtonItem!
     @IBOutlet var btnChangePass: UIButton!
-    @IBOutlet var note: UILabel!
     
     var changePassparam = [
         "en": [
@@ -59,18 +58,7 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
         
         //load language set..
         language = setLanguage.appLanguage
-        
-        //set text field text and value
-        navTitle.title = changePassparam["\(language)"]!["navTitle"]
-//        navBack.title  = changePassparam["\(language)"]!["navBack"]
-        labelUserEmail.text = changePassparam["\(language)"]!["emailLabel"]
-        userEmailField.placeholder = changePassparam["\(language)"]!["emailPlaceholder"]
-        userNote.text = changePassparam["\(language)"]!["note1"]
-        note.text = changePassparam["\(language)"]!["note2"]
-        
-        //set button text..
-        btnChangePass.setTitle(changePassparam["\(language)"]!["changePassbutton"], forState: .Normal)
-        
+
         //add listener action to changepass button
         btnChangePass.addTarget(self, action: "changePass:", forControlEvents: .TouchUpInside)
        
@@ -79,16 +67,31 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
         self.navBackLogin.action = Selector("navBackLogin:")
         
         //set numberofline0
-        userNote.numberOfLines = 0
-        note.numberOfLines = 0
-        userNote.sizeToFit()
-        note.sizeToFit()
+      
     
         //set border radius
         btnChangePass.layer.cornerRadius = 5
         btnChangePass.layer.borderWidth = 1
     
         
+       self.loadConfigure()
+    }
+    
+    func loadConfigure() {
+        
+        let config = SYSTEM_CONFIG()
+    
+        navTitle.title = config.translate("title_resetting_email")
+        labelUserEmail.text = config.translate("label_e-mail_address")
+        
+        userEmailField.placeholder = config.translate("holder_ex.@xxx.com")
+        userNote.text = config.translate("text_change_pass")
+        
+        //set button text..
+        btnChangePass.setTitle(config.translate("subtitle_reconfiguration_URL"), forState: .Normal)
+        
+        userNote.numberOfLines = 0
+        userNote.sizeToFit()
     }
     
     func navBackLogin(sender: UIBarButtonItem) ->() {

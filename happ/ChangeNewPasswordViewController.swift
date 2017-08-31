@@ -25,32 +25,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var navBackChangePass: UIBarButtonItem!
     
-    
-    var arrText = [
-        
-        "en" : [
-            "navTitle": "Change Password",
-            "save" : "Save",
-            "labelCurrentPass" : "Current password",
-            "labelNewPass" : "New password",
-            "labelReEnterPass" : "Re-enter password",
-            "PlaceCurrentPass" : "Current Password",
-            "PlaceNewPass" : "New Password",
-            "PlaceReEnterPass" : "Re-Enter Password"
-        ],
-        
-        "ja" : [
-            "navTitle": "プロフィールの編集",
-            "save" : "保存する",
-            "labelCurrentPass" : "現在のパスワード",
-            "labelNewPass" : "新しいパスワード",
-            "labelReEnterPass" : "パスワード再入力",
-            "PlaceCurrentPass" : "半角英数字4文字以上",
-            "PlaceNewPass" : "半角英数字4文字以上",
-            "PlaceReEnterPass" : "上と同じものを入力"
-        ]
-        
-    ]
+
     var language: String!
     var userId: String!
     
@@ -60,15 +35,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         //load language set.
         language = setLanguage.appLanguage
         
-        navTitle.title = arrText["\(language)"]!["navTitle"]
-        save.title = arrText["\(language)"]!["save"]
-        currentPass.text = arrText["\(language)"]!["labelCurrentPass"]
-        newPass.text = arrText["\(language)"]!["labelNewPass"]
-        reenterpass.text = arrText["\(language)"]!["labelReEnterPass"]
-        
-        currentPassField.placeholder = arrText["\(language)"]!["PlaceCurrentPass"]
-        newPassField.placeholder = arrText["\(language)"]!["PlaceNewPass"]
-        reenterPassField.placeholder = arrText["\(language)"]!["PlaceReEnterPass"]
+        self.loadConfigure()
         
         userId = globalUserId.userID
 //        self.loaduserPassword()
@@ -86,9 +53,19 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
     
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+    func loadConfigure() {
         
+        let config = SYSTEM_CONFIG()
+        
+        navTitle.title = config.translate("title_change_password")
+        save.title = config.translate("button_save")
+        currentPass.text = config.translate("label_current_password")
+        newPass.text = config.translate("label_new_password")
+        reenterpass.text = config.translate("label_re-enter_password")
+        
+        currentPassField.placeholder = config.translate("label_current_password")
+        newPassField.placeholder = config.translate("label_new_password")
+        reenterPassField.placeholder = config.translate("label_re-enter_password")
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -123,19 +100,21 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func Save(sender: AnyObject) {
         
+         let config = SYSTEM_CONFIG()
          let currentPass1 = currentPassField.text!
          let newPass1 = newPassField.text!
          let reEnterPass1 = reenterPassField.text!
 //         let origPass = originalPass.text!
         
-        if currentPass1 == "" || newPass1 == "" || reEnterPass1 == "" {
-            self.displayMyAlertMessage("All Fields Required!")
+        if currentPass1 == ""  {
+            self.displayMyAlertMessage(config.translate("empty_current_password"))
+        } else if newPass1 == ""  {
+            self.displayMyAlertMessage(config.translate("empty_new_password"))
+        } else if reEnterPass1 == "" {
+            self.displayMyAlertMessage(config.translate("empty_reenter_password"))
         }
-//        else if currentPass1 != origPass {
-//            self.displayMyAlertMessage("Current Password Not Match")
-//        }
         else if newPass1 != reEnterPass1 {
-            self.displayMyAlertMessage("Not Match New Password")
+            self.displayMyAlertMessage(config.translate("not_match_password"))
         }
         else {
             //created NSURL
@@ -164,7 +143,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                 "sercret"     : "jo8nefamehisd",
                 "action"      : "api",
                 "ac"          : "user_update",
-                "d"           : "1",
+                "d"           : "0",
                 "lang"        : "\(language)",
                 "user_id"     : "\(userId)",
                 "passwd"      : "\(newPass1)",
@@ -194,6 +173,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                     
                     if json!["result"] != nil {
                         message = json!["result"]!["mess"] as! String
+                        self.displayMyAlertMessage(message)
                     }
                     
                     dispatch_async(dispatch_get_main_queue()) {
@@ -204,7 +184,6 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                                 self.displayMyAlertMessage(message)
                             }
                         }
-                        self.displayMyAlertMessage(message)
                     }
                     
                 } catch {

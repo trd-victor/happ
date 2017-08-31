@@ -23,20 +23,7 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
     var items = ["1", "2", "3", "4"]
     var language: String!
     var getPercent: String!
-    var congestionSettings = [
-    
-        "en" : [
-            "CongestionTitle" : "Situation",
-            "CongestSituation" : "Congestion situation",
-            "CongestionFree" : "Now I am free"
-        
-        ],
-        "jp" : [
-            "CongestionTitle" : "状況",
-            "CongestSituation" : "混雑状況",
-            "CongestionFree" : "いま暇"
-        ]
-    ]
+
     
     //set of label string...
     @IBOutlet var situation: UILabel!
@@ -68,10 +55,7 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
         
-        //set title and text accdg. to language set....
-        self.congestiontitle.title = congestionSettings["\(language)"]!["CongestionTitle"]
-        self.situation.text = congestionSettings["\(language)"]!["CongestSituation"]
-        self.freestatus.text = congestionSettings["\(language)"]!["CongestionFree"]
+        self.loadConfigure()
         
         //set static office id 
         let office_id = 32
@@ -89,6 +73,16 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
         
         
     }
+    
+    func loadConfigure() {
+        let config = SYSTEM_CONFIG()
+        
+        //set title and text accdg. to language set....
+        self.congestiontitle.title = config.translate("title_situation")
+        self.situation.text = config.translate("label_congestion_situation")
+        self.freestatus.text = config.translate("subtitle_now_free")
+    }
+    
     
     func getCongestionPercentage(sender: Int) {
        

@@ -27,4 +27,5 @@ struct globalvar {
     static var API_URL: NSURL = NSURL(string: "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
     static var userTitle: String = ""
     static var SYSTEM_VALUE = [String : [String: String]]()
+    let config = SYSTEM_CONFIG()
 }

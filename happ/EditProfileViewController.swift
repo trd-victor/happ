@@ -88,19 +88,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         //load language set.
         language = setLanguage.appLanguage
         
-        //set label text..
-        navTitle.title = arrText["\(language)"]!["navTitle"]
-        StatusItem.title = arrText["\(language)"]!["save"]
-        labelName.text = arrText["\(language)"]!["name"]
-        userNamefield.placeholder = arrText["\(language)"]!["nameplaceholder"]
-        userDescription.placeholder = arrText["\(language)"]!["descplaceholder"]
-        labelSkills.text = arrText["\(language)"]!["skills"]
-        labelfrontEnd.text = arrText["\(language)"]!["frontEnd"]
-        labelbackend.text = arrText["\(language)"]!["backEnd"]
-        labelIOS.text = arrText["\(language)"]!["ios"]
-        labelAndroid.text = arrText["\(language)"]!["android"]
-        labelAppDesign.text = arrText["\(language)"]!["appdesign"]
-        labelwebdesign.text = arrText["\(language)"]!["webdesign"]
+        self.loadConfigure()
         
         let paddingView = UIView(frame: CGRectMake(0, 0, 10, self.userDescription.frame.height))
         userDescription.leftView = paddingView
@@ -126,6 +114,26 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
 //        view.addSubview(myActivityIndicator)
         
         view.endEditing(true)
+        
+    }
+    
+    func loadConfigure() {
+        
+        let config = SYSTEM_CONFIG()
+        
+        //set label text..
+        navTitle.title = config.translate("title_edit_profile")
+        StatusItem.title = config.translate("button_save")
+        labelName.text = config.translate("text_name")
+        userNamefield.placeholder = config.translate("holder_15_char/less")
+        userDescription.placeholder = config.translate("holder_profile_statement")
+        labelSkills.text = config.translate("subtitle_skills")
+        labelfrontEnd.text = config.translate("label_front_end")
+        labelbackend.text = config.translate("label_server_side")
+        labelIOS.text = config.translate("label_IOS_application")
+        labelAndroid.text = config.translate("label_android_application")
+        labelAppDesign.text = config.translate("label_app_design")
+        labelwebdesign.text = config.translate("label_web_design")
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -240,7 +248,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
                             if data != nil {
                                 self.userImage.image = UIImage(data: data!)
                             } else {
-                                self.userImage.image = UIImage(named: "photo")
+                                self.userImage.image = UIImage(named: "noPhoto")
                             }
                            
                             self.userDescription.text = message

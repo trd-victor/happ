@@ -15,7 +15,17 @@ struct firebaseId {
     static var indicator: String = ""
 }
 
-class SearchDetailViewController: UIViewController, UITabBarDelegate {
+class onlyUserPost: UITableViewCell {
+    
+    @IBOutlet var userPostImage: UIImageView!
+    @IBOutlet var userPostName: UILabel!
+    @IBOutlet var userPostDate: UILabel!
+    @IBOutlet var userPostContent: UITextView!
+    
+}
+
+
+class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableViewDelegate, UITableViewDataSource {
 
    
     @IBOutlet var mytabBar: UITabBar!
@@ -31,6 +41,9 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
     @IBOutlet var btnMessage: UIButton!
     @IBOutlet var btnBlock: UIButton!
     
+    @IBOutlet var mytableView: UITableView!
+    
+    
     var arrText = [
         "en" : [
             "Message"  : "Message",
@@ -43,6 +56,25 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
     ]
     
     
+    //get usertimeline parameters...
+    var getTimeline = [
+        "sercret"     : "jo8nefamehisd",
+        "action"      : "api",
+        "ac"          : "get_timeline",
+        "d"           : "0",
+        "lang"        : "en",
+        "user_id"     : "\(globalUserId.userID)",
+    ]
+    
+    var userDetails = [
+        "sercret"     : "jo8nefamehisd",
+        "action"      : "api",
+        "ac"          : "get_userinfo",
+        "d"           : "0",
+        "lang"        : "en",
+        "user_id"     : "\(globalUserId.userID)",
+    ]
+    
     var timelineViewController: UIViewController!
     var configurationViewControllers: UIViewController!
     var viewControllers: [UIViewController]!
@@ -51,6 +83,10 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
     var stringName: String!
     var language: String!
     var useEmail : String!
+    var userPost = [String]()
+    var userContent = [String]()
+    var userDate = [String]()
+    var fromID = [String]()
     
     var detailUser: SearchUser? {
         didSet {
@@ -78,6 +114,7 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
         self.userSkills.numberOfLines = 0
         self.userSkills.sizeToFit()
         
+
         //load user information
         self.loadUserinfo(self.user_id)
 //        print(self.user_id)
@@ -104,13 +141,24 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
                 let userSnap = snap as! FIRDataSnapshot
                 let uid = userSnap.key //the uid of each user
                 dispatch_async(dispatch_get_main_queue(), {() -> Void in
-//                  print("\(uid)")
                     firebaseId.userId = uid
-//                    print(uid)
                 })
             }
         })
         
+    
+        //make it delegate..
+        self.mytableView.delegate = self
+        self.mytableView.dataSource = self
+        
+        
+        self.mytableView.separatorStyle = .None
+
+        //load user post 
+        self.getTimelineUser(self.getTimeline)
+        
+   
+    
     }
     
     func loadUserinfo(sender: String) {
@@ -200,7 +248,7 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
                         if data != nil {
                             self.userImage.image = UIImage(data: data!)
                         } else {
-                            self.userImage.image = UIImage(named: "photo")
+                            self.userImage.image = UIImage(named: "noPhoto")
                         }
                     })
                 })
@@ -233,6 +281,121 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate {
         } else {
             self.goToConfiguration()
         }
+        
+    }
+    
+//    func getUserDetails(parameters: [String: String]?) {
+//        let httpRequest = HttpDataRequest(postData: self.getTimeline)
+//        let request = httpRequest.requestGet()
+//        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+//            data, response, error  in
+//            
+//            if error != nil{
+//                print("\(error)")
+//                return;
+//            }
+//            do {
+//                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+//                
+//                    print(json)
+//                
+//               } catch {
+//                print(error)
+//            }
+//            
+//        }
+//        task.resume()
+//    }
+    
+    
+    func getTimelineUser(parameters: [String: String]?) {
+     
+        let httpRequest = HttpDataRequest(postData: self.getTimeline)
+        let request = httpRequest.requestGet()
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil{
+                print("\(error)")
+                return;
+            }
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                
+                
+                if let resultArray = json!.valueForKey("result") as? NSArray {
+                    
+                    for item in resultArray {
+                        
+                        if let resultDict = item as? NSDictionary {
+//                            if let userPostId = resultDict.valueForKey("ID") {
+//                                self.postID.append(userPostId as! Int)
+//                            }
+                            
+                            if let userPostModied = resultDict.valueForKey("post_modified") {
+                                self.userDate.append(userPostModied as! String)
+                            }
+                            
+                            if let postContent = resultDict.valueForKey("fields")  {
+                                
+                                if let body = postContent.valueForKey("body") {
+                                    self.userContent.append(body as! String)
+                                }
+                                if let body = postContent.valueForKey("from_user_id") {
+                                    self.fromID.append(body as! String)
+                                }
+                            }
+                        }
+                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                self.mytableView.reloadData()
+                            }
+                        }
+                        
+                    }
+                }
+            } catch {
+                print(error)
+            }
+            
+        }
+        task.resume()
+    }
+    
+    
+
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.userContent.count
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = self.mytableView.dequeueReusableCellWithIdentifier("userCellPost", forIndexPath: indexPath) as! onlyUserPost
+        cell.userPostContent.text = self.userContent[indexPath.row]
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 100.0
+    }
+    
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        cell.contentView.backgroundColor = UIColor.clearColor()
+        
+        let whiteRoundedView : UIView = UIView(frame: CGRectMake(0, 10, self.view.frame.size.width, self.view.frame.size.height))
+        
+        whiteRoundedView.layer.backgroundColor = CGColorCreate(CGColorSpaceCreateDeviceRGB(), [1.0, 1.0, 1.0, 1.0])
+        whiteRoundedView.layer.masksToBounds = false
+        whiteRoundedView.layer.cornerRadius = 1.0
+        whiteRoundedView.layer.shadowOffset = CGSizeMake(-1, 1)
+        whiteRoundedView.layer.shadowOpacity = 0
+        
+        cell.contentView.addSubview(whiteRoundedView)
+        cell.contentView.sendSubviewToBack(whiteRoundedView)
         
     }
     

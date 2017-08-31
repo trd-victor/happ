@@ -8,6 +8,8 @@
 
 import UIKit
 
+
+
 class CurrentSettingsViewController: UIViewController {
     
     @IBOutlet var currentSettingslang: UILabel!
@@ -47,21 +49,41 @@ class CurrentSettingsViewController: UIViewController {
         //load language set.
         language = setLanguage.appLanguage
         
+//        let defaults = NSUserDefaults.standardUserDefaults()
+//        let lang = defaults.valueForKey("AppLanguage")
+        
+//        if lang! as! String == "en"  {
+//            self.currentSettingslang.text = "English"
+//        } else {
+//            self.currentSettingslang.text = "日本語"
+//        }
+
         //set button text..
-        btnCurrentSettings.setTitle(arrText["\(language)"]!["btnCurrentSettings"], forState: .Normal)
-        navTitle.title = arrText["\(language)"]!["title"]
-        savelang.title = arrText["\(language)"]!["save"]
+        self.loadConfigure()
         
         self.loadCurrentUserLang()
-//        self.navBackLang.action = Selector("backToConfiguration:")
-        
         self.savelang.action = Selector("saveLang:")
-
+        self.navBackLang.action = Selector("backToConfiguration:")
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "englishLang:", name: "changeLang", object: nil)
+    }
+    
+    
+    func englishLang(notification: NSNotification) {
+        let lang = changeLang.lang
+        
+        if lang == "en" {
+            self.currentSettingslang.text = lang
+        } else {
+            self.currentSettingslang.text = lang
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        
+    func loadConfigure() {
+        let config = SYSTEM_CONFIG()
+        btnCurrentSettings.setTitle(config.translate("label_current settings"), forState: .Normal)
+        navTitle.title = config.translate("title_language_settings")
+        savelang.title = config.translate("button_save")
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -70,13 +92,12 @@ class CurrentSettingsViewController: UIViewController {
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
-        
        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     func backToConfiguration(sender: UIBarButtonItem) -> () {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyBoard.instantiateViewControllerWithIdentifier("UserTimeline") as! UserTimelineViewController
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("Configuration") as! ConfigurationViewController
         
         let transition = CATransition()
         transition.duration = 0.10
@@ -86,9 +107,21 @@ class CurrentSettingsViewController: UIViewController {
         self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.presentDetail(vc)
     }
-
+    
+   
     
     func saveLang(sender: UIBarButtonItem) ->() {
+        
+        let new_lang = self.currentSettingslang.text!
+        
+        
+        if new_lang == "English" {
+            self.currentSettingslang.text = "en"
+        } else {
+            self.currentSettingslang.text = "ja"
+        }
+        
+        
         //let URL
         let viewDataURL = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
         
@@ -113,14 +146,6 @@ class CurrentSettingsViewController: UIViewController {
             language = "jp"
         }
         
-        let lang = self.currentSettingslang.text as String!
-        var change_lang: String!
-        if lang == "English" || lang == "英語" {
-             change_lang = "en"
-        } else if lang == "Japanese" || lang == "日本語"{
-            change_lang = "jp"
-        }
-        
         //set parameters...
         let param = [
             "sercret"     : "jo8nefamehisd",
@@ -129,7 +154,7 @@ class CurrentSettingsViewController: UIViewController {
             "d"           : "0",
             "lang"        : "\(language)",
             "user_id"     : "\(userId)",
-            "change_lang" : "\(change_lang)",
+            "change_lang" : "\(self.currentSettingslang.text!)",
             "targets"     : "\(targets)"
         ]
         
@@ -154,7 +179,7 @@ class CurrentSettingsViewController: UIViewController {
                 if json!["result"] != nil {
                     mess   = json!["result"]!["mess"] as! String
                 }
-                
+
                 dispatch_async(dispatch_get_main_queue()) {
                    self.displayMyAlertMessage(mess)
                 }
@@ -166,6 +191,12 @@ class CurrentSettingsViewController: UIViewController {
         }
         task.resume()
 
+    }
+    
+    func changeLanguage(sender : String) {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.setValue(sender, forKey: "AppLanguage")
+        userDefaults.synchronize()
     }
     
     

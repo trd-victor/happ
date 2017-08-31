@@ -42,14 +42,13 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
 
         //load language set.
         language = setLanguage.appLanguage
-        
-        navTitle.title = arrText["\(language)"]!["navTitle"]
-        Save.title = arrText["\(language)"]!["save"]
-        txtMail.placeholder = arrText["\(language)"]!["nameplaceholder"]
-        labelMail.text = arrText["\(language)"]!["name"]
+    
         
         userId = globalUserId.userID
         self.loaduserEmail()
+        
+        
+        self.loadConfigure()
         
         //hide original email
         self.userRealEmail.hidden = true
@@ -62,10 +61,17 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
 
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func loadConfigure() {
+        
+        let config = SYSTEM_CONFIG()
+        
+        navTitle.title = config.translate("title_e-mail_add_change")
+        Save.title = config.translate("button_save")
+        txtMail.placeholder = config.translate("holder_ex.@xx.com")
+        labelMail.text = config.translate("label_email_address")
     }
+    
+
     
     @IBAction func Save(sender: AnyObject) {
         if userId != "" {
@@ -76,10 +82,13 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
     }
     
     func updateEmail() {
+        
+        let config = SYSTEM_CONFIG()
+        
         let email = txtMail.text!
         
         if email == "" {
-            self.displayMyAlertMessage("Enter Your Email")
+            self.displayMyAlertMessage(config.translate("empty_email"))
         }
         else {
             //created NSURL

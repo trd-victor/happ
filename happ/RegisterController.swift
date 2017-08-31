@@ -81,10 +81,16 @@ class RegisterController: UIViewController,UIImagePickerControllerDelegate, UINa
         let pass = userPassword.text!
         let name = userName.text!
         let message = userMessage.text!
+        let config = SYSTEM_CONFIG()
         
-        
-        if email == "" || pass == "" || name == "" || message == "" {
-            displayMyAlertMessage("All Fields Required")
+        if email == ""  {
+            displayMyAlertMessage(config.translate("empty_email"))
+        } else if pass == "" {
+            displayMyAlertMessage(config.translate("empty_passwd"))
+        } else if  name == ""  {
+            displayMyAlertMessage(config.translate("empty_name"))
+        } else if  message == "" {
+           displayMyAlertMessage(config.translate("empty_mess"))
         } else {
             //created NSURL
             let URL_SAVE_TEAM = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"

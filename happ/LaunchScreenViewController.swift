@@ -23,22 +23,49 @@ class SYSTEM_CONFIG {
     internal func getSYS_VAL(key: String) -> AnyObject?{
         return self.SYS_VAL.valueForKey(key)
     }
+    
+    /**
+     * @param key as String
+     * System Language
+    **/
+    internal func translate(key: String) -> String {
+        let lang = self.getSYS_VAL("AppLanguage") as! String
+        let textTranslate = self.getSYS_VAL("SYSTM_VAL")
+        return textTranslate![key]!![lang]!! as! String
+    }
 }
 
 class LaunchScreenViewController: UIViewController {
     
     var myTimer : NSTimer!
+    var language: String!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.delayLaunchScreen()
+//        self.delayLaunchScreen()
         let config = getSystemValue()
         config.getKey()
         
         
         //setup Views..
         self.setUpView()
+        
+        //Setup Configurations
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        
+        self.isAppAlreadyLaunchedOnce()
+        
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        if let systemLang = userDefaults.valueForKey("AppLanguage") {
+            setLanguage.appLanguage = systemLang as! String
+            self.language = setLanguage.appLanguage
+        } else {
+            setLanguage.appLanguage = "en"
+            self.language = setLanguage.appLanguage
+        }
     }
     
     func delay(delay:Double, closure:()->()) {
@@ -57,10 +84,9 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(5.0) {
+        self.delay(2.0) {
             self.dismissViewControllerAnimated(false, completion: nil)
             self.gotoMainBoard()
-            print("Dismiss ME NOW!")
         }
     }
     
@@ -69,7 +95,26 @@ class LaunchScreenViewController: UIViewController {
         viewbg.backgroundColor = UIColor(hexString: "#eeeeee")
         view.addSubview(viewbg)
     }
+    
+    func isAppAlreadyLaunchedOnce()->Bool{
+        let defaults = NSUserDefaults.standardUserDefaults()
+        
+        if let _ = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
+            //self.dismissViewControllerAnimated(true, completion: nil)
+            self.delayLaunchScreen()
+            return true
+        }else{
+            defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
+            self.firstload()
+            return false
+        }
+    }
+    
+    func firstload() {
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("ChooseLanguage") as! FirstLaunchLanguage
+        self.presentViewController(nextViewController, animated:true, completion:nil)
+    }
 
-
-
+    
 }

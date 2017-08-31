@@ -45,15 +45,21 @@ class ChangeLanguageViewController: UIViewController {
         //load language set.
         language = setLanguage.appLanguage
         
-        //set label text..
-        navTitle.title = arrText["\(language)"]!["navTitle"]
-        btnenglish.setTitle(arrText["\(language)"]!["engLang"], forState: .Normal)
-        btnJapanese.setTitle(arrText["\(language)"]!["jplang"], forState: .Normal)
+        self.loadConfigure()
         
         //set image back button position..   
         self.navBackSettings.action = Selector("backToConfiguration:")
         btnenglish.addTarget(self, action: "englishBackButton:", forControlEvents: .TouchUpInside)
         btnJapanese.addTarget(self, action: "japaneseBackButton:", forControlEvents: .TouchUpInside)
+    }
+    
+    func loadConfigure() {
+        let config = SYSTEM_CONFIG()
+        
+        //set label text..
+        navTitle.title = config.translate("title_language_settings")
+        btnenglish.setTitle(config.translate("label_en"), forState: .Normal)
+        btnJapanese.setTitle(config.translate("label_ja"), forState: .Normal)
     }
 
     
@@ -64,7 +70,7 @@ class ChangeLanguageViewController: UIViewController {
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
         
-        presentViewController(viewControllerToPresent, animated: false, completion: nil)
+       self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     func presentDetail2 (viewControllerToPresent: UIViewController) {
@@ -81,6 +87,8 @@ class ChangeLanguageViewController: UIViewController {
         
         let getTextButton = btnenglish.titleLabel!.text as String!
         changeLang.lang = getTextButton
+        
+    NSNotificationCenter.defaultCenter().postNotificationName("changeLang", object: nil, userInfo: nil)
 
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
@@ -92,7 +100,8 @@ class ChangeLanguageViewController: UIViewController {
         transition.subtype = kCATransitionFromLeft
         self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.presentDetail(vc)
-
+        
+        
     }
     
     
@@ -100,7 +109,7 @@ class ChangeLanguageViewController: UIViewController {
         
         let getJpButton = btnJapanese.titleLabel!.text as String!
         changeLang.lang = getJpButton
-       
+    NSNotificationCenter.defaultCenter().postNotificationName("changeLang", object: nil, userInfo: nil)
         
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController

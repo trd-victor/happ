@@ -128,27 +128,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         //load language set.
         language = setLanguage.appLanguage
         
-        //change text value according to language...
-        navController.title = arrText["\(language)"]!["navigation"]
-//        navBack.title = arrText["\(language)"]!["navBack"]
-        labeltopTitle.text = arrText["\(language)"]!["basicInfo"]
-        labelName.text = arrText["\(language)"]!["name"]
-        userName.placeholder = arrText["\(language)"]!["namePlaceholder"]
-        labelEmail.text = arrText["\(language)"]!["email"]
-        userEmail.placeholder = arrText["\(language)"]!["emailPlaceholder"]
-        labelPass.text = arrText["\(language)"]!["pass"]
-        userPassword.placeholder = arrText["\(language)"]!["passPlaceholder"]
-        labelReEnterPass.text = arrText["\(language)"]!["repeatPass"]
-        userReEnterPassword.placeholder = arrText["\(language)"]!["repeatPassPlaceholder"]
-        labelSkill.text = arrText["\(language)"]!["skills"]
-        labelFrontEnd.text = arrText["\(language)"]!["frontEnd"]
-        labelBackEnd.text = arrText["\(language)"]!["backEnd"]
-        labelIOS.text = arrText["\(language)"]!["ios"]
-        labelAndroid.text = arrText["\(language)"]!["android"]
-        labelAppDesign.text = arrText["\(language)"]!["appdesign"]
-        labelWebDesign.text = arrText["\(language)"]!["webdesign"]
         
-        btnUpdate.setTitle(arrText["\(language)"]!["update"], forState: .Normal)
         
         //set border for textbox and label
         setBorder(userName)
@@ -167,6 +147,36 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         //set border 
         btnUpdate.layer.cornerRadius = 5
         btnUpdate.layer.borderWidth = 1
+        
+        self.loadConfigure()
+    }
+    
+    
+    func loadConfigure() {
+        
+        let config = SYSTEM_CONFIG()
+        
+        //change text value according to language...
+        navController.title = config.translate("button_new_member_registration")
+        labeltopTitle.text = config.translate("subtitle_basic_information")
+        labelName.text = config.translate("text_name")
+        userName.placeholder = config.translate("holder_15_char/less")
+        labelEmail.text = config.translate("label_e-mail_address")
+        userEmail.placeholder = config.translate("holder_ex.@xxx.com")
+        labelPass.text = config.translate("label_Password")
+        userPassword.placeholder = config.translate("holder_4/more_char")
+        labelReEnterPass.text = config.translate("holder_re-enter_password")
+        userReEnterPassword.placeholder = config.translate("holder_re-enter_password")
+        
+        labelSkill.text = config.translate("subtitle_skills")
+        labelFrontEnd.text = config.translate("label_front_end")
+        labelBackEnd.text = config.translate("label_server_side")
+        labelIOS.text = config.translate("label_IOS_application")
+        labelAndroid.text = config.translate("label_android_application")
+        labelAppDesign.text = config.translate("label_app design")
+        labelWebDesign.text = config.translate("label_web_design")
+        
+        btnUpdate.setTitle(config.translate("btn_regist_new_member"), forState: .Normal)
     }
     
     func backHome(sender: UIBarButtonItem) -> () {
@@ -180,20 +190,19 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         let name = userName.text!
         let reEnterpassword = userReEnterPassword.text!
         
-        let registError = Error()
+//        let registError = Error()
         
-        if name == ""  {
-            displayMyAlertMessage(registError.ErrorList["\(self.language)"]!["empty_name"]!)
+        let config = SYSTEM_CONFIG()
+        
+        if email == ""  {
+            displayMyAlertMessage(config.translate("empty_email"))
         } else if pass == "" {
-            displayMyAlertMessage(registError.ErrorList["\(self.language)"]!["empty_passwd"]!)
-        } else if email == "" {
-            displayMyAlertMessage(registError.ErrorList["\(self.language)"]!["email"]!)
-        } else if reEnterpassword == "" {
-            displayMyAlertMessage(registError.ErrorList["\(self.language)"]!["empty_reenterpassword"]!)
-        }
-        else if pass != reEnterpassword {
+            displayMyAlertMessage(config.translate("empty_passwd"))
+        } else if  name == ""  {
+            displayMyAlertMessage(config.translate("empty_name"))
+        } else if pass != reEnterpassword {
             notmatchPass = arrText["\(language)"]!["notMatchPassword"]
-            displayMyAlertMessage("\(notmatchPass)")
+            displayMyAlertMessage(config.translate("not_match_password"))
         }
         else {
             //created NSURL

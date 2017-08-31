@@ -215,7 +215,7 @@ class ViewLibViewController: JSQMessagesViewController {
     
     override func collectionView(collectionView: JSQMessagesCollectionView!, avatarImageDataForItemAtIndexPath indexPath: NSIndexPath) -> JSQMessageAvatarImageDataSource!
     {
-        let img = UIImage(named: "photo")
+        let img = UIImage(named: "noPhoto")
         return JSQMessagesAvatarImage.avatarWithImage(self.maskRoundedImage(img!, radius: 8))
     }
     

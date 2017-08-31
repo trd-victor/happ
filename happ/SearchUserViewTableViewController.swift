@@ -67,7 +67,7 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+    
         //load language set.
         language = setLanguage.appLanguage
         
@@ -85,8 +85,7 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
         self.navigationController?.navigationBar.translucent = true
         self.navigationController?.navigationItem.title = "Search"
         
-        self.navigationController?.navigationBar.topItem?.title = searchLang["\(language)"]!["title"]
-        self.searchController.searchBar.placeholder = searchLang["\(language)"]!["searchPlachoder"]
+        
         
         
 //        self.navigationController?.navigationBar.tintColor = UIColor.whiteColor()
@@ -96,7 +95,18 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
 //        self.getFirebaseuser()
          self.getFirebaseuser()
         
+        self.loadConfigure()
+        
     }
+    
+    func loadConfigure() {
+        
+        let config = SYSTEM_CONFIG()
+        
+        self.navigationController?.navigationBar.topItem?.title = config.translate("title_search_users")
+        self.searchController.searchBar.placeholder = config.translate("button_name/membership_number")
+    }
+    
     func getFirebaseuser() {
         
         let userDB = FIRDatabase.database().reference().child("users")
@@ -289,7 +299,7 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
                 if self.imageData != nil {
                     cell.imageuser.image = UIImage(data: self.imageData)
                 } else {
-                    cell.imageuser.image = UIImage(named: "photo")
+                    cell.imageuser.image = UIImage(named: "noPhoto")
                 }
             })
         })

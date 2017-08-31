@@ -29,9 +29,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
 
     @IBOutlet var freetimeStatus: UISwitch!
     
+    var pageCount : String!
     
-//    var refreshControl: UIRefreshControl!
-
     var userData: NSDictionary!
     var countData: NSArray = []
     
@@ -143,8 +142,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         //load language set.
         language = setLanguage.appLanguage
         
+        //calll system value...
+        let config = SYSTEM_CONFIG()
+        
         //set text i am free
-        labelFree.text = arrText["\(language)"]!["IamFree"]
+        labelFree.text = config.translate("subtitle_now_free")
         
        // self.searchIcon.action = Selector("gotoSearchbar:")
         
@@ -152,13 +154,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.roundButton.setTitleColor(UIColor.orangeColor(), forState: .Normal)
         self.roundButton.addTarget(self, action: "CreatePostButton:", forControlEvents: .TouchUpInside)
         self.view.addSubview(roundButton)
-        
-        
-        //add to refresh table..
-//        refreshControl = UIRefreshControl()
-//        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
-//        refreshControl.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
-//        self.mytableview.addSubview(refreshControl)
+    
         
         self.scrollview = UIScrollView()
         self.scrollview.delegate = self
@@ -169,11 +165,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.setSwitchOnOff(self.freetimeStatus)
         
 
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTable:", name: "refresh", object: nil)
+        
         self.getTimelineUser(self.getTimeline)
-//        self.getUserinfo(self.userDataImage)
-     
+
     }
-    
+  
    
     
     override func viewWillLayoutSubviews() {
@@ -199,10 +196,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.mytableview.delegate = self
         self.mytableview.dataSource = self
         
-//        self.getTimelineUser(self.getTimeline)
-//        self.getUserinfo(self.userDataImage)
-        
     }
+    
     
     func refreshTimelineTable() {
        self.mytableview.reloadData()
@@ -347,11 +342,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                 
                             }
                         }
-                       
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.mytableview.reloadData()
+                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                self.mytableview.reloadData()
+                            }
                         }
-                        
+
                     }
                 }
                 self.getAllUserInfo(self.fromID)
@@ -422,6 +418,16 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
     }
     
+    func refreshTable(notification: NSNotification) {
+        self.userBody.removeAll()
+        self.postDate.removeAll()
+        self.postID.removeAll()
+        self.fromID.removeAll()
+        self.username.removeAll()
+        self.realImage.removeAll()
+        self.getTimelineUser(self.getTimeline)
+    }
+    
     func setSwitchOnOff(sender : UISwitch) {
         
         let userFreetime = NSUserDefaults.standardUserDefaults().objectForKey("Freetime") as? String
@@ -444,7 +450,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         //referre to custom cell created
         let cell = self.mytableview.dequeueReusableCellWithIdentifier("RowCell", forIndexPath: indexPath) as! CustomCell
-    
+        
         let radius = min(cell.uesrImage!.frame.width/2 , cell.uesrImage!.frame.height/2)
         cell.uesrImage.layer.cornerRadius = radius
         cell.uesrImage.clipsToBounds = true
@@ -459,7 +465,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             dispatch_async(dispatch_get_main_queue(), {() -> Void in
                 
                 if self.data == nil {
-                    cell.uesrImage.image = UIImage(named: "photo")
+                    cell.uesrImage.image = UIImage(named: "noPhoto")
                 } else {
                     cell.uesrImage.image = UIImage(data: self.data!)
                 }
@@ -472,9 +478,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.delet.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.delet.tag = indexPath.row
             cell.delet.hidden = false
+
         } else {
             cell.delet.hidden = true
         }
+        
+   
+        
         cell.username.text = self.username[indexPath.row]
         cell.postDate.text = self.postDate[indexPath.row]
         cell.delet.setTitle("\(self.postID[indexPath.row])", forState: .Normal)
@@ -501,7 +511,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         cell.contentView.addSubview(whiteRoundedView)
         cell.contentView.sendSubviewToBack(whiteRoundedView)
-        
+
     }
     
   
@@ -573,9 +583,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
 
-    
-    
-    
     
 
 }

@@ -56,12 +56,15 @@ class MessageTableViewController: UITableViewController {
         
          NSNotificationCenter.defaultCenter().addObserver(self, selector: "showTabBarMenu:", name: "tabBarShow", object: nil)
         
-        self.getUserMessage()
+         self.getUserMessage()
     }
     
     func getUserMessage() {
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        let fireDB = userDefaults.valueForKey("FirebaseID") as! String
+
         
-        let details = FIRDatabase.database().reference().child("chat").child("last-message").child(globalUserId.FirID)
+        let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB)
         
         //start of retrieving messages on every user
         details.observeEventType(.ChildAdded, withBlock: { (snap) in
@@ -118,7 +121,7 @@ class MessageTableViewController: UITableViewController {
         cell.userImage.clipsToBounds = true
         
         if self.chatImage[indexPath.row] == "null" {
-            cell.userImage.image = UIImage(named: "photo")
+            cell.userImage.image = UIImage(named: "noPhoto")
         }
         
         cell.username.text = self.chatName[indexPath.row]

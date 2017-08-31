@@ -13,9 +13,6 @@ struct setLanguage {
     static var appLanguage: String = ""
 }
 
-
-
-
 class ViewController: UIViewController, UIScrollViewDelegate {
     
     /*variable declaration..*/
@@ -32,28 +29,67 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet var subBottomView: UIView!
     @IBOutlet var imageLogo: UIImageView!
     
+    var portrait: Bool = false
+    var landscape: Bool = false
+    
     override func viewDidLoad() {
-        
         super.viewDidLoad()
+       self.setupAllViews()
+    }
+    
+    func setupAllViews() {
         
-//        self.isAppAlreadyLaunchedOnce()
-        
+        //set button border
         btnBorder(btn_register)
         btnBorder(btn_login)
+        
+        
+        //set scrollview wiew width and height
+        self.sView.frame.size = CGSizeMake(self.testView.frame.width,self.testView.frame.height + 200)
+        
+        //check orient and add autolayout..
+        checkOrientation()
+        autoLayout()
+        
+        loadConfigure()
     
-        var buttonText = [
-            
-            "en": [
-                "btnRegister": "New member registration",
-                "btnLogin": "Login",
-                "changeLang" : "Choose Language"
-            ],
-            "ja" : [
-                "btnRegister": "新規会員登録",
-                "btnLogin": "ログイン",
-                "changeLang" : "言語を選択する"
-            ]
-        ]
+    }
+
+    
+    
+    func displayTimestamp(ts: Double) -> String {
+        let date = NSDate(timeIntervalSince1970: ts)
+        let formatter = NSDateFormatter()
+        formatter.timeZone = NSTimeZone.systemTimeZone()
+        
+        if NSCalendar.currentCalendar().isDateInToday(date) {
+            formatter.dateStyle = .NoStyle
+            formatter.timeStyle = .ShortStyle
+        } else {
+            formatter.dateStyle = .ShortStyle
+            formatter.timeStyle = .NoStyle
+        }
+        
+        return formatter.stringFromDate(date)
+    }
+    
+    func loadConfigure(){
+        let config = SYSTEM_CONFIG()
+    
+        // Set Translations
+        btn_register.setTitle(config.translate("button_regist"), forState: .Normal)
+        btn_login.setTitle(config.translate("subtitle_Login"),forState: .Normal)
+    }
+    
+    //get sysetm value
+    func get_system_val() -> AnyObject {
+        let config = SYSTEM_CONFIG()
+        let sysLang = config.getSYS_VAL("SYSTM_VAL")
+        return sysLang!
+    }
+    
+    //get language set by user..
+    func get_language() -> String {
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let systemLang = userDefaults.valueForKey("AppLanguage") {
@@ -61,39 +97,79 @@ class ViewController: UIViewController, UIScrollViewDelegate {
             self.language = setLanguage.appLanguage
         } else {
             setLanguage.appLanguage = "en"
-             self.language = setLanguage.appLanguage
+            self.language = setLanguage.appLanguage
         }
-        autoLayout(view.frame.width,height: view.frame.height)
-        
-        btn_register.setTitle(buttonText["\(language)"]!["btnRegister"], forState: .Normal)
-        btn_login.setTitle(buttonText["\(language)"]!["btnLogin"], forState: .Normal)
-        
-        let config = SYSTEM_CONFIG()
-        
-        let sysLang = config.getSYS_VAL("SYSTM_VAL")
-        
-        print(sysLang!["added_block"]!!["en"]!!)
-        
+        return self.language
     }
     
-    func autoLayout(width: CGFloat, height: CGFloat){
+    func checkOrientation(){
+        if UIDevice.currentDevice().orientation.isPortrait {
+          self.portrait = true
+        }else{
+            self.landscape = true
+        }
+    }
+    
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        
+        coordinator.animateAlongsideTransition({ (UIViewControllerTransitionCoordinatorContext) -> Void in
+            
+            let orient = UIApplication.sharedApplication().statusBarOrientation
+            
+            switch orient {
+            case .Portrait:
+                if self.portrait == true {
+                    self.sView.frame.size = CGSizeMake(self.testView.frame.width,self.testView.frame.height + 200)
+                    self.mView.translatesAutoresizingMaskIntoConstraints = true
+                    self.mView.frame.size = CGSizeMake(self.testView.frame.width,self.testView.frame.height)
+                }else{
+                    self.sView.frame.size = CGSizeMake(self.testView.frame.height,self.testView.frame.width + 200)
+                    self.mView.translatesAutoresizingMaskIntoConstraints = true
+                    self.mView.frame.size = CGSizeMake(self.testView.frame.height,self.testView.frame.width)
+                    
+                }
+                self.view.layoutIfNeeded()
+                print(self.sView.frame.size)
+                break
+                // Do something
+            default:
+                if self.portrait == true {
+                    self.sView.frame.size = CGSizeMake(self.testView.frame.height,self.testView.frame.width + 200)
+                    self.mView.translatesAutoresizingMaskIntoConstraints = true
+                    self.mView.frame.size = CGSizeMake(self.testView.frame.height,self.testView.frame.width)
+                }else{
+                    self.sView.frame.size = CGSizeMake(self.testView.frame.width,self.testView.frame.height + 200)
+                    self.mView.translatesAutoresizingMaskIntoConstraints = true
+                    self.mView.frame.size = CGSizeMake(self.testView.frame.width,self.testView.frame.height)
+                    
+                }
+                
+                self.view.layoutIfNeeded()
+                print(self.sView.frame.size)
+                // Do something else
+                break
+            }
+            }, completion: { (UIViewControllerTransitionCoordinatorContext) -> Void in
+               
+        })
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+    }
+    
+    
+    
+    func autoLayout(){
+        
         self.testView.translatesAutoresizingMaskIntoConstraints = false
         self.testView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         self.testView.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
-//        self.testView.widthAnchor.constraintEqualToConstant(view.frame.width).active = true
-//        self.testView.heightAnchor.constraintEqualToConstant(view.frame.height).active = true
-        self.testView.sizeThatFits(CGSizeMake(width,height))
-        
+        self.testView.widthAnchor.constraintEqualToConstant(view.frame.width).active = true
+        self.testView.heightAnchor.constraintEqualToConstant(view.frame.height).active = true
         
         self.mView.translatesAutoresizingMaskIntoConstraints = false
         self.mView.centerXAnchor.constraintEqualToAnchor(self.testView.centerXAnchor).active = true
         self.mView.centerYAnchor.constraintEqualToAnchor(self.testView.centerYAnchor).active = true
         self.mView.widthAnchor.constraintEqualToConstant(self.testView.frame.width).active = true
         self.mView.heightAnchor.constraintEqualToConstant(self.testView.frame.height).active = true
-        
-        
-        self.sView.frame.size = CGSizeMake(self.testView.frame.width,self.testView.frame.height + 200)
-        self.sView.layoutIfNeeded()
         
         self.subTopView.translatesAutoresizingMaskIntoConstraints = false
         self.subTopView.topAnchor.constraintEqualToAnchor(self.mView.topAnchor).active = true
@@ -115,7 +191,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         
         self.btn_register.translatesAutoresizingMaskIntoConstraints = false
         self.btn_register.centerXAnchor.constraintEqualToAnchor(self.subBottomView.centerXAnchor).active = true
-        self.btn_register.topAnchor.constraintEqualToAnchor(self.subBottomView.topAnchor, constant: 60).active = true
+        self.btn_register.topAnchor.constraintEqualToAnchor(self.subBottomView.topAnchor, constant: 40).active = true
         self.btn_register.widthAnchor.constraintEqualToConstant(250).active = true
         self.btn_register.heightAnchor.constraintEqualToConstant(50).active = true
         
@@ -127,20 +203,20 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     
-    override func viewDidAppear(animated: Bool) {
-        
-        self.isAppAlreadyLaunchedOnce()
-        
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if let systemLang = userDefaults.valueForKey("AppLanguage") {
-            setLanguage.appLanguage = systemLang as! String
-            self.language = setLanguage.appLanguage
-        } else {
-            setLanguage.appLanguage = "en"
-            self.language = setLanguage.appLanguage
-        }
-    }
-    
+//    override func viewDidAppear(animated: Bool) {
+//        
+//        self.isAppAlreadyLaunchedOnce()
+//        
+//        let userDefaults = NSUserDefaults.standardUserDefaults()
+//        if let systemLang = userDefaults.valueForKey("AppLanguage") {
+//            setLanguage.appLanguage = systemLang as! String
+//            self.language = setLanguage.appLanguage
+//        } else {
+//            setLanguage.appLanguage = "en"
+//            self.language = setLanguage.appLanguage
+//        }
+//    }
+//    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.sView.translatesAutoresizingMaskIntoConstraints = true
@@ -152,25 +228,25 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
   
-        
-    func isAppAlreadyLaunchedOnce()->Bool{
-        let defaults = NSUserDefaults.standardUserDefaults()
-        
-        if let isAppAlreadyLaunchedOnce = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
-            //self.dismissViewControllerAnimated(true, completion: nil)
-            return true
-        }else{
-            defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-            self.firstload()
-            return false
-        }
-    }
     
-    func firstload() {
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("ChooseLanguage") as! FirstLaunchLanguage
-        self.presentViewController(nextViewController, animated:true, completion:nil)
-    }
+//    func isAppAlreadyLaunchedOnce()->Bool{
+//        let defaults = NSUserDefaults.standardUserDefaults()
+//        
+//        if let isAppAlreadyLaunchedOnce = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
+//            //self.dismissViewControllerAnimated(true, completion: nil)
+//            return true
+//        }else{
+//            defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
+//            self.firstload()
+//            return false
+//        }
+//    }
+//    
+//    func firstload() {
+//        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("ChooseLanguage") as! FirstLaunchLanguage
+//        self.presentViewController(nextViewController, animated:true, completion:nil)
+//    }
     
     func btnBorder(sender: UIButton) {
         sender.backgroundColor = UIColor.clearColor()
