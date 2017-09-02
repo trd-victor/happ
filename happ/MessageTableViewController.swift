@@ -24,6 +24,7 @@ class MessageCellDisp : UITableViewCell {
     @IBOutlet var username: UILabel!
     @IBOutlet var userMessage: UILabel!
     @IBOutlet var userTime: UILabel!
+    @IBOutlet var separator: UIView!
     
 }
 
@@ -43,6 +44,7 @@ class MessageTableViewController: UITableViewController {
     var chatMessage = [String]()
     var chatImage = [String]()
     var chatKey = [String]()
+    var chatTime = [String]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,31 +59,38 @@ class MessageTableViewController: UITableViewController {
          NSNotificationCenter.defaultCenter().addObserver(self, selector: "showTabBarMenu:", name: "tabBarShow", object: nil)
         
          self.getUserMessage()
+        
     }
     
     func getUserMessage() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        let fireDB = userDefaults.valueForKey("FirebaseID") as! String
-
+        let config = SYSTEM_CONFIG()
         
+        let fireDB = config.getSYS_VAL("FirebaseID") as! String
+        print(fireDB)
         let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB)
-        
+            
         //start of retrieving messages on every user
         details.observeEventType(.ChildAdded, withBlock: { (snap) in
             
             if let result = snap.value {
-                
+                print(result)
                 let userimage = result.objectForKey("photoUrl") as! String
                 let name = result.objectForKey("name") as! String
                 let message = result.objectForKey("lastMessage") as! String
                 let chatRoomID = result.objectForKey("chatroomId") as! String
-                
+                let timestamp = result.objectForKey("timestamp") as! NSNumber
+                print(timestamp)
+                let seconds = timestamp.doubleValue / 1000
+                let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
+                let formatter = NSDateFormatter()
+                formatter.dateFormat = "hh:mm:ss a"
+                let msgDate = formatter.stringFromDate(dateTimestamp)
                 dispatch_async(dispatch_get_main_queue()) {
                     self.chatImage.append(userimage)
                     self.chatName.append(name)
                     self.chatMessage.append(message)
                     self.chatRoom.append(chatRoomID)
-                    
+                    self.chatTime.append(msgDate)
                     self.mytableview.reloadData()
                 }
             }
@@ -94,6 +103,7 @@ class MessageTableViewController: UITableViewController {
         self.chatName.removeAll()
         self.chatMessage.removeAll()
         self.chatRoom.removeAll()
+        self.chatTime.removeAll()
         self.getUserMessage()
     }
     
@@ -115,15 +125,27 @@ class MessageTableViewController: UITableViewController {
         
         let cell = self.mytableview.dequeueReusableCellWithIdentifier("CellDisplay", forIndexPath: indexPath) as! MessageCellDisp
         
+        cell.separator.translatesAutoresizingMaskIntoConstraints = false
+        cell.separator.bottomAnchor.constraintEqualToAnchor(cell.contentView.bottomAnchor, constant: -5).active = true
+        cell.separator.leftAnchor.constraintEqualToAnchor(cell.contentView.leftAnchor, constant: 55).active = true
+        cell.separator.widthAnchor.constraintEqualToConstant(view.frame.size.width - 65).active = true
+        cell.separator.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        cell.userTime.translatesAutoresizingMaskIntoConstraints = false
+        cell.userTime.topAnchor.constraintEqualToAnchor(cell.contentView.topAnchor, constant: 3).active = true
+        cell.userTime.rightAnchor.constraintEqualToAnchor(cell.contentView.rightAnchor, constant: -10).active = true
+        cell.userTime.widthAnchor.constraintEqualToConstant(120).active = true
+        cell.userTime.heightAnchor.constraintEqualToConstant(31).active = true
         
         let radius = min(cell.userImage!.frame.width/2 , cell.userImage!.frame.height/2)
         cell.userImage.layer.cornerRadius = radius
         cell.userImage.clipsToBounds = true
         
         if self.chatImage[indexPath.row] == "null" {
-            cell.userImage.image = UIImage(named: "noPhoto")
+            cell.userImage.image = UIImage(named: "photo")
         }
         
+        cell.userTime.text = self.chatTime[indexPath.row]
         cell.username.text = self.chatName[indexPath.row]
         cell.userMessage.text = self.chatMessage[indexPath.row]
 

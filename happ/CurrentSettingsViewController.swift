@@ -12,6 +12,9 @@ import UIKit
 
 class CurrentSettingsViewController: UIViewController {
     
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var separator: UIView!
+    @IBOutlet var imgRightLang: UIImageView!
     @IBOutlet var currentSettingslang: UILabel!
     @IBOutlet var btnCurrentSettings: UIButton!
     
@@ -66,8 +69,42 @@ class CurrentSettingsViewController: UIViewController {
         self.navBackLang.action = Selector("backToConfiguration:")
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "englishLang:", name: "changeLang", object: nil)
+        autoLayout()
     }
     
+    func autoLayout(){
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        btnCurrentSettings.translatesAutoresizingMaskIntoConstraints = false
+        btnCurrentSettings.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnCurrentSettings.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        btnCurrentSettings.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -20).active = true
+        btnCurrentSettings.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        
+        imgRightLang.translatesAutoresizingMaskIntoConstraints = false
+        imgRightLang.rightAnchor.constraintEqualToAnchor(btnCurrentSettings.rightAnchor).active = true
+        imgRightLang.topAnchor.constraintEqualToAnchor(btnCurrentSettings.topAnchor, constant: 5).active = true
+        imgRightLang.widthAnchor.constraintEqualToConstant(30).active = true
+        imgRightLang.heightAnchor.constraintEqualToConstant(30).active = true
+        
+        currentSettingslang.translatesAutoresizingMaskIntoConstraints = false
+        currentSettingslang.rightAnchor.constraintEqualToAnchor(btnCurrentSettings.rightAnchor, constant: -35).active = true
+        currentSettingslang.topAnchor.constraintEqualToAnchor(btnCurrentSettings.topAnchor).active = true
+        currentSettingslang.widthAnchor.constraintEqualToConstant(100).active = true
+        currentSettingslang.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator.topAnchor.constraintEqualToAnchor(btnCurrentSettings.bottomAnchor).active = true
+        separator.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator.heightAnchor.constraintEqualToConstant(1).active = true
+        
+    }
     
     func englishLang(notification: NSNotification) {
         let lang = changeLang.lang

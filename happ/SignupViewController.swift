@@ -17,6 +17,7 @@ struct globalUserId {
 
 class SignupViewController: UIViewController, UITextFieldDelegate {
 
+    @IBOutlet var navBar: UINavigationBar!
     /*Setting up variable*/
     @IBOutlet var userEmailField: UITextField!
     @IBOutlet var userPasswordField: UITextField!
@@ -75,7 +76,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         //setup delegate
         userEmailField.delegate = self
         userPasswordField.delegate = self
@@ -110,7 +110,62 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
         //load settings
         self.loadConfigure()
-       
+        autoLayout()
+        
+    }
+    
+    func autoLayout(){
+        
+        myActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        myActivityIndicator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        myActivityIndicator.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
+        myActivityIndicator.widthAnchor.constraintEqualToConstant(50).active = true
+        myActivityIndicator.heightAnchor.constraintEqualToConstant(50).active = true
+        
+        
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        userEmailField.translatesAutoresizingMaskIntoConstraints = false
+        userEmailField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        userEmailField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        labelUserEmail.translatesAutoresizingMaskIntoConstraints = false
+        labelUserEmail.centerXAnchor.constraintEqualToAnchor(userEmailField.centerXAnchor).active = true
+        labelUserEmail.topAnchor.constraintEqualToAnchor(userEmailField.topAnchor).active = true
+        labelUserEmail.widthAnchor.constraintEqualToAnchor(userEmailField.widthAnchor, constant: -20).active = true
+        labelUserEmail.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        userPasswordField.translatesAutoresizingMaskIntoConstraints = false
+        userPasswordField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        userPasswordField.topAnchor.constraintEqualToAnchor(userEmailField.bottomAnchor).active = true
+        userPasswordField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        userPasswordField.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        labelPassword.translatesAutoresizingMaskIntoConstraints = false
+        labelPassword.centerXAnchor.constraintEqualToAnchor(userPasswordField.centerXAnchor).active = true
+        labelPassword.topAnchor.constraintEqualToAnchor(userPasswordField.topAnchor).active = true
+        labelPassword.widthAnchor.constraintEqualToAnchor(userPasswordField.widthAnchor, constant: -20).active = true
+        labelPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        btnLogin.translatesAutoresizingMaskIntoConstraints = false
+        btnLogin.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnLogin.topAnchor.constraintEqualToAnchor(userPasswordField.bottomAnchor, constant: 20).active = true
+        btnLogin.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -40).active = true
+        btnLogin.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        
+        forgetPass.translatesAutoresizingMaskIntoConstraints = false
+        forgetPass.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        forgetPass.topAnchor.constraintEqualToAnchor(btnLogin.bottomAnchor, constant: 25).active = true
+        forgetPass.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        forgetPass.heightAnchor.constraintEqualToConstant(48).active = true
+        
     }
     
     func loadConfigure(){
@@ -227,9 +282,12 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
-                let userDefaults = NSUserDefaults.standardUserDefaults()
-                let fireabaseID = userDefaults.setValue(globalUserId.FirID, forKey: "FirebaseID")
-                userDefaults.synchronize()
+//                let userDefaults = NSUserDefaults.standardUserDefaults()
+//                userDefaults.setValue(globalUserId.FirID, forKey: "FirebaseID")
+//                userDefaults.synchronize()
+                let config = SYSTEM_CONFIG()
+                config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+                print(config.getSYS_VAL("FirebaseID"))
                 self.redirectLogin()
             } else {
                 self.displayMyAlertMessage("Don't have Account!")

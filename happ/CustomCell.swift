@@ -29,4 +29,11 @@ class CustomCell: UITableViewCell {
     @IBOutlet var userContent: UITextView!
     @IBOutlet var delet: UIButton!
     
+    
+    let userContentLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFontOfSize(16)
+        return label
+    }()
+    
 }

@@ -37,12 +37,16 @@ class SYSTEM_CONFIG {
 
 class LaunchScreenViewController: UIViewController {
     
+    @IBOutlet var logo: UIImageView!
     var myTimer : NSTimer!
     var language: String!
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        autoLayout()
+        
 //        self.delayLaunchScreen()
         let config = getSystemValue()
         config.getKey()
@@ -51,7 +55,18 @@ class LaunchScreenViewController: UIViewController {
         //setup Views..
         self.setUpView()
         
+        
         //Setup Configurations
+    }
+    
+    func autoLayout() {
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        logo.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
+        logo.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        logo.widthAnchor.constraintEqualToConstant(240).active = true
+        logo.heightAnchor.constraintEqualToConstant(130).active = true
+        
+        logo.image = UIImage(named: "logo")
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -84,7 +99,7 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(2.0) {
+        self.delay(3.0) {
             self.dismissViewControllerAnimated(false, completion: nil)
             self.gotoMainBoard()
         }

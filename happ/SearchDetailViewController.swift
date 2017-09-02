@@ -27,6 +27,8 @@ class onlyUserPost: UITableViewCell {
 
 class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet var scrollView: UIScrollView!
+    @IBOutlet var topView: UIView!
    
     @IBOutlet var mytabBar: UITabBar!
     @IBOutlet var username: UILabel!
@@ -157,8 +159,75 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         //load user post 
         self.getTimelineUser(self.getTimeline)
         
-   
+        autoLayout()
+        
+    }
     
+    func autoLayout() {
+        
+        mytabBar.translatesAutoresizingMaskIntoConstraints = false
+        mytabBar.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor).active = true
+        mytabBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        mytabBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        mytabBar.heightAnchor.constraintEqualToConstant(50).active = true
+        
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 64).active = true
+        scrollView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        scrollView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        scrollView.bottomAnchor.constraintEqualToAnchor(mytabBar.topAnchor).active = true
+        scrollView.contentSize = CGSizeMake(view.frame.width, view.frame.height)
+        
+        
+        topView.translatesAutoresizingMaskIntoConstraints = false
+        topView.topAnchor.constraintEqualToAnchor(scrollView.topAnchor).active = true
+        topView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        topView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        topView.heightAnchor.constraintEqualToConstant(305).active = true
+        
+        userImage.translatesAutoresizingMaskIntoConstraints = false
+        userImage.topAnchor.constraintEqualToAnchor(topView.topAnchor, constant: 5).active = true
+        userImage.centerXAnchor.constraintEqualToAnchor(topView.centerXAnchor).active = true
+        userImage.widthAnchor.constraintEqualToConstant(60).active = true
+        userImage.heightAnchor.constraintEqualToConstant(60).active = true
+        userImage.frame.size = CGSize(width: 60, height: 60)
+        
+        userName.translatesAutoresizingMaskIntoConstraints = false
+        userName.topAnchor.constraintEqualToAnchor(userImage.bottomAnchor, constant: 5).active = true
+        userName.centerXAnchor.constraintEqualToAnchor(topView.centerXAnchor).active = true
+        userName.widthAnchor.constraintEqualToAnchor(topView.widthAnchor).active = true
+        userName.heightAnchor.constraintEqualToConstant(26).active = true
+        
+        userHID.translatesAutoresizingMaskIntoConstraints = false
+        userHID.topAnchor.constraintEqualToAnchor(userName.bottomAnchor, constant: 5).active = true
+        userHID.centerXAnchor.constraintEqualToAnchor(topView.centerXAnchor).active = true
+        userHID.widthAnchor.constraintEqualToAnchor(topView.widthAnchor).active = true
+        userHID.heightAnchor.constraintEqualToConstant(25).active = true
+        
+        userSkills.translatesAutoresizingMaskIntoConstraints = false
+        userSkills.topAnchor.constraintEqualToAnchor(userHID.bottomAnchor, constant: 5).active = true
+        userSkills.centerXAnchor.constraintEqualToAnchor(topView.centerXAnchor).active = true
+        userSkills.widthAnchor.constraintEqualToAnchor(topView.widthAnchor).active = true
+        userSkills.heightAnchor.constraintEqualToConstant(47).active = true
+        
+        userDesription.translatesAutoresizingMaskIntoConstraints = false
+        userDesription.topAnchor.constraintEqualToAnchor(userHID.bottomAnchor, constant: 5).active = true
+        userDesription.centerXAnchor.constraintEqualToAnchor(userSkills.centerXAnchor).active = true
+        userDesription.widthAnchor.constraintEqualToAnchor(topView.widthAnchor).active = true
+        userDesription.heightAnchor.constraintEqualToConstant(75).active = true
+        
+        btnMessage.translatesAutoresizingMaskIntoConstraints = false
+        btnMessage.topAnchor.constraintEqualToAnchor(userDesription.bottomAnchor, constant: 10).active = true
+        btnMessage.leftAnchor.constraintEqualToAnchor(view.leftAnchor, constant: 10).active = true
+        btnMessage.widthAnchor.constraintEqualToAnchor(view.widthAnchor, multiplier: 1/2, constant: -20).active = true
+        btnMessage.heightAnchor.constraintEqualToConstant(42).active = true
+        
+        btnBlock.translatesAutoresizingMaskIntoConstraints = false
+        btnBlock.topAnchor.constraintEqualToAnchor(userDesription.bottomAnchor, constant: 10).active = true
+        btnBlock.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        btnBlock.widthAnchor.constraintEqualToAnchor(view.widthAnchor, multiplier: 1/2, constant: -20).active = true
+        btnBlock.heightAnchor.constraintEqualToConstant(42).active = true
+        
     }
     
     func loadUserinfo(sender: String) {

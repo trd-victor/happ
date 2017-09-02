@@ -12,6 +12,7 @@ import UIKit
 
 class CreatePostViewController: UIViewController, UITextViewDelegate {
 
+    @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var saveItem: UIBarButtonItem!
     @IBOutlet var saveContent: UITextField!
@@ -58,6 +59,21 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
         content.delegate = self
         self.loadConfigure()
+        
+        autoLayout()
+    }
+    
+    func autoLayout() {
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        content.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        content.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        content.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
     }
 
     func loadConfigure() {

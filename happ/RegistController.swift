@@ -15,6 +15,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
 //    @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var navController: UINavigationItem!
     
+    @IBOutlet var skillView: UIView!
+    @IBOutlet var infoView: UIView!
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var scrollView: UIScrollView!
 
     @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var labeltopTitle: UILabel!
@@ -51,52 +55,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     
     var arrText = [
         "en": [
-            "navigation":"Registration",
-            "navBack":"Back",
-            "basicInfo":"Basic information",
-            "email":"Mail address",
-            "emailPlaceholder": "example@xxx.com",
-            "pass":"Password",
-            "passPlaceholder":"Enter Password",
-            "repeatPass":"Re-enter Password",
-            "repeatPassPlaceholder":"Re-enter Password",
-            "name":"Name",
-            "namePlaceholder": "15 characters or less",
-            "skills": "Skills",
-            "frontEnd":"Front End",
-            "backEnd":"Back End",
-            "ios":"iOS",
-            "android":"Android",
-            "appdesign":"Application Design",
-            "webdesign":"Web Design",
-            "update":"Register as a new member",
-            "emtpyFields": "All Fields Required",
             "notMatchPassword": "Password did not match"
-            
-            
         ],
         "ja": [
-            "navigation":"新規会員登録",
-            "navBack":"バック",
-            "basicInfo":"基本情報",
-            "email":"メールアドレス",
-            "pass":"パスワード",
-            "repeatPass":"パスワード再入力",
-            "msg":"Message Jp",
-            "name":"お名前",
-            "namePlaceholder": "15文字以内",
-            "emailPlaceholder":"example@xxx.com",
-            "passPlaceholder":"半角英数字4文字以上",
-            "repeatPassPlaceholder":"上と同じものを入力",
-            "skills": "基本情報",
-            "frontEnd":"フロントエンド",
-            "backEnd":"サーバーサイド",
-            "ios":"iOSアプリ",
-            "android":"Androidアプリ",
-            "appdesign":"アプリデザイン",
-            "webdesign":"ウェブデザイン",
-            "update":"新規会員登録する",
-            "emtpyFields": "必要なすべてのフィールド",
             "notMatchPassword": "パスワードが一致しませんでした"
         ]
     ]
@@ -111,12 +72,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.scrollview = UIScrollView()
-        self.scrollview.delegate = self
-        self.scrollview.contentSize = CGSizeMake(1000, 1000)
-        view.addSubview(scrollview)
-        
+        autoLayout()
         
         //delegate textfield..
         userEmail.delegate = self
@@ -151,6 +107,164 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         self.loadConfigure()
     }
     
+    func autoLayout(){
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        scrollView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        scrollView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        scrollView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        scrollView.contentSize = CGSizeMake(view.frame.width,950)
+        
+        infoView.translatesAutoresizingMaskIntoConstraints = false
+        infoView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        infoView.topAnchor.constraintEqualToAnchor(scrollView.topAnchor).active = true
+        infoView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        infoView.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        labeltopTitle.translatesAutoresizingMaskIntoConstraints = false
+        labeltopTitle.centerXAnchor.constraintEqualToAnchor(infoView.centerXAnchor).active = true
+        labeltopTitle.centerYAnchor.constraintEqualToAnchor(infoView.centerYAnchor).active = true
+        labeltopTitle.widthAnchor.constraintEqualToAnchor(infoView.widthAnchor).active = true
+        labeltopTitle.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        userName.translatesAutoresizingMaskIntoConstraints = false
+        userName.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        userName.topAnchor.constraintEqualToAnchor(infoView.bottomAnchor).active = true
+        userName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        userName.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        labelName.translatesAutoresizingMaskIntoConstraints = false
+        labelName.centerXAnchor.constraintEqualToAnchor(userName.centerXAnchor).active = true
+        labelName.topAnchor.constraintEqualToAnchor(userName.topAnchor).active = true
+        labelName.widthAnchor.constraintEqualToAnchor(userName.widthAnchor, constant: -20).active = true
+        labelName.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        userEmail.translatesAutoresizingMaskIntoConstraints = false
+        userEmail.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        userEmail.topAnchor.constraintEqualToAnchor(userName.bottomAnchor).active = true
+        userEmail.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        userEmail.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        labelEmail.translatesAutoresizingMaskIntoConstraints = false
+        labelEmail.centerXAnchor.constraintEqualToAnchor(userEmail.centerXAnchor).active = true
+        labelEmail.topAnchor.constraintEqualToAnchor(userEmail.topAnchor).active = true
+        labelEmail.widthAnchor.constraintEqualToAnchor(userEmail.widthAnchor, constant: -20).active = true
+        labelEmail.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        userPassword.translatesAutoresizingMaskIntoConstraints = false
+        userPassword.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        userPassword.topAnchor.constraintEqualToAnchor(userEmail.bottomAnchor).active = true
+        userPassword.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        userPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        labelPass.translatesAutoresizingMaskIntoConstraints = false
+        labelPass.centerXAnchor.constraintEqualToAnchor(userPassword.centerXAnchor).active = true
+        labelPass.topAnchor.constraintEqualToAnchor(userPassword.topAnchor).active = true
+        labelPass.widthAnchor.constraintEqualToAnchor(userPassword.widthAnchor, constant: -20).active = true
+        labelPass.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        userReEnterPassword.translatesAutoresizingMaskIntoConstraints = false
+        userReEnterPassword.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        userReEnterPassword.topAnchor.constraintEqualToAnchor(userPassword.bottomAnchor).active = true
+        userReEnterPassword.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        userReEnterPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        labelReEnterPass.translatesAutoresizingMaskIntoConstraints = false
+        labelReEnterPass.centerXAnchor.constraintEqualToAnchor(userReEnterPassword.centerXAnchor).active = true
+        labelReEnterPass.topAnchor.constraintEqualToAnchor(userReEnterPassword.topAnchor).active = true
+        labelReEnterPass.widthAnchor.constraintEqualToAnchor(userReEnterPassword.widthAnchor, constant: -20).active = true
+        labelReEnterPass.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        skillView.translatesAutoresizingMaskIntoConstraints = false
+        skillView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        skillView.topAnchor.constraintEqualToAnchor(userReEnterPassword.bottomAnchor).active = true
+        skillView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        skillView.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        labelSkill.translatesAutoresizingMaskIntoConstraints = false
+        labelSkill.centerXAnchor.constraintEqualToAnchor(skillView.centerXAnchor).active = true
+        labelSkill.topAnchor.constraintEqualToAnchor(skillView.topAnchor).active = true
+        labelSkill.widthAnchor.constraintEqualToAnchor(skillView.widthAnchor).active = true
+        labelSkill.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        labelFrontEnd.translatesAutoresizingMaskIntoConstraints = false
+        labelFrontEnd.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelFrontEnd.topAnchor.constraintEqualToAnchor(skillView.bottomAnchor, constant: 10).active = true
+        labelFrontEnd.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelFrontEnd.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        labelBackEnd.translatesAutoresizingMaskIntoConstraints = false
+        labelBackEnd.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelBackEnd.topAnchor.constraintEqualToAnchor(labelFrontEnd.bottomAnchor, constant: 10).active = true
+        labelBackEnd.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelBackEnd.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        labelAndroid.translatesAutoresizingMaskIntoConstraints = false
+        labelAndroid.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelAndroid.topAnchor.constraintEqualToAnchor(labelBackEnd.bottomAnchor, constant: 10).active = true
+        labelAndroid.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelAndroid.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        labelIOS.translatesAutoresizingMaskIntoConstraints = false
+        labelIOS.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelIOS.topAnchor.constraintEqualToAnchor(labelAndroid.bottomAnchor, constant: 10).active = true
+        labelIOS.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelIOS.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        labelAppDesign.translatesAutoresizingMaskIntoConstraints = false
+        labelAppDesign.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelAppDesign.topAnchor.constraintEqualToAnchor(labelIOS.bottomAnchor, constant: 10).active = true
+        labelAppDesign.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelAppDesign.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        labelWebDesign.translatesAutoresizingMaskIntoConstraints = false
+        labelWebDesign.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelWebDesign.topAnchor.constraintEqualToAnchor(labelAppDesign.bottomAnchor, constant: 10).active = true
+        labelWebDesign.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelWebDesign.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        btnUpdate.translatesAutoresizingMaskIntoConstraints = false
+        btnUpdate.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        btnUpdate.topAnchor.constraintEqualToAnchor(labelWebDesign.bottomAnchor, constant: 25).active = true
+        btnUpdate.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -40).active = true
+        btnUpdate.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        frontEndSwitch.translatesAutoresizingMaskIntoConstraints = false
+        frontEndSwitch.frame.size = CGSizeMake(51, 31)
+        frontEndSwitch.topAnchor.constraintEqualToAnchor(skillView.bottomAnchor, constant: 10).active = true
+        frontEndSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        backEndSwitch.translatesAutoresizingMaskIntoConstraints = false
+        backEndSwitch.frame.size = CGSizeMake(51, 31)
+        backEndSwitch.topAnchor.constraintEqualToAnchor(frontEndSwitch.bottomAnchor, constant: 10).active = true
+        backEndSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        AndroidSwitch.translatesAutoresizingMaskIntoConstraints = false
+        AndroidSwitch.frame.size = CGSizeMake(51, 31)
+        AndroidSwitch.topAnchor.constraintEqualToAnchor(backEndSwitch.bottomAnchor, constant: 10).active = true
+        AndroidSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        iosSwitch.translatesAutoresizingMaskIntoConstraints = false
+        iosSwitch.frame.size = CGSizeMake(51, 31)
+        iosSwitch.topAnchor.constraintEqualToAnchor(AndroidSwitch.bottomAnchor, constant: 10).active = true
+        iosSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        appdesignSwitch.translatesAutoresizingMaskIntoConstraints = false
+        appdesignSwitch.frame.size = CGSizeMake(51, 31)
+        appdesignSwitch.topAnchor.constraintEqualToAnchor(iosSwitch.bottomAnchor, constant: 10).active = true
+        appdesignSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        webdesignSwitch.translatesAutoresizingMaskIntoConstraints = false
+        webdesignSwitch.frame.size = CGSizeMake(51, 31)
+        webdesignSwitch.topAnchor.constraintEqualToAnchor(appdesignSwitch.bottomAnchor, constant: 10).active = true
+        webdesignSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+    }
     
     func loadConfigure() {
         

@@ -19,6 +19,7 @@ class SearchCellTableViewCell: UITableViewCell {
     
     @IBOutlet var skills: UILabel!
     @IBOutlet var secondname: UILabel!
+    @IBOutlet var separator: UIView!
     
     @IBOutlet var userID: UILabel!
     override func awakeFromNib() {

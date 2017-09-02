@@ -10,6 +10,8 @@ import UIKit
 
 class MailChangeViewController: UIViewController, UITextFieldDelegate {
     
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var separator: UIView!
     @IBOutlet var navTitle: UINavigationItem!
     @IBOutlet var Save: UIBarButtonItem!
     @IBOutlet var txtMail: UITextField!
@@ -59,6 +61,34 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         
         view.endEditing(true)
 
+        autoLayout()
+    }
+    
+    func autoLayout(){
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        txtMail.translatesAutoresizingMaskIntoConstraints = false
+        txtMail.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        txtMail.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor, constant: 10).active = true
+        txtMail.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        txtMail.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        labelMail.translatesAutoresizingMaskIntoConstraints = false
+        labelMail.centerXAnchor.constraintEqualToAnchor(txtMail.centerXAnchor).active = true
+        labelMail.centerYAnchor.constraintEqualToAnchor(txtMail.centerYAnchor).active = true
+        labelMail.widthAnchor.constraintEqualToAnchor(txtMail.widthAnchor, constant: -20).active = true
+        labelMail.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator.topAnchor.constraintEqualToAnchor(txtMail.bottomAnchor).active = true
+        separator.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator.heightAnchor.constraintEqualToConstant(1).active = true
+        
     }
     
     func loadConfigure() {

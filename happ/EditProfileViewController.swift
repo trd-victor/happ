@@ -10,6 +10,17 @@ import UIKit
 
 class EditProfileViewController: UIViewController, UITextFieldDelegate {
     
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var skillView: UIView!
+    @IBOutlet var separator: UIView!
+    @IBOutlet var separator2: UIView!
+    @IBOutlet var separator3: UIView!
+    @IBOutlet var separator4: UIView!
+    @IBOutlet var separator5: UIView!
+    @IBOutlet var separator6: UIView!
+    @IBOutlet var separator7: UIView!
+    @IBOutlet var separator8: UIView!
+    @IBOutlet var scrollView: UIScrollView!
     
     @IBOutlet var navBackProfile: UIBarButtonItem!
     @IBOutlet var navTitle: UINavigationItem!
@@ -37,41 +48,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var iosswitch: UISwitch!
     @IBOutlet var appdesignswitch: UISwitch!
     @IBOutlet var backdesignswithc: UISwitch!
-
-    
-    var arrText = [
-    
-        "en" : [
-            "navTitle": "Edit profile",
-            "save" : "Save",
-            "name" : "Name",
-            "nameplaceholder" : "15 characters or less",
-            "descplaceholder" : "Enter a profile statement",
-            "skills" : "Skills",
-            "frontEnd":"Front End",
-            "backEnd":"Back End",
-            "ios":"iOS",
-            "android":"Android",
-            "appdesign":"Application Design",
-            "webdesign":"Web Design"
-        ],
-        
-        "ja" : [
-            "navTitle": "プロフィールの編集",
-            "save" : "保存する",
-            "name" : "お名前",
-            "nameplaceholder" : "15文字以内",
-            "descplaceholder" : "プロフィール文を入力する",
-            "skills" : "スキル",
-            "frontEnd":"フロントエンド",
-            "backEnd":"サーバーサイド",
-            "ios":"iOSアプリ",
-            "android":"Androidアプリ",
-            "appdesign":"アプリデザイン",
-            "webdesign":"ウェブデザイン"
-        ]
-    
-    ]
 
     var language: String!
     var userId: String = ""
@@ -115,7 +91,176 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         
         view.endEditing(true)
         
+        autoLayout()
+        
     }
+    
+    func autoLayout() {
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        scrollView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        scrollView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        scrollView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        scrollView.contentSize = CGSizeMake(view.frame.width,750)
+        
+        userImage.translatesAutoresizingMaskIntoConstraints = false
+        userImage.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        userImage.topAnchor.constraintEqualToAnchor(scrollView.topAnchor, constant: 5).active = true
+        userImage.widthAnchor.constraintEqualToConstant(75).active = true
+        userImage.heightAnchor.constraintEqualToConstant(75).active = true
+        
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        separator.topAnchor.constraintEqualToAnchor(userImage.bottomAnchor, constant: 5).active = true
+        separator.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        userNamefield.translatesAutoresizingMaskIntoConstraints = false
+        userNamefield.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        userNamefield.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
+        userNamefield.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        userNamefield.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        labelName.translatesAutoresizingMaskIntoConstraints = false
+        labelName.centerXAnchor.constraintEqualToAnchor(userNamefield.centerXAnchor).active = true
+        labelName.topAnchor.constraintEqualToAnchor(userNamefield.topAnchor).active = true
+        labelName.widthAnchor.constraintEqualToAnchor(userNamefield.widthAnchor, constant: -20).active = true
+        labelName.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        separator2.translatesAutoresizingMaskIntoConstraints = false
+        separator2.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        separator2.topAnchor.constraintEqualToAnchor(userNamefield.bottomAnchor).active = true
+        separator2.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator2.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        
+        userDescription.translatesAutoresizingMaskIntoConstraints = false
+        userDescription.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        userDescription.topAnchor.constraintEqualToAnchor(userNamefield.bottomAnchor, constant: 5).active = true
+        userDescription.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        userDescription.heightAnchor.constraintEqualToConstant(100).active = true
+        
+        skillView.translatesAutoresizingMaskIntoConstraints = false
+        skillView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        skillView.topAnchor.constraintEqualToAnchor(userDescription.bottomAnchor).active = true
+        skillView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        skillView.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        labelSkills.translatesAutoresizingMaskIntoConstraints = false
+        labelSkills.centerXAnchor.constraintEqualToAnchor(skillView.centerXAnchor).active = true
+        labelSkills.centerYAnchor.constraintEqualToAnchor(skillView.centerYAnchor).active = true
+        labelSkills.widthAnchor.constraintEqualToAnchor(skillView.widthAnchor).active = true
+        labelSkills.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        labelfrontEnd.translatesAutoresizingMaskIntoConstraints = false
+        labelfrontEnd.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelfrontEnd.topAnchor.constraintEqualToAnchor(skillView.bottomAnchor, constant: 10).active = true
+        labelfrontEnd.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelfrontEnd.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        fronendswitch.translatesAutoresizingMaskIntoConstraints = false
+        fronendswitch.frame.size = CGSizeMake(51, 31)
+        fronendswitch.topAnchor.constraintEqualToAnchor(skillView.bottomAnchor, constant: 10).active = true
+        fronendswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        separator3.translatesAutoresizingMaskIntoConstraints = false
+        separator3.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        separator3.topAnchor.constraintEqualToAnchor(labelfrontEnd.bottomAnchor, constant: 5).active = true
+        separator3.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator3.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        labelbackend.translatesAutoresizingMaskIntoConstraints = false
+        labelbackend.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelbackend.topAnchor.constraintEqualToAnchor(labelfrontEnd.bottomAnchor, constant: 10).active = true
+        labelbackend.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelbackend.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        backendswitch.translatesAutoresizingMaskIntoConstraints = false
+        backendswitch.frame.size = CGSizeMake(51, 31)
+        backendswitch.topAnchor.constraintEqualToAnchor(fronendswitch.bottomAnchor, constant: 10).active = true
+        backendswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        separator4.translatesAutoresizingMaskIntoConstraints = false
+        separator4.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        separator4.topAnchor.constraintEqualToAnchor(labelbackend.bottomAnchor, constant: 5).active = true
+        separator4.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator4.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        labelAndroid.translatesAutoresizingMaskIntoConstraints = false
+        labelAndroid.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelAndroid.topAnchor.constraintEqualToAnchor(labelbackend.bottomAnchor, constant: 10).active = true
+        labelAndroid.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelAndroid.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        androidswitch.translatesAutoresizingMaskIntoConstraints = false
+        androidswitch.frame.size = CGSizeMake(51, 31)
+        androidswitch.topAnchor.constraintEqualToAnchor(backendswitch.bottomAnchor, constant: 10).active = true
+        androidswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        separator5.translatesAutoresizingMaskIntoConstraints = false
+        separator5.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        separator5.topAnchor.constraintEqualToAnchor(labelAndroid.bottomAnchor, constant: 5).active = true
+        separator5.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator5.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        labelIOS.translatesAutoresizingMaskIntoConstraints = false
+        labelIOS.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelIOS.topAnchor.constraintEqualToAnchor(labelAndroid.bottomAnchor, constant: 10).active = true
+        labelIOS.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelIOS.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        iosswitch.translatesAutoresizingMaskIntoConstraints = false
+        iosswitch.frame.size = CGSizeMake(51, 31)
+        iosswitch.topAnchor.constraintEqualToAnchor(androidswitch.bottomAnchor, constant: 10).active = true
+        iosswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        separator6.translatesAutoresizingMaskIntoConstraints = false
+        separator6.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        separator6.topAnchor.constraintEqualToAnchor(labelIOS.bottomAnchor, constant: 5).active = true
+        separator6.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator6.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        labelAppDesign.translatesAutoresizingMaskIntoConstraints = false
+        labelAppDesign.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelAppDesign.topAnchor.constraintEqualToAnchor(labelIOS.bottomAnchor, constant: 10).active = true
+        labelAppDesign.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelAppDesign.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        appdesignswitch.translatesAutoresizingMaskIntoConstraints = false
+        appdesignswitch.frame.size = CGSizeMake(51, 31)
+        appdesignswitch.topAnchor.constraintEqualToAnchor(iosswitch.bottomAnchor, constant: 10).active = true
+        appdesignswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        separator7.translatesAutoresizingMaskIntoConstraints = false
+        separator7.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        separator7.topAnchor.constraintEqualToAnchor(labelAppDesign.bottomAnchor, constant: 5).active = true
+        separator7.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator7.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        labelwebdesign.translatesAutoresizingMaskIntoConstraints = false
+        labelwebdesign.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        labelwebdesign.topAnchor.constraintEqualToAnchor(labelAppDesign.bottomAnchor, constant: 10).active = true
+        labelwebdesign.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        labelwebdesign.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        backdesignswithc.translatesAutoresizingMaskIntoConstraints = false
+        backdesignswithc.frame.size = CGSizeMake(51, 31)
+        backdesignswithc.topAnchor.constraintEqualToAnchor(appdesignswitch.bottomAnchor, constant: 10).active = true
+        backdesignswithc.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        
+        separator8.translatesAutoresizingMaskIntoConstraints = false
+        separator8.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        separator8.topAnchor.constraintEqualToAnchor(labelwebdesign.bottomAnchor, constant: 5).active = true
+        separator8.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator8.heightAnchor.constraintEqualToConstant(1).active = true
+    }
+
     
     func loadConfigure() {
         

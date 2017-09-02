@@ -24,6 +24,10 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
     var language: String!
     var getPercent: String!
 
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var situationView: UIView!
+    @IBOutlet var statusCollectionView: UIView!
+    @IBOutlet var statusView: UIView!
     
     //set of label string...
     @IBOutlet var situation: UILabel!
@@ -70,8 +74,59 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
             self.getFreeTimeStatusUser(userID)
         }
         
+        autoLayout()
         
+    }
+    
+    func autoLayout() {
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
         
+        situationView.translatesAutoresizingMaskIntoConstraints = false
+        situationView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        situationView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        situationView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        situationView.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        situation.translatesAutoresizingMaskIntoConstraints = false
+        situation.centerXAnchor.constraintEqualToAnchor(situationView.centerXAnchor).active = true
+        situation.centerYAnchor.constraintEqualToAnchor(situationView.centerYAnchor).active = true
+        situation.widthAnchor.constraintEqualToAnchor(situationView.widthAnchor).active = true
+        situation.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        statusCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        statusCollectionView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        statusCollectionView.topAnchor.constraintEqualToAnchor(situationView.bottomAnchor).active = true
+        statusCollectionView.widthAnchor.constraintEqualToConstant(245).active = true
+        
+        statusCollectionView.heightAnchor.constraintEqualToConstant(175).active = true
+        
+        percentage.translatesAutoresizingMaskIntoConstraints = false
+        percentage.bottomAnchor.constraintEqualToAnchor(statusCollectionView.bottomAnchor, constant: -15).active = true
+        percentage.centerXAnchor.constraintEqualToAnchor(statusCollectionView.centerXAnchor).active = true
+        percentage.widthAnchor.constraintEqualToAnchor(statusCollectionView.widthAnchor).active = true
+        percentage.heightAnchor.constraintEqualToConstant(30).active = true
+        
+        statusView.translatesAutoresizingMaskIntoConstraints = false
+        statusView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        statusView.topAnchor.constraintEqualToAnchor(statusCollectionView.bottomAnchor).active = true
+        statusView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        statusView.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        freestatus.translatesAutoresizingMaskIntoConstraints = false
+        freestatus.centerXAnchor.constraintEqualToAnchor(statusView.centerXAnchor).active = true
+        freestatus.centerYAnchor.constraintEqualToAnchor(statusView.centerYAnchor).active = true
+        freestatus.widthAnchor.constraintEqualToAnchor(statusView.widthAnchor).active = true
+        freestatus.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        collectionView.topAnchor.constraintEqualToAnchor(statusView.bottomAnchor).active = true
+        collectionView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        collectionView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
     }
     
     func loadConfigure() {

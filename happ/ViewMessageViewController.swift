@@ -112,7 +112,6 @@ class ViewMessageViewController: UIViewController, UICollectionViewDelegate, UIC
         let db = FIRDatabase.database().reference().child("chat").child("messages").child("\(self.roomID)").childByAutoId()
         
         let timestamp = FIRServerValue.timestamp()
-        
         let messageValue = [
             "message" : sendMessage,
             "name"    : "android",

@@ -14,6 +14,9 @@ struct changeLang {
 
 class ChangeLanguageViewController: UIViewController {
 
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var separator: UIView!
+    @IBOutlet var separator2: UIView!
 
     @IBOutlet var navTitle: UINavigationItem!
     @IBOutlet var btnenglish: UIButton!
@@ -22,21 +25,6 @@ class ChangeLanguageViewController: UIViewController {
     
     
     @IBOutlet var navBackSettings: UIBarButtonItem!
-    
-    var arrText = [
-    
-        "en" : [
-            "navTitle": "Change Language settings",
-            "engLang": "English",
-            "jplang": "Japanese"
-        ],
-        "ja" : [
-            "navTitle": "言語の設定",
-            "engLang": "英語",
-            "jplang": "日本語"
-        ]
-    
-    ]
     
     var language: String!
     override func viewDidLoad() {
@@ -51,6 +39,41 @@ class ChangeLanguageViewController: UIViewController {
         self.navBackSettings.action = Selector("backToConfiguration:")
         btnenglish.addTarget(self, action: "englishBackButton:", forControlEvents: .TouchUpInside)
         btnJapanese.addTarget(self, action: "japaneseBackButton:", forControlEvents: .TouchUpInside)
+    
+        autoLayout()
+    }
+    
+    
+    func autoLayout() {
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        btnenglish.translatesAutoresizingMaskIntoConstraints = false
+        btnenglish.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnenglish.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        btnenglish.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -20).active = true
+        btnenglish.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator.topAnchor.constraintEqualToAnchor(btnenglish.bottomAnchor).active = true
+        separator.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        btnJapanese.translatesAutoresizingMaskIntoConstraints = false
+        btnJapanese.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnJapanese.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
+        btnJapanese.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -20).active = true
+        btnJapanese.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        separator2.translatesAutoresizingMaskIntoConstraints = false
+        separator2.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator2.topAnchor.constraintEqualToAnchor(btnJapanese.bottomAnchor).active = true
+        separator2.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator2.heightAnchor.constraintEqualToConstant(1).active = true
     }
     
     func loadConfigure() {

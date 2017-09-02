@@ -267,7 +267,6 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! SearchCellTableViewCell
-
         let radius = min(cell.imageuser!.frame.width/2 , cell.imageuser!.frame.height/2)
         cell.imageuser.layer.cornerRadius = radius
         cell.imageuser.clipsToBounds = true
@@ -284,9 +283,25 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
         
         cell.nameuser.text = displayUser.name
         cell.secondname.text = displayUser.HappID
+        
+        
         cell.skills.text = displayUser.skills
-
-     
+        
+        cell.skills.translatesAutoresizingMaskIntoConstraints = false
+        cell.skills.topAnchor.constraintEqualToAnchor(cell.contentView.topAnchor, constant: 30).active = true
+        cell.skills.leftAnchor.constraintEqualToAnchor(cell.imageuser.rightAnchor, constant: 5).active = true
+        cell.skills.widthAnchor.constraintEqualToConstant(cell.contentView.frame.size.width - 65).active = true
+        cell.skills.lineBreakMode = .ByTruncatingTail
+        cell.skills.numberOfLines = 0
+        cell.skills.sizeToFit()
+        
+        
+        cell.separator.translatesAutoresizingMaskIntoConstraints = false
+        cell.separator.bottomAnchor.constraintEqualToAnchor(cell.contentView.bottomAnchor, constant: -5).active = true
+        cell.separator.leftAnchor.constraintEqualToAnchor(cell.contentView.leftAnchor, constant: 55).active = true
+        cell.separator.widthAnchor.constraintEqualToConstant(cell.contentView.frame.size.width - 65).active = true
+        cell.separator.heightAnchor.constraintEqualToConstant(1).active = true
+        
         
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
@@ -299,7 +314,7 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
                 if self.imageData != nil {
                     cell.imageuser.image = UIImage(data: self.imageData)
                 } else {
-                    cell.imageuser.image = UIImage(named: "noPhoto")
+                    cell.imageuser.image = UIImage(named: "photo")
                 }
             })
         })
@@ -307,6 +322,7 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
         cell.skills.numberOfLines = 0
         cell.skills.sizeToFit()
         return cell
+
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

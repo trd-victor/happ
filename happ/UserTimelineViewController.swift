@@ -15,6 +15,9 @@ struct statusButton {
 
 class UserTimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var topImage: UIImageView!
+    @IBOutlet var topView: UIView!
     
     @IBOutlet var labelFree: UILabel!
     @IBOutlet var mytableview: UITableView!
@@ -169,9 +172,47 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.getTimelineUser(self.getTimeline)
 
+        autoLayout()
     }
   
-   
+    
+    func autoLayout(){
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        topImage.translatesAutoresizingMaskIntoConstraints = false
+        topImage.centerXAnchor.constraintEqualToAnchor(navBar.centerXAnchor).active = true
+        topImage.topAnchor.constraintEqualToAnchor(navBar.topAnchor, constant: 4).active = true
+        topImage.widthAnchor.constraintEqualToConstant(84).active = true
+        topImage.heightAnchor.constraintEqualToConstant(33).active = true
+        
+        topView.translatesAutoresizingMaskIntoConstraints = false
+        topView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        topView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        topView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        topView.heightAnchor.constraintEqualToConstant(43).active = true
+        
+        labelFree.translatesAutoresizingMaskIntoConstraints = false
+        labelFree.centerXAnchor.constraintEqualToAnchor(topView.centerXAnchor).active = true
+        labelFree.topAnchor.constraintEqualToAnchor(topView.topAnchor, constant: 6).active = true
+        labelFree.widthAnchor.constraintEqualToAnchor(topView.widthAnchor, constant: -20).active = true
+        labelFree.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        freetimeStatus.translatesAutoresizingMaskIntoConstraints = false
+        freetimeStatus.frame.size = CGSizeMake(51, 31)
+        freetimeStatus.topAnchor.constraintEqualToAnchor(topView.topAnchor, constant: 6).active = true
+        freetimeStatus.rightAnchor.constraintEqualToAnchor(topView.rightAnchor, constant: -10).active = true
+        
+        mytableview.translatesAutoresizingMaskIntoConstraints = false
+        mytableview.topAnchor.constraintEqualToAnchor(topView.bottomAnchor, constant: 5).active = true
+        mytableview.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        mytableview.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        mytableview.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        
+    }
     
     override func viewWillLayoutSubviews() {
         
@@ -449,12 +490,22 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         //referre to custom cell created
+        
         let cell = self.mytableview.dequeueReusableCellWithIdentifier("RowCell", forIndexPath: indexPath) as! CustomCell
+        
+        cell.contentView.addSubview(cell.userContentLabel)
+        
+        //Test Layout
+        cell.uesrImage.translatesAutoresizingMaskIntoConstraints = false
+        cell.uesrImage.leftAnchor.constraintEqualToAnchor(cell.contentView.leftAnchor, constant: 5).active = true
+        cell.uesrImage.topAnchor.constraintEqualToAnchor(cell.contentView.topAnchor, constant: 20).active = true
+        cell.uesrImage.widthAnchor.constraintEqualToConstant(58).active = true
+        cell.uesrImage.heightAnchor.constraintEqualToConstant(58).active = true
+        
         
         let radius = min(cell.uesrImage!.frame.width/2 , cell.uesrImage!.frame.height/2)
         cell.uesrImage.layer.cornerRadius = radius
         cell.uesrImage.clipsToBounds = true
-
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), {() -> Void in
             
@@ -465,7 +516,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             dispatch_async(dispatch_get_main_queue(), {() -> Void in
                 
                 if self.data == nil {
-                    cell.uesrImage.image = UIImage(named: "noPhoto")
+                    cell.uesrImage.image = UIImage(named: "photo")
                 } else {
                     cell.uesrImage.image = UIImage(data: self.data!)
                 }
@@ -473,26 +524,50 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             })
         })
         
+        cell.delet.translatesAutoresizingMaskIntoConstraints = false
+        cell.postDate.translatesAutoresizingMaskIntoConstraints = false
+        
         if self.fromID[indexPath.row] == globalUserId.userID {
+            cell.delet.rightAnchor.constraintEqualToAnchor(cell.contentView.rightAnchor).active = true
+            cell.delet.topAnchor.constraintEqualToAnchor(cell.contentView.topAnchor, constant: 15).active = true
+            cell.delet.widthAnchor.constraintEqualToConstant(29).active = true
+            cell.delet.heightAnchor.constraintEqualToConstant(34).active = true
+            
+            cell.postDate.topAnchor.constraintEqualToAnchor(cell.contentView.topAnchor, constant: 20).active = true
+            cell.postDate.rightAnchor.constraintEqualToAnchor(cell.contentView.rightAnchor, constant: -36).active = true
+            cell.postDate.widthAnchor.constraintEqualToConstant(120).active = true
+            cell.postDate.heightAnchor.constraintEqualToConstant(34).active = true
+            
             cell.delet.setImage(UIImage(named: "more"), forState: UIControlState())
             cell.delet.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.delet.tag = indexPath.row
+            
             cell.delet.hidden = false
-
         } else {
+            cell.postDate.rightAnchor.constraintEqualToAnchor(cell.contentView.rightAnchor, constant: -5).active = true
+            cell.postDate.topAnchor.constraintEqualToAnchor(cell.contentView.topAnchor, constant: 20).active = true
+            cell.postDate.widthAnchor.constraintEqualToConstant(120).active = true
+            cell.postDate.heightAnchor.constraintEqualToConstant(34).active = true
+            
             cell.delet.hidden = true
         }
         
-   
         
         cell.username.text = self.username[indexPath.row]
         cell.postDate.text = self.postDate[indexPath.row]
         cell.delet.setTitle("\(self.postID[indexPath.row])", forState: .Normal)
-        cell.userContent.editable = false
-        cell.userContent.sizeToFit()
-        cell.userContent.text =  String(self.userBody[indexPath.row])
+        
+        cell.userContentLabel.text =  String(self.userBody[indexPath.row])
+        cell.userContentLabel.translatesAutoresizingMaskIntoConstraints = false
+        cell.userContentLabel.leftAnchor.constraintEqualToAnchor(cell.contentView.leftAnchor, constant: 5).active = true
+        cell.userContentLabel.topAnchor.constraintEqualToAnchor(cell.uesrImage.bottomAnchor, constant: 5).active = true
+        cell.userContentLabel.widthAnchor.constraintEqualToAnchor(cell.contentView.widthAnchor, constant: -10).active = true
+        cell.userContentLabel.numberOfLines = 0
+        cell.userContentLabel.lineBreakMode = .ByTruncatingTail
+        cell.userContentLabel.sizeToFit()
         
         cell.backgroundColor = UIColor.clearColor()
+        
         return cell
     }
 

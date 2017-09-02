@@ -10,8 +10,12 @@ import UIKit
 
 class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
 
-    @IBOutlet var save: UIBarButtonItem!
+    @IBOutlet var navBar: UINavigationBar!
+    @IBOutlet var separator: UIView!
+    @IBOutlet var separator2: UIView!
+    @IBOutlet var separator3: UIView!
 
+    @IBOutlet var save: UIBarButtonItem!
     @IBOutlet var navTitle: UINavigationItem!
     @IBOutlet var currentPass: UILabel!
     @IBOutlet var newPass: UILabel!
@@ -50,7 +54,71 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         reenterPassField.delegate = self
         
         view.endEditing(true)
+        
+        autoLayout()
+    }
     
+    func autoLayout() {
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        currentPassField.translatesAutoresizingMaskIntoConstraints = false
+        currentPassField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        currentPassField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        currentPassField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        currentPassField.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        currentPass.translatesAutoresizingMaskIntoConstraints = false
+        currentPass.centerXAnchor.constraintEqualToAnchor(currentPassField.centerXAnchor).active = true
+        currentPass.topAnchor.constraintEqualToAnchor(currentPassField.topAnchor).active = true
+        currentPass.widthAnchor.constraintEqualToAnchor(currentPassField.widthAnchor, constant: -20).active = true
+        currentPass.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator.topAnchor.constraintEqualToAnchor(currentPassField.bottomAnchor).active = true
+        separator.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        newPassField.translatesAutoresizingMaskIntoConstraints = false
+        newPassField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        newPassField.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
+        newPassField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        newPassField.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        newPass.translatesAutoresizingMaskIntoConstraints = false
+        newPass.centerXAnchor.constraintEqualToAnchor(newPassField.centerXAnchor).active = true
+        newPass.topAnchor.constraintEqualToAnchor(newPassField.topAnchor).active = true
+        newPass.widthAnchor.constraintEqualToAnchor(newPassField.widthAnchor, constant: -20).active = true
+        newPass.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        separator2.translatesAutoresizingMaskIntoConstraints = false
+        separator2.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator2.topAnchor.constraintEqualToAnchor(newPassField.bottomAnchor).active = true
+        separator2.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator2.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        reenterPassField.translatesAutoresizingMaskIntoConstraints = false
+        reenterPassField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        reenterPassField.topAnchor.constraintEqualToAnchor(separator2.bottomAnchor).active = true
+        reenterPassField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        reenterPassField.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        reenterpass.translatesAutoresizingMaskIntoConstraints = false
+        reenterpass.centerXAnchor.constraintEqualToAnchor(reenterPassField.centerXAnchor).active = true
+        reenterpass.topAnchor.constraintEqualToAnchor(reenterPassField.topAnchor).active = true
+        reenterpass.widthAnchor.constraintEqualToAnchor(reenterPassField.widthAnchor, constant: -20).active = true
+        reenterpass.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        separator3.translatesAutoresizingMaskIntoConstraints = false
+        separator3.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator3.topAnchor.constraintEqualToAnchor(reenterpass.bottomAnchor).active = true
+        separator3.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator3.heightAnchor.constraintEqualToConstant(1).active = true
+        
     }
     
     func loadConfigure() {
