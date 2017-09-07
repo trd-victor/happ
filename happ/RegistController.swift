@@ -315,7 +315,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         } else if  name == ""  {
             displayMyAlertMessage(config.translate("empty_name"))
         } else if pass != reEnterpassword {
-            notmatchPass = arrText["\(language)"]!["notMatchPassword"]
             displayMyAlertMessage(config.translate("not_match_password"))
         }
         else {
@@ -459,28 +458,24 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     let email = data["email"] as! String
                     if email == userEmail {
                         let userId = data["user_id"] as! Int
-                        let x: Int = userId
-                        let idUser = String(x)
-                        self.FirebaseID = idUser
-                        self.FirebaseImage = data["icon"] as! String as? String ?? ""
+                        let uid: Int = userId
+                        self.FirebaseImage = data["icon"] as? String ?? ""
                         self.Firebaseemail = data["email"] as! String
                         self.Firebasename = data["name"] as! String
                         
-                         self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID:  self.FirebaseID)
+                         self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid)
                     }
                     else {
                         
                         dispatch_async(dispatch_get_main_queue()) {
 
                         let userId = data["user_id"] as! Int
-                        let x: Int = userId
-                        let idUser = String(x)
-                        self.FirebaseID = idUser
+                        let uid: Int = userId
                         self.FirebaseImage = data["icon"] as? String ?? ""
                         self.Firebaseemail = data["email"] as! String
                         self.Firebasename = data["name"] as! String
                         
-                        self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: self.FirebaseID )
+                        self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid )
                         }
                     }
                 }
@@ -494,7 +489,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     
-    func insertUserFB(userEmail: String, userPassword: String, name: String, image: String, userID : String ) {
+    func insertUserFB(userEmail: String, userPassword: String, name: String, image: String, userID : Int ) {
         FIRAuth.auth()?.createUserWithEmail(userEmail, password: userPassword, completion: { (user: FIRUser?, error) in
             if error == nil {
 //                //connect to firebase db.

@@ -1343,17 +1343,17 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                             </imageView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="235" sectionHeaderHeight="28" sectionFooterHeight="28" id="vFj-zs-yki">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" showsSelectionImmediatelyOnTouchBegin="NO" rowHeight="360" sectionHeaderHeight="28" sectionFooterHeight="28" id="vFj-zs-yki">
                                 <rect key="frame" x="0.0" y="114" width="320" height="454"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RowCell" rowHeight="235" id="yfa-CB-HsB" customClass="CustomCell" customModule="happ" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="320" height="235"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RowCell" rowHeight="360" id="yfa-CB-HsB" customClass="CustomCell" customModule="happ" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="320" height="360"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yfa-CB-HsB" id="Ses-7y-XWK">
-                                            <rect key="frame" x="0.0" y="0.0" width="320" height="234"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="359"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="QiM-2c-ZoY">
@@ -1441,7 +1441,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="happ" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="92" width="320" height="77"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lqd-Oi-WpL" id="3Q3-ls-nLn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="76"/>
@@ -2211,23 +2211,58 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" id="s3m-D0-Uvd">
-                                <rect key="frame" x="7" y="69" width="305" height="191"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="WOY-ih-jla">
+                                <rect key="frame" x="40" y="220" width="240" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" id="s3m-D0-Uvd">
+                                        <rect key="frame" x="-33" y="-31" width="305" height="191"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <animations/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" spellCheckingType="yes" returnKeyType="done"/>
+                                    </textView>
+                                </subviews>
+                                <animations/>
+                            </scrollView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="OPu-WV-zaE">
+                                <rect key="frame" x="143" y="271" width="34" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" autocorrectionType="yes" spellCheckingType="yes" returnKeyType="done"/>
-                            </textView>
+                                <state key="normal" image="camera"/>
+                                <connections>
+                                    <action selector="btnCamera:" destination="AZm-Nu-zGn" eventType="touchUpInside" id="z9Z-cV-BNW"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="tCz-XS-0LU">
+                                <rect key="frame" x="144" y="271" width="32" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <state key="normal" image="picture"/>
+                                <connections>
+                                    <action selector="btnGallery:" destination="AZm-Nu-zGn" eventType="touchUpInside" id="F4o-Qk-Xwe"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" id="LZu-Sv-U0N">
+                                <rect key="frame" x="92" y="284" width="136" height="1"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <outlet property="content" destination="s3m-D0-Uvd" id="h17-51-GJr"/>
+                        <outlet property="btnCamera" destination="OPu-WV-zaE" id="Ro6-73-lpB"/>
+                        <outlet property="btnGallery" destination="tCz-XS-0LU" id="hqg-Jj-sCm"/>
+                        <outlet property="content" destination="s3m-D0-Uvd" id="reU-o4-mEn"/>
                         <outlet property="navBack" destination="ZWi-qy-2yC" id="p9b-i5-CPv"/>
-                        <outlet property="navBar" destination="gwU-xv-ZBV" id="zvE-is-Hd6"/>
+                        <outlet property="navBar" destination="gwU-xv-ZBV" id="ZmM-fa-tYY"/>
                         <outlet property="saveItem" destination="Fsh-AT-CXb" id="6ST-wI-ByK"/>
+                        <outlet property="scrollView" destination="WOY-ih-jla" id="hOT-7q-xs5"/>
+                        <outlet property="separator" destination="LZu-Sv-U0N" id="D7c-x2-A3Y"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5v7-NV-shL" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2565,9 +2600,24 @@
             </objects>
             <point key="canvasLocation" x="1028" y="1867"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="Ndx-ya-MKc">
+            <objects>
+                <viewController id="lCh-1S-qIa" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="vff-hA-sn8">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sJq-Iq-fno" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
     </scenes>
     <resources>
         <image name="Image" width="29" height="29"/>
+        <image name="camera" width="32" height="27"/>
         <image name="group2" width="19" height="57"/>
         <image name="group5" width="19" height="57"/>
         <image name="logo" width="375" height="163"/>
@@ -2575,6 +2625,7 @@
         <image name="notificationIcon" width="25" height="25"/>
         <image name="page1" width="37" height="16"/>
         <image name="photo" width="13" height="11"/>
+        <image name="picture" width="32" height="27"/>
         <image name="reservationIcon" width="25" height="25"/>
         <image name="right-icon" width="29" height="29"/>
         <image name="rushIcon" width="25" height="25"/>

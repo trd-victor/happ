@@ -214,6 +214,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
     }
     
+    
+    
     override func viewWillLayoutSubviews() {
         
         roundButton.layer.cornerRadius = roundButton.layer.frame.size.width/2
@@ -423,8 +425,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
                 data1, response1, error1 in
                 
-                var imageuser : String!
-                
                 if error1 != nil{
                     print("\(error1)")
                     return;
@@ -432,21 +432,24 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 do {
                     let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
 
-                    self.testName = json2!["result"]!["name"] as! String
-                    
-                    if let imageuser = json2!["result"]!["icon"] as? NSNull {
-                        self.urlImage = "" as? String
-                    } else {
-                        self.urlImage = json2!["result"]!["icon"] as? String
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.userEachImage.append(self.urlImage)
-                        self.realImage = self.userEachImage.map{ $0 ?? ""}
-                        if self.testName != nil {
-                            self.username.append(self.testName)
+                    if json2!["error"] == nil {
+                        self.testName = json2!["result"]!["name"] as! String
+                        let imageUser = json2!["result"]!["icon"] as? String
+                        if imageUser == nil {
+                            self.urlImage = ""
+                        } else {
+                            self.urlImage = json2!["result"]!["icon"] as? String
                         }
-                        self.mytableview.reloadData()
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.userEachImage.append(self.urlImage)
+                            self.realImage = self.userEachImage.map{ $0 ?? ""}
+                            if self.testName != nil {
+                                self.username.append(self.testName)
+                            }
+                            self.mytableview.reloadData()
+                        }
+
                     }
                     
                 } catch {
@@ -687,14 +690,3 @@ extension String {
         }
     }
 }
-
-//loop 
-//count the result...
-//        let resultCount  = self.varResult
-//        for var i=0; i < resultCount ; i++ {
-//            cell.mmylba.text = self.username
-//            print(self.username)
-//            if self.data != nil {
-//                cell.postUserImage.image = UIImage(data: self.data!)
-//            }
-//        }

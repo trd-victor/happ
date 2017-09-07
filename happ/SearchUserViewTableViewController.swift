@@ -121,7 +121,6 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
                 if idUser != "" {
                     dispatch_async(dispatch_get_main_queue()) {
                         self.FIRID.append(idUser)
-                        print(self.FIRID.last!)
                         self.getAllUserInfo(self.FIRID.last!)
                         self.tableView.reloadData()
                     }
@@ -163,86 +162,45 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
                 do {
                     let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
-                    let skills = json2!["result"]!["skills"] as? String ?? ""
-                    let happID = json2!["result"]!["h_id"] as? String ?? ""
-                    let userID = json2!["result"]!["user_id"] as! Int
-                    let name = json2!["result"]!["name"] as? String ?? ""
-                    let email = json2!["result"]!["email"] as? String ?? ""
-                    let image = json2!["result"]!["icon"] as? String ?? ""
-                    
-                    let userDetails :
-                    SearchUser = SearchUser (
-                         name : name,
-                         HappID: happID,
-                         skills:  skills,
-                         image:  image,
-                         userID:  userID,
-                         email: email
-                    )
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.userSearch.append(userDetails)
-                        self.tableView.reloadData()
+                    if json2!["error"] == nil {
+                        
+                        let skills = json2!["result"]!["skills"] as? String ?? ""
+                        let happID = json2!["result"]!["h_id"] as? String ?? ""
+                        let userID = json2!["result"]!["user_id"] as! Int
+                        let name = json2!["result"]!["name"] as? String ?? ""
+                        let email = json2!["result"]!["email"] as? String ?? ""
+                        let image = json2!["result"]!["icon"] as? String ?? ""
+                        
+                        let userDetails :
+                        SearchUser = SearchUser (
+                            name : name,
+                            HappID: happID,
+                            skills:  skills,
+                            image:  image,
+                            userID:  userID,
+                            email: email
+                        )
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.userSearch.append(userDetails)
+                            self.tableView.reloadData()
+                        }
                     }
-                    
                 } catch {
                     print(error)
                 }
             }
             
             task2.resume()
-//        }
-        
     }
-    
-//    func getAllUser(parameters : [String: String] ) {
-//        
-//        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-//            data, response, error  in
-//            
-//            
-//            if error != nil{
-//                print("\(error)")
-//                return;
-//            }
-//            do {
-//                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-//                
-//                if let resultArray = json!.valueForKey("result") as? NSArray {
-//                    
-//                    for item in resultArray {
-//                        
-//                        
-//                        let userDetails :
-//                        SearchUser = SearchUser (
-//                            name   :  (item.objectForKey("name")) as? String ?? "",
-//                            HappID :  (item.objectForKey("h_id")) as? String ?? "",
-//                            skills :  (item.objectForKey("skills")) as? String ?? "",
-//                            image  :  (item.objectForKey("icon")) as? String ?? "",
-//                            userID :  ((item.objectForKey("user_id")) as? Int)!,
-//                            email :  (item.objectForKey("email")) as? String ?? ""
-//                        )
-//                        
-//                        self.userSearch.append(userDetails)
-//                        
-//                        dispatch_async(dispatch_get_main_queue()) {
-//                            self.tableView.reloadData()
-//                        }
-//                    }
-//                }
-//            } catch {
-//                print(error)
-//            }
-//            
-//        }
-//        task.resume()
-//    }
+
     func filterContentForSearchText(searchText: String) {
         self.filterName = self.userSearch.filter { SearchUser in
             return SearchUser.name.lowercaseString.containsString(searchText.lowercaseString)
         }
         self.tableView.reloadData()
     }
+    
     func updateSearchResultsForSearchController(searchController: UISearchController)
     {
         self.filterContentForSearchText(self.searchController.searchBar.text!)

@@ -73,13 +73,11 @@ class MessageTableViewController: UITableViewController {
         details.observeEventType(.ChildAdded, withBlock: { (snap) in
             
             if let result = snap.value {
-                print(result)
                 let userimage = result.objectForKey("photoUrl") as! String
                 let name = result.objectForKey("name") as! String
                 let message = result.objectForKey("lastMessage") as! String
                 let chatRoomID = result.objectForKey("chatroomId") as! String
                 let timestamp = result.objectForKey("timestamp") as! NSNumber
-                print(timestamp)
                 let seconds = timestamp.doubleValue / 1000
                 let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
                 let formatter = NSDateFormatter()

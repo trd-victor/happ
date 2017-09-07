@@ -57,17 +57,6 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         ]
     ]
     
-    
-    //get usertimeline parameters...
-    var getTimeline = [
-        "sercret"     : "jo8nefamehisd",
-        "action"      : "api",
-        "ac"          : "get_timeline",
-        "d"           : "0",
-        "lang"        : "en",
-        "user_id"     : "\(globalUserId.userID)",
-    ]
-    
     var userDetails = [
         "sercret"     : "jo8nefamehisd",
         "action"      : "api",
@@ -119,11 +108,9 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
 
         //load user information
         self.loadUserinfo(self.user_id)
-//        print(self.user_id)
         
         self.useEmail = SearchDetailsView.userEmail
         
-//        print(self.useEmail)
         
         //set text button 
         btnMessage.setTitle(arrText["\(language)"]!["Message"], forState: .Normal)
@@ -157,7 +144,7 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         self.mytableView.separatorStyle = .None
 
         //load user post 
-        self.getTimelineUser(self.getTimeline)
+        self.getTimelineUser()
         
         autoLayout()
         
@@ -217,16 +204,21 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         userDesription.heightAnchor.constraintEqualToConstant(75).active = true
         
         btnMessage.translatesAutoresizingMaskIntoConstraints = false
-        btnMessage.topAnchor.constraintEqualToAnchor(userDesription.bottomAnchor, constant: 10).active = true
+        btnMessage.bottomAnchor.constraintEqualToAnchor(topView.bottomAnchor, constant: -10).active = true
         btnMessage.leftAnchor.constraintEqualToAnchor(view.leftAnchor, constant: 10).active = true
         btnMessage.widthAnchor.constraintEqualToAnchor(view.widthAnchor, multiplier: 1/2, constant: -20).active = true
         btnMessage.heightAnchor.constraintEqualToConstant(42).active = true
         
         btnBlock.translatesAutoresizingMaskIntoConstraints = false
-        btnBlock.topAnchor.constraintEqualToAnchor(userDesription.bottomAnchor, constant: 10).active = true
+        btnBlock.bottomAnchor.constraintEqualToAnchor(topView.bottomAnchor, constant: -10).active = true
         btnBlock.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
         btnBlock.widthAnchor.constraintEqualToAnchor(view.widthAnchor, multiplier: 1/2, constant: -20).active = true
         btnBlock.heightAnchor.constraintEqualToConstant(42).active = true
+        
+        if self.user_id == globalUserId.userID {
+            btnBlock.hidden = true
+            btnMessage.hidden = true
+        }
         
     }
     
@@ -266,8 +258,8 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
                 if json!["result"] != nil {
                     name    = json!["result"]!["name"] as! String
                     
-                    if let happIDuser = json!["result"]!["h_id"] as? NSNull {
-                        happID = "" as? String
+                    if let _ = json!["result"]!["h_id"] as? NSNull {
+                        happID = ""
                         self.userHID.hidden = true
                     } else {
                         happID = json!["result"]!["h_id"] as? String
@@ -275,16 +267,16 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
                     }
 
                     
-                    if let imageuser = json!["result"]!["icon"] as? NSNull {
-                        image = "" as? String
+                    if let _ = json!["result"]!["icon"] as? NSNull {
+                        image = ""
                     } else {
                         image = json!["result"]!["icon"] as? String
                     }
                     
                     
                     
-                    if let skillsUser = json!["result"]!["skills"] as? NSNull {
-                        skills = "" as? String
+                    if let _ = json!["result"]!["skills"] as? NSNull {
+                        skills = ""
                         self.userSkills.hidden = true
                     } else {
                         skills = json!["result"]!["skills"] as? String
@@ -353,34 +345,21 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         
     }
     
-//    func getUserDetails(parameters: [String: String]?) {
-//        let httpRequest = HttpDataRequest(postData: self.getTimeline)
-//        let request = httpRequest.requestGet()
-//        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-//            data, response, error  in
-//            
-//            if error != nil{
-//                print("\(error)")
-//                return;
-//            }
-//            do {
-//                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-//                
-//                    print(json)
-//                
-//               } catch {
-//                print(error)
-//            }
-//            
-//        }
-//        task.resume()
-//    }
-    
-    
-    func getTimelineUser(parameters: [String: String]?) {
-     
-        let httpRequest = HttpDataRequest(postData: self.getTimeline)
+    func getTimelineUser() {
+        
+        //get usertimeline parameters...
+        let getTimeline = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "get_timeline",
+            "d"           : "0",
+            "lang"        : "en",
+            "user_id"     : "\(self.user_id)",
+        ]
+        
+        let httpRequest = HttpDataRequest(postData: getTimeline)
         let request = httpRequest.requestGet()
+        
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
@@ -397,9 +376,10 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
                     for item in resultArray {
                         
                         if let resultDict = item as? NSDictionary {
-//                            if let userPostId = resultDict.valueForKey("ID") {
-//                                self.postID.append(userPostId as! Int)
-//                            }
+                            let timeline_id = resultDict["fields"]!["from_user_id"]! as! String
+                            if timeline_id != self.user_id {
+                                continue
+                            }
                             
                             if let userPostModied = resultDict.valueForKey("post_modified") {
                                 self.userDate.append(userPostModied as! String)
@@ -415,12 +395,12 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
                                 }
                             }
                         }
-                        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-                            dispatch_async(dispatch_get_main_queue()) {
-                                self.mytableView.reloadData()
-                            }
-                        }
                         
+                    }
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.mytableView.reloadData()
+                        }
                     }
                 }
             } catch {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EditProfileViewController: UIViewController, UITextFieldDelegate {
+class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var skillView: UIView!
@@ -40,7 +40,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var labelAppDesign: UILabel!
     @IBOutlet var labelwebdesign: UILabel!
     
-
+    
     //Switch variabel...
     @IBOutlet var fronendswitch: UISwitch!
     @IBOutlet var backendswitch: UISwitch!
@@ -48,10 +48,13 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var iosswitch: UISwitch!
     @IBOutlet var appdesignswitch: UISwitch!
     @IBOutlet var backdesignswithc: UISwitch!
-
+    
     var language: String!
     var userId: String = ""
-//    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
+    var imageName: String = ""
+    var checkNewImage: Bool = false
+    var galleryPicker = UIImagePickerController()
+    //    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,7 +63,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         //set delegate ..
         userDescription.delegate = self
         userNamefield.delegate = self
-
+        galleryPicker.delegate = self
+        
         //load language set.
         language = setLanguage.appLanguage
         
@@ -80,19 +84,50 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         
         self.navBackProfile.action = Selector("backToConfiguration:")
         
-//        //add it to the center...
-//        myActivityIndicator.center = view.center
-//        
-//        // If needed, you can prevent Acivity Indicator from hiding when stopAnimating() is called
-//        myActivityIndicator.hidesWhenStopped = true
-//        myActivityIndicator.frame = CGRectMake(0.0, 0.0, 40.0, 40.0)
-//        
-//        view.addSubview(myActivityIndicator)
+        //        //add it to the center...
+        //        myActivityIndicator.center = view.center
+        //
+        //        // If needed, you can prevent Acivity Indicator from hiding when stopAnimating() is called
+        //        myActivityIndicator.hidesWhenStopped = true
+        //        myActivityIndicator.frame = CGRectMake(0.0, 0.0, 40.0, 40.0)
+        //
+        //        view.addSubview(myActivityIndicator)
+        
+        //add clickable profile image
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action:Selector("openGallery"))
+        userImage.userInteractionEnabled = true
+        userImage.addGestureRecognizer(tapGestureRecognizer)
         
         view.endEditing(true)
         
         autoLayout()
         
+    }
+    
+    func openGallery(){
+        galleryPicker.allowsEditing = false
+        galleryPicker.sourceType = .PhotoLibrary
+        presentViewController(galleryPicker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            let imageUrl = info[UIImagePickerControllerReferenceURL] as? NSURL
+            imageName = imageUrl!.lastPathComponent!
+            userImage.contentMode = .ScaleAspectFill
+            userImage.image = pickedImage
+            
+            
+            // checking for new profile picture
+            checkNewImage = true
+            
+        }
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
     func autoLayout() {
@@ -260,7 +295,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         separator8.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator8.heightAnchor.constraintEqualToConstant(1).active = true
     }
-
+    
     
     func loadConfigure() {
         
@@ -288,8 +323,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
         
-//        presentViewController(viewControllerToPresent, animated: false, completion: nil)
-//        self.tabBarController?.presentViewController(viewControllerToPresent, animated: true, completion: nil)
+        //        presentViewController(viewControllerToPresent, animated: false, completion: nil)
+        //        self.tabBarController?.presentViewController(viewControllerToPresent, animated: true, completion: nil)
         self.dismissViewControllerAnimated(false, completion: nil)
     }
     
@@ -305,109 +340,109 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.presentDetail(vc)
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
     func loadUserData() {
-            //let URL
-            let viewDataURL = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
-            
-            //created NSURL
-            let requestURL = NSURL(string: viewDataURL)
-            
-            
-            //creating NSMutableURLRequest
-            let request = NSMutableURLRequest(URL: requestURL!)
-            
-            //set boundary string..
-            let boundary = generateBoundaryString()
-            
-            //set value for image upload
-            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            
-            //setting the method to post
-            request.HTTPMethod = "POST"
-            
-            //        if language == "ja" {
-            //            language = "jp"
-            //        }
-            //        set parameters...
-            let param = [
-                "sercret"     : "jo8nefamehisd",
-                "action"      : "api",
-                "ac"          : "get_userinfo",
-                "d"           : "0",
-                "lang"        : "en",
-                "user_id"     : "\(userId)"
-            ]
-    
-            //adding the parameters to request body
-            request.HTTPBody = createBodyWithParameters(param, boundary: boundary)
+        //let URL
+        let viewDataURL = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
         
-//             self.myActivityIndicator.startAnimating()
+        //created NSURL
+        let requestURL = NSURL(string: viewDataURL)
         
-            let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-                data, response, error  in
+        
+        //creating NSMutableURLRequest
+        let request = NSMutableURLRequest(URL: requestURL!)
+        
+        //set boundary string..
+        let boundary = generateBoundaryString()
+        
+        //set value for image upload
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        //setting the method to post
+        request.HTTPMethod = "POST"
+        
+        //        if language == "ja" {
+        //            language = "jp"
+        //        }
+        //        set parameters...
+        let param = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "get_userinfo",
+            "d"           : "0",
+            "lang"        : "en",
+            "user_id"     : "\(userId)"
+        ]
+        
+        //adding the parameters to request body
+        request.HTTPBody = createBodyWithParameters(param,  data: nil, boundary: boundary)
+        
+        //             self.myActivityIndicator.startAnimating()
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            print("response", response);
+            //user Data...
+            var name: String!
+            var image: String!
+            var skills: String!
+            var message: String!
+            
+            if error != nil{
+                print("\(error)")
+                return;
+            }
+            do {
                 
-                //user Data...
-                var name: String!
-                var image: String!
-                var skills: String!
-                var message: String!
-                
-                if error != nil{
-                    print("\(error)")
-                    return;
-                }
-                do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                print(json)
+                if json!["result"] != nil {
+                    name    = json!["result"]!["name"] as! String
+                    //                        image1   = json!["result"]!["icon"] as! String
                     
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json!["result"] != nil {
-                        name    = json!["result"]!["name"] as! String
-//                        image1   = json!["result"]!["icon"] as! String
-                        
-                        if let imageuser = json!["result"]!["icon"] as? NSNull {
-                             image = "" as? String
-                        } else {
-                            image = json!["result"]!["icon"] as? String
-                        }
-                        
-                        
-                        skills  = json!["result"]!["skills"] as! String
-                       message = json!["result"]!["mess"] as! String
+                    if let imageuser = json!["result"]!["icon"] as? NSNull {
+                        image = "" as? String
+                    } else {
+                        image = json!["result"]!["icon"] as? String
                     }
                     
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
-                        
-                        let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-                        
-                        
-                         let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
-                        dispatch_async(dispatch_get_main_queue(), {() -> Void in
-                           
-                            self.userNamefield.text = name
-                            if data != nil {
-                                self.userImage.image = UIImage(data: data!)
-                            } else {
-                                self.userImage.image = UIImage(named: "noPhoto")
-                            }
-                           
-                            self.userDescription.text = message
-                            self.getSkillNotArray(self.returnSkillState(skills))
-                        })
-                    })
-
                     
-                } catch {
-                    print(error)
+                    skills  = json!["result"]!["skills"] as! String
+                    message = json!["result"]!["mess"] as! String
                 }
                 
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
+                    
+                    let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+                    
+                    
+                    let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
+                    dispatch_async(dispatch_get_main_queue(), {() -> Void in
+                        
+                        self.userNamefield.text = name
+                        if data != nil {
+                            self.userImage.image = UIImage(data: data!)
+                        } else {
+                            self.userImage.image = UIImage(named: "noPhoto")
+                        }
+                        
+                        self.userDescription.text = message
+                        self.getSkillNotArray(self.returnSkillState(skills))
+                    })
+                })
+                
+                
+            } catch {
+                print(error)
             }
-            task.resume()
+            
+        }
+        task.resume()
         
     }
     
@@ -448,8 +483,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
             
             //setting the method to post
             request.HTTPMethod = "POST"
-
-        
+            
+            
             //declaring button state
             let frontEndSkill   = fronendswitch
             let backEndSkill    = backendswitch
@@ -457,7 +492,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
             let androidSkill    = androidswitch
             let appDesignSkill  = appdesignswitch
             let webDesignSkill  = backdesignswithc
-        
+            
             //get state
             let frontEndState   = switchButtonCheck(frontEndSkill)
             let backEndState    = switchButtonCheck(backEndSkill)
@@ -465,7 +500,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
             let androidState    = switchButtonCheck(androidSkill)
             let appDesignState  = switchButtonCheck(appDesignSkill)
             let webDesignState  = switchButtonCheck(webDesignSkill)
-        
+            
             let skills: [Int: String] = [
                 1  : "\(frontEndState)",
                 2  : "\(backEndState)",
@@ -475,8 +510,15 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
                 6  : "\(webDesignState)"
             ]
             let skills2 = returnSkillValue(skills)
-            let targetedData: String = "name,skills,mess"
+            var targetedData: String
             
+            //check if there is new Image selected on gallery
+            if checkNewImage {
+                targetedData = "name,skills,mess,icon"
+                checkNewImage = false
+            }else{
+                targetedData = "name,skills,mess"
+            }
             
             //set parameters...
             let param = [
@@ -491,9 +533,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
                 "skills"      : "\(skills2)",
                 "targets"     : "\(targetedData)"
             ]
-            
             //adding the parameters to request body
-            request.HTTPBody = createBodyWithParameters(param,  boundary: boundary)
+            request.HTTPBody = createBodyWithParameters(param, data: UIImageJPEGRepresentation(userImage.image!, 0.7),  boundary: boundary)
             
             let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
                 data, response, error  in
@@ -506,7 +547,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
                 }
                 
                 do {
-
+                    
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
                     if json!["message"] != nil {
@@ -582,10 +623,10 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         if skill == "4" {
             self.androidswitch.setOn(true, animated: true)
         }
-       if skill == "5" {
+        if skill == "5" {
             self.appdesignswitch.setOn(true, animated: true)
         }
-      if skill == "6" {
+        if skill == "6" {
             self.backdesignswithc.setOn(true, animated: true)
         }
     }
@@ -601,7 +642,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         return "Boundary-\(NSUUID().UUIDString)"
     }
     
-    func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
+    func createBodyWithParameters(parameters: [String: String]?, data: NSData!,  boundary: String) -> NSData {
         let body = NSMutableData();
         
         if parameters != nil {
@@ -612,8 +653,15 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
             }
         }
         
-        body.appendString("--\(boundary)--\r\n")
+        if data != nil {
+            body.appendString("--\(boundary)\r\n")
+            body.appendString("Content-Disposition: form-data; name=\"icon\"; filename=\"\(imageName)\"\r\n")
+            body.appendString("Content-Type: image/jpg \r\n\r\n")
+            body.appendData(data!)
+            body.appendString("\r\n")
+        }
         
+        body.appendString("--\(boundary)--\r\n")
         return body
     }
     
@@ -624,6 +672,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate {
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
-  
-
+    
+    
 }

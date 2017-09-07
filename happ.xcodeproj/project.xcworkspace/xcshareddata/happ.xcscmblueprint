@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "9AFA11357D696188275414B615E21421E1B6EA0E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "E13CFE7D64AB8870EE89A021FED88411483B7683" : 0,
+    "9AFA11357D696188275414B615E21421E1B6EA0E" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "DB9AF65B-52AD-424B-B837-4203D9128383",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "E13CFE7D64AB8870EE89A021FED88411483B7683" : "",
+    "9AFA11357D696188275414B615E21421E1B6EA0E" : "happ_app_ios\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "happ",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "happ.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/timeriver\/happ_app_ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9AFA11357D696188275414B615E21421E1B6EA0E"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/costa0007\/regrowth-front-end.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E13CFE7D64AB8870EE89A021FED88411483B7683"
+    }
+  ]
+}

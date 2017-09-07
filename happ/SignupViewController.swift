@@ -282,9 +282,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
-//                let userDefaults = NSUserDefaults.standardUserDefaults()
-//                userDefaults.setValue(globalUserId.FirID, forKey: "FirebaseID")
-//                userDefaults.synchronize()
                 let config = SYSTEM_CONFIG()
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
                 print(config.getSYS_VAL("FirebaseID"))
