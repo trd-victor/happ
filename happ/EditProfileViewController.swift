@@ -405,8 +405,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                     name    = json!["result"]!["name"] as! String
                     //                        image1   = json!["result"]!["icon"] as! String
                     
-                    if let imageuser = json!["result"]!["icon"] as? NSNull {
-                        image = "" as? String
+                    if let _ = json!["result"]!["icon"] as? NSNull {
+                        image = ""
                     } else {
                         image = json!["result"]!["icon"] as? String
                     }

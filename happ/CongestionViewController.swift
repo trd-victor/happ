@@ -284,8 +284,8 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
                     
                     self.testName = json2!["result"]!["name"] as! String
                     
-                    if let imageuser = json2!["result"]!["icon"] as? NSNull {
-                        self.urlImage = "" as? String
+                    if let _ = json2!["result"]!["icon"] as? NSNull {
+                        self.urlImage = ""
                     } else {
                         self.urlImage = json2!["result"]!["icon"] as? String
                     }

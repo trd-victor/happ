@@ -150,7 +150,6 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
             let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
                 data, response, error  in
                 
-                var mess: String = ""
                 if error != nil{
                     print("\(error)")
                     return;
@@ -158,11 +157,9 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     if json!["message"] != nil {
-                        mess = json!["message"] as! String
                     }
                     if json!["result"] != nil {
                         if json!["result"]!["mess"] != nil {
-                            mess = json!["result"]!["mess"] as! String
                         }
                     }
                     dispatch_async(dispatch_get_main_queue()) {

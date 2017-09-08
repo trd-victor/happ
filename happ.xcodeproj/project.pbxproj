@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3823B8219AD4C9A65F44A2CC /* Pods_happ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27363907F19FC132E296BAFF /* Pods_happ.framework */; };
+		3D77DC371F61581500DAC74E /* TimelineTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D77DC361F61581500DAC74E /* TimelineTableController.swift */; };
 		3DCFDECC1F5D539400E50EC0 /* CreatePost+hanlder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCFDECB1F5D539400E50EC0 /* CreatePost+hanlder.swift */; };
 		A302AA5C1F27007400D8FBA8 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A302AA5B1F27007400D8FBA8 /* CustomCell.swift */; };
 		A30364C31F25E3440083A495 /* TableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30364C21F25E3440083A495 /* TableController.swift */; };
@@ -66,7 +67,6 @@
 		A3E124AE1F40BA300053B2CC /* CongestionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */; };
 		A3E124B01F40BDDA0053B2CC /* searchdetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124AF1F40BDDA0053B2CC /* searchdetails.swift */; };
 		A3F378C41F500D8F003FD98D /* ViewLibViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */; };
-		A3F3B46A1F3737C600E44106 /* Main2.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3F3B4691F3737C600E44106 /* Main2.storyboard */; };
 		A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */; };
 		A3F872E11F1D4927004C4BA5 /* RegistController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F872E01F1D4926004C4BA5 /* RegistController.swift */; };
 /* End PBXBuildFile section */
@@ -74,6 +74,7 @@
 /* Begin PBXFileReference section */
 		21B7B4581F3CCAF89E262E59 /* Pods-happ.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happ.debug.xcconfig"; path = "Pods/Target Support Files/Pods-happ/Pods-happ.debug.xcconfig"; sourceTree = "<group>"; };
 		27363907F19FC132E296BAFF /* Pods_happ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_happ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D77DC361F61581500DAC74E /* TimelineTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineTableController.swift; sourceTree = "<group>"; };
 		3DCFDECB1F5D539400E50EC0 /* CreatePost+hanlder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CreatePost+hanlder.swift"; sourceTree = "<group>"; };
 		8E7910D823270E02D72DC1CE /* Pods-happ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happ.release.xcconfig"; path = "Pods/Target Support Files/Pods-happ/Pods-happ.release.xcconfig"; sourceTree = "<group>"; };
 		A302AA5B1F27007400D8FBA8 /* CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
@@ -136,7 +137,6 @@
 		A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CongestionViewController.swift; sourceTree = "<group>"; };
 		A3E124AF1F40BDDA0053B2CC /* searchdetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = searchdetails.swift; sourceTree = "<group>"; };
 		A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewLibViewController.swift; sourceTree = "<group>"; };
-		A3F3B4691F3737C600E44106 /* Main2.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main2.storyboard; sourceTree = "<group>"; };
 		A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentSettingsViewController.swift; sourceTree = "<group>"; };
 		A3F872E01F1D4926004C4BA5 /* RegistController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,6 +153,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3D77DC331F61571E00DAC74E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				3D77DC361F61581500DAC74E /* TimelineTableController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
 		3DCFDECA1F5D537700E50EC0 /* Handler */ = {
 			isa = PBXGroup;
 			children = (
@@ -193,13 +201,13 @@
 		A3A343A31F09F8B600DC55FC /* happ */ = {
 			isa = PBXGroup;
 			children = (
+				3D77DC331F61571E00DAC74E /* Controller */,
 				3DCFDECA1F5D537700E50EC0 /* Handler */,
 				A3A343A41F09F8B600DC55FC /* AppDelegate.swift */,
 				A3D90D9B1F49678800DB5624 /* Constants.swift */,
 				A36AD9E71F46CF4500620C05 /* GoogleService-Info.plist */,
 				A3A343A61F09F8B600DC55FC /* ViewController.swift */,
 				A3B046461F38E283003789CC /* Main.storyboard */,
-				A3F3B4691F3737C600E44106 /* Main2.storyboard */,
 				A3A343AB1F09F8B700DC55FC /* Assets.xcassets */,
 				A3A343AD1F09F8B700DC55FC /* LaunchScreen.storyboard */,
 				A3A343B01F09F8B700DC55FC /* Info.plist */,
@@ -310,6 +318,14 @@
 					A3A343A01F09F8B500DC55FC = {
 						CreatedOnToolsVersion = 7.1;
 						DevelopmentTeam = 8VY9SE4VLG;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -339,7 +355,6 @@
 				A3105B131F1CC2260067F069 /* Assets.xcassets in Resources */,
 				A3B046471F38E283003789CC /* Main.storyboard in Resources */,
 				A31ABBF01F34147300994064 /* FirstLanguageStoryboard.storyboard in Resources */,
-				A3F3B46A1F3737C600E44106 /* Main2.storyboard in Resources */,
 				A3A343AF1F09F8B700DC55FC /* LaunchScreen.storyboard in Resources */,
 				A36AD9E81F46CF4500620C05 /* GoogleService-Info.plist in Resources */,
 			);
@@ -393,6 +408,7 @@
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/JSQMessagesViewController/JSQMessagesViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/JSQSystemSoundPlayer/JSQSystemSoundPlayer.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -401,6 +417,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSQMessagesViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSQSystemSoundPlayer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -465,6 +482,7 @@
 				A3F872E11F1D4927004C4BA5 /* RegistController.swift in Sources */,
 				A332F2281F3865B7009BF3CC /* Error.swift in Sources */,
 				A33DECB01F2F0FB100275CAE /* CreatePostViewController.swift in Sources */,
+				3D77DC371F61581500DAC74E /* TimelineTableController.swift in Sources */,
 				A30364C31F25E3440083A495 /* TableController.swift in Sources */,
 				A3A343A51F09F8B600DC55FC /* AppDelegate.swift in Sources */,
 				A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */,

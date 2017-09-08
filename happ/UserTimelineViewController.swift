@@ -99,27 +99,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     var scrollview : UIScrollView!
     
-    var arrText = [
-    
-        "en" : [
-            "IamFree" : "Now I am free",
-            "Timeline" : "Timeline",
-            "Message" : "Message",
-            "Reservation": "Room Reservation",
-            "Situation": "Situation",
-            "Configuration": "Configuration"
-        ],
-        "ja" : [
-            "IamFree" : "いま暇",
-            "Timeline" : "タイムライン",
-            "Message" : "メッセージ",
-            "Reservation": "ルーム予約",
-            "Situation": "状況",
-            "Configuration": "設定"
-        ]
-    
-    ]
-    
     var roundButton = UIButton()
     var refreshControl: UIRefreshControl!
     var myTimer: NSTimer!
@@ -171,7 +150,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTable:", name: "refresh", object: nil)
         
         self.getTimelineUser(self.getTimeline)
-
+        
         autoLayout()
     }
   
@@ -236,8 +215,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
-        self.mytableview.delegate = self
-        self.mytableview.dataSource = self
+//        self.mytableview.delegate = self
+//        self.mytableview.dataSource = self
         
     }
     
@@ -269,12 +248,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.presentDetail(vc)
     }
     
-//    func refresh(sender: AnyObject) {
-//        self.getTimelineUser(self.getTimeline)
-//        self.mytableview.reloadData()
-//        refreshControl.endRefreshing()
-//    }
-    
     func deletePost(sender: String, index: Int) {
         self.deleteAlertMessage("Delete this Post?")
         self.userpostID = sender
@@ -283,7 +256,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func deleteTimeline(sender: String) {
-        var mess: String!
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
@@ -311,11 +283,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                 
                 if json3!["message"] != nil {
-                    mess = json3!["message"] as! String
                 }
                 if json3!["result"] != nil {
                     if json3!["result"]!["mess"] != nil {
-                        mess = json3!["result"]!["mess"] as! String
                     }
                 }
                 dispatch_async(dispatch_get_main_queue()) {
