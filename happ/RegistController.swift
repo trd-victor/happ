@@ -552,7 +552,19 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         if parameters != nil {
             for(key, value) in parameters! {
                 if value != "On" { continue }
-                retString += "\(key),"
+                if key == 1 {
+                    retString += "Front end,"
+                }else if key == 2 {
+                    retString += "Server side,"
+                }else if key == 3 {
+                    retString += "IOS Application,"
+                }else if key == 4 {
+                    retString += "Android Application,"
+                }else if key == 5 {
+                    retString += "App design,"
+                }else if key == 6 {
+                    retString += "Web design"
+                }
             }
         }
         return retString

@@ -250,6 +250,9 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
             self.content.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
             self.content.heightAnchor.constraintEqualToConstant(CGFloat(height) + 20).active = true
         }
+        if textView.text.characters.count > 0 {
+            self.withContent = "true"
+        }
     }
     
     func textViewDidBeginEditing(textView: UITextView) {
@@ -258,9 +261,9 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
             self.content.textColor = UIColor.blackColor()
         }
         if self.content.text.characters.count == 0 {
-            withContent = "false"
+            self.withContent = "false"
         }else{
-            withContent = "true"
+            self.withContent = "true"
         }
     }
     

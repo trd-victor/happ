@@ -56,5 +56,27 @@ extension CreatePostViewController: UIImagePickerControllerDelegate, UINavigatio
             print("No Camera")
         }
     }
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+        
+        var img: UIImage?
+        
+        if let originalImage = info["UIImagePickerControllerOriginalImage"] as? UIImage {
+            img = originalImage
+        }
+        
+        if let selectedImage = img {
+            imgList.append(selectedImage)
+        }
+        
+        if imgList.count == 3 {
+            btnCamera.enabled = false
+        }
+        
+        self.loadTimelineImagePost()
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
 }
 

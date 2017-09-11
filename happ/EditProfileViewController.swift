@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -426,6 +427,12 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                         
                         self.userNamefield.text = name
                         if data != nil {
+                            //save new photo on firebase database
+                            if self.checkNewImage {
+                                let uid = globalUserId.FirID
+                                FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
+                                self.checkNewImage = false
+                            }
                             self.userImage.image = UIImage(data: data!)
                         } else {
                             self.userImage.image = UIImage(named: "noPhoto")
@@ -515,7 +522,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             //check if there is new Image selected on gallery
             if checkNewImage {
                 targetedData = "name,skills,mess,icon"
-                checkNewImage = false
             }else{
                 targetedData = "name,skills,mess"
             }
@@ -566,6 +572,11 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 self.displayMyAlertMessage(message)
                             }
                         }
+                        if json!["success"] != nil {
+                            let uid = globalUserId.FirID
+                            FIRDatabase.database().reference().child("users").child("\(uid)").child("name").setValue(name)
+                            self.loadUserData()
+                        }
                         self.displayMyAlertMessage(message)
                     }
                     
@@ -594,7 +605,19 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         if parameters != nil {
             for(key, value) in parameters! {
                 if value != "On" { continue }
-                retString += "\(key),"
+                if key == 1 {
+                    retString += "Front end,"
+                }else if key == 2 {
+                    retString += "Server side,"
+                }else if key == 3 {
+                    retString += "IOS Application,"
+                }else if key == 4 {
+                    retString += "Android Application,"
+                }else if key == 5 {
+                    retString += "App design,"
+                }else if key == 6 {
+                    retString += "Web design"
+                }
             }
         }
         return retString
@@ -611,22 +634,22 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         }
     }
     func switchButtonOn(skill: String)  {
-        if skill == "1" {
+        if skill == "Front end" {
             self.fronendswitch.setOn(true, animated: true)
         }
-        if skill == "2" {
+        if skill == "Server side" {
             self.backendswitch.setOn(true, animated: true)
         }
-        if skill == "3" {
+        if skill == "IOS Application" {
             self.iosswitch.setOn(true, animated: true)
         }
-        if skill == "4" {
+        if skill == "Android Application" {
             self.androidswitch.setOn(true, animated: true)
         }
-        if skill == "5" {
+        if skill == "App design" {
             self.appdesignswitch.setOn(true, animated: true)
         }
-        if skill == "6" {
+        if skill == "Web design" {
             self.backdesignswithc.setOn(true, animated: true)
         }
     }
@@ -653,9 +676,12 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             }
         }
         
-        if data != nil {
+        if data != nil && self.checkNewImage == true {
+            
+            let filename = "profile_\(globalUserId.userID)_\(self.randomString(6))_\(self.randomString(5))"
+            
             body.appendString("--\(boundary)\r\n")
-            body.appendString("Content-Disposition: form-data; name=\"icon\"; filename=\"\(imageName)\"\r\n")
+            body.appendString("Content-Disposition: form-data; name=\"icon\"; filename=\"\(filename)\"\r\n")
             body.appendString("Content-Type: image/jpg \r\n\r\n")
             body.appendData(data!)
             body.appendString("\r\n")
@@ -663,6 +689,22 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         body.appendString("--\(boundary)--\r\n")
         return body
+    }
+    
+    func randomString(length: Int) -> String {
+        
+        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let len = UInt32(letters.length)
+        
+        var randomString = ""
+        
+        for _ in 0 ..< length {
+            let rand = arc4random_uniform(len)
+            var nextChar = letters.characterAtIndex(Int(rand))
+            randomString += NSString(characters: &nextChar, length: 1) as String
+        }
+        
+        return randomString
     }
     
     func displayMyAlertMessage(userMessage:String){

@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		3823B8219AD4C9A65F44A2CC /* Pods_happ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27363907F19FC132E296BAFF /* Pods_happ.framework */; };
-		3D77DC371F61581500DAC74E /* TimelineTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D77DC361F61581500DAC74E /* TimelineTableController.swift */; };
+		3D7AA5B11F63704F00E16CAC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B01F63704F00E16CAC /* Extensions.swift */; };
+		3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */; };
+		3D7AA5B71F653E1C00E16CAC /* ExtensionTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */; };
 		3DCFDECC1F5D539400E50EC0 /* CreatePost+hanlder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCFDECB1F5D539400E50EC0 /* CreatePost+hanlder.swift */; };
 		A302AA5C1F27007400D8FBA8 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A302AA5B1F27007400D8FBA8 /* CustomCell.swift */; };
 		A30364C31F25E3440083A495 /* TableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30364C21F25E3440083A495 /* TableController.swift */; };
@@ -74,7 +76,9 @@
 /* Begin PBXFileReference section */
 		21B7B4581F3CCAF89E262E59 /* Pods-happ.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happ.debug.xcconfig"; path = "Pods/Target Support Files/Pods-happ/Pods-happ.debug.xcconfig"; sourceTree = "<group>"; };
 		27363907F19FC132E296BAFF /* Pods_happ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_happ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3D77DC361F61581500DAC74E /* TimelineTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineTableController.swift; sourceTree = "<group>"; };
+		3D7AA5B01F63704F00E16CAC /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
+		3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionTimeline.swift; sourceTree = "<group>"; };
 		3DCFDECB1F5D539400E50EC0 /* CreatePost+hanlder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CreatePost+hanlder.swift"; sourceTree = "<group>"; };
 		8E7910D823270E02D72DC1CE /* Pods-happ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happ.release.xcconfig"; path = "Pods/Target Support Files/Pods-happ/Pods-happ.release.xcconfig"; sourceTree = "<group>"; };
 		A302AA5B1F27007400D8FBA8 /* CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
@@ -153,12 +157,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3D77DC331F61571E00DAC74E /* Controller */ = {
+		3D7AA5AF1F63703B00E16CAC /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				3D77DC361F61581500DAC74E /* TimelineTableController.swift */,
+				3D7AA5B01F63704F00E16CAC /* Extensions.swift */,
+				3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */,
 			);
-			name = Controller;
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		3D7AA5B21F63831900E16CAC /* TableCell */ = {
+			isa = PBXGroup;
+			children = (
+				3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */,
+			);
+			name = TableCell;
 			sourceTree = "<group>";
 		};
 		3DCFDECA1F5D537700E50EC0 /* Handler */ = {
@@ -201,7 +214,8 @@
 		A3A343A31F09F8B600DC55FC /* happ */ = {
 			isa = PBXGroup;
 			children = (
-				3D77DC331F61571E00DAC74E /* Controller */,
+				3D7AA5B21F63831900E16CAC /* TableCell */,
+				3D7AA5AF1F63703B00E16CAC /* Helpers */,
 				3DCFDECA1F5D537700E50EC0 /* Handler */,
 				A3A343A41F09F8B600DC55FC /* AppDelegate.swift */,
 				A3D90D9B1F49678800DB5624 /* Constants.swift */,
@@ -458,6 +472,7 @@
 				A3E124AC1F40BA130053B2CC /* ReservationViewController.swift in Sources */,
 				A34A509B1F307BFC00BAD1E2 /* setParam.swift in Sources */,
 				A3E124B01F40BDDA0053B2CC /* searchdetails.swift in Sources */,
+				3D7AA5B11F63704F00E16CAC /* Extensions.swift in Sources */,
 				A3D90D9C1F49678800DB5624 /* Constants.swift in Sources */,
 				A331ADB91F0A3B5F00CA50AC /* SignupViewController.swift in Sources */,
 				A34A509D1F30982C00BAD1E2 /* GlobalVar.swift in Sources */,
@@ -466,6 +481,7 @@
 				A3F378C41F500D8F003FD98D /* ViewLibViewController.swift in Sources */,
 				A31CEA9F1F27498600F386FC /* ConfigurationViewController.swift in Sources */,
 				3DCFDECC1F5D539400E50EC0 /* CreatePost+hanlder.swift in Sources */,
+				3D7AA5B71F653E1C00E16CAC /* ExtensionTimeline.swift in Sources */,
 				A38E96F41F55703D00AE3D66 /* LaunchScreenViewController.swift in Sources */,
 				A321606F1F384B4A009A72E2 /* RealTimelineTableViewController.swift in Sources */,
 				A321606D1F3821F6009A72E2 /* TestTimelineTableViewController.swift in Sources */,
@@ -482,11 +498,11 @@
 				A3F872E11F1D4927004C4BA5 /* RegistController.swift in Sources */,
 				A332F2281F3865B7009BF3CC /* Error.swift in Sources */,
 				A33DECB01F2F0FB100275CAE /* CreatePostViewController.swift in Sources */,
-				3D77DC371F61581500DAC74E /* TimelineTableController.swift in Sources */,
 				A30364C31F25E3440083A495 /* TableController.swift in Sources */,
 				A3A343A51F09F8B600DC55FC /* AppDelegate.swift in Sources */,
 				A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */,
 				A38DC7C01F4BCFC9009C168A /* NewMessageViewController.swift in Sources */,
+				3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

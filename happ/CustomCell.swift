@@ -10,19 +10,7 @@ import UIKit
 
 
 class CustomCell: UITableViewCell {
-    
-    //@IBOutlet var postUserImage: UIImageView!
-   // @IBOutlet var mmylba: UILabel!
-    //@IBOutlet var date: UILabel!
-   // @IBOutlet var content: UILabel!
-   // @IBOutlet var more: UIImageView!
-   // @IBOutlet var morebutton: UIButton!
-   // @IBOutlet var postIDUSER: UILabel!
-   //// @IBOutlet var moreimg: UIButton!
-   // @IBOutlet var delete: UIButton!
-   // @IBOutlet var postid: UIButton!
-    
-    //@IBOutlet var title: UIButton!
+   
     @IBOutlet var uesrImage: UIImageView!
     @IBOutlet var username: UILabel!
     @IBOutlet var postDate: UILabel!
@@ -35,5 +23,24 @@ class CustomCell: UITableViewCell {
         label.font = UIFont.systemFontOfSize(16)
         return label
     }()
+
+    let imageContainer: UIView = {
+        let view = UIView()
+        return view
+    }()
     
+    let imgView1: UIImageView = {
+        let img = UIImageView()
+        return img
+    }()
+    
+    let imgView2: UIImageView = {
+        let img = UIImageView()
+        return img
+    }()
+    
+    let imgView3: UIImageView = {
+        let img = UIImageView()
+        return img
+    }()
 }

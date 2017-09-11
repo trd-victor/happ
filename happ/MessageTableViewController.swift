@@ -140,7 +140,12 @@ class MessageTableViewController: UITableViewController {
         cell.userImage.clipsToBounds = true
         
         if self.chatImage[indexPath.row] == "null" {
-            cell.userImage.image = UIImage(named: "photo")
+            cell.userImage.image = UIImage(named: "noPhoto")
+        }else{
+            dispatch_async(dispatch_get_main_queue()){
+                let data = NSData(contentsOfURL: NSURL(string: "\(self.chatImage[indexPath.row])")!)
+                cell.userImage.image = UIImage(data: data!)
+            }
         }
         
         cell.userTime.text = self.chatTime[indexPath.row]

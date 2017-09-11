@@ -153,6 +153,14 @@
                                                             <segue destination="oiE-AQ-YM2" kind="modal" id="o8A-kG-tHn"/>
                                                         </connections>
                                                     </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="qPU-gW-X3f">
+                                                        <rect key="frame" x="51" y="120" width="247" height="51"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <animations/>
+                                                        <state key="normal" title="Button">
+                                                            <color key="titleColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
+                                                        </state>
+                                                    </button>
                                                 </subviews>
                                                 <animations/>
                                                 <color key="backgroundColor" red="0.11372549019607843" green="0.11372549019607843" blue="0.11372549019607843" alpha="1" colorSpace="calibratedRGB"/>
@@ -186,6 +194,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="500" height="568"/>
                     <connections>
+                        <outlet property="btnCLang" destination="qPU-gW-X3f" id="9Xu-lT-87w"/>
                         <outlet property="btn_login" destination="R81-5q-fgK" id="tTf-Ze-G4T"/>
                         <outlet property="btn_register" destination="IRJ-oS-hyi" id="Mr9-Ro-lC9"/>
                         <outlet property="imageLogo" destination="cPg-gx-Ub4" id="MV6-OY-p0g"/>
@@ -1441,7 +1450,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="happ" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="77"/>
+                                <rect key="frame" x="0.0" y="92" width="320" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lqd-Oi-WpL" id="3Q3-ls-nLn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="76"/>

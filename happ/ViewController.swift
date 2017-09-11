@@ -28,16 +28,31 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet var subTopView: UIView!
     @IBOutlet var subBottomView: UIView!
     @IBOutlet var imageLogo: UIImageView!
+    @IBOutlet var btnCLang: UIButton!
     
     var portrait: Bool = false
     var landscape: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       self.setupAllViews()
+        self.setupAllViews()
+    
+        let config = SYSTEM_CONFIG()
+        if var count = config.getSYS_VAL("runningApp") as? Int {
+            count += 1
+            if count > 1 {
+                self.btnCLang.hidden = true
+            }
+            config.setSYS_VAL(count, key: "runningApp")
+        }else{
+            config.setSYS_VAL(1, key: "runningApp")
+        }
+        self.btnCLang.setTitle(config.translate("sys_change_lang"), forState: .Normal)
+        self.btnCLang.addTarget(self, action: Selector("gotoLang"), forControlEvents: .TouchUpInside)
     }
     
     func setupAllViews() {
+        
         
         //set button border
         btnBorder(btn_register)
@@ -52,7 +67,20 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         autoLayout()
         
         loadConfigure()
+        
+    }
     
+    func gotoLang() {
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("ChooseLanguage") as! FirstLaunchLanguage
+        
+        let transition = CATransition()
+        transition.duration = 0.2
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        view.window!.layer.addAnimation(transition, forKey: kCATransition)
+        self.presentViewController(nextViewController, animated: false, completion: nil)
+        
     }
 
     
@@ -191,32 +219,24 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         
         self.btn_register.translatesAutoresizingMaskIntoConstraints = false
         self.btn_register.centerXAnchor.constraintEqualToAnchor(self.subBottomView.centerXAnchor).active = true
-        self.btn_register.topAnchor.constraintEqualToAnchor(self.subBottomView.topAnchor, constant: 40).active = true
+        self.btn_register.topAnchor.constraintEqualToAnchor(self.subBottomView.topAnchor, constant: 30).active = true
         self.btn_register.widthAnchor.constraintEqualToConstant(250).active = true
         self.btn_register.heightAnchor.constraintEqualToConstant(50).active = true
         
         self.btn_login.translatesAutoresizingMaskIntoConstraints = false
         self.btn_login.centerXAnchor.constraintEqualToAnchor(self.subBottomView.centerXAnchor).active = true
-        self.btn_login.topAnchor.constraintEqualToAnchor(self.btn_register.bottomAnchor, constant: 30).active = true
+        self.btn_login.topAnchor.constraintEqualToAnchor(self.btn_register.bottomAnchor, constant: 20).active = true
         self.btn_login.widthAnchor.constraintEqualToConstant(250).active = true
         self.btn_login.heightAnchor.constraintEqualToConstant(50).active = true
+        
+        self.btnCLang.translatesAutoresizingMaskIntoConstraints = false
+        self.btnCLang.bottomAnchor.constraintEqualToAnchor(subBottomView.bottomAnchor, constant: -10).active = true
+        self.btnCLang.centerXAnchor.constraintEqualToAnchor(self.subBottomView.centerXAnchor).active = true
+        self.btnCLang.widthAnchor.constraintEqualToConstant(200).active = true
+        self.btnCLang.heightAnchor.constraintEqualToConstant(40).active = true
+        
     }
     
-    
-//    override func viewDidAppear(animated: Bool) {
-//        
-//        self.isAppAlreadyLaunchedOnce()
-//        
-//        let userDefaults = NSUserDefaults.standardUserDefaults()
-//        if let systemLang = userDefaults.valueForKey("AppLanguage") {
-//            setLanguage.appLanguage = systemLang as! String
-//            self.language = setLanguage.appLanguage
-//        } else {
-//            setLanguage.appLanguage = "en"
-//            self.language = setLanguage.appLanguage
-//        }
-//    }
-//    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.sView.translatesAutoresizingMaskIntoConstraints = true
@@ -226,27 +246,6 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-  
-    
-//    func isAppAlreadyLaunchedOnce()->Bool{
-//        let defaults = NSUserDefaults.standardUserDefaults()
-//        
-//        if let isAppAlreadyLaunchedOnce = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
-//            //self.dismissViewControllerAnimated(true, completion: nil)
-//            return true
-//        }else{
-//            defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-//            self.firstload()
-//            return false
-//        }
-//    }
-//    
-//    func firstload() {
-//        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-//        let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("ChooseLanguage") as! FirstLaunchLanguage
-//        self.presentViewController(nextViewController, animated:true, completion:nil)
-//    }
     
     func btnBorder(sender: UIButton) {
         sender.backgroundColor = UIColor.clearColor()
