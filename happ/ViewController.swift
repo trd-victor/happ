@@ -13,6 +13,10 @@ struct setLanguage {
     static var appLanguage: String = ""
 }
 
+struct sysCache {
+    var cache = NSCache()
+}
+
 class ViewController: UIViewController, UIScrollViewDelegate {
     
     /*variable declaration..*/
@@ -30,22 +34,22 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet var imageLogo: UIImageView!
     @IBOutlet var btnCLang: UIButton!
     
+    //basepath
+    let baseUrl: NSURL = NSURL(string: "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    
     var portrait: Bool = false
     var landscape: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupAllViews()
-    
+        self.getAllUserInfo()
+        
         let config = SYSTEM_CONFIG()
-        if var count = config.getSYS_VAL("runningApp") as? Int {
-            count += 1
+        if let count = config.getSYS_VAL("runningApp") as? Int {
             if count > 1 {
                 self.btnCLang.hidden = true
             }
-            config.setSYS_VAL(count, key: "runningApp")
-        }else{
-            config.setSYS_VAL(1, key: "runningApp")
         }
         self.btnCLang.setTitle(config.translate("sys_change_lang"), forState: .Normal)
         self.btnCLang.addTarget(self, action: Selector("gotoLang"), forControlEvents: .TouchUpInside)
@@ -71,6 +75,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func gotoLang() {
+                
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("ChooseLanguage") as! FirstLaunchLanguage
         
@@ -99,6 +104,69 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         }
         
         return formatter.stringFromDate(date)
+    }
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().UUIDString)"
+    }
+    
+    func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
+        let body = NSMutableData();
+        
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString("\(value)\r\n")
+            }
+        }
+        
+        body.appendString("--\(boundary)--\r\n")
+        
+        return body
+    }
+    
+    
+    func getAllUserInfo() {
+        
+        let config = SYSTEM_CONFIG()
+        
+        let parameters = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "user_search",
+            "d"           : "0",
+            "lang"        : "en"
+        ]
+        let request1 = NSMutableURLRequest(URL: self.baseUrl)
+        let boundary1 = generateBoundaryString()
+        request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
+        request1.HTTPMethod = "POST"
+        request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
+        let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1) {
+            data1, response1, error1 in
+            if error1 != nil{
+                print("\(error1)")
+                return;
+            }
+            do {
+                let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                if let info = json2!["result"] as? NSArray {
+                    
+                    for profile in info {
+                        config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
+                        if let url = profile["icon"] as? String {
+                            config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
+                        }else{
+                            config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                        }
+                    }
+                }
+            } catch {
+                print(error)
+            }
+        }
+        task2.resume()
     }
     
     func loadConfigure(){

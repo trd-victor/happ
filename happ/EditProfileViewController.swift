@@ -324,8 +324,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
         
-        //        presentViewController(viewControllerToPresent, animated: false, completion: nil)
-        //        self.tabBarController?.presentViewController(viewControllerToPresent, animated: true, completion: nil)
         self.dismissViewControllerAnimated(false, completion: nil)
     }
     
@@ -516,7 +514,12 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 5  : "\(appDesignState)",
                 6  : "\(webDesignState)"
             ]
-            let skills2 = returnSkillValue(skills)
+            
+            var skills2 = returnSkillValue(skills)
+            if skills2 != "" {
+                skills2 = String(skills2.characters.dropLast())
+            }
+            
             var targetedData: String
             
             //check if there is new Image selected on gallery
@@ -575,7 +578,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                         if json!["success"] != nil {
                             let uid = globalUserId.FirID
                             FIRDatabase.database().reference().child("users").child("\(uid)").child("name").setValue(name)
-                            self.loadUserData()
+                            
+                            //updating image url on firebase
+                            self.setImageToFirebaseUser()
                         }
                         self.displayMyAlertMessage(message)
                     }
@@ -616,7 +621,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 }else if key == 5 {
                     retString += "App design,"
                 }else if key == 6 {
-                    retString += "Web design"
+                    retString += "Web design,"
                 }
             }
         }
@@ -678,7 +683,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         if data != nil && self.checkNewImage == true {
             
-            let filename = "profile_\(globalUserId.userID)_\(self.randomString(6))_\(self.randomString(5))"
+            let filename = "profile_\(globalUserId.userID)_\(self.randomString(6))_\(self.randomString(5)).jpg"
             
             body.appendString("--\(boundary)\r\n")
             body.appendString("Content-Disposition: form-data; name=\"icon\"; filename=\"\(filename)\"\r\n")
@@ -714,6 +719,67 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
-    
+    func setImageToFirebaseUser(){
+        //let URL
+        let viewDataURL = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
+        
+        //created NSURL
+        let requestURL = NSURL(string: viewDataURL)
+        
+        //creating NSMutableURLRequest
+        let request = NSMutableURLRequest(URL: requestURL!)
+        
+        //set boundary string..
+        let boundary = generateBoundaryString()
+        
+        //set value for image upload
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        //setting the method to post
+        request.HTTPMethod = "POST"
+        
+        //        set parameters...
+        let param = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "get_userinfo",
+            "d"           : "0",
+            "lang"        : "en",
+            "user_id"     : "\(userId)"
+        ]
+        
+        //adding the parameters to request body
+        request.HTTPBody = createBodyWithParameters(param,  data: nil, boundary: boundary)
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil{
+                print("\(error)")
+                return;
+            }
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                if json!["result"] != nil {
+                    var image: String!
+                    
+                    if let _ = json!["result"]!["icon"] as? NSNull {
+                        image = ""
+                    } else {
+                        image = json!["result"]!["icon"] as? String
+                    }
+                    
+                    if self.checkNewImage {
+                        let uid = globalUserId.FirID
+                        FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
+                        self.checkNewImage = false
+                    }
+                }
+            } catch {
+                print(error)
+            }
+        }
+        task.resume()
+    }
     
 }

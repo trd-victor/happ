@@ -50,6 +50,8 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshSituation", object: nil)
+        
         //load language set.
         language = setLanguage.appLanguage
         
@@ -138,6 +140,14 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
         self.freestatus.text = config.translate("subtitle_now_free")
     }
     
+    func refreshLang(notification: NSNotification){
+        let config = SYSTEM_CONFIG()
+        
+        //set title and text accdg. to language set....
+        self.congestiontitle.title = config.translate("title_situation")
+        self.situation.text = config.translate("label_congestion_situation")
+        self.freestatus.text = config.translate("subtitle_now_free")
+    }
     
     func getCongestionPercentage(sender: Int) {
        

@@ -41,17 +41,19 @@ class getSystemValue {
             }
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                for result in json?.valueForKey("result") as! NSArray {
-                    if result["fields"] != nil && result["fields"]!!["key"] != nil {
-                        if let msg = result["fields"]! {
-                            let key = msg["key"] as! String
-                            let en = msg["value_en"] as! String
-                            let ja = msg["value_jp"] as! String
-                            
-                            self.sysVals[key] = [
-                                "en" : en,
-                                "ja" : ja
-                            ]
+                if let _ = json?.valueForKey("result") as? NSArray {
+                    for result in json?.valueForKey("result") as! NSArray {
+                        if result["fields"] != nil && result["fields"]!!["key"] != nil {
+                            if let msg = result["fields"]! {
+                                let key = msg["key"] as! String
+                                let en = msg["value_en"] as! String
+                                let ja = msg["value_jp"] as! String
+                                
+                                self.sysVals[key] = [
+                                    "en" : en,
+                                    "ja" : ja
+                                ]
+                            }
                         }
                     }
                 }

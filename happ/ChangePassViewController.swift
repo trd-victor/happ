@@ -163,8 +163,17 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
                         }
                     }
                     dispatch_async(dispatch_get_main_queue()) {
-                        let MailError = Error()
-                        self.displayMyAlertMessage(MailError.ErrorList["\(self.language)"]!["not_regist_email"]!)
+                        if json!["error"] != nil {
+                            if json!["message"] != nil {
+                                self.displayMyAlertMessage(json!["message"] as! String)
+                            }
+                        }else{
+                            if json!["result"] != nil {
+                                if json!["result"]!["mess"] != nil {
+                                    self.displayMyAlertMessage(json!["result"]!["mess"] as! String)
+                                }
+                            }
+                        }
                     }
                     
                 } catch {

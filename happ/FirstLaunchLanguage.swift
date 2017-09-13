@@ -22,7 +22,13 @@ class FirstLaunchLanguage: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.skip.action = Selector("skip:")
+        
+        let config = getSystemValue()
+        config.getKey()
+        
         autoLayout()
+        
+        
     }
     
     func autoLayout(){

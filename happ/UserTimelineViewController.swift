@@ -12,7 +12,6 @@ struct statusButton {
     static var status : String = ""
 }
 
-
 class UserTimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     
     @IBOutlet var navBar: UINavigationBar!
@@ -93,12 +92,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         return control
     }()
     
+    var page:Int = 1
     var userProfile = NSCache()
     
     @IBOutlet var searchIcon: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
         
         if #available(iOS 10, *){
         }else{
@@ -148,9 +150,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.mytableview.delegate = self
         self.mytableview.dataSource = self
-        
     }
   
+    func refreshLang(notification: NSNotification) {
+        let config = SYSTEM_CONFIG()
+        self.labelFree.text = config.translate("subtitle_now_free")
+    }
     
     func autoLayout(){
         navBar.translatesAutoresizingMaskIntoConstraints = false
@@ -183,7 +188,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         freetimeStatus.rightAnchor.constraintEqualToAnchor(topView.rightAnchor, constant: -10).active = true
         
         mytableview.translatesAutoresizingMaskIntoConstraints = false
-        mytableview.topAnchor.constraintEqualToAnchor(topView.bottomAnchor, constant: 5).active = true
+        mytableview.topAnchor.constraintEqualToAnchor(topView.bottomAnchor, constant: 10).active = true
         mytableview.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         mytableview.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         mytableview.heightAnchor.constraintEqualToAnchor(view.heightAnchor, constant: -120).active = true
@@ -295,13 +300,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         defaults.synchronize()
     }
     
-    var page:Int = 1
     
     func getOlderPostTimeline() {
         
         self.page += 1
-        
-        let post_id = self.postID[0]
         
         let parameters = [
             "sercret"     : "jo8nefamehisd",
@@ -311,7 +313,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "lang"        : "en",
             "user_id"     : "\(globalUserId.userID)",
             "page"        : "\(page)",
-            "post_id"     : "\(post_id)",
             "count"       : "5"
         ]
        let request = NSMutableURLRequest(URL: self.baseUrl)
@@ -378,13 +379,18 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                     self.fromID.append(body as! String)
                                 }
                                 
+                                
+                                dispatch_async(dispatch_get_main_queue()){
+                                    if self.loadingData {
+                                        self.loadingData = false
+                                    }
+                                    self.mytableview.reloadData()
+                                }
                             }
                         }
                         
                     }
                 }
-                let count: Int = self.postID.count - 4
-                self.getAllUserInfo(self.fromID, count: count )
             } catch {
                 print(error)
             }
@@ -394,11 +400,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func getTimelineUser() {
-        
-        if !self.firstLoad {
-            self.refreshControl.beginRefreshing()
-            self.firstLoad = true
-        }
         
         let parameters = [
             "sercret"     : "jo8nefamehisd",
@@ -478,12 +479,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                     self.fromID.append(id as! String)
                                 }
                                 
+                                dispatch_async(dispatch_get_main_queue()){
+                                    self.mytableview.reloadData()
+                                }
                             }
                         }
                         
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.getAllUserInfo(self.fromID, count: 0)
-                        }
                     }
                 }
             } catch {
@@ -491,64 +492,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
         task.resume()
-    }
-    
-    
-    func getAllUserInfo(userID: [String]?, count: Int) {
-        let config = SYSTEM_CONFIG()
-        
-        let parameters = [
-            "sercret"     : "jo8nefamehisd",
-            "action"      : "api",
-            "ac"          : "user_search",
-            "d"           : "0",
-            "lang"        : "en"
-        ]
-        let request1 = NSMutableURLRequest(URL: self.baseUrl)
-        let boundary1 = generateBoundaryString()
-        request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
-        request1.HTTPMethod = "POST"
-        request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
-        let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1) {
-            data1, response1, error1 in
-            if error1 != nil{
-                print("\(error1)")
-                return;
-            }
-            do {
-                let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                if json2!["result"] != nil {
-                    
-                    for profile in json2!["result"] as! NSArray {
-//                        self.userProfile.setObject(profile["name"]!!, forKey: "username_\(profile["user_id"]!!)")
-                        config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
-                        if let url = profile["icon"] as? String {
-//                            self.userProfile.setObject(profile["name"]!!, forKey: "userimage_\(profile["user_id"]!!)")
-                            config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
-                        }else{
-//                            self.userProfile.setObject(profile["name"]!!, forKey: "userimage_\(profile["user_id"]!!)")
-                            config.setSYS_VAL("", key: "userimage_\(profile["user_id"]!!)")
-                        }
-//                        config.setSYS_VAL(profile["icon"]!!, key: "userimage_\(profile["user_id"]!!)")
-                    }
-                            self.mytableview.reloadData()
-                            if self.firstLoad {
-                                self.firstLoad = false
-                                self.refreshControl.endRefreshing()
-                            }
-                            if self.loadingData {
-                                self.loadingData = false
-                            }
-                            if self.scrollLoad {
-                                self.scrollLoad = false
-                            }
-                }
-                
-            } catch {
-                print(error)
-            }
-        }
-        task2.resume()
     }
     
     func refreshTable() {
@@ -573,7 +516,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         if scrollView == self.mytableview {
-            if scrollView.contentOffset.y < -50 && self.scrollLoad == false {
+            if scrollView.contentOffset.y < -60 && self.scrollLoad == false {
                 self.page = 1
                 self.scrollLoad = true
                 
@@ -613,9 +556,24 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         if self.img3[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("TripleImage", forIndexPath: indexPath) as! TripleImage
-            cell.textLabel?.text = username
+            
+            let imgView = UIImageView()
+            
+            cell.btnUsername.setTitle(username, forState: .Normal)
+            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+            cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
-            cell.profileImg.profileForCache(userimageURL)
+            
+            if userimageURL == "null" {
+                imgView.image = UIImage(named: "noPhoto")
+            }else {
+                imgView.profileForCache(userimageURL)
+            }
+            cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
+            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+            
+            cell.profileImg.tag = Int(self.fromID[indexPath.row])!
             cell.postDate.text = self.postDate[indexPath.row]
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
@@ -635,10 +593,22 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else if self.img2[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("DoubleImage", forIndexPath: indexPath) as! DoubleImage
+            let imgView = UIImageView()
             
-            cell.textLabel?.text = username
+            cell.btnUsername.setTitle(username, forState: .Normal)
+            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+            cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
-            cell.profileImg.profileForCache(userimageURL)
+            
+            if userimageURL == "null" {
+                imgView.image = UIImage(named: "noPhoto")
+            }else {
+                imgView.profileForCache(userimageURL)
+            }
+            cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
+            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+            
             cell.postDate.text = self.postDate[indexPath.row]
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
@@ -658,10 +628,22 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else if self.img1[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("SingleImage", forIndexPath: indexPath) as! SingleImage
+            let imgView = UIImageView()
             
-            cell.textLabel?.text = username
+            cell.btnUsername.setTitle(username, forState: .Normal)
+            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+            cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
-            cell.profileImg.profileForCache(userimageURL)
+            
+            if userimageURL == "null" {
+                imgView.image = UIImage(named: "noPhoto")
+            }else {
+                imgView.profileForCache(userimageURL)
+            }
+            cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
+            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+            
             cell.postDate.text = self.postDate[indexPath.row]
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
@@ -679,10 +661,22 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else{
             let cell = tableView.dequeueReusableCellWithIdentifier("NoImage", forIndexPath: indexPath) as! NoImage
+            let imgView = UIImageView()
             
-            cell.textLabel?.text = username
+            cell.btnUsername.setTitle(username, forState: .Normal)
+            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+            cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
-            cell.profileImg.profileForCache(userimageURL)
+            
+            if userimageURL == "null" {
+                imgView.image = UIImage(named: "noPhoto")
+            }else {
+                imgView.profileForCache(userimageURL)
+            }
+            cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
+            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+            
             cell.postDate.text = self.postDate[indexPath.row]
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
@@ -699,6 +693,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
             
         }
+    }
+    
+    func viewProfile(sender: UIButton!){
+        print(sender.tag)
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {

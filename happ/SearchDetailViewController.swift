@@ -99,6 +99,7 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         
         super.viewDidLoad()
         self.configureView()
+        self.loadConfig()
         self.user_id = SearchDetailsView.searchIDuser
         self.mytabBar.delegate = self
         
@@ -148,6 +149,15 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         
         autoLayout()
         
+    }
+    
+    func loadConfig(){
+        let config = SYSTEM_CONFIG()
+        self.mytabBar.items![0].title = config.translate("menu_timeline")
+        self.mytabBar.items![1].title = config.translate("menu_message")
+        self.mytabBar.items![2].title = config.translate("menu_reservation")
+        self.mytabBar.items![3].title = config.translate("menu_situation")
+        self.mytabBar.items![4].title = config.translate("menu_configuration")
     }
     
     func autoLayout() {

@@ -40,46 +40,15 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet var btnLogout: UIButton!
     @IBOutlet var labelLogout: UILabel!
     @IBOutlet var labelBasicInfo: UILabel!
-    var arrText = [
-        "en" :
-            [
-                "EditProfile" : "Edit profile",
-                "EmailAddressChange" : "E-mail address change",
-                "ChangePassword" : "Change Password",
-                "LangSettings" : "Language settings",
-                "labelLogout": "Logout",
-                "ToLogOut" : "To log out",
-                "labelBasicInfo" : "Basic information",
-                "navTitle" : "Configuration",
-                "Timeline" : "Timeline",
-                "Message" : "Message",
-                "Reservation": "Room Reservation",
-                "Situation": "Situation",
-                "Configuration": "Configuration"
-                
-        ],
-        "ja" : [
-                "EditProfile" : "プロフィールの編集",
-                "EmailAddressChange" : "メールアドレスの変更",
-                "ChangePassword" : "パスワードの変更",
-                "LangSettings" : "言語の設定",
-                "labelLogout": "ログアウト",
-                "labelBasicInfo" : "基本情報",
-                "ToLogOut" : "ログアウトする",
-                "navTitle" : "設定",
-                "Timeline" : "タイムライン",
-                "Message" : "メッセージ",
-                "Reservation": "ルーム予約",
-                "Situation": "状況",
-                "Configuration": "設定"
-        ]
-    ]
+    
     
     var language: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshConfig", object: nil)
+        
         //load language set.
         language = setLanguage.appLanguage
         
@@ -228,6 +197,24 @@ class ConfigurationViewController: UIViewController {
         
     }
     
+    func refreshLang(notification: NSNotification) {
+        
+        let config = SYSTEM_CONFIG()
+        
+        //set label text..
+        navTitle.title = config.translate("menu_configuration")
+        labelLogout.text = config.translate("label_logout")
+        labelBasicInfo.text = config.translate("subtitle_basic_information")
+        labelLogout.text = config.translate("label_logout")
+        
+        btnEditProfile.setTitle(config.translate("title_edit_profile"), forState: .Normal)
+        btnMailAddressChange.setTitle(config.translate("label_e-mail_address_change"), forState: .Normal)
+        btnChangePass.setTitle(config.translate("label_change-password"), forState: .Normal)
+        btnLanguageSettings.setTitle(config.translate("title_language_settings"), forState: .Normal)
+        btnLogout.setTitle(config.translate("btn_logout"), forState: .Normal)
+    }
+    
+    
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
         transition.duration = 0.25
@@ -294,5 +281,22 @@ class ConfigurationViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
 
+    @IBAction func btnLogout(sender: UIButton) {
+        let myAlert = UIAlertController(title: "", message: "Are you sure you want to logout", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: "Logout", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+            
+            let transition = CATransition()
+            transition.duration = 0.10
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionPush
+            transition.subtype = kCATransitionFromLeft
+            self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
+            self.presentDetail(vc)
+        }))
+        myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
 
 }

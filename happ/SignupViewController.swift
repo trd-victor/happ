@@ -203,9 +203,9 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
 //        let error = Error()
         
         if userEmail == ""  {
-            displayMyAlertMessage(config.translate("empty_email"))
+            displayMyAlertMessage(config.translate("mess_fail_auth"))
         }else if userPass == "" {
-            displayMyAlertMessage(config.translate("empty_passwd"))
+            displayMyAlertMessage(config.translate("mess_fail_auth"))
         }
         else {
 
@@ -262,7 +262,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                         if json!["error"] != nil {
                             errorMessage = json!["error"] as! Bool
                             if errorMessage == true {
-                                self.displayMyAlertMessage(config.translate("login_fail"))
+                                self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                             }
                         } else {
                             self.loginFirebase(userEmail, pass: userPass)
@@ -284,7 +284,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
                 let config = SYSTEM_CONFIG()
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
-                print(config.getSYS_VAL("FirebaseID"))
+                config.setSYS_VAL(2, key: "runningApp")
+                
                 self.redirectLogin()
             } else {
                 self.displayMyAlertMessage("Don't have Account!")

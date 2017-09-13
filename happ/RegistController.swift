@@ -362,7 +362,11 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             ]
             
             //set skill into variable and targets...
-            let keyskill = returnSkillValue(skills)
+            var keyskill = returnSkillValue(skills)
+            if keyskill != "" {
+                keyskill = String(keyskill.characters.dropLast())
+            }
+            
             let targetedData: String = "email,passwd,name,skills,change_lang"
             if language == "ja" {
                 language = "jp"
@@ -563,7 +567,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 }else if key == 5 {
                     retString += "App design,"
                 }else if key == 6 {
-                    retString += "Web design"
+                    retString += "Web design,"
                 }
             }
         }

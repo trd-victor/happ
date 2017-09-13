@@ -52,21 +52,32 @@ class MessageTableViewController: UITableViewController {
         //remove border in messages
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
         
-        self.title = "Messages"
+        self.loadConfig()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTable:", name: "refresh", object: nil)
         
-         NSNotificationCenter.defaultCenter().addObserver(self, selector: "showTabBarMenu:", name: "tabBarShow", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "showTabBarMenu:", name: "tabBarShow", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshLang:", name: "refreshMessage", object: nil)
         
-         self.getUserMessage()
+        self.getUserMessage()
         
+    }
+    
+    func loadConfig(){
+        let config = SYSTEM_CONFIG()
+        
+        self.title = config.translate("title:message")
+    }
+    
+    func refreshLang(notifcation: NSNotification){
+        let config = SYSTEM_CONFIG()
+        self.title = config.translate("title:message")
     }
     
     func getUserMessage() {
         let config = SYSTEM_CONFIG()
         
         let fireDB = config.getSYS_VAL("FirebaseID") as! String
-        print(fireDB)
         let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB)
             
         //start of retrieving messages on every user

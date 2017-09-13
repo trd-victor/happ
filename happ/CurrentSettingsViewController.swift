@@ -28,38 +28,15 @@ class CurrentSettingsViewController: UIViewController {
     var userId: String!
     var language: String!
     
-    var arrText = [
-        
-        "en" : [
-            "btnCurrentSettings": "Current settings",
-            "save": "Save",
-            "title" : "Language settings"
-            
-        ],
-        "ja" : [
-             "btnCurrentSettings": "現在の設定",
-            "save": "保存する",
-            "title" : "言語の設定"
-        ]
-        
-    ]
-
+    let config = SYSTEM_CONFIG()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
         userId = globalUserId.userID
     
         //load language set.
         language = setLanguage.appLanguage
-        
-//        let defaults = NSUserDefaults.standardUserDefaults()
-//        let lang = defaults.valueForKey("AppLanguage")
-        
-//        if lang! as! String == "en"  {
-//            self.currentSettingslang.text = "English"
-//        } else {
-//            self.currentSettingslang.text = "日本語"
-//        }
 
         //set button text..
         self.loadConfigure()
@@ -145,19 +122,31 @@ class CurrentSettingsViewController: UIViewController {
         self.presentDetail(vc)
     }
     
-   
+    func changeSysLang() {
+        
+        // self controller load
+        self.loadConfigure()
+        
+        // other controller load
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshUserTimeline", object: nil, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshMessage", object: nil, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshSituation", object: nil, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshConfig", object: nil, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("refreshMenu", object: nil, userInfo: nil)
+    }
     
     func saveLang(sender: UIBarButtonItem) ->() {
         
         let new_lang = self.currentSettingslang.text!
         
         
-        if new_lang == "English" {
+        if new_lang == "English" || new_lang == "EnglishJP" {
             self.currentSettingslang.text = "en"
         } else {
             self.currentSettingslang.text = "ja"
         }
         
+        self.changeSysLang()
         
         //let URL
         let viewDataURL = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"

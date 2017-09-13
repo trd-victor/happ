@@ -20,12 +20,33 @@ class NoImage: UITableViewCell {
         textLabel?.frame = CGRectMake(70, 22, textLabel!.frame.width, textLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(14)
         
-        detailTextLabel?.frame = CGRectMake(10, 70, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
+        detailTextLabel?.frame = CGRectMake(10, 55, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
         detailTextLabel?.numberOfLines = 0
         detailTextLabel?.lineBreakMode = .ByWordWrapping
         detailTextLabel?.sizeToFit()
     }
+    
+    let btnProfile: UIButton = {
+        let btn = UIButton()
+        btn.contentMode = .ScaleAspectFill
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.layer.cornerRadius = 20
+        btn.clipsToBounds = true
+        return btn
+    }()
+    
+    let btnUsername: UIButton = {
+        let btn = UIButton()
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.titleLabel!.textColor = UIColor.blackColor()
+        btn.setTitleColor(UIColor.blackColor(), forState: .Normal)
+        btn.setTitleColor(UIColor.blackColor(), forState: .Selected)
+        btn.setTitleColor(UIColor.blackColor(), forState: .Focused)
+        btn.titleLabel!.font = UIFont.boldSystemFontOfSize(14)
+        btn.contentHorizontalAlignment = .Left
+        return btn
+    }()
     
     let whiteView: UIView = {
         let view = UIView()
@@ -69,15 +90,21 @@ class NoImage: UITableViewCell {
         addSubview(whiteView)
         sendSubviewToBack(whiteView)
         
-        addSubview(profileImg)
+        addSubview(btnUsername)
+        addSubview(btnProfile)
         addSubview(postDate)
         addSubview(btnDelete)
         
         
-        profileImg.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
-        profileImg.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
-        profileImg.widthAnchor.constraintEqualToConstant(50).active = true
-        profileImg.heightAnchor.constraintEqualToConstant(50).active = true
+        btnProfile.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
+        btnProfile.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
+        btnProfile.widthAnchor.constraintEqualToConstant(40).active = true
+        btnProfile.heightAnchor.constraintEqualToConstant(40).active = true
+        
+        btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
+        btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
         postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
@@ -116,6 +143,27 @@ class SingleImage: UITableViewCell {
         detailTextLabel?.lineBreakMode = .ByWordWrapping
         detailTextLabel?.sizeToFit()
     }
+    
+    let btnProfile: UIButton = {
+        let btn = UIButton()
+        btn.contentMode = .ScaleAspectFill
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.layer.cornerRadius = 20
+        btn.clipsToBounds = true
+        return btn
+    }()
+    
+    let btnUsername: UIButton = {
+        let btn = UIButton()
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.titleLabel!.textColor = UIColor.blackColor()
+        btn.setTitleColor(UIColor.blackColor(), forState: .Normal)
+        btn.setTitleColor(UIColor.blackColor(), forState: .Selected)
+        btn.setTitleColor(UIColor.blackColor(), forState: .Focused)
+        btn.titleLabel!.font = UIFont.boldSystemFontOfSize(14)
+        btn.contentHorizontalAlignment = .Left
+        return btn
+    }()
     
     let whiteView: UIView = {
         let view = UIView()
@@ -174,16 +222,22 @@ class SingleImage: UITableViewCell {
         addSubview(whiteView)
         sendSubviewToBack(whiteView)
         
-        addSubview(profileImg)
+        addSubview(btnUsername)
+        addSubview(btnProfile)
         addSubview(postDate)
         addSubview(btnDelete)
         addSubview(imgContainer)
         imgContainer.addSubview(imgView1)
         
-        profileImg.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
-        profileImg.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
-        profileImg.widthAnchor.constraintEqualToConstant(50).active = true
-        profileImg.heightAnchor.constraintEqualToConstant(50).active = true
+        btnProfile.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
+        btnProfile.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
+        btnProfile.widthAnchor.constraintEqualToConstant(40).active = true
+        btnProfile.heightAnchor.constraintEqualToConstant(40).active = true
+        
+        btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
+        btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
         postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
@@ -230,6 +284,27 @@ class DoubleImage: UITableViewCell {
         detailTextLabel?.lineBreakMode = .ByWordWrapping
         detailTextLabel?.sizeToFit()
     }
+    
+    let btnProfile: UIButton = {
+        let btn = UIButton()
+        btn.contentMode = .ScaleAspectFill
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.layer.cornerRadius = 20
+        btn.clipsToBounds = true
+        return btn
+    }()
+    
+    let btnUsername: UIButton = {
+        let btn = UIButton()
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.titleLabel!.textColor = UIColor.blackColor()
+        btn.setTitleColor(UIColor.blackColor(), forState: .Normal)
+        btn.setTitleColor(UIColor.blackColor(), forState: .Selected)
+        btn.setTitleColor(UIColor.blackColor(), forState: .Focused)
+        btn.titleLabel!.font = UIFont.boldSystemFontOfSize(14)
+        btn.contentHorizontalAlignment = .Left
+        return btn
+    }()
     
     let whiteView: UIView = {
         let view = UIView()
@@ -296,17 +371,23 @@ class DoubleImage: UITableViewCell {
         addSubview(whiteView)
         sendSubviewToBack(whiteView)
         
-        addSubview(profileImg)
+        addSubview(btnUsername)
+        addSubview(btnProfile)
         addSubview(postDate)
         addSubview(btnDelete)
         addSubview(imgContainer)
         imgContainer.addSubview(imgView1)
         imgContainer.addSubview(imgView2)
         
-        profileImg.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
-        profileImg.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
-        profileImg.widthAnchor.constraintEqualToConstant(50).active = true
-        profileImg.heightAnchor.constraintEqualToConstant(50).active = true
+        btnProfile.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
+        btnProfile.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
+        btnProfile.widthAnchor.constraintEqualToConstant(40).active = true
+        btnProfile.heightAnchor.constraintEqualToConstant(40).active = true
+        
+        btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
+        btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
         postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
@@ -359,6 +440,27 @@ class TripleImage: UITableViewCell {
         detailTextLabel?.lineBreakMode = .ByWordWrapping
         detailTextLabel?.sizeToFit()
     }
+    
+    let btnProfile: UIButton = {
+        let btn = UIButton()
+        btn.contentMode = .ScaleAspectFill
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.layer.cornerRadius = 20
+        btn.clipsToBounds = true
+        return btn
+    }()
+    
+    let btnUsername: UIButton = {
+        let btn = UIButton()
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        btn.titleLabel!.textColor = UIColor.blackColor()
+        btn.setTitleColor(UIColor.blackColor(), forState: .Normal)
+        btn.setTitleColor(UIColor.blackColor(), forState: .Selected)
+        btn.setTitleColor(UIColor.blackColor(), forState: .Focused)
+        btn.titleLabel!.font = UIFont.boldSystemFontOfSize(14)
+        btn.contentHorizontalAlignment = .Left
+        return btn
+    }()
     
     let whiteView: UIView = {
         let view = UIView()
@@ -432,7 +534,8 @@ class TripleImage: UITableViewCell {
         addSubview(whiteView)
         sendSubviewToBack(whiteView)
         
-        addSubview(profileImg)
+        addSubview(btnUsername)
+        addSubview(btnProfile)
         addSubview(postDate)
         addSubview(btnDelete)
         addSubview(imgContainer)
@@ -440,10 +543,15 @@ class TripleImage: UITableViewCell {
         imgContainer.addSubview(imgView2)
         imgContainer.addSubview(imgView3)
         
-        profileImg.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
-        profileImg.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
-        profileImg.widthAnchor.constraintEqualToConstant(50).active = true
-        profileImg.heightAnchor.constraintEqualToConstant(50).active = true
+        btnProfile.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
+        btnProfile.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
+        btnProfile.widthAnchor.constraintEqualToConstant(40).active = true
+        btnProfile.heightAnchor.constraintEqualToConstant(40).active = true
+        
+        btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
+        btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
         postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true

@@ -26,7 +26,7 @@ extension UIImageView {
         dispatch_async(dispatch_get_main_queue(), {() -> Void in
             
             if data == nil {
-                self.image = UIImage(named: "photo")
+                self.image = UIImage(named: "noPhoto")
                 return
             } else {
                 if let downloadImage = UIImage(data: data!) {
