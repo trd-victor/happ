@@ -1203,7 +1203,7 @@
                                     <color key="titleColor" red="0.88627450980392153" green="0.6705882352941176" blue="0.37647058823529411" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <segue destination="BYZ-38-t0r" kind="modal" id="p0I-By-wab"/>
+                                    <action selector="btnLogout:" destination="Fqd-1L-vKV" eventType="touchUpInside" id="EsL-hq-PzV"/>
                                 </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="right-icon" id="Fbc-m2-VON">
@@ -1714,6 +1714,7 @@
                         <color key="selectedImageTintColor" red="1" green="0.99607843139999996" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
                     </tabBar>
                     <connections>
+                        <outlet property="menuTabBar" destination="PEM-8e-9Li" id="HyY-Ze-lQA"/>
                         <segue destination="dx6-VY-Iwv" kind="relationship" relationship="viewControllers" id="eTY-vy-na1"/>
                         <segue destination="fHb-3J-ySl" kind="relationship" relationship="viewControllers" id="cJ6-dO-Z28"/>
                         <segue destination="QjW-QP-TU2" kind="relationship" relationship="viewControllers" id="qGL-Ak-nB4"/>
@@ -2629,9 +2630,9 @@
         <image name="timelineIcon" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="p0I-By-wab"/>
         <segue reference="aK0-bE-m4E"/>
-        <segue reference="Uti-YF-d28"/>
+        <segue reference="cJ6-dO-Z28"/>
+        <segue reference="DQQ-jv-aFW"/>
     </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.5" green="0.0" blue="0.5" alpha="1" colorSpace="calibratedRGB"/>
 </document>

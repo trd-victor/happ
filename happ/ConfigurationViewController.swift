@@ -281,7 +281,7 @@ class ConfigurationViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
 
-    @IBAction func btnLogout(sender: UIButton) {
+    @IBAction func btnLogout(sender: AnyObject) {
         let myAlert = UIAlertController(title: "", message: "Are you sure you want to logout", preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: "Logout", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -298,5 +298,5 @@ class ConfigurationViewController: UIViewController {
         myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
-
+    
 }
