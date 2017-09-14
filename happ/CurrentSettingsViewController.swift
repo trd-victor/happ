@@ -98,6 +98,12 @@ class CurrentSettingsViewController: UIViewController {
         btnCurrentSettings.setTitle(config.translate("label_current settings"), forState: .Normal)
         navTitle.title = config.translate("title_language_settings")
         savelang.title = config.translate("button_save")
+        let lang = changeLang.lang
+        if lang == "en" {
+            self.currentSettingslang.text = config.translate("label_en")
+        } else {
+            self.currentSettingslang.text = config.translate("label_ja")
+        }
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -133,6 +139,8 @@ class CurrentSettingsViewController: UIViewController {
         NSNotificationCenter.defaultCenter().postNotificationName("refreshSituation", object: nil, userInfo: nil)
         NSNotificationCenter.defaultCenter().postNotificationName("refreshConfig", object: nil, userInfo: nil)
         NSNotificationCenter.defaultCenter().postNotificationName("refreshMenu", object: nil, userInfo: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
+        
     }
     
     func saveLang(sender: UIBarButtonItem) ->() {
@@ -192,30 +200,10 @@ class CurrentSettingsViewController: UIViewController {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            //user Data...
-            var mess: String!
-            
-            
             if error != nil{
                 print("\(error)")
                 return;
             }
-            do {
-                
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if json!["result"] != nil {
-                    mess   = json!["result"]!["mess"] as! String
-                }
-
-                dispatch_async(dispatch_get_main_queue()) {
-                   self.displayMyAlertMessage(mess)
-                }
-                
-            } catch {
-                print(error)
-            }
-            
         }
         task.resume()
 

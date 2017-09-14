@@ -45,6 +45,8 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         self.setupAllViews()
         self.getAllUserInfo()
         
+        
+        
         let config = SYSTEM_CONFIG()
         if let count = config.getSYS_VAL("runningApp") as? Int {
             if count > 1 {
@@ -84,6 +86,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         view.window!.layer.addAnimation(transition, forKey: kCATransition)
+        
         self.presentViewController(nextViewController, animated: false, completion: nil)
         
     }

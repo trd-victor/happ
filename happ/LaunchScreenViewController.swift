@@ -99,7 +99,7 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(5.0) {
+        self.delay(10.0) {
             self.dismissViewControllerAnimated(false, completion: nil)
             self.gotoMainBoard()
         }
@@ -120,7 +120,7 @@ class LaunchScreenViewController: UIViewController {
             return true
         }else{
             defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-            self.delay(5.0){
+            self.delay(10.0){
                 self.firstload()
             }
             return false

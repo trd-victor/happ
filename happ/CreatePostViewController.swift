@@ -295,6 +295,24 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     func savePost(parameters: [String: String]?) {
+        
+        let loadingView: UIView = UIView()
+        
+        saveItem.enabled = false
+        navBack.enabled = false
+        content.userInteractionEnabled = false
+        loadingView.backgroundColor = UIColor.grayColor()
+        loadingView.alpha = 0.3
+        view.addSubview(loadingView)
+        view.sendSubviewToBack(scrollView)
+        
+        loadingView.translatesAutoresizingMaskIntoConstraints = false
+        loadingView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        loadingView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        loadingView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        loadingView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        
+        
         var mess: Bool!
         let config = SYSTEM_CONFIG()
         
@@ -318,9 +336,9 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
                 if json3!["success"] != nil {
                     mess = json3!["success"] as! Bool
                 }
-                NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
                 dispatch_async(dispatch_get_main_queue()) {
                     if mess == true {
+                        NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
                         self.displayMyAlertMessage(config.translate("saved_post"))
                         self.content.text = config.translate("holder_post_content")
                     }
@@ -335,6 +353,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
        
     }
+    
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
     }
@@ -352,7 +371,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         if self.imgView1.image != nil {
             body.appendString("--\(boundary)\r\n")
             let imageData = UIImageJPEGRepresentation(self.imgView1.image!,0.5)
-            let fileName = "\(randomString(12)).jpg"
+            let fileName = "\(randomString(16))-\(randomString(16)).jpg"
             body.appendString("Content-Disposition: form-data; name=\"images[0]\"; filename=\"\(fileName)\"\r\n")
             body.appendString("Content-Type: image/jpg \r\n\r\n")
             body.appendData(imageData!)
@@ -361,7 +380,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         if self.imgView2.image != nil {
             body.appendString("--\(boundary)\r\n")
             let imageData = UIImageJPEGRepresentation(self.imgView2.image!,0.5)
-            let fileName = "\(randomString(12)).jpg"
+            let fileName = "\(randomString(16))-\(randomString(16)).jpg"
             body.appendString("Content-Disposition: form-data; name=\"images[1]\"; filename=\"\(fileName)\"\r\n")
             body.appendString("Content-Type: image/jpg \r\n\r\n")
             body.appendData(imageData!)
@@ -370,7 +389,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         if self.imgView3.image != nil {
             body.appendString("--\(boundary)\r\n")
             let imageData = UIImageJPEGRepresentation(self.imgView3.image!,0.5)
-            let fileName = "\(randomString(12)).jpg"
+            let fileName = "\(randomString(16))-\(randomString(16)).jpg"
             body.appendString("Content-Disposition: form-data; name=\"images[2]\"; filename=\"\(fileName)\"\r\n")
             body.appendString("Content-Type: image/jpg \r\n\r\n")
             body.appendData(imageData!)
@@ -384,7 +403,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     func randomString(length: Int) -> String {
         
-        let letters : NSString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let letters : NSString = "abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         let len = UInt32(letters.length)
         
         var randomString = ""

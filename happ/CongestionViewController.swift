@@ -45,6 +45,8 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
     var urlImage : String!
     var data: NSData!
     
+    
+    
     @IBOutlet var collectionView: UICollectionView!
     
     override func viewDidLoad() {
@@ -68,6 +70,7 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
         
         self.getCongestionPercentage(office_id)
         
+        statusCollectionView.hidden = true
         
         
         let userFreetime = NSUserDefaults.standardUserDefaults().objectForKey("Freetime") as? String
@@ -103,7 +106,6 @@ class CongestionViewController: UIViewController, UICollectionViewDataSource, UI
         statusCollectionView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         statusCollectionView.topAnchor.constraintEqualToAnchor(situationView.bottomAnchor).active = true
         statusCollectionView.widthAnchor.constraintEqualToConstant(245).active = true
-        
         statusCollectionView.heightAnchor.constraintEqualToConstant(175).active = true
         
         percentage.translatesAutoresizingMaskIntoConstraints = false

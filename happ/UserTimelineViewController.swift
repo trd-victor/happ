@@ -101,6 +101,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         super.viewDidLoad()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadTimeline:")), name: "reloadTimeline", object: nil)
         
         if #available(iOS 10, *){
         }else{
@@ -150,6 +151,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.mytableview.delegate = self
         self.mytableview.dataSource = self
+        
     }
   
     func refreshLang(notification: NSNotification) {
@@ -324,8 +326,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             data, response, error  in
             
             if error != nil{
-                print("\(error)")
-                return;
+                self.getTimelineUser()
             }
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
@@ -420,8 +421,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             data, response, error  in
             
             if error != nil{
-                print("\(error)")
-                return;
+                self.getTimelineUser()
             }
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
@@ -537,8 +537,28 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
     }
+    
+    func reloadTimeline(notification: NSNotification){
+        self.page = 1
+        
+        for var i = 5; i < self.fromID.count; i++ {
+            let indexPath = NSIndexPath(forRow: i, inSection: 0)
+            self.mytableview.beginUpdates()
+            self.mytableview.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+            self.userBody.removeAtIndex(i)
+            self.postDate.removeAtIndex(i)
+            self.postID.removeAtIndex(i)
+            self.fromID.removeAtIndex(i)
+            self.img1.removeAtIndex(i)
+            self.img2.removeAtIndex(i)
+            self.img3.removeAtIndex(i)
+            self.mytableview.endUpdates()
+        }
+        
+        self.reloadTimeline()
+    }
 
-     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
@@ -551,17 +571,22 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let config = SYSTEM_CONFIG()
         let username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String
         let userimageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as! String
-//        let username = userProfile.objectForKey("username_\(self.fromID[indexPath.row])") as! String
-//        let userimageURL = userProfile.objectForKey("userimage_\(self.fromID[indexPath.row])") as! String
+        let cellTap = UITapGestureRecognizer(target: self, action: "tapCell:")
+        let dateTap = UITapGestureRecognizer(target: self, action: "tapDate:")
+        let bodyTap = UITapGestureRecognizer(target: self, action: "tapBody:")
+        let imgTap = UITapGestureRecognizer(target: self, action: "tapImage:")
         
         if self.img3[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("TripleImage", forIndexPath: indexPath) as! TripleImage
+            
+            cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
             cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
+            cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
             if userimageURL == "null" {
@@ -582,6 +607,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.imgView1.imgForCache(self.img1[indexPath.row])
             cell.imgView2.imgForCache(self.img2[indexPath.row])
             cell.imgView3.imgForCache(self.img3[indexPath.row])
+            cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
                 cell.btnDelete.hidden = false
@@ -593,11 +619,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else if self.img2[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("DoubleImage", forIndexPath: indexPath) as! DoubleImage
+            
+            cell.contentView.addGestureRecognizer(cellTap)
+            
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
             cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
+            cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
             if userimageURL == "null" {
@@ -616,6 +646,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.tag = indexPath.row
             cell.imgView1.imgForCache(self.img1[indexPath.row])
             cell.imgView2.imgForCache(self.img2[indexPath.row])
+            cell.imgContainer.addGestureRecognizer(imgTap)
             
             
             if self.fromID[indexPath.row] == globalUserId.userID {
@@ -628,11 +659,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else if self.img1[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("SingleImage", forIndexPath: indexPath) as! SingleImage
+            
+            cell.contentView.addGestureRecognizer(cellTap)
+            
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
             cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
+            cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
             if userimageURL == "null" {
@@ -650,6 +685,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
             cell.imgView1.imgForCache(self.img1[indexPath.row])
+            cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
                 cell.btnDelete.hidden = false
@@ -661,11 +697,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else{
             let cell = tableView.dequeueReusableCellWithIdentifier("NoImage", forIndexPath: indexPath) as! NoImage
+            
+            cell.contentView.addGestureRecognizer(cellTap)
+            
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
             cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
+            cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
             if userimageURL == "null" {
@@ -682,7 +722,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-        
+            
             if self.fromID[indexPath.row] == globalUserId.userID {
                 cell.btnDelete.hidden = false
             } else {
@@ -692,6 +732,46 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             
             return cell
             
+        }
+    }
+    
+    func tapImage(sender: UITapGestureRecognizer){
+        viewDetail(sender)
+    }
+    
+    func tapBody(sender: UITapGestureRecognizer){
+        viewDetail(sender)
+    }
+    
+    func tapDate(sender: UITapGestureRecognizer){
+        viewDetail(sender)
+    }
+    
+    func tapCell(sender: UITapGestureRecognizer){
+        viewDetail(sender)
+    }
+    
+    func viewDetail(sender: AnyObject){
+        let config = SYSTEM_CONFIG()
+        if sender.state == UIGestureRecognizerState.Ended {
+            let tapLocation = sender.locationInView(self.mytableview)
+            if let indexPath = self.mytableview.indexPathForRowAtPoint(tapLocation) {
+                
+                UserDetails.username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String
+                UserDetails.userimageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as! String
+                UserDetails.postDate = self.postDate[indexPath.row]
+                UserDetails.fromID = self.fromID[indexPath.row]
+                UserDetails.body = String(self.userBody[indexPath.row])
+                UserDetails.img1 = self.img1[indexPath.row]
+                UserDetails.img2 = self.img2[indexPath.row]
+                UserDetails.img3 = self.img3[indexPath.row]
+                
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+                
+                self.presentDetail(vc)
+                
+            }
         }
     }
     

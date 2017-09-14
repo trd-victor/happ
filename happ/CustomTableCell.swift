@@ -423,7 +423,7 @@ class DoubleImage: UITableViewCell {
 }
 
 class TripleImage: UITableViewCell {
-    
+        
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -572,7 +572,6 @@ class TripleImage: UITableViewCell {
         imgView1.leftAnchor.constraintEqualToAnchor(imgContainer.leftAnchor).active = true
         imgView1.widthAnchor.constraintEqualToAnchor(imgContainer.widthAnchor, multiplier: 1/2).active = true
         imgView1.heightAnchor.constraintEqualToAnchor(imgContainer.heightAnchor).active = true
-        
         
         imgView2.topAnchor.constraintEqualToAnchor(imgContainer.topAnchor).active = true
         imgView2.rightAnchor.constraintEqualToAnchor(imgContainer.rightAnchor).active = true

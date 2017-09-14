@@ -20,6 +20,8 @@ class MenuViewController: UITabBarController {
         
         //refresh notification
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshMenu", object: nil)
+        
+        viewControllers?.removeAtIndex(5)
     }
     
     override func viewWillAppear(animated: Bool) {

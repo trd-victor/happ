@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3823B8219AD4C9A65F44A2CC /* Pods_happ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27363907F19FC132E296BAFF /* Pods_happ.framework */; };
+		3D544EF71F68E6370055019A /* TimelineDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D544EF61F68E6370055019A /* TimelineDetail.swift */; };
 		3D7AA5B11F63704F00E16CAC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B01F63704F00E16CAC /* Extensions.swift */; };
 		3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */; };
 		3D7AA5B71F653E1C00E16CAC /* ExtensionTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */; };
@@ -62,7 +63,6 @@
 		A3B046471F38E283003789CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3B046461F38E283003789CC /* Main.storyboard */; };
 		A3D387C11F21FD590011E323 /* UserTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D387C01F21FD590011E323 /* UserTimelineViewController.swift */; };
 		A3D90D9C1F49678800DB5624 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D90D9B1F49678800DB5624 /* Constants.swift */; };
-		A3D90D9F1F49790500DB5624 /* ComposeMessagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D90D9E1F49790500DB5624 /* ComposeMessagController.swift */; };
 		A3E124AA1F40B9F30053B2CC /* MessageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124A91F40B9F30053B2CC /* MessageTableViewController.swift */; };
 		A3E124AC1F40BA130053B2CC /* ReservationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124AB1F40BA130053B2CC /* ReservationViewController.swift */; };
 		A3E124AE1F40BA300053B2CC /* CongestionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */; };
@@ -75,6 +75,7 @@
 /* Begin PBXFileReference section */
 		21B7B4581F3CCAF89E262E59 /* Pods-happ.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happ.debug.xcconfig"; path = "Pods/Target Support Files/Pods-happ/Pods-happ.debug.xcconfig"; sourceTree = "<group>"; };
 		27363907F19FC132E296BAFF /* Pods_happ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_happ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D544EF61F68E6370055019A /* TimelineDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineDetail.swift; sourceTree = "<group>"; };
 		3D7AA5B01F63704F00E16CAC /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
 		3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionTimeline.swift; sourceTree = "<group>"; };
@@ -133,7 +134,6 @@
 		A3D387C01F21FD590011E323 /* UserTimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTimelineViewController.swift; sourceTree = "<group>"; };
 		A3D90D9B1F49678800DB5624 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A3D90D9D1F496B9E00DB5624 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
-		A3D90D9E1F49790500DB5624 /* ComposeMessagController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeMessagController.swift; sourceTree = "<group>"; };
 		A3E124A91F40B9F30053B2CC /* MessageTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageTableViewController.swift; sourceTree = "<group>"; };
 		A3E124AB1F40BA130053B2CC /* ReservationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReservationViewController.swift; sourceTree = "<group>"; };
 		A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CongestionViewController.swift; sourceTree = "<group>"; };
@@ -219,7 +219,6 @@
 				A31CEAA41F2750AE00F386FC /* ChangeLanguageViewController.swift */,
 				A31CEAA21F27501700F386FC /* ChangeNewPasswordViewController.swift */,
 				A34FC1091F0CC8AE006BFA81 /* ChangePassViewController.swift */,
-				A3D90D9E1F49790500DB5624 /* ComposeMessagController.swift */,
 				A31CEA9E1F27498600F386FC /* ConfigurationViewController.swift */,
 				A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */,
 				A3D90D9B1F49678800DB5624 /* Constants.swift */,
@@ -273,6 +272,7 @@
 				A3A343A61F09F8B600DC55FC /* ViewController.swift */,
 				A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */,
 				A35DCBD81F4D6450009B9406 /* ViewMessageViewController.swift */,
+				3D544EF61F68E6370055019A /* TimelineDetail.swift */,
 			);
 			path = happ;
 			sourceTree = "<group>";
@@ -445,7 +445,6 @@
 				A35DCBD71F4D175F009B9406 /* FirebaseSetup.swift in Sources */,
 				A30812F31F282AA1003CD5EF /* EditProfileViewController.swift in Sources */,
 				A30752351F3758DE00CB9CE8 /* UserLoginViewController.swift in Sources */,
-				A3D90D9F1F49790500DB5624 /* ComposeMessagController.swift in Sources */,
 				A3E124AE1F40BA300053B2CC /* CongestionViewController.swift in Sources */,
 				A35DCBD91F4D6450009B9406 /* ViewMessageViewController.swift in Sources */,
 				A31CEAA31F27501700F386FC /* ChangeNewPasswordViewController.swift in Sources */,
@@ -485,6 +484,7 @@
 				A34FC10A1F0CC8AE006BFA81 /* ChangePassViewController.swift in Sources */,
 				A34040981F4032FD00EE8BEF /* SearchDetailViewController.swift in Sources */,
 				A3A343A71F09F8B600DC55FC /* ViewController.swift in Sources */,
+				3D544EF71F68E6370055019A /* TimelineDetail.swift in Sources */,
 				A31CEAA11F274F9900F386FC /* MailChangeViewController.swift in Sources */,
 				A339E7E71F2AE0B500FDD907 /* TrasitionLeft.swift in Sources */,
 				A338937A1F31D86A0094F983 /* TimeLineCell.swift in Sources */,

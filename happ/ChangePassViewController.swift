@@ -10,6 +10,7 @@ import UIKit
 
 class ChangePassViewController: UIViewController, UITextFieldDelegate {
     
+    @IBOutlet var navBar: UINavigationBar!
     //setting up variable...
     @IBOutlet var navTitle: UINavigationItem!
     @IBOutlet var userEmailField: UITextField!
@@ -18,33 +19,6 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var navBackLogin: UIBarButtonItem!
     @IBOutlet var btnChangePass: UIButton!
-    
-    var changePassparam = [
-        "en": [
-            "navTitle": "Send resetting e-mail",
-            "navBack": "Back",
-            "emailLabel": "Mail address",
-            "emailPlaceholder": "example@xxx.com",
-            "userNote": "Please Enter a Registered Email Address!",
-            "changePassbutton": "Issue reconfiguration URL",
-            "emptyEmail":"Enter Email",
-            "note1" : "Please enter the registered email address and tap the button below. A mail with the URL for resetting will be sent.",
-            "note2" : "If you do not receive the e-mail, please re-tap the button after confirming that you do not set domain rejected setting."
-        ],
-        
-        "ja" : [
-            "navTitle": "再設定メール送信",
-            "navBack": "バック",
-            "emailLabel": "メールアドレス",
-            "emailPlaceholder": "example@xxx.com",
-            "userNote": "登録されたメールアドレスを入力してください",
-            "changePassbutton": "再設定用URLを発行する",
-            "emptyEmail":"メールアドレスを入力して",
-            "note1" : "登録済みのメールアドレスを入力し、下のボタンをタップしてください。再設定用URLが書かれたメールが送信されます。",
-            "note2" : "メールが届かない場合は、ドメイン着信拒否設定をしていないかご確認の上、ボタンを再タップしてください。"
-        ]
-    ]
-    
     
     //var for global language..
     var language: String!
@@ -73,8 +47,42 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
         btnChangePass.layer.cornerRadius = 5
         btnChangePass.layer.borderWidth = 1
     
+        autoLayout()
         
-       self.loadConfigure()
+        self.loadConfigure()
+    }
+    
+    func autoLayout() {
+        
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        userEmailField.translatesAutoresizingMaskIntoConstraints = false
+        userEmailField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        userEmailField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        labelUserEmail.translatesAutoresizingMaskIntoConstraints = false
+        labelUserEmail.leftAnchor.constraintEqualToAnchor(userEmailField.leftAnchor, constant: 5).active = true
+        labelUserEmail.centerYAnchor.constraintEqualToAnchor(userEmailField.centerYAnchor).active = true
+        labelUserEmail.widthAnchor.constraintEqualToConstant(200).active = true
+        labelUserEmail.heightAnchor.constraintEqualToConstant(20).active = true
+        
+        userNote.translatesAutoresizingMaskIntoConstraints = false
+        userNote.topAnchor.constraintEqualToAnchor(userEmailField.bottomAnchor, constant: 5).active = true
+        userNote.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        userNote.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -10).active = true
+        
+        btnChangePass.translatesAutoresizingMaskIntoConstraints = false
+        btnChangePass.topAnchor.constraintEqualToAnchor(userNote.bottomAnchor, constant: 20).active = true
+        btnChangePass.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnChangePass.widthAnchor.constraintEqualToConstant(280).active = true
+        btnChangePass.heightAnchor.constraintEqualToConstant(40).active = true
+        
     }
     
     func loadConfigure() {
@@ -106,9 +114,9 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
     
     func changePass(sender: AnyObject) {
         let userEmail = userEmailField.text!
-        
+        let config = SYSTEM_CONFIG()
         if userEmail == "" {
-            emptyEmail = changePassparam["\(language)"]!["emptyEmail"]
+            emptyEmail = config.translate("empty_email")
             displayMyAlertMessage("\(emptyEmail)")
         } else {
             let changePassUrl = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
