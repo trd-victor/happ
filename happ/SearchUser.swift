@@ -9,7 +9,6 @@
 import Foundation
 
 struct SearchUser {
-    
     let name   :  String
     let HappID : String
     let skills : String

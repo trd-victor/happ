@@ -85,6 +85,13 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         }
     }
     
+    let navView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(hexString: "#272727")
+        return view
+    }()
+    
     func configureView() {
         if let detailUser = detailUser {
             if let username = self.username {
@@ -93,11 +100,14 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         }
     }
     
+    var frmOther: Bool = false
+    
     override func viewDidLoad() {
-        
+        super.viewDidLoad()
         language = setLanguage.appLanguage
         
-        super.viewDidLoad()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("otherControlView:")), name: "otherControlView", object: nil)
+        
         self.configureView()
         self.loadConfig()
         self.user_id = SearchDetailsView.searchIDuser
@@ -112,14 +122,16 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         
         self.useEmail = SearchDetailsView.userEmail
         
+        let config = SYSTEM_CONFIG()
         
         //set text button 
-        btnMessage.setTitle(arrText["\(language)"]!["Message"], forState: .Normal)
-        btnBlock.setTitle(arrText["\(language)"]!["Block"], forState: .Normal)
+        btnMessage.setTitle(config.translate("menu_message"), forState: .Normal)
+        btnBlock.setTitle(config.translate("added_block"), forState: .Normal)
         
         
         //remov back title 
         self.navigationController?.navigationBar.topItem?.title = " "
+        
         
         
         let db = FIRDatabase.database().reference().child("users")
@@ -147,8 +159,17 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         //load user post 
         self.getTimelineUser()
         
+        if self.frmOther {
+            view.addSubview(navView)
+        }
+        
         autoLayout()
         
+    }
+    
+    func otherControlView(notification: NSNotification) {
+        print("test")
+        self.frmOther = true
     }
     
     func loadConfig(){
@@ -158,23 +179,38 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         self.mytabBar.items![2].title = config.translate("menu_reservation")
         self.mytabBar.items![3].title = config.translate("menu_situation")
         self.mytabBar.items![4].title = config.translate("menu_configuration")
+        btnMessage.setTitle(config.translate("menu_message"), forState: .Normal)
     }
     
     func autoLayout() {
+        
+        if self.frmOther {
+            navView.topAnchor.constraintEqualToAnchor(view.topAnchor).active = true
+            navView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+            navView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+            navView.heightAnchor.constraintEqualToConstant(66).active = true
+            
+            scrollView.translatesAutoresizingMaskIntoConstraints = false
+            scrollView.topAnchor.constraintEqualToAnchor(navView.bottomAnchor).active = true
+            scrollView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+            scrollView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+            scrollView.bottomAnchor.constraintEqualToAnchor(mytabBar.topAnchor).active = true
+            scrollView.contentSize = CGSizeMake(view.frame.width, view.frame.height)
+            
+        }else{
+            scrollView.translatesAutoresizingMaskIntoConstraints = false
+            scrollView.topAnchor.constraintEqualToAnchor(view.topAnchor).active = true
+            scrollView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+            scrollView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+            scrollView.bottomAnchor.constraintEqualToAnchor(mytabBar.topAnchor).active = true
+            scrollView.contentSize = CGSizeMake(view.frame.width, view.frame.height)
+        }
         
         mytabBar.translatesAutoresizingMaskIntoConstraints = false
         mytabBar.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor).active = true
         mytabBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         mytabBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         mytabBar.heightAnchor.constraintEqualToConstant(50).active = true
-        
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 64).active = true
-        scrollView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        scrollView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        scrollView.bottomAnchor.constraintEqualToAnchor(mytabBar.topAnchor).active = true
-        scrollView.contentSize = CGSizeMake(view.frame.width, view.frame.height)
-        
         
         topView.translatesAutoresizingMaskIntoConstraints = false
         topView.topAnchor.constraintEqualToAnchor(scrollView.topAnchor).active = true

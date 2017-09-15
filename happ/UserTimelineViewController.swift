@@ -572,7 +572,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String
         let userimageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as! String
         let cellTap = UITapGestureRecognizer(target: self, action: "tapCell:")
-        let dateTap = UITapGestureRecognizer(target: self, action: "tapDate:")
         let bodyTap = UITapGestureRecognizer(target: self, action: "tapBody:")
         let imgTap = UITapGestureRecognizer(target: self, action: "tapImage:")
         
@@ -776,7 +775,16 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func viewProfile(sender: UIButton!){
-        print(sender.tag)
+        let config = SYSTEM_CONFIG()
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("otherControlView", object: nil, userInfo: nil)
+        
+        SearchDetailsView.userEmail = config.getSYS_VAL("useremail_\(sender.tag)") as! String
+        SearchDetailsView.searchIDuser = config.getSYS_VAL("userid_\(sender.tag)") as! String
+        
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchDetailView") as! SearchDetailViewController
+        self.presentDetail(vc)
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {

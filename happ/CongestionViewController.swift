@@ -8,349 +8,315 @@
 
 import UIKit
 
-
-class UserCollectionView : UICollectionViewCell {
-
-    @IBOutlet var Username: UILabel!
-    @IBOutlet var userImage: UIImageView!
+class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
-}
-
-
-class CongestionViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+    @IBOutlet weak var collectionView: UICollectionView!
+    let topView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(hexString: "#272727")
+        return view
+    }()
     
-    let reuseIdentifier = "cell"
-    var items = ["1", "2", "3", "4"]
-    var language: String!
-    var getPercent: String!
-
-    @IBOutlet var navBar: UINavigationBar!
-    @IBOutlet var situationView: UIView!
-    @IBOutlet var statusCollectionView: UIView!
-    @IBOutlet var statusView: UIView!
+    let congestiontitle: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.boldSystemFontOfSize(18)
+        label.textColor = UIColor.whiteColor()
+        label.sizeToFit()
+        return label
+    }()
     
-    //set of label string...
-    @IBOutlet var situation: UILabel!
-    @IBOutlet var percentage: UILabel!
-    @IBOutlet var freestatus: UILabel!
-    @IBOutlet var congestiontitle: UINavigationItem!
+    let situationView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
+    let conView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(hexString: "#E4D4B9")
+        return view
+    }()
     
-    var userID: String!
-    var user_id = [String]()
-    var username = [String]()
-    var testName: String!
-    var userEachImage = [String]()
-    var realImage = [String]()
-    var urlImage : String!
-    var data: NSData!
+    let conTitle: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFontOfSize(14)
+        label.textColor = UIColor.blackColor()
+        label.sizeToFit()
+        label.textAlignment = .Center
+        return label
+    }()
     
+    let personContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
+    let percentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
-    @IBOutlet var collectionView: UICollectionView!
+    let prcentViewBlack: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let personImg1: UIImageView = {
+        let imgview = UIImageView()
+        imgview.clipsToBounds = true
+        return imgview
+    }()
+    
+    let percentage: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.boldSystemFontOfSize(20)
+        label.textColor = UIColor.blackColor()
+        label.sizeToFit()
+        label.textAlignment = .Center
+        return label
+    }()
+    
+    let freeView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(hexString: "#E4D4B9")
+        return view
+    }()
+    
+    let freeTitle: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFontOfSize(14)
+        label.textColor = UIColor.blackColor()
+        label.sizeToFit()
+        label.textAlignment = .Center
+        return label
+    }()
+    
+    var widthPercentage: CGFloat = 0
+    
+    var userIds = [Int]()
+    
+    let config = SYSTEM_CONFIG()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshSituation", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
         
-        //load language set.
-        language = setLanguage.appLanguage
+        var layoutwidth:CGFloat = 0
         
-        //get user id...
-        userID = globalUserId.userID
+        layoutwidth = (view.frame.width - 60) / 3
         
-        self.collectionView.delegate = self
-        self.collectionView.dataSource = self
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.itemSize = CGSizeMake(layoutwidth, 100)
         
-        self.loadConfigure()
+        collectionView.collectionViewLayout = layout
         
-        //set static office id 
-        let office_id = 32
+        view.backgroundColor = UIColor(hexString: "#272727")
         
-        self.getCongestionPercentage(office_id)
+        view.addSubview(topView)
+        topView.addSubview(congestiontitle)
         
-        statusCollectionView.hidden = true
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.registerClass(UserCollection.self, forCellWithReuseIdentifier: "UserCell")
+        collectionView.contentInset = UIEdgeInsetsMake(280, 10, 30, 10)
         
+        collectionView.addSubview(situationView)
+        collectionView.bringSubviewToFront(situationView)
         
-        let userFreetime = NSUserDefaults.standardUserDefaults().objectForKey("Freetime") as? String
+        situationView.addSubview(conView)
+        conView.addSubview(conTitle)
+
+        percentView.clipsToBounds = true
         
-        if userFreetime == "On" {
-            self.getFreeTimeStatusUser(userID)
-        }
+        situationView.addSubview(percentView)
+        
+        percentView.addSubview(prcentViewBlack)
+        percentView.sendSubviewToBack(prcentViewBlack)
+        percentView.addSubview(personImg1)
+        
+        situationView.addSubview(percentage)
+        situationView.addSubview(freeView)
+        freeView.addSubview(freeTitle)
+        
+        percentage.text = "0%"
+        congestiontitle.text = config.translate("title_situation")
+        conTitle.text = config.translate("label_congestion_situation")
+        freeTitle.text = config.translate("subtitle_now_free")
         
         autoLayout()
         
-    }
-    
-    func autoLayout() {
-        navBar.translatesAutoresizingMaskIntoConstraints = false
-        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
-        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        getCongestion()
         
-        situationView.translatesAutoresizingMaskIntoConstraints = false
-        situationView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        situationView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
-        situationView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        situationView.heightAnchor.constraintEqualToConstant(38).active = true
-        
-        situation.translatesAutoresizingMaskIntoConstraints = false
-        situation.centerXAnchor.constraintEqualToAnchor(situationView.centerXAnchor).active = true
-        situation.centerYAnchor.constraintEqualToAnchor(situationView.centerYAnchor).active = true
-        situation.widthAnchor.constraintEqualToAnchor(situationView.widthAnchor).active = true
-        situation.heightAnchor.constraintEqualToConstant(38).active = true
-        
-        statusCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        statusCollectionView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        statusCollectionView.topAnchor.constraintEqualToAnchor(situationView.bottomAnchor).active = true
-        statusCollectionView.widthAnchor.constraintEqualToConstant(245).active = true
-        statusCollectionView.heightAnchor.constraintEqualToConstant(175).active = true
-        
-        percentage.translatesAutoresizingMaskIntoConstraints = false
-        percentage.bottomAnchor.constraintEqualToAnchor(statusCollectionView.bottomAnchor, constant: -15).active = true
-        percentage.centerXAnchor.constraintEqualToAnchor(statusCollectionView.centerXAnchor).active = true
-        percentage.widthAnchor.constraintEqualToAnchor(statusCollectionView.widthAnchor).active = true
-        percentage.heightAnchor.constraintEqualToConstant(30).active = true
-        
-        statusView.translatesAutoresizingMaskIntoConstraints = false
-        statusView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        statusView.topAnchor.constraintEqualToAnchor(statusCollectionView.bottomAnchor).active = true
-        statusView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        statusView.heightAnchor.constraintEqualToConstant(38).active = true
-        
-        freestatus.translatesAutoresizingMaskIntoConstraints = false
-        freestatus.centerXAnchor.constraintEqualToAnchor(statusView.centerXAnchor).active = true
-        freestatus.centerYAnchor.constraintEqualToAnchor(statusView.centerYAnchor).active = true
-        freestatus.widthAnchor.constraintEqualToAnchor(statusView.widthAnchor).active = true
-        freestatus.heightAnchor.constraintEqualToConstant(38).active = true
-        
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        collectionView.topAnchor.constraintEqualToAnchor(statusView.bottomAnchor).active = true
-        collectionView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        collectionView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
-    }
-    
-    func loadConfigure() {
-        let config = SYSTEM_CONFIG()
-        
-        //set title and text accdg. to language set....
-        self.congestiontitle.title = config.translate("title_situation")
-        self.situation.text = config.translate("label_congestion_situation")
-        self.freestatus.text = config.translate("subtitle_now_free")
     }
     
     func refreshLang(notification: NSNotification){
-        let config = SYSTEM_CONFIG()
-        
         //set title and text accdg. to language set....
-        self.congestiontitle.title = config.translate("title_situation")
-        self.situation.text = config.translate("label_congestion_situation")
-        self.freestatus.text = config.translate("subtitle_now_free")
+        self.congestiontitle.text = config.translate("title_situation")
+        self.conTitle.text = config.translate("label_congestion_situation")
+        self.freeTitle.text = config.translate("subtitle_now_free")
     }
     
-    func getCongestionPercentage(sender: Int) {
-       
-        //set parameter for
-        let param = [
-            "sercret"     : "jo8nefamehisd",
-            "action"      : "api",
-            "ac"          : "\(globalvar.GET_CONGESTION_ACTION)",
-            "d"           : "0",
-            "lang"        : "jp",
-            "office_id"   : "\(sender)"
-        ]
-        
-        let httpRequest = HttpDataRequest(postData: param)
-        let request = httpRequest.requestGet()
-        
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-            data, response, error  in
-            
-            
-            if error != nil{
-                print("\(error)")
-                return;
-            }
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                
-                if json!["result"] != nil {
-                   let result = json!["result"] as! NSArray
-                    
-                    for item in result {
-                        if let resultData = item as? NSDictionary {
-                         
-                            if let fields = resultData.valueForKey("fields") {
-                                if let percent = fields.valueForKey("persentage") {
-                                    self.getPercent = percent as! String
-                                }
-                            }
-                            
-                        }
-                    }
-                }
-                dispatch_async(dispatch_get_main_queue()) {
-                    let percentString = "%"
-                    self.percentage.text = self.getPercent + percentString
-                }
-            
-            } catch {
-                print(error)
-            }
-            
-        }
-        task.resume()
-
-    }
-    func getFreeTimeStatusUser(sender: String) {
-    
-        //set parameter for
-        let param = [
-            "sercret"     : "jo8nefamehisd",
-            "action"      : "api",
-            "ac"          : "\(globalvar.GET_FREETIME_STATUS_ACTION)",
-            "d"           : "0",
-            "lang"        : "en",
-            "user_id"     : "sender",
-            "office_id"   : "32",
-            "status_key"   : "freetime"
-        ]
-        
-        let httpRequest = HttpDataRequest(postData: param)
-        let request = httpRequest.requestGet()
-        
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-            data, response, error  in
-            
-            
-            if error != nil{
-                print("\(error)")
-                return;
-            }
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if let resultArray = json!.valueForKey("result") as? NSArray {
-              
-                    for item in resultArray {
-                        
-                        if let resultDict = item as? NSDictionary {
-                            
-                            if let postContent = resultDict.valueForKey("fields")  {
-                                
-                                if let userId = postContent.valueForKey("user_id") {
-                                    self.user_id.append(userId as! String)
-//                                   print(self.user_id)
-                                }
-                            }
-                        }
-                        
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.collectionView.reloadData()
-                        }
-                    }
-                }
-                self.getAllUserInfo(self.user_id)
-                
-            } catch {
-                print(error)
-            }
-            
-        }
-        task.resume()
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
-    func getAllUserInfo(userID: [String]?) {
+    func calculatePercentage(percent: Int)-> CGFloat {
+        var x:CGFloat = 0
         
-        for var i = 0; i < userID!.count; i++ {
-            let parameters = [
-                "sercret"     : "jo8nefamehisd",
-                "action"      : "api",
-                "ac"          : "get_userinfo",
-                "d"           : "0",
-                "lang"        : "en",
-                "user_id"     : "\(userID![i])"
-            ]
-            
-            let httpRequest = HttpDataRequest(postData: parameters)
-            let request = httpRequest.requestGet()
-            
-
-            let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request){
-                data1, response1, error1 in
-                
-//                var imageuser : String!
-                
-                if error1 != nil{
-                    print("\(error1)")
-                    return;
-                }
-                do {
-                    let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-//                    print(json2!)
-                    
-                    self.testName = json2!["result"]!["name"] as! String
-                    
-                    if let _ = json2!["result"]!["icon"] as? NSNull {
-                        self.urlImage = ""
-                    } else {
-                        self.urlImage = json2!["result"]!["icon"] as? String
-                    }
-                    
-                    self.userEachImage.append(self.urlImage)
-                    self.realImage = self.userEachImage.map{ $0 ?? ""}
-                    self.username.append(self.testName)
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.collectionView.reloadData()
-                    }
-                    
-                } catch {
-                    print(error)
-                }
+        for var i = 1; i <= percent; i++ {
+            if (i % 20) == 0  && i != 100 {
+                x += 13.75
             }
-            
-            task2.resume()
+            x += 2.2
         }
+        return x
+    }
+    
+    func autoLayout() {
+        topView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        topView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        topView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        topView.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        congestiontitle.centerXAnchor.constraintEqualToAnchor(topView.centerXAnchor).active = true
+        congestiontitle.centerYAnchor.constraintEqualToAnchor(topView.centerYAnchor).active = true
+    
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.topAnchor.constraintEqualToAnchor(topView.bottomAnchor).active = true
+        collectionView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        collectionView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        collectionView.heightAnchor.constraintEqualToAnchor(view.heightAnchor, constant: -100).active = true
+        collectionView.backgroundColor = UIColor.whiteColor()
+        
+        situationView.topAnchor.constraintEqualToAnchor(collectionView.topAnchor, constant: -280).active = true
+        situationView.centerXAnchor.constraintEqualToAnchor(collectionView.centerXAnchor).active = true
+        situationView.widthAnchor.constraintEqualToAnchor(collectionView.widthAnchor, constant: 20).active = true
+        situationView.heightAnchor.constraintEqualToConstant(280).active = true
+        
+        conView.topAnchor.constraintEqualToAnchor(situationView.topAnchor).active = true
+        conView.centerXAnchor.constraintEqualToAnchor(situationView.centerXAnchor, constant: -10).active = true
+        conView.widthAnchor.constraintEqualToAnchor(situationView.widthAnchor).active = true
+        conView.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        conTitle.centerYAnchor.constraintEqualToAnchor(conView.centerYAnchor).active = true
+        conTitle.centerXAnchor.constraintEqualToAnchor(conView.centerXAnchor).active = true
+        conTitle.widthAnchor.constraintEqualToAnchor(conView.widthAnchor).active = true
+        conTitle.heightAnchor.constraintEqualToConstant(21).active = true
+        
+        percentView.topAnchor.constraintEqualToAnchor(conView.bottomAnchor, constant: 25).active = true
+        percentView.centerXAnchor.constraintEqualToAnchor(situationView.centerXAnchor, constant: -10).active = true
+        percentView.widthAnchor.constraintEqualToConstant(275).active = true
+        percentView.heightAnchor.constraintEqualToConstant(146).active = true
+        percentView.backgroundColor = UIColor.grayColor()
+        
+        personImg1.translatesAutoresizingMaskIntoConstraints = false
+        personImg1.topAnchor.constraintEqualToAnchor(percentView.topAnchor).active = true
+        personImg1.centerXAnchor.constraintEqualToAnchor(percentView.centerXAnchor).active = true
+        personImg1.widthAnchor.constraintEqualToConstant(275).active = true
+        personImg1.heightAnchor.constraintEqualToConstant(146).active = true
+        
+        personImg1.image = UIImage(named: "congestionGroup")
+        personImg1.contentMode = .ScaleAspectFill
+        
+        percentage.topAnchor.constraintEqualToAnchor(percentView.bottomAnchor, constant: 10).active = true
+        percentage.centerXAnchor.constraintEqualToAnchor(situationView.centerXAnchor, constant: -10).active = true
+        percentage.widthAnchor.constraintEqualToAnchor(situationView.widthAnchor).active = true
+        percentage.heightAnchor.constraintEqualToConstant(21).active = true
+        
+        freeView.bottomAnchor.constraintEqualToAnchor(situationView.bottomAnchor).active = true
+        freeView.centerXAnchor.constraintEqualToAnchor(situationView.centerXAnchor, constant: -10).active = true
+        freeView.widthAnchor.constraintEqualToAnchor(situationView.widthAnchor).active = true
+        freeView.heightAnchor.constraintEqualToConstant(31).active = true
+        
+        freeTitle.centerYAnchor.constraintEqualToAnchor(freeView.centerYAnchor).active = true
+        freeTitle.centerXAnchor.constraintEqualToAnchor(freeView.centerXAnchor).active = true
+        freeTitle.widthAnchor.constraintEqualToAnchor(freeView.widthAnchor).active = true
+        freeTitle.heightAnchor.constraintEqualToConstant(21).active = true
         
     }
-
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.username.count
+        return userIds.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-        let cell = self.collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! UserCollectionView
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("UserCell", forIndexPath: indexPath) as! UserCollection
         
+        let username = config.getSYS_VAL("username_\(userIds[indexPath.row])") as! String
+        let userimageURL = config.getSYS_VAL("userimage_\(userIds[indexPath.row])") as! String
+        let tapCell = UITapGestureRecognizer(target: self, action: "tapCell:")
         
-        let radius = min(cell.userImage!.frame.width/2 , cell.userImage!.frame.height/2)
-        cell.userImage!.layer.cornerRadius = radius
-        cell.userImage!.clipsToBounds = true
+        cell.addGestureRecognizer(tapCell)
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), {() -> Void in
-            
-            self.data = NSData(contentsOfURL: NSURL(string: "\(self.realImage[indexPath.item])")!)
-            
-            dispatch_async(dispatch_get_main_queue(), {() -> Void in
-                
-                if self.data != nil {
-                    cell.userImage.image = UIImage(data: self.data!)
-                } else {
-                    cell.userImage.image = nil
-                }
-            })
-        })
-        
-        cell.Username.text = self.username[indexPath.item]
-        
+        cell.imgView.profileForCache(userimageURL)
+        cell.userName.text = username
         return cell
+    }
+    
+    func tapCell(sender: UITapGestureRecognizer){
+        if sender.state == UIGestureRecognizerState.Ended {
+            let tapLocation = sender.locationInView(self.collectionView)
+            if let indexPath = self.collectionView.indexPathForItemAtPoint(tapLocation) {
+                print(indexPath.row)
+            }
+        }
+    }
+    
+}
+
+class UserCollection: UICollectionViewCell {
+    
+    let imgView: UIImageView = {
+        let img = UIImageView()
+        img.translatesAutoresizingMaskIntoConstraints = false
+        img.layer.cornerRadius = 30
+        img.clipsToBounds = true
+        return img
+    }()
+    
+    let userName: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFontOfSize(14)
+        label.textAlignment = .Center
+        label.numberOfLines = 0
+        label.sizeToFit()
+        return label
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        addSubview(imgView)
+        addSubview(userName)
+        
+        
+        imgView.centerXAnchor.constraintEqualToAnchor(self.centerXAnchor).active = true
+        imgView.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor, constant: -10).active = true
+        imgView.widthAnchor.constraintEqualToConstant(60).active = true
+        imgView.heightAnchor.constraintEqualToConstant(60).active = true
+        
+        userName.topAnchor.constraintEqualToAnchor(imgView.bottomAnchor, constant: 5).active = true
+        userName.centerXAnchor.constraintEqualToAnchor(self.centerXAnchor).active = true
+        userName.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -25).active = true
         
     }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
 }

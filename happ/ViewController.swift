@@ -157,12 +157,14 @@ class ViewController: UIViewController, UIScrollViewDelegate {
                 if let info = json2!["result"] as? NSArray {
                     
                     for profile in info {
+                        config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
                         config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
                         if let url = profile["icon"] as? String {
                             config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
                         }else{
                             config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
                         }
+                        config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
                     }
                 }
             } catch {
