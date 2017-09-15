@@ -589,3 +589,77 @@ class TripleImage: UITableViewCell {
     }
     
 }
+
+class NotifCell: UITableViewCell {
+    
+    let separator: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(hexString: "#E8E8E8")
+        return view
+    }()
+    
+    let notifPhoto: UIImageView = {
+        let photo = UIImageView()
+        photo.image = UIImage(named: "photo")
+        photo.translatesAutoresizingMaskIntoConstraints = false
+        photo.layer.cornerRadius = 24
+        photo.contentMode = .ScaleAspectFill
+        photo.layer.masksToBounds = true
+        return photo
+    }()
+    
+    let lblMessage: UILabel = {
+        let lblMessage = UILabel()
+        lblMessage.font = UIFont.systemFontOfSize(16)
+        return lblMessage
+    }()
+    let lblDate: UILabel = {
+        let lblDate = UILabel()
+        lblDate.font = UIFont.systemFontOfSize(12)
+        return lblDate
+    }()
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+    }
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: .Subtitle, reuseIdentifier: reuseIdentifier)
+        
+        addSubview(separator)
+        addSubview(notifPhoto)
+        addSubview(lblMessage)
+        addSubview(lblDate)
+        
+        notifPhoto.translatesAutoresizingMaskIntoConstraints = false
+        notifPhoto.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 5).active = true
+        notifPhoto.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor).active = true
+        notifPhoto.widthAnchor.constraintEqualToConstant(45).active = true
+        notifPhoto.heightAnchor.constraintEqualToConstant(45).active = true
+        
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        separator.bottomAnchor.constraintEqualToAnchor(self.bottomAnchor).active = true
+        separator.leftAnchor.constraintEqualToAnchor(notifPhoto.rightAnchor).active = true
+        separator.centerXAnchor.constraintGreaterThanOrEqualToAnchor(self.centerXAnchor).active = true
+        separator.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
+        separator.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        lblMessage.translatesAutoresizingMaskIntoConstraints = false
+        lblMessage.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 5).active = true
+        lblMessage.leftAnchor.constraintEqualToAnchor(self.notifPhoto.rightAnchor, constant: 5).active = true
+        lblMessage.widthAnchor.constraintLessThanOrEqualToAnchor(self.widthAnchor, constant: -50).active = true
+        lblMessage.lineBreakMode = .ByWordWrapping
+        lblMessage.numberOfLines = 0
+        lblMessage.sizeToFit()
+        
+        lblDate.translatesAutoresizingMaskIntoConstraints = false
+        lblDate.leftAnchor.constraintEqualToAnchor(self.notifPhoto.rightAnchor, constant: 160).active = true
+        lblDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 50).active = true
+        lblDate.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
+        lblDate.sizeToFit()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

@@ -303,6 +303,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     
+    @IBAction func btnViewNotif(sender: UIBarButtonItem) {
+        let notfif = NotifController()
+        self.presentViewController(notfif, animated: true, completion: nil)
+    }
+    
     func getOlderPostTimeline() {
         
         self.page += 1

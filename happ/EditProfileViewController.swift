@@ -615,9 +615,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 }else if key == 2 {
                     retString += "Server side,"
                 }else if key == 3 {
-                    retString += "IOS Application,"
+                    retString += "IOS application,"
                 }else if key == 4 {
-                    retString += "Android Application,"
+                    retString += "Android application,"
                 }else if key == 5 {
                     retString += "App design,"
                 }else if key == 6 {
@@ -645,10 +645,10 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         if skill == "Server side" {
             self.backendswitch.setOn(true, animated: true)
         }
-        if skill == "IOS Application" {
+        if skill == "IOS application" {
             self.iosswitch.setOn(true, animated: true)
         }
-        if skill == "Android Application" {
+        if skill == "Android application" {
             self.androidswitch.setOn(true, animated: true)
         }
         if skill == "App design" {

@@ -561,9 +561,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 }else if key == 2 {
                     retString += "Server side,"
                 }else if key == 3 {
-                    retString += "IOS Application,"
+                    retString += "IOS application,"
                 }else if key == 4 {
-                    retString += "Android Application,"
+                    retString += "Android application,"
                 }else if key == 5 {
                     retString += "App design,"
                 }else if key == 6 {

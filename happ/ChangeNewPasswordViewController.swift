@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
 
@@ -232,7 +233,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                 }
                 
                 do {
-                    
+                    FIRAuth.auth()?.currentUser?.updatePassword(newPass1, completion: nil)
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
                     if json!["message"] != nil {
