@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 struct statusButton {
     static var status : String = ""
@@ -300,6 +301,26 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(statust, forKey: "Freetime")
         defaults.synchronize()
+        
+        let config = SYSTEM_CONFIG()
+        let timestamp = FIRServerValue.timestamp()
+        let firID = config.getSYS_VAL("FirebaseID") as? String
+        
+        if statust == "On" {
+            let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
+            
+            let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
+            let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
+            let notifData = [
+                "name": "\(name)",
+                "photoUrl"  : "\(photoUrl)",
+                "postId"    : 0,
+                "type"      : "free-time",
+                "timestamp" : timestamp,
+                "userId"    : firID!
+             ] as [String: AnyObject]
+            notifDB.setValue(notifData)
+            }
     }
     
     
