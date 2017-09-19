@@ -22,7 +22,7 @@ class CustomViewController: UIViewController, UITableViewDataSource, UITableView
     var imgURL: String!
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
     var animals : [String] = ["Dogs", "cat", "lion", "Zebra", "cow","mouse", "tiger", "carabao", "goat", "mice"]
     

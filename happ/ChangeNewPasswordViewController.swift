@@ -187,7 +187,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         }
         else {
             //created NSURL
-            let URL_SAVE_TEAM = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
+            let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
             
             //created NSURL
             let requestURL = NSURL(string: URL_SAVE_TEAM)
@@ -267,72 +267,6 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-    
-    
-    func loaduserPassword() {
-//        //let URL
-//        let viewDataURL = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
-//        
-//        //created NSURL
-//        let requestURL = NSURL(string: viewDataURL)
-//        
-//        
-//        //creating NSMutableURLRequest
-//        let request = NSMutableURLRequest(URL: requestURL!)
-//        
-//        //set boundary string..
-//        let boundary = generateBoundaryString()
-//        
-//        //set value for image upload
-//        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-//        
-//        //setting the method to post
-//        request.HTTPMethod = "POST"
-//        
-//        //        if language == "ja" {
-//        //            language = "jp"
-//        //        }
-//        //        set parameters...
-//        let param = [
-//            "sercret"     : "jo8nefamehisd",
-//            "action"      : "api",
-//            "ac"          : "get_userinfo",
-//            "d"           : "1",
-//            "lang"        : "\(language)",
-//            "user_id"     : "\(userId)"
-//        ]
-//        
-//        //adding the parameters to request body
-//        request.HTTPBody = createBodyWithParameters(param, boundary: boundary)
-//        
-//        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-//            data, response, error  in
-//            
-//            //user Data...
-////            var passwd: String!
-//            
-//            if error != nil{
-//                print("\(error)")
-//                return;
-//            }
-//            do {
-//                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-//                
-////                if json!["result"] != nil {
-////                    passwd = json!["result"]!["passwd"] as! String
-////                }
-//                print(json)
-//                dispatch_async(dispatch_get_main_queue()) {
-////                    self.originalPass.text = passwd
-////                    print(passwd)
-//                }
-//                
-//            } catch {
-//                print(error)
-//            }
-//        }
-//        task.resume()
     }
     
     func generateBoundaryString() -> String {

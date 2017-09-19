@@ -128,9 +128,6 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
             }
         })
       
- 
-        
-    
     }
     
     func getAllUserInfo(userID: String) {
@@ -326,6 +323,7 @@ class SearchUserViewTableViewController: UITableViewController, UISearchResultsU
     func getPostID(postuserID: Int) -> Int {
         return postuserID
     }
+    
     
     
     func displayMyAlertMessage(userMessage:String){

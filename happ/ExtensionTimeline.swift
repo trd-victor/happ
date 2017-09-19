@@ -29,8 +29,7 @@ extension UserTimelineViewController {
             data, response, error  in
             
             if error != nil{
-                print("\(error)")
-                return;
+                self.reloadTimeline()
             }
             do {
                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
@@ -95,8 +94,8 @@ extension UserTimelineViewController {
                             if self.loadingData {
                                 self.loadingData = false
                             }
+                            self.refreshControl.endRefreshing()
                             if self.scrollLoad {
-                                self.refreshControl.endRefreshing()
                                 self.scrollLoad = false
                             }
                         }
@@ -109,6 +108,32 @@ extension UserTimelineViewController {
         task.resume()
     }
 
+    func updateFreeTimeStatus(){
+        let parameters = [
+            "sercret"          : "jo8nefamehisd",
+            "action"           : "api",
+            "ac"               : "update_freetime_status",
+            "d"                : "0",
+            "lang"             : "en",
+            "user_id"          : "\(globalUserId.userID)",
+            "office_id"        : "32",
+            "status_key"       : "freetime"
+        ]
+        let request = NSMutableURLRequest(URL: self.baseUrl)
+        let boundary = generateBoundaryString()
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil{
+                print("\(error)")
+                return;
+            }
+        }
+        task.resume()
+    }
     
     func delay(delay:Double, closure:()->()) {
         dispatch_after(

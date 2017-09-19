@@ -21,7 +21,6 @@ class MenuViewController: UITabBarController {
         //refresh notification
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshMenu", object: nil)
         
-        viewControllers?.removeAtIndex(5)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -45,4 +44,5 @@ class MenuViewController: UITabBarController {
         self.menuTabBar.items![3].title = config.translate("menu_situation")
         self.menuTabBar.items![4].title = config.translate("menu_configuration")
     }
+    
 }

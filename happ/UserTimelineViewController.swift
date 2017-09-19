@@ -18,6 +18,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var topImage: UIImageView!
     @IBOutlet var topView: UIView!
+    @IBOutlet var btnViewNotif: UIBarButtonItem!
     
     @IBOutlet var labelFree: UILabel!
     @IBOutlet var mytableview: UITableView!
@@ -45,7 +46,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     var dataResult: AnyObject?
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
     var image1 = [UIImageView]()
     
@@ -104,10 +105,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadTimeline:")), name: "reloadTimeline", object: nil)
         
-        if #available(iOS 10, *){
-        }else{
-            self.mytableview.addSubview(self.refreshControl)
-        }
+        self.mytableview.addSubview(self.refreshControl)
         
         self.mytableview.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
         self.mytableview.registerClass(SingleImage.self, forCellReuseIdentifier: "SingleImage")
@@ -155,6 +153,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
     }
   
+    @IBAction func searchIcon(sender: AnyObject) {
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchUserController") as! SearchController
+        self.presentDetail(vc)
+    }
+    
     func refreshLang(notification: NSNotification) {
         let config = SYSTEM_CONFIG()
         self.labelFree.text = config.translate("subtitle_now_free")
@@ -321,8 +325,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
              ] as [String: AnyObject]
             notifDB.setValue(notifData)
             }
+        if statust == "On" {
+            //Update Server Free Time Status
+            updateFreeTimeStatus()
+        }
     }
-    
     
     @IBAction func btnViewNotif(sender: UIBarButtonItem) {
         let notfif = NotifController()
@@ -355,9 +362,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 self.getTimelineUser()
             }
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                 
-                if let resultArray = json!.valueForKey("result") as? NSArray {
+                if let resultArray = json.valueForKey("result") as? NSArray {
                     
                     self.myResultArr = resultArray
                     
@@ -418,12 +425,24 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                         
                     }
                 }
+            }
             } catch {
                 print(error)
             }
         }
         task.resume()
         
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if !self.firstLoad {
+            self.mytableview.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height)
+            
+            self.refreshControl.beginRefreshing()
+            self.firstLoad = true
+        }
     }
     
     func getTimelineUser() {
@@ -506,6 +525,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                 }
                                 
                                 dispatch_async(dispatch_get_main_queue()){
+                                    if self.refreshControl.refreshing {
+                                        self.refreshControl.endRefreshing()
+                                        self.mytableview.contentOffset = CGPoint(x: 0,y: 0)
+                                    }
                                     self.mytableview.reloadData()
                                 }
                             }
@@ -540,9 +563,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
     
+    var scrollOffset: CGFloat = 0
+    
     func scrollViewDidScroll(scrollView: UIScrollView) {
+        self.scrollOffset = scrollView.contentOffset.y
         if scrollView == self.mytableview {
-            if scrollView.contentOffset.y < -60 && self.scrollLoad == false {
+            if scrollView.contentOffset.y < -70 && self.scrollLoad == false {
                 self.page = 1
                 self.scrollLoad = true
                 
@@ -807,6 +833,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         SearchDetailsView.userEmail = config.getSYS_VAL("useremail_\(sender.tag)") as! String
         SearchDetailsView.searchIDuser = config.getSYS_VAL("userid_\(sender.tag)") as! String
+        doConfigurationProfile.form = true
         
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchDetailView") as! SearchDetailViewController
@@ -827,10 +854,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     var loadingData = false
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        if !loadingData && indexPath.row == self.fromID.count - 1  {
+        if !loadingData && indexPath.row == self.fromID.count - 1 {
+            print("true")
             self.getOlderPostTimeline()
             self.loadingData = true
-            
         }
     }
     

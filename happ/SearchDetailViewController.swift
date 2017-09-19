@@ -15,6 +15,10 @@ struct firebaseId {
     static var indicator: String = ""
 }
 
+struct doConfigurationProfile {
+    static var form : Bool = false
+}
+
 class onlyUserPost: UITableViewCell {
     
     @IBOutlet var userPostImage: UIImageView!
@@ -44,27 +48,6 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
     @IBOutlet var btnBlock: UIButton!
     
     @IBOutlet var mytableView: UITableView!
-    
-    
-    var arrText = [
-        "en" : [
-            "Message"  : "Message",
-            "Block"    : "To block"
-        ],
-        "ja" : [
-            "Message"  : "メッセージ",
-            "Block"    : "ブロックする"
-        ]
-    ]
-    
-    var userDetails = [
-        "sercret"     : "jo8nefamehisd",
-        "action"      : "api",
-        "ac"          : "get_userinfo",
-        "d"           : "0",
-        "lang"        : "en",
-        "user_id"     : "\(globalUserId.userID)",
-    ]
     
     var timelineViewController: UIViewController!
     var configurationViewControllers: UIViewController!
@@ -104,6 +87,11 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navView.removeFromSuperview()
+        if doConfigurationProfile.form {
+            view.addSubview(navView)
+        }
+        
         language = setLanguage.appLanguage
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("otherControlView:")), name: "otherControlView", object: nil)
@@ -184,7 +172,7 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
     
     func autoLayout() {
         
-        if self.frmOther {
+        if doConfigurationProfile.form {
             navView.topAnchor.constraintEqualToAnchor(view.topAnchor).active = true
             navView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
             navView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true

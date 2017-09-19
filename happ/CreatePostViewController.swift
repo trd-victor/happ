@@ -29,7 +29,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     var language: String!
     
     var empty_post = "false"
@@ -612,7 +612,6 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     func removeImage3(){
         self.imgView3.image = nil
-        print("3")
     }
     
     func reloadImageList(){

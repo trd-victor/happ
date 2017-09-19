@@ -202,7 +202,7 @@ class TimelineDetail: UIViewController {
         let width: CGFloat = view.bounds.width
         let imgWidth: CGFloat = (imgview.image?.size.width)!
         let widthRatio: CGFloat = width / imgWidth
-        let newHeight: CGFloat = (imgview.image?.size.height)! * widthRatio
+        let newHeight: CGFloat = ((imgview.image?.size.height)! * widthRatio) - 4
         
         switch(swtchCase){
         case 1:

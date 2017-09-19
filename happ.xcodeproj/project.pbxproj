@@ -13,7 +13,10 @@
 		3D7AA5B11F63704F00E16CAC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B01F63704F00E16CAC /* Extensions.swift */; };
 		3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */; };
 		3D7AA5B71F653E1C00E16CAC /* ExtensionTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */; };
+		3DCBCD911F6F88C10010AE6C /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCBCD901F6F88C10010AE6C /* SearchController.swift */; };
+		3DCBCD931F6FBBDD0010AE6C /* SearchCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCBCD921F6FBBDD0010AE6C /* SearchCustomCell.swift */; };
 		3DCFDECC1F5D539400E50EC0 /* CreatePost+hanlder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCFDECB1F5D539400E50EC0 /* CreatePost+hanlder.swift */; };
+		3DD40F7B1F708F1800968896 /* SearchExtensionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD40F7A1F708F1800968896 /* SearchExtensionController.swift */; };
 		A302AA5C1F27007400D8FBA8 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A302AA5B1F27007400D8FBA8 /* CustomCell.swift */; };
 		A30364C31F25E3440083A495 /* TableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30364C21F25E3440083A495 /* TableController.swift */; };
 		A30752351F3758DE00CB9CE8 /* UserLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30752341F3758DE00CB9CE8 /* UserLoginViewController.swift */; };
@@ -82,7 +85,10 @@
 		3D7AA5B01F63704F00E16CAC /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
 		3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionTimeline.swift; sourceTree = "<group>"; };
+		3DCBCD901F6F88C10010AE6C /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
+		3DCBCD921F6FBBDD0010AE6C /* SearchCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCustomCell.swift; sourceTree = "<group>"; };
 		3DCFDECB1F5D539400E50EC0 /* CreatePost+hanlder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CreatePost+hanlder.swift"; sourceTree = "<group>"; };
+		3DD40F7A1F708F1800968896 /* SearchExtensionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchExtensionController.swift; sourceTree = "<group>"; };
 		8E7910D823270E02D72DC1CE /* Pods-happ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happ.release.xcconfig"; path = "Pods/Target Support Files/Pods-happ/Pods-happ.release.xcconfig"; sourceTree = "<group>"; };
 		A302AA5B1F27007400D8FBA8 /* CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		A30364C21F25E3440083A495 /* TableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableController.swift; sourceTree = "<group>"; };
@@ -177,6 +183,16 @@
 			name = TableCell;
 			sourceTree = "<group>";
 		};
+		3DCBCD8F1F6F88AE0010AE6C /* SearchController */ = {
+			isa = PBXGroup;
+			children = (
+				3DCBCD901F6F88C10010AE6C /* SearchController.swift */,
+				3DCBCD921F6FBBDD0010AE6C /* SearchCustomCell.swift */,
+				3DD40F7A1F708F1800968896 /* SearchExtensionController.swift */,
+			);
+			name = SearchController;
+			sourceTree = "<group>";
+		};
 		3DCFDECA1F5D537700E50EC0 /* Handler */ = {
 			isa = PBXGroup;
 			children = (
@@ -217,6 +233,7 @@
 		A3A343A31F09F8B600DC55FC /* happ */ = {
 			isa = PBXGroup;
 			children = (
+				3DCBCD8F1F6F88AE0010AE6C /* SearchController */,
 				A34FC1071F0CA6F1006BFA81 /* AccountViewController.swift */,
 				A33DECB11F2F1A2200275CAE /* AddPadding.swift */,
 				A3A343A41F09F8B600DC55FC /* AppDelegate.swift */,
@@ -458,6 +475,7 @@
 				A370FBB41F3ABA2D00EBD50F /* SearchUser.swift in Sources */,
 				A3D387C11F21FD590011E323 /* UserTimelineViewController.swift in Sources */,
 				A36804B21F0B85490032BF49 /* RegisterController.swift in Sources */,
+				3DCBCD931F6FBBDD0010AE6C /* SearchCustomCell.swift in Sources */,
 				A34040961F3FFC8E00EE8BEF /* SearchCellTableViewCell.swift in Sources */,
 				A366EB821F29851C000C574C /* TransitionRight.swift in Sources */,
 				A30752391F37701600CB9CE8 /* MenuViewController.swift in Sources */,
@@ -479,6 +497,7 @@
 				A331ADB91F0A3B5F00CA50AC /* SignupViewController.swift in Sources */,
 				A34A509D1F30982C00BAD1E2 /* GlobalVar.swift in Sources */,
 				A34A50991F30744400BAD1E2 /* HttpDataRequest.swift in Sources */,
+				3DCBCD911F6F88C10010AE6C /* SearchController.swift in Sources */,
 				A370FBB61F3AF4EF00EBD50F /* SearViewController.swift in Sources */,
 				A3F378C41F500D8F003FD98D /* ViewLibViewController.swift in Sources */,
 				A31CEA9F1F27498600F386FC /* ConfigurationViewController.swift in Sources */,
@@ -507,6 +526,7 @@
 				A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */,
 				A38DC7C01F4BCFC9009C168A /* NewMessageViewController.swift in Sources */,
 				3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */,
+				3DD40F7B1F708F1800968896 /* SearchExtensionController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

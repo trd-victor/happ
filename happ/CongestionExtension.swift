@@ -35,26 +35,27 @@ extension CongestionViewController {
                 self.getCongestion()
             }
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                 
                 
-                if json!["result"] != nil {
-                    let result = json!["result"] as! NSArray
+                    if json["result"] != nil {
+                        let result = json["result"] as! NSArray
                     
-                    for item in result {
-                        if let resultData = item as? NSDictionary {
+                        for item in result {
+                            if let resultData = item as? NSDictionary {
                             
-                            if let fields = resultData.valueForKey("fields") {
-                                if let percent = fields.valueForKey("persentage") {
-                                    retData = Int(percent as! String)!
+                                if let fields = resultData.valueForKey("fields") {
+                                    if let percent = fields.valueForKey("persentage") {
+                                        retData = Int(percent as! String)!
+                                    }
                                 }
-                            }
                             
+                            }
                         }
                     }
-                }
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.getFreeStatus(retData)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.getFreeStatus(retData)
+                    }
                 }
                 
             } catch {
@@ -102,7 +103,10 @@ extension CongestionViewController {
                             
                             if let fields = resultData.valueForKey("fields") {
                                 if let id = fields.valueForKey("user_id") {
-                                    self.userIds.append(Int(id as! String)!)
+                                    let existsUser = self.userIds.contains(Int(id as! String)!)
+                                    if !existsUser {
+                                        self.userIds.append(Int(id as! String)!)
+                                    }
                                 }
                             }
                             

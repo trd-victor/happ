@@ -159,7 +159,7 @@ class CurrentSettingsViewController: UIViewController {
         self.changeSysLang()
         
         //let URL
-        let viewDataURL = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
+        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
         
         //created NSURL
         let requestURL = NSURL(string: viewDataURL)
