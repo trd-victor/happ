@@ -497,7 +497,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         FIRAuth.auth()?.createUserWithEmail(userEmail, password: userPassword, completion: { (user: FIRUser?, error) in
             if error == nil {
 //                //connect to firebase db.
-                let db = FIRDatabase.database().reference().child("users").childByAutoId()
+                let db = FIRDatabase.database().reference().child("users").child((user?.uid)!)
                 
                 let token = FIRInstanceID.instanceID().token()!
 //                //set users array to insert...

@@ -177,24 +177,30 @@ class TimelineDetail: UIViewController {
         var contentHeight: CGFloat = 0
         
         if UserDetails.img1 != "null" {
-            imgView1.imgForCache(UserDetails.img1)
-            imgViewHeight(imgView1,swtchCase: 1)
-            contentHeight += imgHeight1
+            self.imgView1.imgForCache(UserDetails.img1)
+            dispatch_async(dispatch_get_main_queue()){
+                self.imgViewHeight(self.imgView1,swtchCase: 1)
+            }
         }
         if UserDetails.img2 != "null" {
             imgView2.imgForCache(UserDetails.img2)
-            imgViewHeight(imgView2,swtchCase: 2)
-            contentHeight += imgHeight2
+            dispatch_async(dispatch_get_main_queue()){
+                self.imgViewHeight(self.imgView2,swtchCase: 2)
+            }
         }
         if UserDetails.img3 != "null" {
             imgView3.imgForCache(UserDetails.img3)
-            imgViewHeight(imgView3,swtchCase: 3)
-            contentHeight += imgHeight3
+            dispatch_async(dispatch_get_main_queue()){
+                self.imgViewHeight(self.imgView3,swtchCase: 3)
+            }
         }
-        
-        scrollView.contentSize = CGSizeMake(view.frame.width,contentHeight + 210)
-        
-        autoLayout()
+        dispatch_async(dispatch_get_main_queue()){
+            contentHeight += self.imgHeight1
+            contentHeight += self.imgHeight2
+            contentHeight += self.imgHeight3
+            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 210)
+            self.autoLayout()
+        }
 
     }
     

@@ -17,6 +17,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     let tblView: UITableView = UITableView()
     var arrayData: [NSObject] = []
     var backupData: [NSObject] = []
+    var postName: String = ""
+    var postPhotoUrl: String = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,6 +91,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
                 if firID != userID{
                     self.arrayData.insert(result, atIndex: 0)
+                    self.backupData.append(result)
                     self.tblView.reloadData()
                 }
             }
@@ -105,16 +108,26 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
-        self.presentDetail(vc)
+        self.presentBackDetail(vc)
     }
     
-    func presentDetail(viewControllerToPresent: UIViewController) {
+    func presentBackDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
         transition.duration = 0.25
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    func presentDetail(viewControllerToPresent: UIViewController) {
+        let transition = CATransition()
+        transition.duration = 0.25
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        
+        presentViewController(viewControllerToPresent, animated: false, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -137,6 +150,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 cell.lblMessage.text = "\(name) posted it on the timeline."
             }else if type == "free-time" {
                 cell.lblMessage.text = "\(name) turned \"now\" free."
+            }else if type == "message"{
+                cell.lblMessage.text = "You have a message from \(name)."
             }else{
                 cell.lblMessage.text = "\(name) posted it on the timeline."
             }
@@ -158,7 +173,36 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let data = self.backupData[self.backupData.count - 1 - indexPath.row]
         
+        if let type = data.valueForKey("type") as? String {
+            let postID = data.valueForKey("postId") as? Int
+            if type == "post-timeline" {
+                // post timeline
+                self.postName = data.valueForKey("name") as! String
+                self.postPhotoUrl = data.valueForKey("photoUrl") as! String
+                self.getPostDetail(postID!)
+                
+            }else if type == "free-time" {
+                // i am free
+//                let userID = data.valueForKey("userId") as! String
+//                self.getUserDetail(userID)
+                
+            }else if type == "message"{
+                // message
+                let messageData = data.valueForKey("data") as! [String: AnyObject]
+                globalvar.userTitle =  messageData["sender"] as! String
+                chatVar.RoomID = messageData["roomId"] as! String
+                chatVar.Indicator = "MessageTable"
+                
+                let viewLib = ViewLibViewController()
+                self.presentDetail(viewLib)
+            }else {
+                print("nothing")
+            }
+        }else{
+            print("no type")
+        }
     }
     
     func dateFormatter(timestamp: NSNumber) -> String{
@@ -185,5 +229,117 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
         
         return image
+    }
+    
+    func getUserDetail(id: String){
+        let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
+        
+        userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            if let result = snapshot.value{
+                
+                SearchDetailsView.searchIDuser = String(result["id"]!!)
+                SearchDetailsView.userEmail = result["email"] as! String
+                
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchDetailView") as! SearchDetailViewController
+                
+                self.presentDetail(vc)
+            }
+        })
+    }
+    
+    func getPostDetail(postid: Int) {
+        
+        let baseUrl: NSURL = NSURL(string: "http://happ.biz/wp-admin/admin-ajax.php")!
+        let parameters = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "get_timeline",
+            "d"           : "0",
+            "lang"        : "en",
+            "user_id"     : "\(globalUserId.userID)",
+            "post_id"     : "\(postid)",
+            "count"       : "1"
+        ]
+        
+        let request = NSMutableURLRequest(URL: baseUrl)
+        let boundary = generateBoundaryString()
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil{
+                print("\(error)")
+                return;
+            }
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                
+                if json!["success"] != nil {
+                    if let resultArray = json!.valueForKey("result") as? NSArray {
+                        if resultArray.count != 0 {
+                            UserDetails.username =  self.postName
+                            UserDetails.userimageURL = self.postPhotoUrl
+                            UserDetails.postDate = resultArray[0]["post_modified"] as! String
+                            UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
+                            UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
+
+                            dispatch_async(dispatch_get_main_queue()){
+                                if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
+                                    let images = resultArray[0]["fields"]!!["images"] as! NSArray
+                                    
+                                    if images.count == 3 {
+                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                        UserDetails.img3 = images[2]["image"]!!["url"] as! String
+                                    }else if images.count == 2 {
+                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                        UserDetails.img3 = "null"
+                                    }else if images.count == 1 {
+                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                        UserDetails.img2 = "null"
+                                        UserDetails.img3 = "null"
+                                    }
+                                }else{
+                                    UserDetails.img1 = "null"
+                                    UserDetails.img2 = "null"
+                                    UserDetails.img3 = "null"
+                                }
+                                
+                                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                                let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+                                
+                                self.presentDetail(vc)
+                            }
+                        }
+                    }
+                }
+            } catch {
+                print(error)
+            }
+        }
+        task.resume()
+    }
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().UUIDString)"
+    }
+    
+    func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
+        let body = NSMutableData();
+        
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString("\(value)\r\n")
+            }
+        }
+        
+        body.appendString("--\(boundary)--\r\n")
+        
+        return body
     }
 }

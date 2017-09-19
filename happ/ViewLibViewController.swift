@@ -237,7 +237,8 @@ class ViewLibViewController: JSQMessagesViewController {
     
     override func didPressSendButton(button: UIButton!, withMessageText text: String!, senderId: String!, senderDisplayName: String!, date: NSDate!) {
         
-        
+        let config = SYSTEM_CONFIG()
+        let username = config.getSYS_VAL("username_\(globalUserId.userID)")!
         
         let cuid = firebaseId.userId
         let uid = globalUserId.FirID
@@ -256,6 +257,7 @@ class ViewLibViewController: JSQMessagesViewController {
             //save message to message table firebase...
             ref.setValue(message)
             
+            //save user last message
             let lastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message").child(uid).child(self.roomID)
             
             let lastmsg = [
@@ -268,8 +270,49 @@ class ViewLibViewController: JSQMessagesViewController {
                 "timestamp"    : timestamp
             ]
             
-            //save to database last-message...
             lastmsgDB.setValue(lastmsg)
+            //end here user
+  
+            //save chatmate last message
+            let clastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message").child(cuid).child(self.roomID)
+            
+            let clastmsg = [
+                "chatmateId"   : uid,
+                "chatroomId"   : roomID,
+                "lastMessage"  : text,
+                "name"         : username,
+                "photoUrl"     : "null",
+                "read"         : true,
+                "timestamp"    : timestamp
+            ]
+            clastmsgDB.setValue(clastmsg)
+            //end here chatmate
+            
+            // save notif message on firebase
+            let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
+            let keyID = notifDB.key
+            let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
+            let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
+            let firID = config.getSYS_VAL("FirebaseID") as? String
+            
+            let data = [
+                "key"           : keyID,
+                "roomId"        : roomID,
+                "chatmateId"    : cuid,
+                "sender"          : self.senderDisplayName,
+            ]
+            
+            let notifData = [
+                "name"      : "\(name)",
+                "photoUrl"  : "\(photoUrl)",
+                "data"      : data,
+                "type"      : "message",
+                "timestamp" : timestamp,
+                "userId"    : firID!
+            ]
+            
+            notifDB.setValue(notifData)
+            // end here notif
             
             self.finishSendingMessage()
         } else {
@@ -316,6 +359,21 @@ class ViewLibViewController: JSQMessagesViewController {
                     //save to database last-message...
                     lastmsgDB.setValue(lastmsg)
                     
+                    let cmatelastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message").child(cuid).child(userChatRoomID.key)
+                    
+                    let cmatelastmsg = [
+                        "chatmateId"   : uid,
+                        "chatroomId"   : userChatRoomID.key,
+                        "lastMessage"  : text,
+                        "name"         : username,
+                        "photoUrl"     : "null",
+                        "read"         : true,
+                        "timestamp"    : timestamp
+                    ]
+                    
+                    //save to database last-message...
+                    cmatelastmsgDB.setValue(cmatelastmsg)
+                    
                     self.finishSendingMessage()
                     
                     if self.AllMessages.isEmpty == true {
@@ -333,9 +391,11 @@ class ViewLibViewController: JSQMessagesViewController {
                     //save message to message table firebase...
                     ref.setValue(message)
                     
-                    let lastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message").child(uid).child(chatRoomID)
+                    let lastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message")
                     
-                    let lastmsg = [
+                     let userlastmsgDB = lastmsgDB.child(uid).child(chatRoomID)
+                    
+                    let userlastmsg = [
                         "chatmateId"   : cuid,
                         "chatroomId"   : chatRoomID,
                         "lastMessage"  : text,
@@ -346,8 +406,22 @@ class ViewLibViewController: JSQMessagesViewController {
                     ]
                     
                     //save to database last-message...
-                    lastmsgDB.setValue(lastmsg)
+                    userlastmsgDB.setValue(userlastmsg)
                     
+                    let cmatelastmsgDB = lastmsgDB.child(cuid).child(chatRoomID)
+                    
+                    let cmatelastmsg = [
+                        "chatmateId"   : uid,
+                        "chatroomId"   : chatRoomID,
+                        "lastMessage"  : text,
+                        "name"         : username,
+                        "photoUrl"     : "null",
+                        "read"         : true,
+                        "timestamp"    : timestamp
+                    ]
+                    
+                    //save to database last-message...
+                    cmatelastmsgDB.setValue(cmatelastmsg)
                     self.finishSendingMessage()
                 }
                 
