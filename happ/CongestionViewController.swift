@@ -157,8 +157,13 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         
         autoLayout()
         
-        getCongestion()
+//        getCongestion()
         
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        getCongestion()
     }
     
     func refreshLang(notification: NSNotification){

@@ -11,7 +11,6 @@ import Firebase
 
 extension UserProfileController {
     
-    
     //
     // GET USER PROFILE INFORMATION
     //
@@ -48,7 +47,7 @@ extension UserProfileController {
                             if let imgUrl = json["result"]!["icon"] as? String {
                                 self.ProfileImage.profileForCache(imgUrl)
                             }
-                            
+                            self.getTimelineUser()
                         }
                     }
                 }else{

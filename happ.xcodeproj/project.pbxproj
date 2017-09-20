@@ -19,7 +19,7 @@
 		3DD40F7B1F708F1800968896 /* SearchExtensionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD40F7A1F708F1800968896 /* SearchExtensionController.swift */; };
 		3DD40F7E1F70F57B00968896 /* UserProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD40F7D1F70F57B00968896 /* UserProfileController.swift */; };
 		3DD40F801F70F58600968896 /* UserProfileExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD40F7F1F70F58600968896 /* UserProfileExtension.swift */; };
-		3DD40F821F70F58F00968896 /* UserProfileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD40F811F70F58F00968896 /* UserProfileCell.swift */; };
+		3DD977751F725C7A00DCBDC4 /* TableViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD977741F725C7A00DCBDC4 /* TableViewExtension.swift */; };
 		A302AA5C1F27007400D8FBA8 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A302AA5B1F27007400D8FBA8 /* CustomCell.swift */; };
 		A30364C31F25E3440083A495 /* TableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30364C21F25E3440083A495 /* TableController.swift */; };
 		A30752351F3758DE00CB9CE8 /* UserLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30752341F3758DE00CB9CE8 /* UserLoginViewController.swift */; };
@@ -94,7 +94,7 @@
 		3DD40F7A1F708F1800968896 /* SearchExtensionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchExtensionController.swift; sourceTree = "<group>"; };
 		3DD40F7D1F70F57B00968896 /* UserProfileController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileController.swift; sourceTree = "<group>"; };
 		3DD40F7F1F70F58600968896 /* UserProfileExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileExtension.swift; sourceTree = "<group>"; };
-		3DD40F811F70F58F00968896 /* UserProfileCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileCell.swift; sourceTree = "<group>"; };
+		3DD977741F725C7A00DCBDC4 /* TableViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewExtension.swift; sourceTree = "<group>"; };
 		8E7910D823270E02D72DC1CE /* Pods-happ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-happ.release.xcconfig"; path = "Pods/Target Support Files/Pods-happ/Pods-happ.release.xcconfig"; sourceTree = "<group>"; };
 		A302AA5B1F27007400D8FBA8 /* CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
 		A30364C21F25E3440083A495 /* TableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableController.swift; sourceTree = "<group>"; };
@@ -212,7 +212,7 @@
 			children = (
 				3DD40F7D1F70F57B00968896 /* UserProfileController.swift */,
 				3DD40F7F1F70F58600968896 /* UserProfileExtension.swift */,
-				3DD40F811F70F58F00968896 /* UserProfileCell.swift */,
+				3DD977741F725C7A00DCBDC4 /* TableViewExtension.swift */,
 			);
 			name = UserProfile;
 			sourceTree = "<group>";
@@ -509,6 +509,7 @@
 				A3E124AC1F40BA130053B2CC /* ReservationViewController.swift in Sources */,
 				A34A509B1F307BFC00BAD1E2 /* setParam.swift in Sources */,
 				A3E124B01F40BDDA0053B2CC /* searchdetails.swift in Sources */,
+				3DD977751F725C7A00DCBDC4 /* TableViewExtension.swift in Sources */,
 				3D7AA5B11F63704F00E16CAC /* Extensions.swift in Sources */,
 				A3D90D9C1F49678800DB5624 /* Constants.swift in Sources */,
 				A331ADB91F0A3B5F00CA50AC /* SignupViewController.swift in Sources */,
@@ -528,7 +529,6 @@
 				A32160711F384D0D009A72E2 /* CustomViewController.swift in Sources */,
 				A34FC10A1F0CC8AE006BFA81 /* ChangePassViewController.swift in Sources */,
 				A34040981F4032FD00EE8BEF /* SearchDetailViewController.swift in Sources */,
-				3DD40F821F70F58F00968896 /* UserProfileCell.swift in Sources */,
 				A3A343A71F09F8B600DC55FC /* ViewController.swift in Sources */,
 				3D544EF71F68E6370055019A /* TimelineDetail.swift in Sources */,
 				A31CEAA11F274F9900F386FC /* MailChangeViewController.swift in Sources */,

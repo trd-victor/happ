@@ -19,6 +19,18 @@ struct UserProfile {
 
 class UserProfileController: UIViewController {
     
+    var img1 = [String]()
+    var img2 = [String]()
+    var img3 = [String]()
+    var userBody = [String]()
+    var fromID = [String]()
+    var postDate = [String]()
+    var postID = [Int]()
+    var page: Int = 1
+    
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    
+    
     let ProfileView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -59,6 +71,7 @@ class UserProfileController: UIViewController {
         label.font = UIFont.systemFontOfSize(14)
         label.numberOfLines = 0
         label.textAlignment = .Center
+        label.lineBreakMode = .ByWordWrapping
         label.sizeToFit()
         return label
     }()
@@ -95,8 +108,18 @@ class UserProfileController: UIViewController {
     @IBOutlet var tblProfile: UITableView!
     @IBOutlet var tabBar: UITabBar!
     
+    let refreshControl: UIRefreshControl = {
+        let control = UIRefreshControl()
+        return control
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tblProfile.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
+        tblProfile.registerClass(SingleImage.self, forCellReuseIdentifier: "SingleImage")
+        tblProfile.registerClass(DoubleImage.self, forCellReuseIdentifier: "DoubleImage")
+        tblProfile.registerClass(TripleImage.self, forCellReuseIdentifier: "TripleImage")
         
         userName.text = ""
         h_id.text = ""
@@ -114,6 +137,14 @@ class UserProfileController: UIViewController {
         ProfileView.addSubview(msg)
         ProfileView.addSubview(btnMessage)
         ProfileView.addSubview(btnBlock)
+        
+        tblProfile.addSubview(self.refreshControl)
+        
+        tblProfile.separatorStyle = .None
+        tblProfile.backgroundColor = UIColor(hexString: "#E4D4B9")
+        
+        tblProfile.delegate = self
+        tblProfile.dataSource = self
         
         translate()
         
@@ -176,7 +207,7 @@ class UserProfileController: UIViewController {
         skills.topAnchor.constraintEqualToAnchor(h_id.bottomAnchor, constant: 5).active = true
         skills.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
         skills.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -40).active = true
-        skills.heightAnchor.constraintEqualToConstant(30).active = true
+        skills.heightAnchor.constraintEqualToConstant(45).active = true
         
         msg.topAnchor.constraintEqualToAnchor(skills.bottomAnchor, constant: 5).active = true
         msg.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
