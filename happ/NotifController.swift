@@ -176,7 +176,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let data = self.backupData[self.backupData.count - 1 - indexPath.row]
-        print(data)
         if let type = data.valueForKey("type") as? String {
             let postID = data.valueForKey("postId") as? Int
             if type == "post-timeline" || type == "timeline" {
