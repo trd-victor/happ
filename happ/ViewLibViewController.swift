@@ -287,32 +287,32 @@ class ViewLibViewController: JSQMessagesViewController {
             ]
             clastmsgDB.setValue(clastmsg)
             //end here chatmate
-            
-            // save notif message on firebase
-            let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
-            let keyID = notifDB.key
-            let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
-            let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
-            let firID = config.getSYS_VAL("FirebaseID") as? String
-            
-            let data = [
-                "key"           : keyID,
-                "roomId"        : roomID,
-                "chatmateId"    : cuid,
-                "sender"          : self.senderDisplayName,
-            ]
-            
-            let notifData = [
-                "name"      : "\(name)",
-                "photoUrl"  : "\(photoUrl)",
-                "data"      : data,
-                "type"      : "message",
-                "timestamp" : timestamp,
-                "userId"    : firID!
-            ]
-            
-            notifDB.setValue(notifData)
-            // end here notif
+// temporary comment
+//            // save notif message on firebase
+//            let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
+//            let keyID = notifDB.key
+//            let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
+//            let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
+//            let firID = config.getSYS_VAL("FirebaseID") as? String
+//            
+//            let data = [
+//                "key"           : keyID,
+//                "roomId"        : roomID,
+//                "chatmateId"    : cuid,
+//                "sender"          : self.senderDisplayName,
+//            ]
+//            
+//            let notifData = [
+//                "name"      : "\(name)",
+//                "photoUrl"  : "\(photoUrl)",
+//                "data"      : data,
+//                "type"      : "message",
+//                "timestamp" : timestamp,
+//                "userId"    : firID!
+//            ]
+//            
+//            notifDB.setValue(notifData)
+//            // end here notif
             
             self.finishSendingMessage()
         } else {

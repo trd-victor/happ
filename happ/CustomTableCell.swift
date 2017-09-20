@@ -634,8 +634,8 @@ class NotifCell: UITableViewCell {
         notifPhoto.translatesAutoresizingMaskIntoConstraints = false
         notifPhoto.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 5).active = true
         notifPhoto.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor).active = true
-        notifPhoto.widthAnchor.constraintEqualToConstant(45).active = true
-        notifPhoto.heightAnchor.constraintEqualToConstant(45).active = true
+        notifPhoto.widthAnchor.constraintEqualToConstant(46).active = true
+        notifPhoto.heightAnchor.constraintEqualToConstant(46).active = true
         
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.bottomAnchor.constraintEqualToAnchor(self.bottomAnchor).active = true

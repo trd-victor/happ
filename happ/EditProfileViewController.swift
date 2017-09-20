@@ -148,8 +148,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userImage.translatesAutoresizingMaskIntoConstraints = false
         userImage.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         userImage.topAnchor.constraintEqualToAnchor(scrollView.topAnchor, constant: 5).active = true
-        userImage.widthAnchor.constraintEqualToConstant(75).active = true
-        userImage.heightAnchor.constraintEqualToConstant(75).active = true
+        userImage.widthAnchor.constraintEqualToConstant(74).active = true
+        userImage.heightAnchor.constraintEqualToConstant(74).active = true
         
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
@@ -661,8 +661,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     
     
     func setRounded(sender: UIImageView) {
-        let radius = min(sender.frame.width/2 , sender.frame.height/2)
-        sender.layer.cornerRadius = radius
+        sender.layer.cornerRadius = 37
         sender.clipsToBounds = true
     }
     

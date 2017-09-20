@@ -146,16 +146,18 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if data.valueForKey("type") != nil {
             let type = data.valueForKey("type") as! String
             
-            if type == "post-timeline" {
+            if type == "post-timeline" || type == "timeline"{
                 cell.lblMessage.text = "\(name) posted it on the timeline."
             }else if type == "free-time" {
                 cell.lblMessage.text = "\(name) turned \"now\" free."
-            }else if type == "message"{
+            }
+            else if type == "message"{
                 cell.lblMessage.text = "You have a message from \(name)."
             }else{
                 cell.lblMessage.text = "\(name) posted it on the timeline."
             }
-        }else{
+        }
+        else{
             cell.lblMessage.text = "\(name) posted it on the timeline."
         }
         
@@ -174,10 +176,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         let data = self.backupData[self.backupData.count - 1 - indexPath.row]
-        
+        print(data)
         if let type = data.valueForKey("type") as? String {
             let postID = data.valueForKey("postId") as? Int
-            if type == "post-timeline" {
+            if type == "post-timeline" || type == "timeline" {
                 // post timeline
                 self.postName = data.valueForKey("name") as! String
                 self.postPhotoUrl = data.valueForKey("photoUrl") as! String
@@ -185,8 +187,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
             }else if type == "free-time" {
                 // i am free
-//                let userID = data.valueForKey("userId") as! String
-//                self.getUserDetail(userID)
+                let userID = data.valueForKey("userId") as! String
+                self.getUserDetail(userID)
                 
             }else if type == "message"{
                 // message
@@ -237,13 +239,15 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             if let result = snapshot.value{
                 
-                SearchDetailsView.searchIDuser = String(result["id"]!!)
-                SearchDetailsView.userEmail = result["email"] as! String
-                
-                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchDetailView") as! SearchDetailViewController
-                
-                self.presentDetail(vc)
+                if result["id"] != nil {
+                    SearchDetailsView.searchIDuser = String(result["id"]!!)
+                    SearchDetailsView.userEmail = result["email"] as! String
+                    
+                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchDetailView") as! SearchDetailViewController
+                    
+                    self.presentDetail(vc)
+                }
             }
         })
     }
