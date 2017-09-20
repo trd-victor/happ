@@ -21,17 +21,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     //basepath
     let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
-    let testData = [
-        "Ralph1",
-        "Ralph2",
-        "Ralph3",
-        "Ralph4",
-        "Ralph5",
-        "Ralph6",
-        "Ralph7",
-        "Ralph8"
-    ]
-    
+    var user_id = [Int]()
     var userData = []
     
     let config = SYSTEM_CONFIG()
@@ -77,7 +67,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     @IBAction func backButton(sender: AnyObject) {
         let transition: CATransition = CATransition()
-        transition.duration = 0.2
+        transition.duration = 0.5
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -136,6 +126,15 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.resignFirstResponder()
+        self.navBar.hidden = false
+        self.tblViewSearch.hidden = true
+        searchBar.showsCancelButton = false
+        view.backgroundColor = UIColor(hexString: "#272727")
+        setNeedsStatusBarAppearanceUpdate()
+        
+        self.searchBar.layoutIfNeeded()
+        searchBarTopConstraint.constant = 0
+        self.searchBar.layoutIfNeeded()
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -172,14 +171,28 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }else{
             cell.profileImg.image = UIImage(named: "noPhoto")
         }
+        if let id = self.userData[indexPath.row]["user_id"] as? Int {
+            user_id.append(id)
+        }
         return cell
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        print(self.userData[indexPath.row]["user_id"])
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
+        let transition = CATransition()
+        
+        UserProfile.id = String(user_id[indexPath.row])
+        
+        transition.duration = 0.25
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        presentViewController(vc, animated: false, completion: nil)
     }
     
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        user_id.removeAll()
         if searchText.characters.count == 0 {
             self.userData = []
             tblViewSearch.reloadData()
@@ -204,21 +217,6 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.searchBar.layoutIfNeeded()
         searchBarTopConstraint.constant = -44
         self.searchBar.layoutIfNeeded()
-        
-        return true
-    }
-    
-    func searchBarShouldEndEditing(searchBar: UISearchBar) -> Bool {
-        self.navBar.hidden = false
-        self.tblViewSearch.hidden = true
-        searchBar.showsCancelButton = false
-        view.backgroundColor = UIColor(hexString: "#272727")
-        setNeedsStatusBarAppearanceUpdate()
-        
-        self.searchBar.layoutIfNeeded()
-        searchBarTopConstraint.constant = 0
-        self.searchBar.layoutIfNeeded()
-        
         
         return true
     }

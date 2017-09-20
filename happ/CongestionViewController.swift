@@ -269,7 +269,17 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         if sender.state == UIGestureRecognizerState.Ended {
             let tapLocation = sender.locationInView(self.collectionView)
             if let indexPath = self.collectionView.indexPathForItemAtPoint(tapLocation) {
-                print(indexPath.row)
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
+                let transition = CATransition()
+                
+                UserProfile.id = String(self.userIds[indexPath.row])
+                
+                transition.duration = 0.25
+                transition.type = kCATransitionPush
+                transition.subtype = kCATransitionFromRight
+                self.view.window!.layer.addAnimation(transition, forKey: nil)
+                presentViewController(vc, animated: false, completion: nil)
             }
         }
     }

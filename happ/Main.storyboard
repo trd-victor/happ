@@ -102,16 +102,16 @@
                                 <textInputTraits key="textInputTraits"/>
                             </searchBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="CwA-ck-yle">
-                                <rect key="frame" x="0.0" y="114" width="274" height="421"/>
+                                <rect key="frame" x="0.0" y="114" width="320" height="454"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="SDN-ev-PTN">
-                                        <rect key="frame" x="0.0" y="28" width="274" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="SDN-ev-PTN" id="jU7-aO-is7">
-                                            <rect key="frame" x="0.0" y="0.0" width="274" height="43"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <animations/>
                                         </tableViewCellContentView>
@@ -130,7 +130,7 @@
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </textAttributes>
                                 <items>
-                                    <navigationItem title="Title" id="7Su-5A-oLB">
+                                    <navigationItem title="Search" id="7Su-5A-oLB">
                                         <barButtonItem key="leftBarButtonItem" image="Image" id="DsQ-lN-iso">
                                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <connections>
@@ -167,7 +167,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="535" y="1579"/>
+            <point key="canvasLocation" x="391" y="1579"/>
         </scene>
         <!--Launch Screen View Controller-->
         <scene sceneID="aZm-Ap-z0B">
@@ -1539,6 +1539,78 @@
             </objects>
             <point key="canvasLocation" x="3020" y="303"/>
         </scene>
+        <!--User Profile Controller-->
+        <scene sceneID="nE7-Ar-IYG">
+            <objects>
+                <viewController storyboardIdentifier="UserProfile" id="4zf-eY-eub" customClass="UserProfileController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="GxR-cQ-Roq">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="v8j-e9-epT">
+                                <rect key="frame" x="0.0" y="25" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </textAttributes>
+                                <items>
+                                    <navigationItem id="yIp-zI-sq2">
+                                        <barButtonItem key="leftBarButtonItem" image="Image" id="wFG-ti-xfw">
+                                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <connections>
+                                                <action selector="navBar:" destination="4zf-eY-eub" id="dmn-xY-jY3"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="vav-Qd-skR">
+                                <rect key="frame" x="0.0" y="69" width="320" height="450"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <tabBar contentMode="scaleToFill" itemPositioning="centered" id="K0g-8A-lat">
+                                <rect key="frame" x="0.0" y="519" width="320" height="49"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="0.0" colorSpace="calibratedRGB"/>
+                                <items>
+                                    <tabBarItem title="Timeline" image="timelineIcon" id="Vge-5a-7eC"/>
+                                    <tabBarItem tag="1" title="Messages" image="messageIcon" id="Klh-Hw-2us"/>
+                                    <tabBarItem tag="2" title="Room Reservation" image="reservationIcon" id="ufc-Mc-AiS"/>
+                                    <tabBarItem tag="3" title="Situation" image="rushIcon" id="8YA-hd-Tcr"/>
+                                    <tabBarItem tag="4" title="Configuration" image="settings" id="Tf9-La-zcO"/>
+                                </items>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tabBar>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page1" id="fPK-bI-Rlt">
+                                <rect key="frame" x="118" y="30" width="84" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                            </imageView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" red="0.15294117647058825" green="0.15294117647058825" blue="0.15294117647058825" alpha="1" colorSpace="calibratedRGB"/>
+                    </view>
+                    <connections>
+                        <outlet property="happLogo" destination="fPK-bI-Rlt" id="77q-rI-w3Y"/>
+                        <outlet property="navBack" destination="wFG-ti-xfw" id="1BG-9L-MVb"/>
+                        <outlet property="navBar" destination="v8j-e9-epT" id="QVA-4N-Yx0"/>
+                        <outlet property="tabBar" destination="K0g-8A-lat" id="4Ge-XM-24B"/>
+                        <outlet property="tblProfile" destination="vav-Qd-skR" id="bm1-YC-DPd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2o8-ee-gdQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="756" y="1579"/>
+        </scene>
         <!--Room Reservation-->
         <scene sceneID="BHK-Ba-UOG">
             <objects>
@@ -1625,7 +1697,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hSm-EE-FE5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2013" y="303"/>
+            <point key="canvasLocation" x="2261" y="303"/>
         </scene>
         <!--View Message View Controller-->
         <scene sceneID="aDZ-eg-heR">
@@ -1735,7 +1807,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XcH-Bd-CDV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2650" y="-385"/>
+            <point key="canvasLocation" x="2650" y="-303"/>
         </scene>
         <!--Search User View Table View Controller-->
         <scene sceneID="y1Z-2w-Yni">
@@ -1748,7 +1820,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="cell" rowHeight="90" id="eT8-is-h7d" customClass="SearchCellTableViewCell" customModule="happ" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="92" width="320" height="90"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="90"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eT8-is-h7d" id="fAm-ad-EpP">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="90"/>
@@ -1831,7 +1903,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q7X-WU-P79" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2612" y="965"/>
+            <point key="canvasLocation" x="2650" y="929"/>
         </scene>
         <!--Item-->
         <scene sceneID="tMy-7Y-S32">
@@ -1841,12 +1913,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <tabBar contentMode="scaleToFill" itemPositioning="centered" id="GlH-Cz-8qt">
+                                <rect key="frame" x="0.0" y="519" width="320" height="49"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.15294117647058825" green="0.15294117647058825" blue="0.15294117647058825" alpha="0.0" colorSpace="calibratedRGB"/>
+                                <items>
+                                    <tabBarItem title="Timeline" image="timelineIcon" id="ha8-XC-9F8"/>
+                                    <tabBarItem tag="1" title="Messages" image="messageIcon" id="k5J-bn-vrk"/>
+                                    <tabBarItem tag="2" title="Room Reservation" image="reservationIcon" id="jWt-ng-fPl"/>
+                                    <tabBarItem tag="3" title="Situation" image="rushIcon" id="lTz-Y7-wvd"/>
+                                    <tabBarItem tag="4" title="Configuration" image="settings" id="SRm-Ow-BMG"/>
+                                </items>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tabBar>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="esd-4y-SSG">
-                                <rect key="frame" x="0.0" y="47" width="320" height="451"/>
+                                <rect key="frame" x="0.0" y="64" width="320" height="451"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="118" sectionHeaderHeight="28" sectionFooterHeight="28" id="TRd-ra-faY">
-                                        <rect key="frame" x="0.0" y="299" width="320" height="152"/>
+                                        <rect key="frame" x="0.0" y="324" width="320" height="152"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <animations/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1901,7 +1989,7 @@
                                         </prototypes>
                                     </tableView>
                                     <view contentMode="scaleToFill" id="gAf-UF-yIy">
-                                        <rect key="frame" x="0.0" y="-8" width="320" height="307"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="307"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="photo" id="ZVn-WL-j2z">
@@ -1910,7 +1998,7 @@
                                                 <animations/>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qa2-MO-VkR">
-                                                <rect key="frame" x="8" y="77" width="304" height="26"/>
+                                                <rect key="frame" x="8" y="99" width="304" height="26"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <animations/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1918,28 +2006,15 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="e5A-MS-KHa">
-                                                <rect key="frame" x="8" y="105" width="304" height="21"/>
+                                                <rect key="frame" x="8" y="77" width="304" height="21"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <animations/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                 <color key="textColor" red="0.69411764710000001" green="0.69411764710000001" blue="0.69411764710000001" alpha="1" colorSpace="calibratedRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8Tq-zU-J5F">
-                                                <rect key="frame" x="8" y="255" width="146" height="42"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <animations/>
-                                                <color key="backgroundColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <state key="normal">
-                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                                </state>
-                                                <connections>
-                                                    <segue destination="BYC-fe-J7H" kind="push" id="aK0-bE-m4E"/>
-                                                </connections>
-                                            </button>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" editable="NO" textAlignment="natural" id="oqP-Qc-Omp">
-                                                <rect key="frame" x="8" y="177" width="304" height="74"/>
+                                                <rect key="frame" x="8" y="173" width="304" height="74"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <animations/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1962,6 +2037,19 @@
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </state>
                                             </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="8Tq-zU-J5F">
+                                                <rect key="frame" x="8" y="255" width="146" height="42"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <animations/>
+                                                <color key="backgroundColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <state key="normal">
+                                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="btnMessage:" destination="zJF-CH-qrl" eventType="touchUpInside" id="9fX-YA-IFE"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <animations/>
                                         <color key="backgroundColor" red="0.89411764709999997" green="0.83137254900000002" blue="0.72549019609999998" alpha="1" colorSpace="calibratedRGB"/>
@@ -1969,22 +2057,6 @@
                                 </subviews>
                                 <animations/>
                             </scrollView>
-                            <tabBar contentMode="scaleToFill" itemPositioning="centered" id="GlH-Cz-8qt">
-                                <rect key="frame" x="0.0" y="519" width="320" height="49"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <animations/>
-                                <color key="backgroundColor" red="0.15294117647058825" green="0.15294117647058825" blue="0.15294117647058825" alpha="0.0" colorSpace="calibratedRGB"/>
-                                <items>
-                                    <tabBarItem title="Timeline" image="timelineIcon" id="ha8-XC-9F8"/>
-                                    <tabBarItem tag="1" title="Messages" image="messageIcon" id="k5J-bn-vrk"/>
-                                    <tabBarItem tag="2" title="Room Reservation" image="reservationIcon" id="jWt-ng-fPl"/>
-                                    <tabBarItem tag="3" title="Situation" image="rushIcon" id="lTz-Y7-wvd"/>
-                                    <tabBarItem tag="4" title="Configuration" image="settings" id="SRm-Ow-BMG"/>
-                                </items>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </tabBar>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -2008,12 +2080,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UME-j4-Z2e" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3020" y="965"/>
+            <point key="canvasLocation" x="3020" y="929"/>
         </scene>
         <!--View Lib View Controller-->
         <scene sceneID="hho-Hq-kpu">
             <objects>
-                <viewController id="BYC-fe-J7H" customClass="ViewLibViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatMessage" id="BYC-fe-J7H" customClass="ViewLibViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="38P-N9-6HP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2024,7 +2096,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0xe-Gf-o9l" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3480" y="303"/>
+            <point key="canvasLocation" x="3368" y="303"/>
         </scene>
         <!--Create Post View Controller-->
         <scene sceneID="fYJ-LI-MEP">
@@ -2390,7 +2462,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AHg-kp-Ffd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2222" y="965"/>
+            <point key="canvasLocation" x="2261" y="929"/>
         </scene>
         <!--Messages-->
         <scene sceneID="MEG-HG-6vq">
@@ -2430,8 +2502,7 @@
         <image name="timelineIcon" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="9NI-Pd-7f3"/>
-        <segue reference="aK0-bE-m4E"/>
+        <segue reference="eTY-vy-na1"/>
         <segue reference="Uti-YF-d28"/>
         <segue reference="DQQ-jv-aFW"/>
     </inferredMetricsTieBreakers>

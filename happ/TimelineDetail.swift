@@ -9,6 +9,7 @@
 import UIKit
 
 struct UserDetails {
+    static var user_id: String!
     static var username : String!
     static var userimageURL : String!
     static var postDate: String!
@@ -299,7 +300,17 @@ class TimelineDetail: UIViewController {
     }
     
     func viewProfile(sender: UIButton!){
-        print(sender.tag)
+         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
+        let transition = CATransition()
+        
+        UserProfile.id = String(sender.tag)
+        
+        transition.duration = 0.25
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        presentViewController(vc, animated: false, completion: nil)
     }
     
     func backTimeline(sender: UIButton!){

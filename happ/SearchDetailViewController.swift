@@ -155,6 +155,19 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
         
     }
     
+    @IBAction func btnMessage(sender: AnyObject) {
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("ChatMessage") as! ViewLibViewController
+        
+        let transition: CATransition = CATransition()
+        transition.duration = 0.2
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        presentViewController(vc, animated: false, completion: nil)
+    }
+    
     func otherControlView(notification: NSNotification) {
         print("test")
         self.frmOther = true

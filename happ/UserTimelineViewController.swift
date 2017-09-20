@@ -828,15 +828,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func viewProfile(sender: UIButton!){
         let config = SYSTEM_CONFIG()
-        
-        NSNotificationCenter.defaultCenter().postNotificationName("otherControlView", object: nil, userInfo: nil)
-        
-        SearchDetailsView.userEmail = config.getSYS_VAL("useremail_\(sender.tag)") as! String
-        SearchDetailsView.searchIDuser = config.getSYS_VAL("userid_\(sender.tag)") as! String
-        doConfigurationProfile.form = true
-        
+        UserProfile.id = config.getSYS_VAL("userid_\(sender.tag)") as! String
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchDetailView") as! SearchDetailViewController
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
         self.presentDetail(vc)
     }
     
