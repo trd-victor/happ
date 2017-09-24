@@ -122,43 +122,39 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         myActivityIndicator.widthAnchor.constraintEqualToConstant(50).active = true
         myActivityIndicator.heightAnchor.constraintEqualToConstant(50).active = true
         
-        
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
         
-        userEmailField.translatesAutoresizingMaskIntoConstraints = false
-        userEmailField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        userEmailField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
-        userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
-        
         labelUserEmail.translatesAutoresizingMaskIntoConstraints = false
-        labelUserEmail.centerXAnchor.constraintEqualToAnchor(userEmailField.centerXAnchor).active = true
         labelUserEmail.topAnchor.constraintEqualToAnchor(userEmailField.topAnchor).active = true
-        labelUserEmail.widthAnchor.constraintEqualToAnchor(userEmailField.widthAnchor, constant: -20).active = true
+        labelUserEmail.widthAnchor.constraintEqualToConstant(110).active = true
         labelUserEmail.heightAnchor.constraintEqualToConstant(48).active = true
         
-        userPasswordField.translatesAutoresizingMaskIntoConstraints = false
-        userPasswordField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        userPasswordField.topAnchor.constraintEqualToAnchor(userEmailField.bottomAnchor).active = true
-        userPasswordField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        userPasswordField.heightAnchor.constraintEqualToConstant(48).active = true
+        userEmailField.translatesAutoresizingMaskIntoConstraints = false
+        userEmailField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        userEmailField.leftAnchor.constraintEqualToAnchor(labelUserEmail.rightAnchor).active = true
+        userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -110).active = true
+        userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
         
         labelPassword.translatesAutoresizingMaskIntoConstraints = false
-        labelPassword.centerXAnchor.constraintEqualToAnchor(userPasswordField.centerXAnchor).active = true
         labelPassword.topAnchor.constraintEqualToAnchor(userPasswordField.topAnchor).active = true
-        labelPassword.widthAnchor.constraintEqualToAnchor(userPasswordField.widthAnchor, constant: -20).active = true
+        labelPassword.widthAnchor.constraintEqualToConstant(80).active = true
         labelPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        userPasswordField.translatesAutoresizingMaskIntoConstraints = false
+        userPasswordField.topAnchor.constraintEqualToAnchor(userEmailField.bottomAnchor).active = true
+        userPasswordField.leftAnchor.constraintEqualToAnchor(labelPassword.rightAnchor).active = true
+        userPasswordField.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -80).active = true
+        userPasswordField.heightAnchor.constraintEqualToConstant(48).active = true
         
         btnLogin.translatesAutoresizingMaskIntoConstraints = false
         btnLogin.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         btnLogin.topAnchor.constraintEqualToAnchor(userPasswordField.bottomAnchor, constant: 20).active = true
         btnLogin.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -40).active = true
         btnLogin.heightAnchor.constraintEqualToConstant(48).active = true
-        
         
         forgetPass.translatesAutoresizingMaskIntoConstraints = false
         forgetPass.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true

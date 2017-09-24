@@ -77,22 +77,23 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func getNotification(){
-//        let config = SYSTEM_CONFIG()
-//        
-//        let firID = config.getSYS_VAL("FirebaseID") as! String
-//        let notifDB = FIRDatabase.database().reference().child("notifications")
-//        
-//        notifDB.observeEventType(.ChildAdded, withBlock: {(snapshot) in
-//            if let result = snapshot.value as? [String: AnyObject]{
-//                let userID = result["userId"] as! String
-//                
-//                if firID != userID{
-//                    self.arrayData.insert(result, atIndex: 0)
-//                    self.backupData.append(result)
-//                    self.tblView.reloadData()
-//                }
-//            }
-//        })
+        let config = SYSTEM_CONFIG()
+
+        let firID = config.getSYS_VAL("FirebaseID") as! String
+        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("notification-all")
+
+        notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
+            
+            
+            if let result = snapshot.value as? NSDictionary {
+                let userID = result["userId"] as? String
+                if firID != userID! {
+                    self.arrayData.insert(result, atIndex: 0)
+                    self.backupData.append(result)
+                    self.tblView.reloadData()
+                }
+            }
+        })
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
@@ -138,32 +139,31 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("NotifCell", forIndexPath: indexPath) as! NotifCell
         
-        let data = self.arrayData[indexPath.row]
-        let name = data.valueForKey("name") as! String
-        if data.valueForKey("type") != nil {
-            let type = data.valueForKey("type") as! String
+        let data = self.arrayData[indexPath.row] as? NSDictionary
+        
+        if data != nil {
+            let name = data!["name"] as! String
+            let type = data!["type"] as! String
+            let timestamp = data!["timestamp"] as? NSNumber
+            let image = data!["photoUrl"] as? String
             
-            if type == "post-timeline" || type == "timeline"{
+            if type == "timeline" || type == "post-timeline"{
                 cell.lblMessage.text = "\(name) posted it on the timeline."
             }else if type == "free-time" {
                 cell.lblMessage.text = "\(name) turned \"now\" free."
-            }
-            else if type == "message"{
+            }else if type == "message" {
                 cell.lblMessage.text = "You have a message from \(name)."
-            }else{
-                cell.lblMessage.text = "\(name) posted it on the timeline."
+            }else if type == "reservation" {
+                cell.lblMessage.text = "Reservation"
+            }
+            
+            cell.lblDate.text = dateFormatter(timestamp!)
+            
+            if image != nil {
+                cell.notifPhoto.imgForCache(image!)
             }
         }
-        else{
-            cell.lblMessage.text = "\(name) posted it on the timeline."
-        }
-        
-        cell.lblDate.text = dateFormatter((data.valueForKey("timestamp") as? NSNumber)!)
-        if (data.valueForKey("photoUrl") as? String) != nil{
-            let image = setImageURL((data.valueForKey("photoUrl") as? String)!)
-            cell.notifPhoto.image = image
-        }
-        
+       
         return cell
     }
     
