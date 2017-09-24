@@ -117,6 +117,8 @@ class UserProfileController: UIViewController {
         
         translate()
         
+        btnMessage.addTarget(self, action: Selector("openMessage"), forControlEvents: .TouchUpInside)
+        
         tblProfile.contentInset = UIEdgeInsetsMake(380, 0, 0, 0)
         
         autoLayout()
@@ -205,7 +207,11 @@ class UserProfileController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
+    }
+    
+    func openMessage(){
+        let vc = ViewLibViewController()
+        self.presentViewController(vc, animated: false, completion: nil)
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

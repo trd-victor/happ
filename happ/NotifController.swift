@@ -62,9 +62,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func loadConfig(){
-        //        let config = SYSTEM_CONFIG()
-        //        self.title = config.translate("notice")
-        
         let navItem = UINavigationItem(title: "Notification")
         let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
         btnBack.tintColor = UIColor.whiteColor()
@@ -80,22 +77,22 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func getNotification(){
-        let config = SYSTEM_CONFIG()
-        
-        let firID = config.getSYS_VAL("FirebaseID") as! String
-        let notifDB = FIRDatabase.database().reference().child("notifications")
-        
-        notifDB.observeEventType(.ChildAdded, withBlock: {(snapshot) in
-            if let result = snapshot.value as? [String: AnyObject]{
-                let userID = result["userId"] as! String
-                
-                if firID != userID{
-                    self.arrayData.insert(result, atIndex: 0)
-                    self.backupData.append(result)
-                    self.tblView.reloadData()
-                }
-            }
-        })
+//        let config = SYSTEM_CONFIG()
+//        
+//        let firID = config.getSYS_VAL("FirebaseID") as! String
+//        let notifDB = FIRDatabase.database().reference().child("notifications")
+//        
+//        notifDB.observeEventType(.ChildAdded, withBlock: {(snapshot) in
+//            if let result = snapshot.value as? [String: AnyObject]{
+//                let userID = result["userId"] as! String
+//                
+//                if firID != userID{
+//                    self.arrayData.insert(result, atIndex: 0)
+//                    self.backupData.append(result)
+//                    self.tblView.reloadData()
+//                }
+//            }
+//        })
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {

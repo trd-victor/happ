@@ -13,5 +13,5 @@ target 'happ' do
     pod 'Firebase/Storage', '<4'
     pod 'JSQMessagesViewController'
     pod 'DKImagePickerController', '<3'
-    pod 'FirebaseMessaging', '<4'
+    pod 'FirebaseMessaging', '<1.2.3'
 end

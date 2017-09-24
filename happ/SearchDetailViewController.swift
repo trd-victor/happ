@@ -351,7 +351,7 @@ class SearchDetailViewController: UIViewController, UITabBarDelegate, UITableVie
                         
                         //pass the name of the user to send teh message
                         firebaseId.userName = name
-                        
+                    
                                         
                         if data != nil {
                             self.userImage.image = UIImage(data: data!)

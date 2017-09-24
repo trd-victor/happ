@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Firebase
 
 class SYSTEM_CONFIG {
     internal var SYS_VAL = NSUserDefaults.standardUserDefaults()
@@ -54,7 +54,6 @@ class LaunchScreenViewController: UIViewController {
         
         //setup Views..
         self.setUpView()
-        
         
         //Setup Configurations
     }

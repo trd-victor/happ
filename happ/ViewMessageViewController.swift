@@ -48,14 +48,14 @@ class ViewMessageViewController: UIViewController, UICollectionViewDelegate, UIC
         self.mycollectionView.dataSource = self
         
         //get chatroomid
-        self.roomID = chatVar.RoomID
+//        self.roomID = chatVar.RoomID
         print(self.roomID)
         
         //get userKey 
-        self.userID  = chatVar.UserKey
+//        self.userID  = chatVar.UserKey
         
         //set up the for the title of the navigation controller in swift
-        self.username = chatVar.name
+//        self.username = chatVar.name
         self.title = self.username
     
         //remove the text in back button

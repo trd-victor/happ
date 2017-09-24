@@ -11,10 +11,12 @@ import Firebase
 import FirebaseAuth
 
 struct chatVar {
-    static var name : String = ""
+    static var name: String = ""
     static var RoomID : String = ""
     static var UserKey: String = ""
     static var Indicator: String = ""
+    static var chatmateId: String = ""
+    static var chatmatePhoto: String = ""
 }
 
 
@@ -44,10 +46,13 @@ class MessageTableViewController: UITableViewController {
     var chatMessage = [String]()
     var chatImage = [String]()
     var chatKey = [String]()
+    var chatmateId = [String]()
     var chatTime = [String]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
         
         //remove border in messages
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
@@ -86,6 +91,7 @@ class MessageTableViewController: UITableViewController {
             if let result = snap.value {
                 let userimage = result.objectForKey("photoUrl") as! String
                 let name = result.objectForKey("name") as! String
+                let chatmate = result.objectForKey("chatmateId") as! String
                 let message = result.objectForKey("lastMessage") as! String
                 let chatRoomID = result.objectForKey("chatroomId") as! String
                 let timestamp = result.objectForKey("timestamp") as! NSNumber
@@ -99,6 +105,7 @@ class MessageTableViewController: UITableViewController {
                     self.chatName.append(name)
                     self.chatMessage.append(message)
                     self.chatRoom.append(chatRoomID)
+                    self.chatmateId.append(chatmate)
                     self.chatTime.append(msgDate)
                     self.mytableview.reloadData()
                 }
@@ -150,7 +157,7 @@ class MessageTableViewController: UITableViewController {
         cell.userImage.layer.cornerRadius = radius
         cell.userImage.clipsToBounds = true
         
-        if self.chatImage[indexPath.row] == "null" {
+        if self.chatImage[indexPath.row] == "null" || self.chatImage[indexPath.row] == ""{
             cell.userImage.image = UIImage(named: "noPhoto")
         }else{
             dispatch_async(dispatch_get_main_queue()){
@@ -171,8 +178,24 @@ class MessageTableViewController: UITableViewController {
         chatVar.name = self.chatName[indexPath.row]
         chatVar.RoomID = self.chatRoom[indexPath.row]
         chatVar.UserKey = self.chatRoom[indexPath.row]
+        chatVar.chatmateId = self.chatmateId[indexPath.row]
+        firebaseId.userId = self.chatmateId[indexPath.row]
         chatVar.Indicator = "MessageTable"
         globalvar.userTitle = chatVar.name
+        
+        
+        let vc = ViewLibViewController()
+        self.presentDetail(vc)
+    }
+    
+    func presentDetail(viewControllerToPresent: UIViewController) {
+        let transition = CATransition()
+        transition.duration = 0.25
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        
+        presentViewController(viewControllerToPresent, animated: false, completion: nil)
     }
 
 }

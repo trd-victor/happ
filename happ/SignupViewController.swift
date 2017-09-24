@@ -235,45 +235,46 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 var user_id: NSNumber
                 var value: Int
                 
-                if error != nil{
+                if error != nil || data == nil{
                     print("\(error)")
-                    return;
-                }
-                do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json!["message"] != nil {
-                        mess = json!["message"] as! String
-                    }
-                    if json!["result"] != nil {
-                        if json!["result"]!["user_id"] != nil {
-                            value = json!["result"]!["user_id"] as! Int
-                            user_id = value
-                            mess = user_id.stringValue
-                            globalUserId.userID = mess
-                        }
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.myActivityIndicator.stopAnimating()
-                        self.myActivityIndicator.hidesWhenStopped = true
+                    self.loginButton(sender)
+                }else{
+                    do {
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                         
-                        var errorMessage : Bool
-                        if json!["error"] != nil {
-                            errorMessage = json!["error"] as! Bool
-                            if errorMessage == true {
-                                self.displayMyAlertMessage(config.translate("mess_fail_auth"))
-                            }
-                        } else {
-                            self.loginFirebase(userEmail, pass: userPass)
+                        if json!["message"] != nil {
+                            mess = json!["message"] as! String
                         }
-                    }
-                    
+                        if json!["result"] != nil {
+                            if json!["result"]!["user_id"] != nil {
+                                value = json!["result"]!["user_id"] as! Int
+                                user_id = value
+                                mess = user_id.stringValue
+                                globalUserId.userID = mess
+                            }
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.myActivityIndicator.stopAnimating()
+                            self.myActivityIndicator.hidesWhenStopped = true
+                            
+                            var errorMessage : Bool
+                            if json!["error"] != nil {
+                                errorMessage = json!["error"] as! Bool
+                                if errorMessage == true {
+                                    self.displayMyAlertMessage(config.translate("mess_fail_auth"))
+                                }
+                            } else {
+                                self.loginFirebase(userEmail, pass: userPass)
+                            }
+                        }
+                        
                     } catch {
-                    print(error)
+                        print(error)
+                    }
                 }
-                
             }
+            
             task.resume()
         }
     }
@@ -285,6 +286,9 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 let config = SYSTEM_CONFIG()
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
                 config.setSYS_VAL(2, key: "runningApp")
+                
+                let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
+                registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
                 
                 self.redirectLogin()
             } else {

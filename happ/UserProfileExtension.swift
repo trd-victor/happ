@@ -49,7 +49,22 @@ extension UserProfileController {
                                 self.ProfileImage.profileForCache(imgUrl)
                             }
                             
+                            let userid = json["result"]!["user_id"]!!
+                            let userDB = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(userid)
+                            print(self.userName.text!)
+                            userDB.observeSingleEventOfType(.ChildAdded, withBlock: {(snapshot) in
+                                dispatch_async(dispatch_get_main_queue()){
+                                    if snapshot.key != "" && snapshot.key != "<null>"{
+                                        chatVar.chatmateId = snapshot.key
+                                        chatVar.name = self.userName.text!
+                                        chatVar.Indicator = "Search"
+                                    }
+                                }
+                            })
                         }
+                        
+                        
+                        
                     }
                 }else{
                     self.loadUserinfo(sender)

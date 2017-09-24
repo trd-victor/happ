@@ -505,7 +505,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     "email"     : userEmail,
                     "id"        : userID,
                     "name"      : name,
-                    "photoUrl"  : image,
+                    "photoUrl"  : "null",
                     "token"     : token
                 ]
 //                //insert to users

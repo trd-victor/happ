@@ -10,93 +10,39 @@ import UIKit
 import Firebase
 import FirebaseMessaging
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     var window: UIWindow?
     
+    var badgeNumber = 0
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        
-        
-//        if #available(iOS 10, *){
-//            //for IOS version 10+
-//        }else{
-//            UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Badge, .Sound, .Alert], categories: nil))
-//            
-//            // This is an asynchronous method to retrieve a Device Token
-//            // Callbacks are in AppDelegate.swift
-//            // Success = didRegisterForRemoteNotificationsWithDeviceToken
-//            // Fail = didFailToRegisterForRemoteNotificationsWithError
-//            
-//            UIApplication.sharedApplication().registerForRemoteNotifications()
-//        }
+        UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Badge, .Sound, .Alert], categories: nil))
+        UIApplication.sharedApplication().registerForRemoteNotifications()
         
         FIRApp.configure()
-        
+        UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber
         return true
     }
     
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
         let deviceTokenStr = convertDeviceTokenToString(deviceToken)
-        
-        let alertCtrl = UIAlertController(title: "SuccessToken", message: deviceTokenStr , preferredStyle: .Alert)
-        alertCtrl.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-        
-        var presentedVC = self.window?.rootViewController
-        while (presentedVC!.presentedViewController != nil){
-            presentedVC = presentedVC!.presentedViewController
-        }
-        
-        presentedVC?.presentViewController(alertCtrl, animated: true, completion: nil)
-        
         //getting device token
         print("Device Token", deviceTokenStr)
     }
     
-    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
-        
-        let alertCtrl = UIAlertController(title: "Error Failed: ", message: "APN registration failed: \(error.description)", preferredStyle: .Alert)
-        alertCtrl.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-        
-        var presentedVC = self.window?.rootViewController
-        while (presentedVC!.presentedViewController != nil){
-            presentedVC = presentedVC!.presentedViewController
-        }
-        
-        presentedVC?.presentViewController(alertCtrl, animated: true, completion: nil)
-        
-        print("APN registration failed: \(error.description)")
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {        print("APN registration failed: \(error.description)")
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        
-        if let notification = userInfo["aps"] as? NSDictionary,
-            let alert = notification["alert"] as? String{
-                print("notification", notification)
-                print("alert", alert)
-                let alertCtrl = UIAlertController(title: "Success", message: "Success", preferredStyle: .Alert)
-                alertCtrl.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-                
-                var presentedVC = self.window?.rootViewController
-                while (presentedVC!.presentedViewController != nil){
-                    presentedVC = presentedVC!.presentedViewController
-                }
-                
-                presentedVC?.presentViewController(alertCtrl, animated: true, completion: nil)
-        }
+        print(userInfo)
+        UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber + 1
     }
     
     func applicationReceivedRemoteMessage(remoteMessage: FIRMessagingRemoteMessage) {
         // Receive message
-        
-        let alertCtrl = UIAlertController(title: "PUSH NOTIFICATION", message: "PUSH NOTIFICATION", preferredStyle: .Alert)
-        alertCtrl.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-        
-        var presentedVC = self.window?.rootViewController
-        while (presentedVC!.presentedViewController != nil){
-            presentedVC = presentedVC!.presentedViewController
-        }
         
         print("PUSH NOTIFICATION",remoteMessage.appData)
     }
