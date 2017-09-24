@@ -43,8 +43,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.myCollectionView!.delegate = self
 
         if(chatVar.Indicator == "MessageTable"){
+            self.deleteMessage()
             self.loadMessages()
         }else if(chatVar.Indicator == "Search"){
+            self.deleteMessage()
             self.getChatRoomID()
         }
         
@@ -55,6 +57,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.containerView.addSubview(self.separatorLineView)
         self.containerView.addSubview(self.sendBtn)
         self.containerView.addSubview(self.txtField)
+        
+        print(chatVar.RoomID)
         
         autoLayout()
         loadConfig()
@@ -147,7 +151,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.separatorLineView.heightAnchor.constraintEqualToConstant(1).active = true
         
         self.myCollectionView!.translatesAutoresizingMaskIntoConstraints = false
-        self.myCollectionView!.topAnchor.constraintEqualToAnchor(self.navBar.bottomAnchor).active = true
+        self.myCollectionView!.topAnchor.constraintEqualToAnchor(self.navBar.bottomAnchor, constant: 8).active = true
         self.myCollectionView!.centerXAnchor.constraintEqualToAnchor(self.view.centerXAnchor).active = true
         self.myCollectionView!.widthAnchor.constraintEqualToAnchor(self.view.widthAnchor).active = true
         
@@ -198,6 +202,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let mess = self.txtField.text!
         self.txtField.text = ""
         var checkMessage: String = ""
+        
+        // check if no text on textfield
         checkMessage = mess.componentsSeparatedByString(" ").joinWithSeparator("")
         
         if(checkMessage.characters.count <= 0){
@@ -213,6 +219,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             let chatmateID = chatVar.chatmateId
             let userID = FIRAuth.auth()?.currentUser?.uid
 
+            // save to message table on firebase using the roomID as child
             let messageDB = FIRDatabase.database().reference().child("chat").child("messages").child(roomID).childByAutoId()
             let message = [
                 "message": mess,
@@ -224,6 +231,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             
             messageDB.setValue(message)
             
+            // save to last-message table on firebase using chatmate key as child
             let chatMateLastMessDB = FIRDatabase.database().reference().child("chat").child("last-message").child(chatmateID).child(roomID)
             
             let chatMateDetailMess = [
@@ -237,6 +245,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             ]
             chatMateLastMessDB.setValue(chatMateDetailMess)
             
+            // save to last-message table on firebase using user key as child
             let userLastMessDB = FIRDatabase.database().reference().child("chat").child("last-message").child(userID!).child(roomID)
             
             let userDetailMess = [
@@ -251,6 +260,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             
             userLastMessDB.setValue(userDetailMess)
             
+            // save to message-notif table on firebase
             let messNotifDB = FIRDatabase.database().reference().child("chat").child("message-notif").child(chatmateID)
             
             let notifDetail = [
@@ -262,6 +272,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             ]
             
             messNotifDB.setValue(notifDetail as? AnyObject)
+            
+            // Note after saving on message-notif, the firebase function will detect that there is a changes  on that table and will send a notification to a specific account
         }
     }
     
@@ -292,8 +304,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     func getChatRoomID(){
         let chatmateID = chatVar.chatmateId
         let userid = FIRAuth.auth()?.currentUser?.uid
-//        print(chatmateID)
-//        print(userid)
+        
         let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
         
         membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
@@ -347,6 +358,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         }
         
         cell.bubbleWidthAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).width + 18
+        cell.bubbleHeightAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).height + 10
         return cell
     }
     
@@ -404,7 +416,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let data = self.messagesData[indexPath.row]
         
         if let message = data["message"] {
-            height = estimateFrameForText(message as! String).height + 25
+            height = estimateFrameForText(message as! String).height + 30
         }
         
         return CGSize(width: view.frame.width, height: height)

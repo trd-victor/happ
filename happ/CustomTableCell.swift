@@ -754,30 +754,30 @@ class MessageCell: UICollectionViewCell {
         bubbleViewLeftAnchor = bubbleView.leftAnchor.constraintEqualToAnchor(self.chatmatePhoto.rightAnchor, constant: 5)
 //        bubbleViewLeftAnchor?.active = true
         
-        bubbleView.topAnchor.constraintEqualToAnchor(self.topAnchor).active = true
+//        bubbleView.topAnchor.constraintEqualToAnchor(self.topAnchor).active = true
         
         bubbleWidthAnchor = bubbleView.widthAnchor.constraintEqualToConstant(200)
         bubbleWidthAnchor?.active = true
         
         
-        bubbleView.heightAnchor.constraintEqualToAnchor(self.heightAnchor).active = true
+        bubbleHeightAnchor = bubbleView.heightAnchor.constraintEqualToConstant(40)
+        bubbleHeightAnchor?.active = true
 
         txtLbl.leftAnchor.constraintEqualToAnchor(bubbleView.leftAnchor, constant: 8).active = true
-        txtLbl.topAnchor.constraintEqualToAnchor(self.topAnchor).active = true
-        txtLbl.rightAnchor.constraintEqualToAnchor(bubbleView.rightAnchor).active = true
-    
-//        txtLbl.widthAnchor.constraintEqualToConstant(200).active = true
+        txtLbl.topAnchor.constraintEqualToAnchor(bubbleView.topAnchor, constant: -10).active = true
+        txtLbl.rightAnchor.constraintEqualToAnchor(bubbleView.rightAnchor, constant: -8).active = true
         
         txtLbl.heightAnchor.constraintEqualToAnchor(self.heightAnchor).active = true
         
-        dateLblLeft.topAnchor.constraintEqualToAnchor(self.bottomAnchor).active = true
+        dateLblLeft.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
         dateLblLeft.leftAnchor.constraintEqualToAnchor(self.bubbleView.leftAnchor).active = true
         dateLblLeft.widthAnchor.constraintEqualToConstant(80).active = true
+        dateLblLeft.heightAnchor.constraintEqualToConstant(15).active = true
         
         dateLblRight.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
         dateLblRight.rightAnchor.constraintEqualToAnchor(self.bubbleView.rightAnchor).active = true
         dateLblRight.widthAnchor.constraintEqualToConstant(80).active = true
-
+        dateLblRight.heightAnchor.constraintEqualToConstant(15).active = true
         
     }
     
