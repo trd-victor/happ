@@ -38,25 +38,20 @@ class MessageTableViewController: UITableViewController {
     var USERUID: String!
     
     @IBOutlet var mytableview: UITableView!
+    
     var animals = ["test", "test1"]
     
     //set variables.. 
-    var chatRoom = [String]()
-    var chatName = [String]()
-    var chatMessage = [String]()
-    var chatImage = [String]()
-    var chatKey = [String]()
-    var chatmateId = [String]()
-    var chatTime = [String]()
+    var lastMessages = [NSDictionary]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
-        
         //remove border in messages
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
         
+        self.autoLayout()
         self.loadConfig()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshTable:", name: "refresh", object: nil)
@@ -66,6 +61,11 @@ class MessageTableViewController: UITableViewController {
         
         self.getUserMessage()
         
+    }
+    
+    func autoLayout(){
+        self.navigationController?.navigationBar.barTintColor = UIColor.blackColor()
+        self.navigationController?.navigationBar.titleTextAttributes =  [NSForegroundColorAttributeName : UIColor.whiteColor()]
     }
     
     func loadConfig(){
@@ -80,46 +80,30 @@ class MessageTableViewController: UITableViewController {
     }
     
     func getUserMessage() {
+        self.lastMessages.removeAll()
         let config = SYSTEM_CONFIG()
         
         let fireDB = config.getSYS_VAL("FirebaseID") as! String
         let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB)
-            
+        
         //start of retrieving messages on every user
         details.observeEventType(.ChildAdded, withBlock: { (snap) in
-            
-            if let result = snap.value {
-                let userimage = result.objectForKey("photoUrl") as! String
-                let name = result.objectForKey("name") as! String
-                let chatmate = result.objectForKey("chatmateId") as! String
-                let message = result.objectForKey("lastMessage") as! String
-                let chatRoomID = result.objectForKey("chatroomId") as! String
-                let timestamp = result.objectForKey("timestamp") as! NSNumber
-                let seconds = timestamp.doubleValue / 1000
-                let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
-                let formatter = NSDateFormatter()
-                formatter.dateFormat = "hh:mm:ss a"
-                let msgDate = formatter.stringFromDate(dateTimestamp)
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.chatImage.append(userimage)
-                    self.chatName.append(name)
-                    self.chatMessage.append(message)
-                    self.chatRoom.append(chatRoomID)
-                    self.chatmateId.append(chatmate)
-                    self.chatTime.append(msgDate)
-                    self.mytableview.reloadData()
-                }
+            if let result = snap.value as? NSDictionary {
+                self.lastMessages.append(result)
+                self.lastMessages.sortInPlace({(message1, message2) -> Bool in
+                    return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
+                })
+                self.mytableview.reloadData()
             }
         })
-
+        
+        
     }
     
+
+    
     func refreshTable(notification: NSNotification) {
-        self.chatImage.removeAll()
-        self.chatName.removeAll()
-        self.chatMessage.removeAll()
-        self.chatRoom.removeAll()
-        self.chatTime.removeAll()
+        
         self.getUserMessage()
     }
     
@@ -134,7 +118,7 @@ class MessageTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.chatName.count
+        return self.lastMessages.count
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -157,32 +141,41 @@ class MessageTableViewController: UITableViewController {
         cell.userImage.layer.cornerRadius = radius
         cell.userImage.clipsToBounds = true
         
-        if self.chatImage[indexPath.row] == "null" || self.chatImage[indexPath.row] == ""{
+        let message = self.lastMessages[indexPath.row]
+        let name = message["name"] as? String
+        let lastMessage = message["lastMessage"] as? String
+        let imageUrl  = message["photoUrl"] as? String
+        let timestamp = message["timestamp"] as? NSNumber
+        if imageUrl! == "null" || imageUrl! == ""{
             cell.userImage.image = UIImage(named: "noPhoto")
         }else{
             dispatch_async(dispatch_get_main_queue()){
-                let data = NSData(contentsOfURL: NSURL(string: "\(self.chatImage[indexPath.row])")!)
-                cell.userImage.image = UIImage(data: data!)
+                cell.userImage.imgForCache(imageUrl!)
             }
         }
         
-        cell.userTime.text = self.chatTime[indexPath.row]
-        cell.username.text = self.chatName[indexPath.row]
-        cell.userMessage.text = self.chatMessage[indexPath.row]
+        cell.userTime.text = dateFormatter(timestamp!)
+        cell.username.text = name!
+        cell.userMessage.text = lastMessage
 
         return cell
     }
 
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        chatVar.name = self.chatName[indexPath.row]
-        chatVar.RoomID = self.chatRoom[indexPath.row]
-        chatVar.UserKey = self.chatRoom[indexPath.row]
-        chatVar.chatmateId = self.chatmateId[indexPath.row]
-        firebaseId.userId = self.chatmateId[indexPath.row]
-        chatVar.Indicator = "MessageTable"
-        globalvar.userTitle = chatVar.name
+        let data = self.lastMessages[indexPath.row]
+        let name = data["name"] as? String
+        let room_id = data["chatroomId"] as? String
+        let user_key = FIRAuth.auth()?.currentUser?.uid
+        let chatmate_id = data["chatmateId"] as? String
         
+        chatVar.name = name!
+        chatVar.RoomID =  room_id!
+        chatVar.UserKey = user_key!
+        chatVar.chatmateId = chatmate_id!
+        firebaseId.userId = chatmate_id!
+        chatVar.Indicator = "MessageTable"
+        globalvar.userTitle = name!
         
         let vc = ViewLibViewController()
         self.presentDetail(vc)
@@ -198,6 +191,18 @@ class MessageTableViewController: UITableViewController {
         presentViewController(viewControllerToPresent, animated: false, completion: nil)
     }
 
+    func dateFormatter(timestamp: NSNumber) -> String{
+        let seconds = timestamp.doubleValue / 1000
+        let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "hh:mm"
+        let time = formatter.stringFromDate(dateTimestamp)
+        formatter.dateFormat = "MMM dd"
+        let date = formatter.stringFromDate(dateTimestamp)
+        return "\(date) at \(time)"
+    }
+    
+    
 }
 
 

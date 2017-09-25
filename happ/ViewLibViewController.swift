@@ -58,8 +58,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.containerView.addSubview(self.sendBtn)
         self.containerView.addSubview(self.txtField)
         
-        print(chatVar.RoomID)
-        
         autoLayout()
         loadConfig()
         getUsersImage()
@@ -121,7 +119,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         self.navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         self.navBar.heightAnchor.constraintEqualToConstant(44).active = true
-        
         
         self.containerView.translatesAutoresizingMaskIntoConstraints = false
         self.containerView.leftAnchor.constraintEqualToAnchor(view.leftAnchor).active = true
@@ -289,7 +286,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                     self.myCollectionView!.reloadData()
                     if(self.messagesData.count > 0){
                         let lastItemIndex = NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
-                        self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
+                        self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: true)
                     }
                 }
             }

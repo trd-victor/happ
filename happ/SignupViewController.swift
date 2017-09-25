@@ -130,24 +130,26 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
         labelUserEmail.translatesAutoresizingMaskIntoConstraints = false
         labelUserEmail.topAnchor.constraintEqualToAnchor(userEmailField.topAnchor).active = true
+        labelUserEmail.leftAnchor.constraintEqualToAnchor(self.view.leftAnchor, constant: 5).active = true
         labelUserEmail.widthAnchor.constraintEqualToConstant(110).active = true
         labelUserEmail.heightAnchor.constraintEqualToConstant(48).active = true
         
         userEmailField.translatesAutoresizingMaskIntoConstraints = false
         userEmailField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
         userEmailField.leftAnchor.constraintEqualToAnchor(labelUserEmail.rightAnchor).active = true
-        userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -110).active = true
+        userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -115).active = true
         userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
         
         labelPassword.translatesAutoresizingMaskIntoConstraints = false
         labelPassword.topAnchor.constraintEqualToAnchor(userPasswordField.topAnchor).active = true
+        labelPassword.leftAnchor.constraintEqualToAnchor(self.view.leftAnchor, constant: 5).active = true
         labelPassword.widthAnchor.constraintEqualToConstant(80).active = true
         labelPassword.heightAnchor.constraintEqualToConstant(48).active = true
         
         userPasswordField.translatesAutoresizingMaskIntoConstraints = false
         userPasswordField.topAnchor.constraintEqualToAnchor(userEmailField.bottomAnchor).active = true
         userPasswordField.leftAnchor.constraintEqualToAnchor(labelPassword.rightAnchor).active = true
-        userPasswordField.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -80).active = true
+        userPasswordField.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -86).active = true
         userPasswordField.heightAnchor.constraintEqualToConstant(48).active = true
         
         btnLogin.translatesAutoresizingMaskIntoConstraints = false

@@ -31,6 +31,7 @@ class MenuViewController: UITabBarController {
         let config = SYSTEM_CONFIG()
         self.menuTabBar.items![0].title = config.translate("menu_timeline")
         self.menuTabBar.items![1].title = config.translate("menu_message")
+        self.menuTabBar.items![1].badgeValue = "3"
         self.menuTabBar.items![2].title = config.translate("menu_reservation")
         self.menuTabBar.items![3].title = config.translate("menu_situation")
         self.menuTabBar.items![4].title = config.translate("menu_configuration")
