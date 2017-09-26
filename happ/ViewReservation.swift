@@ -8,14 +8,19 @@
 
 import UIKit
 
-class ViewReservation: UIViewController {
+class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet var navBar: UINavigationBar!
-    @IBOutlet var mainView: UIView!
+    @IBOutlet weak var tableReserved: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableReserved.registerClass(SubtitleCell.self, forCellReuseIdentifier: "SubtitleCell")
+        tableReserved.registerClass(InformationCell.self, forCellReuseIdentifier: "InformationCell")
+        tableReserved.delegate = self
+        tableReserved.dataSource = self
+        tableReserved.backgroundColor = UIColor.whiteColor()
         autoLayout()
     }
     
@@ -26,11 +31,11 @@ class ViewReservation: UIViewController {
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
         
-        mainView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
-        mainView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        mainView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        mainView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        tableReserved.translatesAutoresizingMaskIntoConstraints = false
+        tableReserved.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        tableReserved.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        tableReserved.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        tableReserved.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

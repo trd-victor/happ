@@ -2579,19 +2579,19 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <view contentMode="scaleToFill" id="ZgP-lf-5Nt">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="h1r-2g-9ie">
                                 <rect key="frame" x="0.0" y="67" width="320" height="501"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
+                            </tableView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
-                        <outlet property="mainView" destination="ZgP-lf-5Nt" id="pKT-eo-Epz"/>
                         <outlet property="navBar" destination="pAw-DG-O5T" id="f8Q-aw-3Vu"/>
+                        <outlet property="tableReserved" destination="h1r-2g-9ie" id="jWU-aL-lZe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XCd-fe-2ZW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2626,6 +2626,9 @@
                                         </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" title="予約する" id="0Ec-w5-6c8">
                                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <connections>
+                                                <action selector="navCreate:" destination="UeB-Jq-GqC" id="eAe-a5-RjZ"/>
+                                            </connections>
                                         </barButtonItem>
                                     </navigationItem>
                                 </items>
@@ -2641,9 +2644,10 @@
                         <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
-                        <outlet property="navBar" destination="cMs-Uj-aZH" id="z8F-Jr-U7D"/>
+                        <outlet property="navBar" destination="cMs-Uj-aZH" id="Qo5-Zi-cre"/>
+                        <outlet property="navCreate" destination="0Ec-w5-6c8" id="FD7-8z-3Wj"/>
                         <outlet property="navTitle" destination="fAb-Tg-Tgy" id="QsR-jq-smT"/>
-                        <outlet property="scrollView" destination="VSr-eO-adB" id="zrh-Z7-azc"/>
+                        <outlet property="scrollView" destination="VSr-eO-adB" id="FfC-KJ-Sqz"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cyx-UU-hq1" userLabel="First Responder" sceneMemberID="firstResponder"/>

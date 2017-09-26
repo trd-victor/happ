@@ -16,8 +16,9 @@ struct CreateDetails {
 class CreateReservation: UIViewController {
     
     @IBOutlet var navBar: UINavigationBar!
-    @IBOutlet var scrollView: UIView!
+    @IBOutlet var scrollView: UIScrollView!
     @IBOutlet var navTitle: UINavigationItem!
+    @IBOutlet var navCreate: UIBarButtonItem!
     
     let config = SYSTEM_CONFIG()
     var lang = ""
@@ -89,6 +90,13 @@ class CreateReservation: UIViewController {
         return label
     }()
     
+    let startView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.whiteColor()
+        return view
+    }()
+    
     let startLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .Left
@@ -105,6 +113,13 @@ class CreateReservation: UIViewController {
         label.backgroundColor = UIColor.clearColor()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    let endView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.whiteColor()
+        return view
     }()
     
     let endLabel: UILabel = {
@@ -125,99 +140,54 @@ class CreateReservation: UIViewController {
         return label
     }()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        scrollView.addSubview(roomView)
-        roomView.addSubview(roomSubtitle)
-        
-        scrollView.addSubview(facilityLabel)
-        scrollView.addSubview(facilityName)
-        scrollView.addSubview(separator)
-        scrollView.addSubview(roomLabel)
-        scrollView.addSubview(roomName)
-        scrollView.addSubview(makeReservation)
-        
-        roomSubtitle.text = "ルーム"
-        facilityLabel.text = "施設"
-        facilityName.text = "FUKUOKA"
-        roomLabel.text = "ルーム"
-        roomName.text = "A"
-        makeReservation.text = "予約する"
-        
-        autoLayout()
-    }
+    let separator2: UIView = {
+        let view = UIView()
+        view.alpha = 0.8
+        view.backgroundColor = UIColor.grayColor()
+        return view
+    }()
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        lang = config.getSYS_VAL("AppLanguage") as! String
-        let title = CreateDetails.date
-        let tmpArr = title.characters.split{$0 == "-"}.map(String.init)
-        if lang == "en" {
-            navTitle.title = "\(tmpArr[0])-\(tmpArr[1])-\(tmpArr[2]) (\(CreateDetails.day))"
-        }else{
-            navTitle.title = "\(tmpArr[0])年\(tmpArr[1])月\(tmpArr[2])日 (\(CreateDetails.day))"
-        }
-    }
+    let startTime: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        picker.datePickerMode = .Time
+        picker.locale = NSLocale(localeIdentifier: "da_DK")
+        return picker
+    }()
     
-    func autoLayout(){
-        navBar.translatesAutoresizingMaskIntoConstraints = false
-        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
-        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        navBar.heightAnchor.constraintEqualToConstant(44).active = true
-        
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
-        scrollView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        scrollView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        scrollView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
-        
-        roomView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        roomView.topAnchor.constraintEqualToAnchor(scrollView.topAnchor).active = true
-        roomView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        roomView.heightAnchor.constraintEqualToConstant(30).active = true
-        
-        roomSubtitle.centerXAnchor.constraintEqualToAnchor(roomView.centerXAnchor).active = true
-        roomSubtitle.centerYAnchor.constraintEqualToAnchor(roomView.centerYAnchor).active = true
-        roomSubtitle.widthAnchor.constraintEqualToAnchor(roomView.widthAnchor).active = true
-        roomSubtitle.heightAnchor.constraintEqualToConstant(30).active = true
-        
-        facilityLabel.topAnchor.constraintEqualToAnchor(roomView.bottomAnchor).active = true
-        facilityLabel.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 20).active = true
-        facilityLabel.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -40).active = true
-        facilityLabel.heightAnchor.constraintEqualToConstant(50).active = true
-        
-        facilityName.topAnchor.constraintEqualToAnchor(roomView.bottomAnchor).active = true
-        facilityName.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor).active = true
-        facilityName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        facilityName.heightAnchor.constraintEqualToConstant(50).active = true
-        
-        separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 20).active = true
-        separator.topAnchor.constraintEqualToAnchor(facilityLabel.bottomAnchor).active = true
-        separator.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        separator.heightAnchor.constraintEqualToConstant(1).active = true
-        
-        roomLabel.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
-        roomLabel.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 20).active = true
-        roomLabel.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -40).active = true
-        roomLabel.heightAnchor.constraintEqualToConstant(50).active = true
-        
-        roomName.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
-        roomName.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor).active = true
-        roomName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        roomName.heightAnchor.constraintEqualToConstant(50).active = true
-        
-        makeReservation.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        makeReservation.topAnchor.constraintEqualToAnchor(roomLabel.bottomAnchor).active = true
-        makeReservation.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        makeReservation.heightAnchor.constraintEqualToConstant(30).active = true
-    }
+    let separator3: UIView = {
+        let view = UIView()
+        view.alpha = 0.8
+        view.backgroundColor = UIColor.grayColor()
+        return view
+    }()
     
-    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
-    }
+    let endTime: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        picker.datePickerMode = .Time
+        picker.locale = NSLocale(localeIdentifier: "da_DK")
+        return picker
+    }()
+    
+    let separator4: UIView = {
+        let view = UIView()
+        view.alpha = 0.8
+        view.backgroundColor = UIColor.grayColor()
+        return view
+    }()
+    
+    let reservedLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .Center
+        label.font = UIFont.systemFontOfSize(14)
+        label.backgroundColor = UIColor(hexString: "#E4D4B9")
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    var startTimeConstraint: NSLayoutConstraint = NSLayoutConstraint()
+    var endTimeConstraint: NSLayoutConstraint = NSLayoutConstraint()
     
     @IBAction func navBar(sender: AnyObject) {
         let transition: CATransition = CATransition()
@@ -228,5 +198,66 @@ class CreateReservation: UIViewController {
         self.view.window!.layer.addAnimation(transition, forKey: nil)
         self.dismissViewControllerAnimated(false, completion: nil)
     }
+    
+    //basepath
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    
+    var dataView = [UIView]()
+    var dataLabel = [UILabel]()
+    var dataSeparator = [UIView]()
+    
+    var dataTime = [String]()
+    var dataUserId = [String]()
+    
+    func tapStart(sender: UITapGestureRecognizer){
+        if startTimeConstraint.constant == 0 {
+            startTimeConstraint.constant = 200
+            separator3.hidden = false
+            startName.textColor = UIColor.redColor()
+        }else{
+            startTimeConstraint.constant = 0
+            separator3.hidden = true
+            startName.textColor = UIColor.blackColor()
+        }
+    }
+    
+    func tapEnd(sender: UITapGestureRecognizer){
+        if endTimeConstraint.constant == 0 {
+            endTimeConstraint.constant = 200
+            separator4.hidden = false
+            endName.textColor = UIColor.redColor()
+        }else{
+            endTimeConstraint.constant = 0
+            separator4.hidden = true
+            endName.textColor = UIColor.blackColor()
+        }
+    }
+    
+    func startPicker(sender: UIDatePicker!){
+        let date = sender.date
+        
+        let calendar = NSCalendar.currentCalendar()
+        let components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: date)
+
+        
+        startName.text = "\(components.hour):\(components.minute)"
+    }
+    
+    func endPicker(sender: UIDatePicker!){
+        let date = sender.date
+        
+        let calendar = NSCalendar.currentCalendar()
+        let components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: date)
+        
+        
+        endName.text = "\(components.hour):\(components.minute)"
+    }
+    
+    @IBAction func navCreate(sender: AnyObject) {
+        let sdate = "\(CreateDetails.date) \(startName.text!)"
+        let edate = "\(CreateDetails.date) \(endName.text!)"
+        postReservation(sdate, edate: edate)
+    }
+    
     
 }

@@ -315,8 +315,6 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
         var mess: Bool!
         let config = SYSTEM_CONFIG()
-        let timestamp = FIRServerValue.timestamp()
-        let firID = config.getSYS_VAL("FirebaseID") as? String
         
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()
