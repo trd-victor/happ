@@ -337,21 +337,10 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
                 
                 if json3!["success"] != nil {
                     mess = json3!["success"] as! Bool
-                    let postID = json3!["result"]
+                    let postID = json3!["result"] as? Int
                     
-                    let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
-                    let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
-                    let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
-                   
-                    let notifData = [
-                            "name": "\(name)",
-                            "photoUrl"  : "\(photoUrl)",
-                            "postId"    : postID!,
-                            "type"      : "post-timeline",
-                            "timestamp" : timestamp,
-                            "userId"    : firID!
-                        ] as [String: AnyObject]
-                    notifDB.setValue(notifData)
+                    let notif = NotifController()
+                    notif.saveNotificationMessage(postID!, type: "timeline")
                 }
                 dispatch_async(dispatch_get_main_queue()) {
                     if mess == true {

@@ -1,435 +1,444 @@
 //
-//  ViewLibViewController.swift
+//  NotifController.swift
 //  happ
 //
-//  Created by TokikawaTeppei on 25/08/2017.
+//  Created by TokikawaTeppei on 13/09/2017.
 //  Copyright © 2017 H-FUKUOKA. All rights reserved.
 //
 
 import UIKit
 import Firebase
-import JSQMessagesViewController
 
-struct Message {
-    static var lastMessage : String = ""
-}
-
-class ViewLibViewController: JSQMessagesViewController {
-
-    //variable set
-    var username : String!
-    var roomID : String = ""
-    var userID: String!
+class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout{
     
+    let navBar: UINavigationBar = UINavigationBar()
+    let sendBtn: UIButton = UIButton(type: .System)
+    let containerView: UIView = UIView()
+    let txtField: UITextField = UITextField()
+    let separatorLineView: UIView = UIView()
+    var myCollectionView:UICollectionView?
+    var layout: UICollectionViewFlowLayout?
     
-    //set of messages variables..
-    var currMessage = [String]()
-    var otherMessage = [String]()
-    var userImage = [String]()
-    var userIDmsg = [String]()
-    var msgTime = [String]()
-    var allMsg = [String]()
-    var chatID = [String]()
-    var firebaseID: String!
+    var containerViewBottomAncher: NSLayoutConstraint?
+    var collectioView: NSLayoutConstraint?
     
-    var AllMessages = [JSQMessage]()
-    
-    
-    
-    lazy var outgoingBubble: JSQMessagesBubbleImage = {
-//        return JSQMessagesBubbleImageFactory()!.outgoingMessagesBubbleImageWithColor(UIColor.jsq_messageBubbleBlueColor())
-        
-       return JSQMessagesBubbleImageFactory(bubbleImage: UIImage.jsq_bubbleCompactTaillessImage(), capInsets: UIEdgeInsetsZero).outgoingMessagesBubbleImageWithColor(UIColor(hexString: "#eeeeee"))
-    }()
-    
-
-    lazy var incomingBubble: JSQMessagesBubbleImage = {
-//        return JSQMessagesBubbleImageFactory()!.incomingMessagesBubbleImageWithColor(UIColor.jsq_messageBubbleLightGrayColor())
-        return JSQMessagesBubbleImageFactory(bubbleImage: UIImage.jsq_bubbleCompactTaillessImage(), capInsets: UIEdgeInsetsZero).incomingMessagesBubbleImageWithColor(UIColor(hexString: "#f3e5d0"))
-    }()
+    var messagesData: [NSDictionary] = []
+    var chatMatePhoto: String = ""
+    var userPhoto: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        inputToolbar!.contentView!.leftBarButtonItem = nil
-        senderId = globalUserId.FirID
         
-//        self.collectionView!.reloadData()
-        //hide tabbar controller in swift
-        self.tabBarController?.tabBar.hidden = true
+        self.view.backgroundColor = UIColor.whiteColor()
+        self.navBar.barTintColor = UIColor.blackColor()
+        self.separatorLineView.backgroundColor = UIColor(hexString: "#c0c0c0")
         
-        let cuid = firebaseId.userId
-        let uid = globalUserId.FirID
+        self.layout = UICollectionViewFlowLayout()
+        self.myCollectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: self.layout!)
         
-        self.title = globalvar.userTitle
-        senderDisplayName = globalvar.userTitle
-       
-        print(chatVar.Indicator)
-        if chatVar.Indicator == "MessageTable" {
-            self.roomID = chatVar.RoomID
-            if self.roomID != "" {
-                self.getAllMessage(self.roomID)
-            }
-        } else {
-            if uid != "" && cuid != "" {
-                self.chatMembers(uid, cuid: cuid){ (result) -> () in
-                    if result.characters.count > 0 {
-                        self.getEmptyMessage(result)
-                        self.chatID.append(result)
-                    }
-                }
-            }
+        self.myCollectionView!.registerClass(MessageCell.self, forCellWithReuseIdentifier: "Messagecell")
+        self.myCollectionView!.backgroundColor = UIColor.whiteColor()
+        
+        self.myCollectionView!.dataSource = self
+        self.myCollectionView!.delegate = self
+        
+        if(chatVar.Indicator == "MessageTable"){
+            self.deleteMessage()
+            self.loadMessages()
+        }else if(chatVar.Indicator == "Search"){
+            self.deleteMessage()
+            self.getChatRoomID()
         }
-   
+        
+        self.view.addSubview(self.containerView)
+        self.view.addSubview(self.navBar)
+        self.view.addSubview(self.myCollectionView!)
+        
+        self.containerView.addSubview(self.separatorLineView)
+        self.containerView.addSubview(self.sendBtn)
+        self.containerView.addSubview(self.txtField)
+        
+        autoLayout()
+        loadConfig()
+        getUsersImage()
+        setupKeyboard()
     }
     
-    override func viewWillDisappear(animated: Bool) {
-       NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
+    func setupKeyboard(){
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handleKeyboardShow:"), name: UIKeyboardWillShowNotification, object: nil)
         
-       NSNotificationCenter.defaultCenter().postNotificationName("tabBarShow", object: nil, userInfo: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handleKeyboardHide:"), name: UIKeyboardWillHideNotification, object: nil)
     }
     
-    //get all message
-    func getAllMessage(sender : String ) {
+    func handleKeyboardShow(notification: NSNotification){
+        let keyboardFrame = notification.userInfo?[UIKeyboardFrameEndUserInfoKey]?.CGRectValue
+        let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]?.doubleValue
         
-        //set db according to chatroomID..
-        let db = FIRDatabase.database().reference().child("chat").child("messages").child(sender)
+        containerViewBottomAncher?.constant = -keyboardFrame!.height
+        collectioView?.constant = -114 + -keyboardFrame!.height
         
-        db.observeEventType(.ChildAdded, withBlock: { (snapshot) in
+        UIView.animateWithDuration(keyboardDuration!){
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func handleKeyboardHide(notification: NSNotification){
+        let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]?.doubleValue
+        
+        containerViewBottomAncher?.constant = 0
+        collectioView?.constant = -114
+        
+        UIView.animateWithDuration(keyboardDuration!){
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    
+    func getUsersImage() {
+        let userid  = FIRAuth.auth()?.currentUser?.uid
+        let userDataDB = FIRDatabase.database().reference().child("users").child(userid!)
+        userDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             
-            if let result = snapshot.value {
-                
-                let userName = result.objectForKey("name")
-                let userID = result.objectForKey("userId")
-                let msg = result.objectForKey("message")
-                
-                if let message = JSQMessage(senderId: userID as! String, displayName: userName as! String , text: msg as! String) {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.AllMessages.append(message)
-                        self.finishReceivingMessage()
-                        self.collectionView!.reloadData()
-                    }
-                }
+            if let result = snapshot.value as? NSDictionary {
+                self.userPhoto = result["photoUrl"] as! String
+            }
+        })
+        
+        let chatmateDataDB = FIRDatabase.database().reference().child("users").child(chatVar.chatmateId)
+        
+        chatmateDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            if let result = snapshot.value as? NSDictionary {
+                self.chatMatePhoto = result["photoUrl"] as! String
             }
         })
     }
     
-    
-    
-    //get all message
-    func getEmptyMessage(sender: String) {
+    func autoLayout(){
+        self.navBar.translatesAutoresizingMaskIntoConstraints = false
+        self.navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        self.navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        self.navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        self.navBar.heightAnchor.constraintEqualToConstant(44).active = true
         
-        //set db according to chatroomID..
-        let db = FIRDatabase.database().reference().child("chat").child("messages").child("\(sender)")
+        self.containerView.translatesAutoresizingMaskIntoConstraints = false
+        self.containerView.leftAnchor.constraintEqualToAnchor(view.leftAnchor).active = true
         
-        db.observeEventType(.ChildAdded, withBlock: { (snapshot) in
-            
-            if let result = snapshot.value {
-                
-                let userName = result.objectForKey("name")
-                let userID = result.objectForKey("userId")
-                let msg = result.objectForKey("message")
-                
-                
-                if let message = JSQMessage(senderId: userID as! String, displayName: userName as! String , text: msg as! String) {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.AllMessages.append(message)
-                        self.finishReceivingMessage()
-                        self.collectionView!.reloadData()
-                    }
-                }
-            }
-        })
-    }
-    
-    func displaySendMsg(sender: String) {
+        containerViewBottomAncher = containerView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
+        containerViewBottomAncher?.active = true
         
-        //set db according to chatroomID..
-        let db = FIRDatabase.database().reference().child("chat").child("messages").child("\(sender)")
+        self.containerView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        self.containerView.heightAnchor.constraintEqualToConstant(45).active = true
         
-        db.observeEventType(.ChildAdded, withBlock: { (snapshot) in
-            
-            if let result = snapshot.value {
-                
-                let userName = result.objectForKey("name")
-                let userID = result.objectForKey("userId")
-                let msg = result.objectForKey("message")
-                
-                
-                if let message = JSQMessage(senderId: userID as! String, displayName: userName as! String , text: msg as! String) {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.AllMessages.append(message)
-                        self.finishReceivingMessage()
-                        self.collectionView!.reloadData()
-                    }
-                }
-            }
-        })
-    }
-    
-    
-    func chatMembers(uid:String, cuid: String, completion: (String) -> ()) {
-        let membersDb = FIRDatabase.database().reference().child("chat").child("members")
-        membersDb.observeSingleEventOfType(.Value, withBlock: { snapshot in
-            //get here teh chatroom ID
-            for (key, value) in (snapshot.value as? [String: AnyObject])!{
-                let id = key
-                let dataVal = value as? [String: AnyObject]
-                if dataVal![uid] != nil && dataVal![cuid] != nil {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        completion(id)
-                    }
-                }else{
-                    dispatch_async(dispatch_get_main_queue()) {
-                        completion("")
-                    }
-                }
-            }
-        })
-    }
-    
-    //set image circel..
-    func maskRoundedImage(image: UIImage, radius: CGFloat) -> UIImage {
-        let imageView: UIImageView = UIImageView(image: image)
-        var layer: CALayer = CALayer()
-        layer = imageView.layer
-        layer.masksToBounds = true
-        layer.cornerRadius = radius
-        UIGraphicsBeginImageContext(imageView.bounds.size)
-        layer.renderInContext(UIGraphicsGetCurrentContext()!)
-        let roundedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return roundedImage!
-    }
-
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
-    {
-        return self.AllMessages.count
-    }
-    
-    override func collectionView(collectionView: JSQMessagesCollectionView!, messageDataForItemAtIndexPath indexPath: NSIndexPath) -> JSQMessageData!
-    {
-        return self.AllMessages[indexPath.item]
-    }
-   
-    
-    override func collectionView(collectionView: JSQMessagesCollectionView!, avatarImageDataForItemAtIndexPath indexPath: NSIndexPath) -> JSQMessageAvatarImageDataSource!
-    {
-        let img = UIImage(named: "noPhoto")
-        return JSQMessagesAvatarImage.avatarWithImage(self.maskRoundedImage(img!, radius: 8))
-    }
-    
-    override func collectionView(collectionView: JSQMessagesCollectionView!, messageBubbleImageDataForItemAtIndexPath indexPath: NSIndexPath) -> JSQMessageBubbleImageDataSource!
-    {
-        return AllMessages[indexPath.item].senderId == senderId ? outgoingBubble : incomingBubble
-    }
-    
-//    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-//        
-//        let cell = super.collectionView!.cellForItemAtIndexPath(indexPath) as!
-//        JSQMessagesCollectionViewCell
-//        
-//        cell.textView!.textColor = UIColor.blackColor()
-//        
-//        return cell
-//        
-//    }
-    
-    override func didPressSendButton(button: UIButton!, withMessageText text: String!, senderId: String!, senderDisplayName: String!, date: NSDate!) {
+        self.sendBtn.translatesAutoresizingMaskIntoConstraints = false
+        self.sendBtn.rightAnchor.constraintEqualToAnchor(self.containerView.rightAnchor).active = true
+        self.sendBtn.centerYAnchor.constraintEqualToAnchor(self.containerView.centerYAnchor).active = true
+        self.sendBtn.widthAnchor.constraintEqualToConstant(80).active = true
+        self.sendBtn.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor).active = true
         
+        self.txtField.translatesAutoresizingMaskIntoConstraints = false
+        self.txtField.leftAnchor.constraintEqualToAnchor(self.containerView.leftAnchor, constant: 5).active = true
+        self.txtField.centerYAnchor.constraintEqualToAnchor(self.containerView.centerYAnchor).active = true
+        self.txtField.widthAnchor.constraintEqualToAnchor(self.containerView.widthAnchor, constant: -85).active = true
+        self.txtField.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor).active = true
+        
+        self.separatorLineView.translatesAutoresizingMaskIntoConstraints = false
+        self.separatorLineView.leftAnchor.constraintEqualToAnchor(self.containerView.leftAnchor).active = true
+        self.separatorLineView.topAnchor.constraintEqualToAnchor(self.containerView.topAnchor).active = true
+        self.separatorLineView.widthAnchor.constraintEqualToAnchor(self.containerView.widthAnchor).active = true
+        self.separatorLineView.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        self.myCollectionView!.translatesAutoresizingMaskIntoConstraints = false
+        self.myCollectionView!.topAnchor.constraintEqualToAnchor(self.navBar.bottomAnchor, constant: 8).active = true
+        self.myCollectionView!.centerXAnchor.constraintEqualToAnchor(self.view.centerXAnchor).active = true
+        self.myCollectionView!.widthAnchor.constraintEqualToAnchor(self.view.widthAnchor).active = true
+        
+        collectioView =  self.myCollectionView!.heightAnchor.constraintEqualToAnchor(self.view.heightAnchor, constant: -114)
+        collectioView?.active = true
+    }
+    
+    func loadConfig(){
         let config = SYSTEM_CONFIG()
-        let username = config.getSYS_VAL("username_\(globalUserId.userID)")!
+        let navtitle = chatVar.name
+        let sendStr = config.translate("label_send")
         
-        let cuid = firebaseId.userId
-        let uid = globalUserId.FirID
+        let navItem = UINavigationItem(title: navtitle)
+        let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
+        btnBack.tintColor = UIColor.whiteColor()
         
-        var chatRoomID: String!
-        for roomID in self.chatID {
-            chatRoomID = roomID
-        }
-       
-        if self.roomID != "" {
+        //closer to left anchor nav
+        let negativeSpacer = UIBarButtonItem.init(barButtonSystemItem: .FixedSpace, target: nil, action: nil)
+        negativeSpacer.width = -15
+        
+        navItem.setLeftBarButtonItems([negativeSpacer, btnBack], animated: false)
+        
+        self.navBar.setItems([navItem], animated: false)
+        self.navBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
+        
+        // set button title
+        self.sendBtn.setTitle(sendStr, forState: .Normal)
+        self.sendBtn.addTarget(self, action: Selector("handleSend"), forControlEvents: .TouchUpInside)
+        
+        // set placeholder
+        self.txtField.placeholder = config.translate("label_enter_message")
+    }
+    
+    func backToMenu(sender: UIBarButtonItem) -> () {
+        self.presentBackDetail(MessageTableViewController())
+    }
+    
+    func presentBackDetail(viewControllerToPresent: UIViewController) {
+        let transition = CATransition()
+        transition.duration = 0.25
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    func handleSend(){
+        let mess = self.txtField.text!
+        self.txtField.text = ""
+        var checkMessage: String = ""
+        
+        // check if no text on textfield
+        checkMessage = mess.componentsSeparatedByString(" ").joinWithSeparator("")
+        
+        if(checkMessage.characters.count <= 0){
+            return
+        }else{
+            let config = SYSTEM_CONFIG()
+            let username = config.getSYS_VAL("username_\(globalUserId.userID)")!
+            let userPhoto = config.getSYS_VAL("userimage_\(globalUserId.userID)")
+            
             let timestamp = FIRServerValue.timestamp()
-            let ref = FIRDatabase.database().reference().child("chat").child("messages").child(self.roomID).childByAutoId()
             
-            let message = ["message": text, "name": self.senderDisplayName, "userId": senderId, "photoUrl" : "null", "timestamp" : timestamp]
+            let roomID = chatVar.RoomID
+            let chatmateID = chatVar.chatmateId
+            let userID = FIRAuth.auth()?.currentUser?.uid
             
-            //save message to message table firebase...
-            ref.setValue(message)
-            
-            //save user last message
-            let lastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message").child(uid).child(self.roomID)
-            
-            let lastmsg = [
-                "chatmateId"   : cuid,
-                "chatroomId"   : roomID,
-                "lastMessage"  : text,
-                "name"         : self.senderDisplayName,
-                "photoUrl"     : "null",
-                "read"         : true,
-                "timestamp"    : timestamp
+            // save to message table on firebase using the roomID as child
+            let messageDB = FIRDatabase.database().reference().child("chat").child("messages").child(roomID).childByAutoId()
+            let message = [
+                "message": mess,
+                "name": username,
+                "userId": userID!,
+                "photoUrl" : self.userPhoto,
+                "timestamp" : timestamp
             ]
             
-            lastmsgDB.setValue(lastmsg)
-            //end here user
-  
-            //save chatmate last message
-            let clastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message").child(cuid).child(self.roomID)
+            messageDB.setValue(message)
             
-            let clastmsg = [
-                "chatmateId"   : uid,
+            // save to last-message table on firebase using chatmate key as child
+            let chatMateLastMessDB = FIRDatabase.database().reference().child("chat").child("last-message").child(chatmateID).child(roomID)
+            
+            let chatMateDetailMess = [
+                "chatmateId"   : userID!,
                 "chatroomId"   : roomID,
-                "lastMessage"  : text,
+                "lastMessage"  : mess,
                 "name"         : username,
-                "photoUrl"     : "null",
-                "read"         : true,
+                "photoUrl"     : self.userPhoto,
+                "read"         : false,
                 "timestamp"    : timestamp
             ]
-            clastmsgDB.setValue(clastmsg)
-            //end here chatmate
-// temporary comment
-//            // save notif message on firebase
-//            let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
-//            let keyID = notifDB.key
-//            let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
-//            let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
-//            let firID = config.getSYS_VAL("FirebaseID") as? String
-//            
-//            let data = [
-//                "key"           : keyID,
-//                "roomId"        : roomID,
-//                "chatmateId"    : cuid,
-//                "sender"          : self.senderDisplayName,
-//            ]
-//            
-//            let notifData = [
-//                "name"      : "\(name)",
-//                "photoUrl"  : "\(photoUrl)",
-//                "data"      : data,
-//                "type"      : "message",
-//                "timestamp" : timestamp,
-//                "userId"    : firID!
-//            ]
-//            
-//            notifDB.setValue(notifData)
-//            // end here notif
+            chatMateLastMessDB.setValue(chatMateDetailMess)
             
-            self.finishSendingMessage()
-        } else {
-            if cuid != "" && uid != "" {
-                
-                if self.chatID.isEmpty == true {
-                    //connection to message
-                    let ref = Constants.ref.rootChild.childByAutoId()
-                    
-                    //set chatroom ID
-                    let userChatRoomID = Constants.ref.rootChild
-                    
-                    //get server timestamp..
-                    let timestamp = FIRServerValue.timestamp()
-                    
-                    let message = ["message": text, "name": self.senderDisplayName, "userId": senderId, "photoUrl" : "null", "timestamp" : timestamp]
-                    
-                    //save message to message table firebase...
-                    ref.setValue(message)
-                    
-                    //get the connection for members DB
-                    let memberDB = Constants.ref.memberDb.child(userChatRoomID.key)
-                    
-                    let membersMessage = [
-                        "\(cuid)"      :  true,
-                        "\(uid)"  : true
-                    ]
-                    
-                    //save to members DB..
-                    memberDB.setValue(membersMessage)
-                    
-                    let lastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message").child(uid).child(userChatRoomID.key)
-                    
-                    let lastmsg = [
-                        "chatmateId"   : cuid,
-                        "chatroomId"   : userChatRoomID.key,
-                        "lastMessage"  : text,
-                        "name"         : self.senderDisplayName,
-                        "photoUrl"     : "null",
-                        "read"         : true,
-                        "timestamp"    : timestamp
-                    ]
-                    
-                    //save to database last-message...
-                    lastmsgDB.setValue(lastmsg)
-                    
-                    let cmatelastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message").child(cuid).child(userChatRoomID.key)
-                    
-                    let cmatelastmsg = [
-                        "chatmateId"   : uid,
-                        "chatroomId"   : userChatRoomID.key,
-                        "lastMessage"  : text,
-                        "name"         : username,
-                        "photoUrl"     : "null",
-                        "read"         : true,
-                        "timestamp"    : timestamp
-                    ]
-                    
-                    //save to database last-message...
-                    cmatelastmsgDB.setValue(cmatelastmsg)
-                    
-                    self.finishSendingMessage()
-                    
-                    if self.AllMessages.isEmpty == true {
-                    
-                        self.displaySendMsg(userChatRoomID.key)
-                    }
-                    
-                }
-                else {
-                    let timestamp = FIRServerValue.timestamp()
-                    let ref = FIRDatabase.database().reference().child("chat").child("messages").child(chatRoomID).childByAutoId()
-                    
-                    let message = ["message": text, "name": self.senderDisplayName, "userId": senderId, "photoUrl" : "null", "timestamp" : timestamp]
-                    
-                    //save message to message table firebase...
-                    ref.setValue(message)
-                    
-                    let lastmsgDB = FIRDatabase.database().reference().child("chat").child("last-message")
-                    
-                     let userlastmsgDB = lastmsgDB.child(uid).child(chatRoomID)
-                    
-                    let userlastmsg = [
-                        "chatmateId"   : cuid,
-                        "chatroomId"   : chatRoomID,
-                        "lastMessage"  : text,
-                        "name"         : self.senderDisplayName,
-                        "photoUrl"     : "null",
-                        "read"         : true,
-                        "timestamp"    : timestamp
-                    ]
-                    
-                    //save to database last-message...
-                    userlastmsgDB.setValue(userlastmsg)
-                    
-                    let cmatelastmsgDB = lastmsgDB.child(cuid).child(chatRoomID)
-                    
-                    let cmatelastmsg = [
-                        "chatmateId"   : uid,
-                        "chatroomId"   : chatRoomID,
-                        "lastMessage"  : text,
-                        "name"         : username,
-                        "photoUrl"     : "null",
-                        "read"         : true,
-                        "timestamp"    : timestamp
-                    ]
-                    
-                    //save to database last-message...
-                    cmatelastmsgDB.setValue(cmatelastmsg)
-                    self.finishSendingMessage()
-                }
-                
-            }
+            // save to last-message table on firebase using user key as child
+            let userLastMessDB = FIRDatabase.database().reference().child("chat").child("last-message").child(userID!).child(roomID)
+            
+            let userDetailMess = [
+                "chatmateId"   : chatmateID,
+                "chatroomId"   : roomID,
+                "lastMessage"  : mess,
+                "name"         : chatVar.name,
+                "photoUrl"     : self.chatMatePhoto,
+                "read"         : false,
+                "timestamp"    : timestamp
+            ]
+            
+            userLastMessDB.setValue(userDetailMess)
+            
+            // save to message-notif table on firebase
+            let messNotifDB = FIRDatabase.database().reference().child("chat").child("message-notif").child(chatmateID)
+            
+            let notifDetail = [
+                "chatmateId": userID!,
+                "chatroomId" : roomID,
+                "message": mess,
+                "name": username,
+                "photoUrl": userPhoto
+            ]
+            
+            messNotifDB.setValue(notifDetail as? AnyObject)
+            
+            // Note after saving on message-notif, the firebase function will detect that there is a changes  on that table and will send a notification to a specific account
         }
+    }
+    
+    func loadMessages(){
+        let roomID = chatVar.RoomID
+        let messagesDb = FIRDatabase.database().reference().child("chat").child("messages").child(String(roomID))
+        
+        messagesDb.observeEventType(.ChildAdded, withBlock: {(snapshot)  in
+            if let result = snapshot.value as? NSDictionary {
+                self.messagesData.append(result)
+                
+                dispatch_async(dispatch_get_main_queue()){
+                    self.myCollectionView!.reloadData()
+                    if(self.messagesData.count > 0){
+                        let lastItemIndex = NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
+                        self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: true)
+                    }
+                }
+            }
+        })
+    }
+    
+    func deleteMessage(){
+        self.messagesData = []
+        self.myCollectionView?.reloadData()
+    }
+    
+    func getChatRoomID(){
+        let chatmateID = chatVar.chatmateId
+        let userid = FIRAuth.auth()?.currentUser?.uid
+        
+        let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
+        
+        membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            var count = 0
+            
+            for (key, value) in (snapshot.value as? [String: AnyObject])!{
+                count++
+                
+                let dataVal = value as? NSDictionary
+                
+                let firstUser = dataVal![String(chatmateID)] as? Int
+                let secondUser = dataVal![String(userid!)] as? Int
+                
+                if firstUser != nil && secondUser != nil {
+                    chatVar.RoomID = key
+                }
+                
+                if(count == snapshot.value?.count!){
+                    if chatVar.RoomID != "" {
+                        self.loadMessages()
+                    }else{
+                        let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                        dispatch_async(dispatch_get_main_queue()){
+                            let roomDetail = [
+                                String(chatmateID) :true,
+                                String(userid!) :true
+                            ]
+                            roomDB.setValue(roomDetail)
+                            chatVar.RoomID = roomDB.key
+                            self.deleteMessage()
+                            self.loadMessages()
+                        }
+                    }
+                }
+            }
+        })
+    }
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.messagesData.count
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Messagecell", forIndexPath: indexPath) as! MessageCell
+        let data = self.messagesData[indexPath.row]
+        
+        self.setupCell(cell, mess_data: data)
+        
+        if let message = data["message"] as? String {
+            cell.txtLbl.text = message
+        }
+        
+        cell.bubbleWidthAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).width + 18
+        cell.bubbleHeightAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).height + 10
+        return cell
+    }
+    
+    func setupCell(cell: MessageCell, mess_data: NSDictionary){
+        if FIRAuth.auth()?.currentUser?.uid == (mess_data["userId"] as! String){
+            cell.bubbleView.backgroundColor = UIColor(hexString: "#E0E0E0")
+            cell.txtLbl.textColor = UIColor.blackColor()
+            
+            cell.bubbleViewLeftAnchor?.active = false
+            cell.bubbleViewRightAnchor?.active = true
+            
+            if self.userPhoto == "null" || self.userPhoto == "" {
+                cell.userPhoto.image = UIImage(named: "noPhoto")
+            }else{
+                cell.userPhoto.imgForCache(self.userPhoto)
+            }
+            
+            cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
+            cell.dateLblRight.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
+            
+            cell.dateLblRight.hidden = false
+            cell.dateLblLeft.hidden = true
+            cell.userPhoto.hidden = false
+            cell.chatmatePhoto.hidden = true
+        }else {
+            cell.bubbleView.backgroundColor =  UIColor(hexString: "#E4D4B9")
+            cell.txtLbl.textColor = UIColor.blackColor()
+            
+            if self.chatMatePhoto == "null" || self.chatMatePhoto == "" {
+                cell.chatmatePhoto.image = UIImage(named: "noPhoto")
+            }else{
+                cell.chatmatePhoto.imgForCache(self.chatMatePhoto)
+            }
+            
+            cell.bubbleViewRightAnchor?.active = false
+            cell.bubbleViewLeftAnchor?.active = true
+            
+            cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
+            cell.dateLblRight.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
+            
+            cell.dateLblLeft.hidden = false
+            cell.dateLblRight.hidden = true
+            cell.chatmatePhoto.hidden = false
+            cell.userPhoto.hidden = true
+        }
+    }
+    
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         
     }
-
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        var height: CGFloat = 80
+        
+        let data = self.messagesData[indexPath.row]
+        
+        if let message = data["message"] {
+            height = estimateFrameForText(message as! String).height + 30
+        }
+        
+        return CGSize(width: view.frame.width, height: height)
+    }
+    
+    func estimateFrameForText(text: String) -> CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
+        return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(16)], context: nil)
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    func dateFormatter(timestamp: NSNumber) -> String{
+        let seconds = timestamp.doubleValue / 1000
+        let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "hh:mm"
+        let time = formatter.stringFromDate(dateTimestamp)
+        formatter.dateFormat = "MMM dd"
+        let date = formatter.stringFromDate(dateTimestamp)
+        return "\(date) at \(time)"
+    }
 }
 extension UIColor {
     convenience init(hexString: String) {
@@ -450,4 +459,3 @@ extension UIColor {
         self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
     }
 }
-

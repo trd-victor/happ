@@ -26,6 +26,7 @@
 		A30752371F37666F00CB9CE8 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30752361F37666F00CB9CE8 /* MainViewController.swift */; };
 		A30752391F37701600CB9CE8 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30752381F37701600CB9CE8 /* MenuViewController.swift */; };
 		A30812F31F282AA1003CD5EF /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30812F21F282AA1003CD5EF /* EditProfileViewController.swift */; };
+		A30E61C01F79FF7A006B2464 /* UIBarButtonItem+Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30E61BF1F79FF7A006B2464 /* UIBarButtonItem+Badge.swift */; };
 		A3105B131F1CC2260067F069 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3A343AB1F09F8B700DC55FC /* Assets.xcassets */; };
 		A31ABBF01F34147300994064 /* FirstLanguageStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A31ABBEF1F34147300994064 /* FirstLanguageStoryboard.storyboard */; };
 		A31CEA9F1F27498600F386FC /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31CEA9E1F27498600F386FC /* ConfigurationViewController.swift */; };
@@ -102,6 +103,7 @@
 		A30752361F37666F00CB9CE8 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		A30752381F37701600CB9CE8 /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		A30812F21F282AA1003CD5EF /* EditProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
+		A30E61BF1F79FF7A006B2464 /* UIBarButtonItem+Badge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Badge.swift"; sourceTree = "<group>"; };
 		A31ABBEF1F34147300994064 /* FirstLanguageStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = FirstLanguageStoryboard.storyboard; sourceTree = "<group>"; };
 		A31CEA9E1F27498600F386FC /* ConfigurationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		A31CEAA01F274F9900F386FC /* MailChangeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailChangeViewController.swift; sourceTree = "<group>"; };
@@ -313,6 +315,7 @@
 				A35DCBD81F4D6450009B9406 /* ViewMessageViewController.swift */,
 				3D544EF61F68E6370055019A /* TimelineDetail.swift */,
 				A39EC1ED1F6BC04E00D9126D /* NotifController.swift */,
+				A30E61BF1F79FF7A006B2464 /* UIBarButtonItem+Badge.swift */,
 			);
 			path = happ;
 			sourceTree = "<group>";
@@ -542,6 +545,7 @@
 				A332F2281F3865B7009BF3CC /* Error.swift in Sources */,
 				A33DECB01F2F0FB100275CAE /* CreatePostViewController.swift in Sources */,
 				A30364C31F25E3440083A495 /* TableController.swift in Sources */,
+				A30E61C01F79FF7A006B2464 /* UIBarButtonItem+Badge.swift in Sources */,
 				A3A343A51F09F8B600DC55FC /* AppDelegate.swift in Sources */,
 				A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */,
 				A38DC7C01F4BCFC9009C168A /* NewMessageViewController.swift in Sources */,

@@ -16,7 +16,7 @@ struct globalUserId {
 
 
 class SignupViewController: UIViewController, UITextFieldDelegate {
-
+    
     @IBOutlet var navBar: UINavigationBar!
     /*Setting up variable*/
     @IBOutlet var userEmailField: UITextField!
@@ -29,11 +29,11 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var forgetPass: UIButton!
     
     @IBOutlet var underline_jp: UIView!
-
     
     
     
-//    @IBOutlet var navBack: UIBarButtonItem!
+    
+    //    @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var navTitle: UINavigationItem!
     
     //set up static param
@@ -83,7 +83,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         //set border for textbox...
         setBorder(userEmailField)
         setBorder(userPasswordField)
-
+        
         //set language
         language = setLanguage.appLanguage
         
@@ -106,7 +106,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         myActivityIndicator.transform = CGAffineTransformMakeScale(1.5, 1.5)
         view.addSubview(myActivityIndicator)
         view.endEditing(true)
-    
+        
         
         //load settings
         self.loadConfigure()
@@ -122,43 +122,41 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         myActivityIndicator.widthAnchor.constraintEqualToConstant(50).active = true
         myActivityIndicator.heightAnchor.constraintEqualToConstant(50).active = true
         
-        
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
         
-        userEmailField.translatesAutoresizingMaskIntoConstraints = false
-        userEmailField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        userEmailField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
-        userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
-        
         labelUserEmail.translatesAutoresizingMaskIntoConstraints = false
-        labelUserEmail.centerXAnchor.constraintEqualToAnchor(userEmailField.centerXAnchor).active = true
         labelUserEmail.topAnchor.constraintEqualToAnchor(userEmailField.topAnchor).active = true
-        labelUserEmail.widthAnchor.constraintEqualToAnchor(userEmailField.widthAnchor, constant: -20).active = true
+        labelUserEmail.leftAnchor.constraintEqualToAnchor(self.view.leftAnchor, constant: 5).active = true
+        labelUserEmail.widthAnchor.constraintEqualToConstant(110).active = true
         labelUserEmail.heightAnchor.constraintEqualToConstant(48).active = true
         
-        userPasswordField.translatesAutoresizingMaskIntoConstraints = false
-        userPasswordField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        userPasswordField.topAnchor.constraintEqualToAnchor(userEmailField.bottomAnchor).active = true
-        userPasswordField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        userPasswordField.heightAnchor.constraintEqualToConstant(48).active = true
+        userEmailField.translatesAutoresizingMaskIntoConstraints = false
+        userEmailField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        userEmailField.leftAnchor.constraintEqualToAnchor(labelUserEmail.rightAnchor).active = true
+        userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -115).active = true
+        userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
         
         labelPassword.translatesAutoresizingMaskIntoConstraints = false
-        labelPassword.centerXAnchor.constraintEqualToAnchor(userPasswordField.centerXAnchor).active = true
         labelPassword.topAnchor.constraintEqualToAnchor(userPasswordField.topAnchor).active = true
-        labelPassword.widthAnchor.constraintEqualToAnchor(userPasswordField.widthAnchor, constant: -20).active = true
+        labelPassword.leftAnchor.constraintEqualToAnchor(self.view.leftAnchor, constant: 5).active = true
+        labelPassword.widthAnchor.constraintEqualToConstant(80).active = true
         labelPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        
+        userPasswordField.translatesAutoresizingMaskIntoConstraints = false
+        userPasswordField.topAnchor.constraintEqualToAnchor(userEmailField.bottomAnchor).active = true
+        userPasswordField.leftAnchor.constraintEqualToAnchor(labelPassword.rightAnchor).active = true
+        userPasswordField.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -86).active = true
+        userPasswordField.heightAnchor.constraintEqualToConstant(48).active = true
         
         btnLogin.translatesAutoresizingMaskIntoConstraints = false
         btnLogin.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         btnLogin.topAnchor.constraintEqualToAnchor(userPasswordField.bottomAnchor, constant: 20).active = true
         btnLogin.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -40).active = true
         btnLogin.heightAnchor.constraintEqualToConstant(48).active = true
-        
         
         forgetPass.translatesAutoresizingMaskIntoConstraints = false
         forgetPass.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -171,11 +169,11 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     func loadConfigure(){
         let config = SYSTEM_CONFIG()
         
-      //  config.translate("button_regist")
+        //  config.translate("button_regist")
         // Set Translations
         navTitle.title = config.translate("title_login")
         labelUserEmail.text = config.translate("label_email_address")
-    
+        
         userEmailField.placeholder = config.translate("holder_ex.@xx.com")
         labelPassword.text = config.translate("label_Password")
         userPasswordField.placeholder = config.translate("holder_4/more_char")
@@ -200,7 +198,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         let config = SYSTEM_CONFIG()
         
         
-//        let error = Error()
+        //        let error = Error()
         
         if userEmail == ""  {
             displayMyAlertMessage(config.translate("mess_fail_auth"))
@@ -208,7 +206,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             displayMyAlertMessage(config.translate("mess_fail_auth"))
         }
         else {
-
+            
             if language == "ja" {
                 language = "jp"
             }
@@ -235,45 +233,46 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 var user_id: NSNumber
                 var value: Int
                 
-                if error != nil{
+                if error != nil || data == nil{
                     print("\(error)")
-                    return;
-                }
-                do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json!["message"] != nil {
-                        mess = json!["message"] as! String
-                    }
-                    if json!["result"] != nil {
-                        if json!["result"]!["user_id"] != nil {
-                            value = json!["result"]!["user_id"] as! Int
-                            user_id = value
-                            mess = user_id.stringValue
-                            globalUserId.userID = mess
-                        }
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.myActivityIndicator.stopAnimating()
-                        self.myActivityIndicator.hidesWhenStopped = true
+                    self.loginButton(sender)
+                }else{
+                    do {
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                         
-                        var errorMessage : Bool
-                        if json!["error"] != nil {
-                            errorMessage = json!["error"] as! Bool
-                            if errorMessage == true {
-                                self.displayMyAlertMessage(config.translate("mess_fail_auth"))
-                            }
-                        } else {
-                            self.loginFirebase(userEmail, pass: userPass)
+                        if json!["message"] != nil {
+                            mess = json!["message"] as! String
                         }
-                    }
-                    
+                        if json!["result"] != nil {
+                            if json!["result"]!["user_id"] != nil {
+                                value = json!["result"]!["user_id"] as! Int
+                                user_id = value
+                                mess = user_id.stringValue
+                                globalUserId.userID = mess
+                            }
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.myActivityIndicator.stopAnimating()
+                            self.myActivityIndicator.hidesWhenStopped = true
+                            
+                            var errorMessage : Bool
+                            if json!["error"] != nil {
+                                errorMessage = json!["error"] as! Bool
+                                if errorMessage == true {
+                                    self.displayMyAlertMessage(config.translate("mess_fail_auth"))
+                                }
+                            } else {
+                                self.loginFirebase(userEmail, pass: userPass)
+                            }
+                        }
+                        
                     } catch {
-                    print(error)
+                        print(error)
+                    }
                 }
-                
             }
+            
             task.resume()
         }
     }
@@ -286,11 +285,14 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
                 config.setSYS_VAL(2, key: "runningApp")
                 
+                let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
+                registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
+                
                 self.redirectLogin()
             } else {
                 self.displayMyAlertMessage("Don't have Account!")
             }
-        
+            
         }
     }
     
@@ -301,7 +303,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     func redirectLogin() {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as!
-            MenuViewController
+        MenuViewController
         self.presentViewController(userTimeLineController, animated:true, completion:nil)
         
     }
@@ -344,13 +346,11 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         textField.layer.shadowOpacity = 0.3
     }
     
-    func displayMyAlertMessage(userMessage:String){ 
+    func displayMyAlertMessage(userMessage:String){
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
-
+    
 }
-
-

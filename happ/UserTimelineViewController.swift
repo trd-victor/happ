@@ -105,6 +105,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadTimeline:")), name: "reloadTimeline", object: nil)
         
+        self.btnViewNotif.addBadge(number: 1)
         self.mytableview.addSubview(self.refreshControl)
         
         self.mytableview.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
@@ -273,26 +274,26 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
             data1, response1, error1 in
             
-            if error1 != nil{
-                print("\(error1)")
-                return;
-            }
-            do {
-                let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if json3!["message"] != nil {
-                }
-                if json3!["result"] != nil {
-                    if json3!["result"]!["mess"] != nil {
+            if error1 != nil || data1 == nil {
+                self.deleteTimeline(sender)
+            }else {
+                do {
+                    let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    
+                    if json3!["message"] != nil {
                     }
+                    if json3!["result"] != nil {
+                        if json3!["result"]!["mess"] != nil {
+                        }
+                    }
+                    dispatch_async(dispatch_get_main_queue()) {
+                        //self.displayMyAlertMessage(mess)
+                        self.mytableview.reloadData()
+                    }
+                    
+                } catch {
+                    print(error)
                 }
-                dispatch_async(dispatch_get_main_queue()) {
-                    //self.displayMyAlertMessage(mess)
-                    self.mytableview.reloadData()
-                }
-                
-            } catch {
-                print(error)
             }
             
         }
@@ -306,25 +307,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         defaults.setObject(statust, forKey: "Freetime")
         defaults.synchronize()
         
-        let config = SYSTEM_CONFIG()
-        let timestamp = FIRServerValue.timestamp()
-        let firID = config.getSYS_VAL("FirebaseID") as? String
-        
         if statust == "On" {
-            let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
-            
-            let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
-            let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
-            let notifData = [
-                "name": "\(name)",
-                "photoUrl"  : "\(photoUrl)",
-                "postId"    : 0,
-                "type"      : "free-time",
-                "timestamp" : timestamp,
-                "userId"    : firID!
-             ] as [String: AnyObject]
-            notifDB.setValue(notifData)
-            }
+            let notif = NotifController()
+            notif.saveNotificationMessage(0, type: "free-time")
+        }
         if statust == "On" {
             //Update Server Free Time Status
             updateFreeTimeStatus()
@@ -358,77 +344,79 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil{
+            if error != nil || data == nil{
                 self.getTimelineUser()
-            }
-            do {
-                if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
-                
-                if let resultArray = json.valueForKey("result") as? NSArray {
-                    
-                    self.myResultArr = resultArray
-                    
-                    for item in resultArray {
-                        if let resultDict = item as? NSDictionary {
-                            if let userPostId = resultDict.valueForKey("ID") {
-                                self.postID.append(userPostId as! Int)
-                            }
+            }else {
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        
+                        if let resultArray = json.valueForKey("result") as? NSArray {
                             
-                            if let userPostModied = resultDict.valueForKey("post_modified") {
-                                self.postDate.append(userPostModied as! String)
-                            }
+                            self.myResultArr = resultArray
                             
-                            if let postContent = resultDict.valueForKey("fields")  {
-                                if postContent["images"] != nil {
-                                    if let images = postContent.valueForKey("images") as? NSArray {
-                                        for index in 1...images.count {
-                                            if let img = images[index - 1].valueForKey("image"){
-                                                if index == 1 {
-                                                    self.img1.append(img["url"] as! String)
+                            for item in resultArray {
+                                if let resultDict = item as? NSDictionary {
+                                    if let userPostId = resultDict.valueForKey("ID") {
+                                        self.postID.append(userPostId as! Int)
+                                    }
+                                    
+                                    if let userPostModied = resultDict.valueForKey("post_modified") {
+                                        self.postDate.append(userPostModied as! String)
+                                    }
+                                    
+                                    if let postContent = resultDict.valueForKey("fields")  {
+                                        if postContent["images"] != nil {
+                                            if let images = postContent.valueForKey("images") as? NSArray {
+                                                for index in 1...images.count {
+                                                    if let img = images[index - 1].valueForKey("image"){
+                                                        if index == 1 {
+                                                            self.img1.append(img["url"] as! String)
+                                                        }
+                                                        if index == 2 {
+                                                            self.img2.append(img["url"] as! String)
+                                                        }
+                                                        if index == 3 {
+                                                            self.img3.append(img["url"] as! String)
+                                                        }
+                                                    }
                                                 }
-                                                if index == 2 {
-                                                    self.img2.append(img["url"] as! String)
+                                                if images.count < 2 {
+                                                    self.img2.append("null")
                                                 }
-                                                if index == 3 {
-                                                    self.img3.append(img["url"] as! String)
+                                                if images.count < 3 {
+                                                    self.img3.append("null")
                                                 }
+                                            }else{
+                                                self.img1.append("null")
+                                                self.img2.append("null")
+                                                self.img3.append("null")
                                             }
                                         }
-                                        if images.count < 2 {
-                                            self.img2.append("null")
+                                        if let body = postContent.valueForKey("body") {
+                                            self.userBody.append(body as! String)
                                         }
-                                        if images.count < 3 {
-                                            self.img3.append("null")
+                                        if let body = postContent.valueForKey("from_user_id") {
+                                            self.fromID.append(body as! String)
                                         }
-                                    }else{
-                                        self.img1.append("null")
-                                        self.img2.append("null")
-                                        self.img3.append("null")
+                                        
+                                        
+                                        dispatch_async(dispatch_get_main_queue()){
+                                            if self.loadingData {
+                                                self.loadingData = false
+                                            }
+                                            self.mytableview.reloadData()
+                                        }
                                     }
                                 }
-                                if let body = postContent.valueForKey("body") {
-                                    self.userBody.append(body as! String)
-                                }
-                                if let body = postContent.valueForKey("from_user_id") {
-                                    self.fromID.append(body as! String)
-                                }
                                 
-                                
-                                dispatch_async(dispatch_get_main_queue()){
-                                    if self.loadingData {
-                                        self.loadingData = false
-                                    }
-                                    self.mytableview.reloadData()
-                                }
                             }
                         }
-                        
                     }
+                } catch {
+                    print(error)
                 }
             }
-            } catch {
-                print(error)
-            }
+            
         }
         task.resume()
         

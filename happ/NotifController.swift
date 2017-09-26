@@ -19,7 +19,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var backupData: [NSObject] = []
     var postName: String = ""
     var postPhotoUrl: String = ""
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -62,9 +62,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func loadConfig(){
-        //        let config = SYSTEM_CONFIG()
-        //        self.title = config.translate("notice")
-        
         let navItem = UINavigationItem(title: "Notification")
         let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
         btnBack.tintColor = UIColor.whiteColor()
@@ -83,17 +80,23 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let config = SYSTEM_CONFIG()
         
         let firID = config.getSYS_VAL("FirebaseID") as! String
-        let notifDB = FIRDatabase.database().reference().child("notifications")
+        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("notification-all")
         
-        notifDB.observeEventType(.ChildAdded, withBlock: {(snapshot) in
-            if let result = snapshot.value as? [String: AnyObject]{
-                let userID = result["userId"] as! String
+        notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
+            
+            if let result = snapshot.value as? NSDictionary {
+                let key =  snapshot.key
                 
-                if firID != userID{
-                    self.arrayData.insert(result, atIndex: 0)
-                    self.backupData.append(result)
-                    self.tblView.reloadData()
-                }
+                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("notification-user").child(firID).child("notif-list").child(key)
+                
+                notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
+                    
+                    if(snap.exists()) {
+                        self.arrayData.insert(result, atIndex: 0)
+                        self.backupData.append(result)
+                        self.tblView.reloadData()
+                    }
+                })
             }
         })
     }
@@ -141,30 +144,29 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("NotifCell", forIndexPath: indexPath) as! NotifCell
         
-        let data = self.arrayData[indexPath.row]
-        let name = data.valueForKey("name") as! String
-        if data.valueForKey("type") != nil {
-            let type = data.valueForKey("type") as! String
+        let data = self.arrayData[indexPath.row] as? NSDictionary
+        
+        if data != nil {
+            let name = data!["name"] as! String
+            let type = data!["type"] as! String
+            let timestamp = data!["timestamp"] as? NSNumber
+            let image = data!["photoUrl"] as? String
             
-            if type == "post-timeline" || type == "timeline"{
+            if type == "timeline" || type == "post-timeline"{
                 cell.lblMessage.text = "\(name) posted it on the timeline."
             }else if type == "free-time" {
                 cell.lblMessage.text = "\(name) turned \"now\" free."
-            }
-            else if type == "message"{
+            }else if type == "message" {
                 cell.lblMessage.text = "You have a message from \(name)."
-            }else{
-                cell.lblMessage.text = "\(name) posted it on the timeline."
+            }else if type == "reservation" {
+                cell.lblMessage.text = "Reservation"
             }
-        }
-        else{
-            cell.lblMessage.text = "\(name) posted it on the timeline."
-        }
-        
-        cell.lblDate.text = dateFormatter((data.valueForKey("timestamp") as? NSNumber)!)
-        if (data.valueForKey("photoUrl") as? String) != nil{
-            let image = setImageURL((data.valueForKey("photoUrl") as? String)!)
-            cell.notifPhoto.image = image
+            
+            cell.lblDate.text = dateFormatter(timestamp!)
+            
+            if image != nil {
+                cell.notifPhoto.imgForCache(image!)
+            }
         }
         
         return cell
@@ -175,35 +177,21 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let data = self.backupData[self.backupData.count - 1 - indexPath.row]
-        if let type = data.valueForKey("type") as? String {
-            let postID = data.valueForKey("postId") as? Int
-            if type == "post-timeline" || type == "timeline" {
-                // post timeline
-                self.postName = data.valueForKey("name") as! String
-                self.postPhotoUrl = data.valueForKey("photoUrl") as! String
-                self.getPostDetail(postID!)
-                
-            }else if type == "free-time" {
-                // i am free
-                let userID = data.valueForKey("userId") as! String
-                self.getUserDetail(userID)
-                
-            }else if type == "message"{
-                // message
-                let messageData = data.valueForKey("data") as! [String: AnyObject]
-                globalvar.userTitle =  messageData["sender"] as! String
-                chatVar.RoomID = messageData["roomId"] as! String
-                chatVar.Indicator = "MessageTable"
-                
-                let viewLib = ViewLibViewController()
-                self.presentDetail(viewLib)
-            }else {
-                print("nothing")
-            }
-        }else{
-            print("no type")
+        let data = self.backupData[self.backupData.count - 1 - indexPath.row] as? NSDictionary
+        let type = data!["type"] as? String
+        let name = data!["name"] as? String
+        let post_id = data!["postId"] as? Int
+        let photoUrl = data!["photoUrl"] as? String
+        let user_id = data!["userId"] as? String
+        
+        if type! == "timeline" || type! == "post-time" {
+            self.postName = name!
+            self.postPhotoUrl = photoUrl!
+            self.getPostDetail(post_id!)
+        }else if type! == "free-time" {
+            self.getUserDetail(user_id!)
         }
+        
     }
     
     func dateFormatter(timestamp: NSNumber) -> String{
@@ -236,16 +224,22 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
         
         userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-            if let result = snapshot.value{
-                
+            if let result = snapshot.value as? NSDictionary{
                 if result["id"] != nil {
-                    SearchDetailsView.searchIDuser = String(result["id"]!!)
-                    SearchDetailsView.userEmail = result["email"] as! String
                     
-                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                    let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchDetailView") as! SearchDetailViewController
-                    
-                    self.presentDetail(vc)
+                    dispatch_async(dispatch_get_main_queue()){
+                        UserProfile.id = String(result["id"]!)
+                        
+                        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                        let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
+                        let transition = CATransition()
+                        
+                        transition.duration = 0.25
+                        transition.type = kCATransitionPush
+                        transition.subtype = kCATransitionFromRight
+                        self.view.window!.layer.addAnimation(transition, forKey: nil)
+                        self.presentViewController(vc, animated: false, completion: nil)
+                    }
                 }
             }
         })
@@ -288,7 +282,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             UserDetails.postDate = resultArray[0]["post_modified"] as! String
                             UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
                             UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
-
+                            
                             dispatch_async(dispatch_get_main_queue()){
                                 if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
                                     let images = resultArray[0]["fields"]!!["images"] as! NSArray
@@ -345,4 +339,56 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         return body
     }
+    
+    func saveNotificationMessage(id: Int, type: String){
+        let config = SYSTEM_CONFIG()
+        let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
+        let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        let timestamp = FIRServerValue.timestamp()
+        
+        dispatch_async(dispatch_get_main_queue()){
+            let notifAllDB = FIRDatabase.database().reference().child("notifications").child("notification-all").childByAutoId()
+            
+            let notif_all_key = notifAllDB.key
+            
+            let notifDetail = [
+                "name": String(name),
+                "photoUrl": String(photoUrl),
+                "postId": id,
+                "timestamp": timestamp,
+                "type": type,
+                "userId": firID!
+            ]
+            
+            notifAllDB.setValue(notifDetail)
+            
+            // get all user
+            let userDB = FIRDatabase.database().reference().child("users")
+            
+            dispatch_async(dispatch_get_main_queue()){
+                userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+                    
+                    if let result = snapshot.value as? NSDictionary {
+                        for (key, _) in result {
+                            if key as! String != firID! {
+                                
+                                // update notification user
+                                FIRDatabase.database().reference().child("notifications").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
+                                
+                                // get unread count on each user
+                                let readDB = FIRDatabase.database().reference().child("notifications").child("notification-user").child(key as! String).child("unread").child("count")
+                                
+                                readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
+                                    let count = snapCount.value as? Int
+                                    readDB.setValue(count! + 1)
+                                })
+                            }
+                        }
+                    }
+                })
+            }
+        }
+    }
+    
 }

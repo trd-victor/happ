@@ -663,3 +663,126 @@ class NotifCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+
+class MessageCell: UICollectionViewCell {
+    
+    let txtLbl: UILabel = {
+        let tv = UILabel()
+        tv.font = UIFont.systemFontOfSize(16)
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        tv.backgroundColor = UIColor.clearColor()
+        tv.numberOfLines = 0
+        tv.lineBreakMode = .ByWordWrapping
+        tv.sizeToFit()
+        return tv
+    }()
+    
+    let bubbleView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 12
+        view.layer.masksToBounds = true
+        return view
+    }()
+    
+    let chatmatePhoto: UIImageView = {
+        let photo = UIImageView()
+        photo.image = UIImage(named: "noPhoto")
+        photo.translatesAutoresizingMaskIntoConstraints = false
+        photo.layer.cornerRadius = 16
+        photo.layer.masksToBounds = true
+        return photo
+    }()
+    
+    let userPhoto: UIImageView = {
+        let photo = UIImageView()
+        photo.image = UIImage(named: "noPhoto")
+        photo.translatesAutoresizingMaskIntoConstraints = false
+        photo.layer.cornerRadius = 16
+        photo.layer.masksToBounds = true
+        return photo
+    }()
+    
+    let dateLblLeft: UILabel = {
+        let lbl = UILabel()
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.backgroundColor = UIColor.clearColor()
+        lbl.font = UIFont.systemFontOfSize(10)
+        return lbl
+    }()
+    
+    let dateLblRight: UILabel = {
+        let lbl = UILabel()
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.backgroundColor = UIColor.clearColor()
+        lbl.font = UIFont.systemFontOfSize(10)
+        return lbl
+    }()
+    
+    var bubbleWidthAnchor: NSLayoutConstraint?
+    var bubbleHeightAnchor: NSLayoutConstraint?
+    var bubbleViewRightAnchor: NSLayoutConstraint?
+    var bubbleViewLeftAnchor: NSLayoutConstraint?
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+    }
+    
+    override init(frame: CGRect){
+        super.init(frame: frame)
+        
+        addSubview(bubbleView)
+        addSubview(txtLbl)
+        addSubview(userPhoto)
+        addSubview(chatmatePhoto)
+        addSubview(dateLblLeft)
+        addSubview(dateLblRight)
+        
+        chatmatePhoto.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 5).active = true
+        chatmatePhoto.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 5).active = true
+        chatmatePhoto.widthAnchor.constraintEqualToConstant(32).active = true
+        chatmatePhoto.heightAnchor.constraintEqualToConstant(32).active = true
+        
+        userPhoto.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -5).active = true
+        userPhoto.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 5).active = true
+        userPhoto.widthAnchor.constraintEqualToConstant(32).active = true
+        userPhoto.heightAnchor.constraintEqualToConstant(32).active = true
+        
+        bubbleViewRightAnchor =  bubbleView.rightAnchor.constraintEqualToAnchor(self.userPhoto.leftAnchor, constant: -5)
+        bubbleViewRightAnchor?.active = true
+        //        bubbleView.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -8).active = true
+        bubbleViewLeftAnchor = bubbleView.leftAnchor.constraintEqualToAnchor(self.chatmatePhoto.rightAnchor, constant: 5)
+        //        bubbleViewLeftAnchor?.active = true
+        
+        //        bubbleView.topAnchor.constraintEqualToAnchor(self.topAnchor).active = true
+        
+        bubbleWidthAnchor = bubbleView.widthAnchor.constraintEqualToConstant(200)
+        bubbleWidthAnchor?.active = true
+        
+        
+        bubbleHeightAnchor = bubbleView.heightAnchor.constraintEqualToConstant(40)
+        bubbleHeightAnchor?.active = true
+        
+        txtLbl.leftAnchor.constraintEqualToAnchor(bubbleView.leftAnchor, constant: 8).active = true
+        txtLbl.topAnchor.constraintEqualToAnchor(bubbleView.topAnchor, constant: -10).active = true
+        txtLbl.rightAnchor.constraintEqualToAnchor(bubbleView.rightAnchor, constant: -8).active = true
+        
+        txtLbl.heightAnchor.constraintEqualToAnchor(self.heightAnchor).active = true
+        
+        dateLblLeft.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
+        dateLblLeft.leftAnchor.constraintEqualToAnchor(self.bubbleView.leftAnchor).active = true
+        dateLblLeft.widthAnchor.constraintEqualToConstant(80).active = true
+        dateLblLeft.heightAnchor.constraintEqualToConstant(15).active = true
+        
+        dateLblRight.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
+        dateLblRight.rightAnchor.constraintEqualToAnchor(self.bubbleView.rightAnchor).active = true
+        dateLblRight.widthAnchor.constraintEqualToConstant(80).active = true
+        dateLblRight.heightAnchor.constraintEqualToConstant(15).active = true
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

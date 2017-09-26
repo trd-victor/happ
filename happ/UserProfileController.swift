@@ -116,6 +116,8 @@ class UserProfileController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        btnMessage.addTarget(self, action: Selector("openMessage"), forControlEvents: .TouchUpInside)
+        
         tblProfile.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
         tblProfile.registerClass(SingleImage.self, forCellReuseIdentifier: "SingleImage")
         tblProfile.registerClass(DoubleImage.self, forCellReuseIdentifier: "DoubleImage")
@@ -156,6 +158,11 @@ class UserProfileController: UIViewController {
     func translate(){
         btnMessage.setTitle("Message", forState: .Normal)
         btnBlock.setTitle("Block", forState: .Normal)
+    }
+    
+    func openMessage(){
+        let vc = ViewLibViewController()
+        self.presentViewController(vc, animated: false, completion: nil)
     }
     
     func autoLayout() {

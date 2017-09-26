@@ -35,26 +35,40 @@ extension UserProfileController {
             
             if error != nil || data == nil {
                 self.loadUserinfo(sender)
-            }
-            do {
-                if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                    if json["result"] != nil {
-                        dispatch_async(dispatch_get_main_queue()){
-                            self.userName.text = json["result"]!["name"] as? String
-                            self.h_id.text = json["result"]!["h_id"] as? String
-                            self.skills.text = json["result"]!["skills"] as? String
-                            self.msg.text = json["result"]!["mess"] as? String
-                            if let imgUrl = json["result"]!["icon"] as? String {
-                                self.ProfileImage.profileForCache(imgUrl)
+            }else{
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
+                        if json["result"] != nil {
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.userName.text = json["result"]!["name"] as? String
+                                self.h_id.text = json["result"]!["h_id"] as? String
+                                self.skills.text = json["result"]!["skills"] as? String
+                                self.msg.text = json["result"]!["mess"] as? String
+                                if let imgUrl = json["result"]!["icon"] as? String {
+                                    self.ProfileImage.profileForCache(imgUrl)
+                                }
+                                
+                                let userid = json["result"]!["user_id"]!!
+                                let userDB = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(userid)
+                                userDB.observeSingleEventOfType(.ChildAdded, withBlock: {(snapshot) in
+                                    dispatch_async(dispatch_get_main_queue()){
+                                        if snapshot.key != "" && snapshot.key != "<null>"{
+                                            chatVar.chatmateId = snapshot.key
+                                            chatVar.name = self.userName.text!
+                                            chatVar.Indicator = "Search"
+                                        }
+                                    }
+                                })
+                                
+                                self.getTimelineUser()
                             }
-                            self.getTimelineUser()
                         }
+                    }else{
+                        self.loadUserinfo(sender)
                     }
-                }else{
-                    self.loadUserinfo(sender)
+                } catch {
+                    print(error)
                 }
-            } catch {
-                print(error)
             }
             
         }

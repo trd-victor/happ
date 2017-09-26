@@ -449,43 +449,42 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
             data1, response1, error1 in
             
-            if error1 != nil{
-                print("\(error1)")
-                return;
-            }
-            do {
-                let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                let result = json2!["result"] as! NSArray
-                for data in result {
-                
-                    let email = data["email"] as! String
-                    if email == userEmail {
-                        let userId = data["user_id"] as! Int
-                        let uid: Int = userId
-                        self.FirebaseImage = data["icon"] as? String ?? ""
-                        self.Firebaseemail = data["email"] as! String
-                        self.Firebasename = data["name"] as! String
+            if error1 != nil || data1 == nil{
+                self.loadUserData(sender, userEmail: userEmail, password:  password)
+            }else{
+                do {
+                    let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    
+                    let result = json2!["result"] as! NSArray
+                    for data in result {
                         
-                         self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid)
-                    }
-                    else {
-                        
-                        dispatch_async(dispatch_get_main_queue()) {
-
-                        let userId = data["user_id"] as! Int
-                        let uid: Int = userId
-                        self.FirebaseImage = data["icon"] as? String ?? ""
-                        self.Firebaseemail = data["email"] as! String
-                        self.Firebasename = data["name"] as! String
-                        
-                        self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid )
+                        let email = data["email"] as! String
+                        if email == userEmail {
+                            let userId = data["user_id"] as! Int
+                            let uid: Int = userId
+                            self.FirebaseImage = data["icon"] as? String ?? ""
+                            self.Firebaseemail = data["email"] as! String
+                            self.Firebasename = data["name"] as! String
+                            
+                            self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid)
+                        }
+                        else {
+                            
+                            dispatch_async(dispatch_get_main_queue()) {
+                                let userId = data["user_id"] as! Int
+                                let uid: Int = userId
+                                self.FirebaseImage = data["icon"] as? String ?? ""
+                                self.Firebaseemail = data["email"] as! String
+                                self.Firebasename = data["name"] as! String
+                                
+                                self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid )
+                            }
                         }
                     }
+                    
+                } catch {
+                    print(error)
                 }
-                
-            } catch {
-                print(error)
             }
         }
         
@@ -505,7 +504,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     "email"     : userEmail,
                     "id"        : userID,
                     "name"      : name,
-                    "photoUrl"  : image,
+                    "photoUrl"  : "null",
                     "token"     : token
                 ]
 //                //insert to users
