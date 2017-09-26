@@ -315,8 +315,6 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
         var mess: Bool!
         let config = SYSTEM_CONFIG()
-        let timestamp = FIRServerValue.timestamp()
-        let firID = config.getSYS_VAL("FirebaseID") as? String
         
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()
@@ -328,43 +326,32 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
             data1, response1, error1 in
             
-            if error1 != nil{
-                print("\(error1)")
-                return;
-            }
-            do {
-                let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if json3!["success"] != nil {
-                    mess = json3!["success"] as! Bool
-                    let postID = json3!["result"]
+            if error1 != nil || data1 == nil{
+                self.savePost(parameters)
+            }else {
+                do {
+                    let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
-                    let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
-                    let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
-                    let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
-                   
-                    let notifData = [
-                            "name": "\(name)",
-                            "photoUrl"  : "\(photoUrl)",
-                            "postId"    : postID!,
-                            "type"      : "post-timeline",
-                            "timestamp" : timestamp,
-                            "userId"    : firID!
-                        ] as [String: AnyObject]
-                    notifDB.setValue(notifData)
-                }
-                dispatch_async(dispatch_get_main_queue()) {
-                    if mess == true {
-                        NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
-                        self.displayMyAlertMessage(config.translate("saved_post"))
-                        self.content.text = config.translate("holder_post_content")
+                    if json3!["success"] != nil {
+                        mess = json3!["success"] as! Bool
+                        let postID = json3!["result"] as? Int
+                        
+                        let notif = NotifController()
+                        notif.saveNotificationMessage(postID!, type: "timeline")
+                        
                     }
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if mess == true {
+                            NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
+                            self.displayMyAlertMessage(config.translate("saved_post"))
+                            self.content.text = config.translate("holder_post_content")
+                        }
+                    }
+                    
+                } catch {
+                    print(error)
                 }
-                
-            } catch {
-                print(error)
             }
-            
         }
         task2.resume()
         

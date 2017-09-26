@@ -105,6 +105,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadTimeline:")), name: "reloadTimeline", object: nil)
         
+        btnViewNotif.addBadge(number: 657)
+        
         self.mytableview.addSubview(self.refreshControl)
         
         self.mytableview.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
@@ -305,26 +307,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(statust, forKey: "Freetime")
         defaults.synchronize()
-        
-        let config = SYSTEM_CONFIG()
-        let timestamp = FIRServerValue.timestamp()
-        let firID = config.getSYS_VAL("FirebaseID") as? String
+
         
         if statust == "On" {
-            let notifDB = FIRDatabase.database().reference().child("notifications").childByAutoId()
-            
-            let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
-            let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
-            let notifData = [
-                "name": "\(name)",
-                "photoUrl"  : "\(photoUrl)",
-                "postId"    : 0,
-                "type"      : "free-time",
-                "timestamp" : timestamp,
-                "userId"    : firID!
-             ] as [String: AnyObject]
-            notifDB.setValue(notifData)
-            }
+            let notif = NotifController()
+            notif.saveNotificationMessage(0, type: "free-time")
+        }
         if statust == "On" {
             //Update Server Free Time Status
             updateFreeTimeStatus()
@@ -334,6 +322,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     @IBAction func btnViewNotif(sender: UIBarButtonItem) {
         let notfif = NotifController()
         self.presentDetail(notfif)
+        
     }
     
     func getOlderPostTimeline() {

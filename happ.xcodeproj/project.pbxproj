@@ -78,6 +78,7 @@
 		A3F378C41F500D8F003FD98D /* ViewLibViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */; };
 		A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */; };
 		A3F872E11F1D4927004C4BA5 /* RegistController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F872E01F1D4926004C4BA5 /* RegistController.swift */; };
+		A3FA325F1F79309400CE36ED /* UIBarButtonItem+Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3FA325E1F79309400CE36ED /* UIBarButtonItem+Badge.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -157,6 +158,7 @@
 		A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewLibViewController.swift; sourceTree = "<group>"; };
 		A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentSettingsViewController.swift; sourceTree = "<group>"; };
 		A3F872E01F1D4926004C4BA5 /* RegistController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistController.swift; sourceTree = "<group>"; };
+		A3FA325E1F79309400CE36ED /* UIBarButtonItem+Badge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Badge.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -313,6 +315,7 @@
 				A35DCBD81F4D6450009B9406 /* ViewMessageViewController.swift */,
 				3D544EF61F68E6370055019A /* TimelineDetail.swift */,
 				A39EC1ED1F6BC04E00D9126D /* NotifController.swift */,
+				A3FA325E1F79309400CE36ED /* UIBarButtonItem+Badge.swift */,
 			);
 			path = happ;
 			sourceTree = "<group>";
@@ -542,6 +545,7 @@
 				A332F2281F3865B7009BF3CC /* Error.swift in Sources */,
 				A33DECB01F2F0FB100275CAE /* CreatePostViewController.swift in Sources */,
 				A30364C31F25E3440083A495 /* TableController.swift in Sources */,
+				A3FA325F1F79309400CE36ED /* UIBarButtonItem+Badge.swift in Sources */,
 				A3A343A51F09F8B600DC55FC /* AppDelegate.swift in Sources */,
 				A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */,
 				A38DC7C01F4BCFC9009C168A /* NewMessageViewController.swift in Sources */,

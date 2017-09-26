@@ -31,35 +31,36 @@ extension CongestionViewController {
             data, response, error  in
             
             
-            if error != nil{
+            if error != nil || data == nil{
                 self.getCongestion()
-            }
-            do {
-                if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
-                
-                
-                    if json["result"] != nil {
-                        let result = json["result"] as! NSArray
-                    
-                        for item in result {
-                            if let resultData = item as? NSDictionary {
+            }else {
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        
+                        
+                        if json["result"] != nil {
+                            let result = json["result"] as! NSArray
                             
-                                if let fields = resultData.valueForKey("fields") {
-                                    if let percent = fields.valueForKey("persentage") {
-                                        retData = Int(percent as! String)!
+                            for item in result {
+                                if let resultData = item as? NSDictionary {
+                                    
+                                    if let fields = resultData.valueForKey("fields") {
+                                        if let percent = fields.valueForKey("persentage") {
+                                            retData = Int(percent as! String)!
+                                        }
                                     }
+                                    
                                 }
-                            
                             }
                         }
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.getFreeStatus(retData)
+                        }
                     }
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.getFreeStatus(retData)
-                    }
+                    
+                } catch {
+                    print(error)
                 }
-                
-            } catch {
-                print(error)
             }
             
         }
