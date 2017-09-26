@@ -406,6 +406,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     if json!["result"] != nil {
                         if json!["result"]!["mess"] != nil {
                             mess = json!["result"]!["mess"] as! String
+                            print("sucess",mess)
                         }
                     }
                     dispatch_async(dispatch_get_main_queue()) {
@@ -414,9 +415,11 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                             errorMessage = json!["error"] as! Bool
                             if errorMessage == true {
                                 self.displayMyAlertMessage(mess)
+                                print("err",mess)
                             }
                         } else {
-                            self.displayMyAlertMessage(mess)
+                            print("sucess2",mess)
+                            self.successMessageAlert(mess)
                             self.loadUserData(name, userEmail: email, password: pass)
                         }
                     }
@@ -430,7 +433,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func loadUserData(sender : String, userEmail: String, password: String) {
-        
+        print("userEmail", userEmail, " password", password)
         let request1 = NSMutableURLRequest(URL: globalvar.API_URL)
         let boundary1 = generateBoundaryString()
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
@@ -515,7 +518,12 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 registTokendb.child("token").setValue(String(token))
             }else{
                 print(error)
-                self.displayMyAlertMessage("Error: Not Successfully Registered to firebase")
+//                self.displayMyAlertMessage("Error: Not Successfully Registered to firebase")
+                
+                FIRAuth.auth()?.fetchProvidersForEmail(userEmail, completion: { (result, error2) in
+                    print(result)
+                    print(error2)
+                })
             }
         })
     }
@@ -615,7 +623,26 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     
-    
+    func successMessageAlert(userMessage: String) {
+        let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
+        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.userEmail.text = ""
+            self.userPassword.text = ""
+            self.userName.text = ""
+            self.userReEnterPassword.text = ""
+            
+            self.frontEndSwitch.setOn(false, animated: true)
+            self.backEndSwitch.setOn(false, animated: true)
+            self.iosSwitch.setOn(false, animated: true)
+            self.AndroidSwitch.setOn(false, animated: true)
+            self.appdesignSwitch.setOn(false, animated: true)
+            self.webdesignSwitch.setOn(false, animated: true)
+            
+            self.dismissViewControllerAnimated(true, completion: nil)
+        })
+        myAlert.addAction(okAction)
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
     
 }
 

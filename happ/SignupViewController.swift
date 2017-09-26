@@ -305,7 +305,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as!
         MenuViewController
         self.presentViewController(userTimeLineController, animated:true, completion:nil)
-        
     }
     
     func generateBoundaryString() -> String {

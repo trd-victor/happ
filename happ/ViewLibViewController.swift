@@ -14,7 +14,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     let navBar: UINavigationBar = UINavigationBar()
     let sendBtn: UIButton = UIButton(type: .System)
     let containerView: UIView = UIView()
-    let txtField: UITextField = UITextField()
+    let txtField: UITextView = UITextView()
     let separatorLineView: UIView = UIView()
     var myCollectionView:UICollectionView?
     var layout: UICollectionViewFlowLayout?
@@ -62,6 +62,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         loadConfig()
         getUsersImage()
         setupKeyboard()
+        
     }
     
     func setupKeyboard(){
@@ -136,10 +137,14 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.sendBtn.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor).active = true
         
         self.txtField.translatesAutoresizingMaskIntoConstraints = false
+        self.txtField.topAnchor.constraintEqualToAnchor(self.containerView.topAnchor, constant: 5).active = true
         self.txtField.leftAnchor.constraintEqualToAnchor(self.containerView.leftAnchor, constant: 5).active = true
-        self.txtField.centerYAnchor.constraintEqualToAnchor(self.containerView.centerYAnchor).active = true
         self.txtField.widthAnchor.constraintEqualToAnchor(self.containerView.widthAnchor, constant: -85).active = true
-        self.txtField.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor).active = true
+        self.txtField.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor, constant: -6).active = true
+        self.txtField.layer.borderColor = UIColor.blackColor().CGColor
+        self.txtField.layer.borderWidth = 1.0
+        self.txtField.layer.cornerRadius = 10
+        self.txtField.font = UIFont.systemFontOfSize(16)
         
         self.separatorLineView.translatesAutoresizingMaskIntoConstraints = false
         self.separatorLineView.leftAnchor.constraintEqualToAnchor(self.containerView.leftAnchor).active = true
@@ -178,11 +183,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.sendBtn.setTitle(sendStr, forState: .Normal)
         self.sendBtn.addTarget(self, action: Selector("handleSend"), forControlEvents: .TouchUpInside)
         
-        // set placeholder
-        self.txtField.placeholder = config.translate("label_enter_message")
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
+        NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
         self.presentBackDetail(MessageTableViewController())
     }
     
@@ -265,10 +269,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 "chatroomId" : roomID,
                 "message": mess,
                 "name": username,
-                "photoUrl": userPhoto
+                "photoUrl": self.userPhoto
             ]
             
-            messNotifDB.setValue(notifDetail as? AnyObject)
+            messNotifDB.setValue(notifDetail)
             
             // Note after saving on message-notif, the firebase function will detect that there is a changes  on that table and will send a notification to a specific account
         }
@@ -285,8 +289,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 dispatch_async(dispatch_get_main_queue()){
                     self.myCollectionView!.reloadData()
                     if(self.messagesData.count > 0){
-                        let lastItemIndex = NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
-                        self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: true)
+                        dispatch_async(dispatch_get_main_queue()){
+                            let lastItemIndex = NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
+                            self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
+                        }
                     }
                 }
             }

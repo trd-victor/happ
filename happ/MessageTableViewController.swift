@@ -47,7 +47,6 @@ class MessageTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         //remove border in messages
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
         
@@ -67,6 +66,7 @@ class MessageTableViewController: UITableViewController {
         self.navigationController?.navigationBar.barTintColor = UIColor.blackColor()
         self.navigationController?.navigationBar.titleTextAttributes =  [NSForegroundColorAttributeName : UIColor.whiteColor()]
     }
+
     
     func loadConfig(){
         let config = SYSTEM_CONFIG()
@@ -80,20 +80,24 @@ class MessageTableViewController: UITableViewController {
     }
     
     func getUserMessage() {
-        self.lastMessages.removeAll()
         let config = SYSTEM_CONFIG()
         
         let fireDB = config.getSYS_VAL("FirebaseID") as! String
         let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB)
         
         //start of retrieving messages on every user
-        details.observeEventType(.ChildAdded, withBlock: { (snap) in
+        details.observeEventType(.Value, withBlock: { (snap) in
+            self.lastMessages.removeAll()
             if let result = snap.value as? NSDictionary {
-                self.lastMessages.append(result)
-                self.lastMessages.sortInPlace({(message1, message2) -> Bool in
-                    return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
-                })
-                self.mytableview.reloadData()
+
+                for (_, value) in result{
+                    self.lastMessages.append(value as! NSDictionary)
+                    self.lastMessages.sortInPlace({(message1, message2) -> Bool in
+                        return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
+                    })
+                    self.mytableview.reloadData()
+                }
+               
             }
         })
         
@@ -101,9 +105,7 @@ class MessageTableViewController: UITableViewController {
     }
     
     
-    
     func refreshTable(notification: NSNotification) {
-        
         self.getUserMessage()
     }
     
@@ -137,6 +139,8 @@ class MessageTableViewController: UITableViewController {
         cell.userTime.widthAnchor.constraintEqualToConstant(120).active = true
         cell.userTime.heightAnchor.constraintEqualToConstant(31).active = true
         
+        cell.username.font = UIFont.boldSystemFontOfSize(17)
+        
         let radius = min(cell.userImage!.frame.width/2 , cell.userImage!.frame.height/2)
         cell.userImage.layer.cornerRadius = radius
         cell.userImage.clipsToBounds = true
@@ -146,28 +150,37 @@ class MessageTableViewController: UITableViewController {
         let lastMessage = message["lastMessage"] as? String
         let imageUrl  = message["photoUrl"] as? String
         let timestamp = message["timestamp"] as? NSNumber
-        if imageUrl! == "null" || imageUrl! == ""{
-            cell.userImage.image = UIImage(named: "noPhoto")
-        }else{
-            dispatch_async(dispatch_get_main_queue()){
+        let readStatus = message["read"] as? Bool
+        
+        dispatch_async(dispatch_get_main_queue()){
+            if imageUrl! == "null" || imageUrl! == ""{
+                cell.userImage.image = UIImage(named: "noPhoto")
+            }else{
                 cell.userImage.imgForCache(imageUrl!)
             }
         }
         
         cell.userTime.text = dateFormatter(timestamp!)
+        
+        if readStatus! == false {
+            cell.userMessage.font = UIFont.boldSystemFontOfSize(17)
+        }
+        
         cell.username.text = name!
         cell.userMessage.text = lastMessage
         
         return cell
     }
-    
+        
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
         
         let data = self.lastMessages[indexPath.row]
         let name = data["name"] as? String
         let room_id = data["chatroomId"] as? String
         let user_key = FIRAuth.auth()?.currentUser?.uid
         let chatmate_id = data["chatmateId"] as? String
+        let messageStatus = data["read"] as? Bool
         
         chatVar.name = name!
         chatVar.RoomID =  room_id!
@@ -177,8 +190,12 @@ class MessageTableViewController: UITableViewController {
         chatVar.Indicator = "MessageTable"
         globalvar.userTitle = name!
         
+        if messageStatus! == false {
+            FIRDatabase.database().reference().child("chat").child("last-message").child(user_key!).child(room_id!).child("read").setValue(true)
+        }
         let vc = ViewLibViewController()
         self.presentDetail(vc)
+
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {

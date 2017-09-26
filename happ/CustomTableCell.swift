@@ -600,7 +600,7 @@ class NotifCell: UITableViewCell {
     
     let notifPhoto: UIImageView = {
         let photo = UIImageView()
-        photo.image = UIImage(named: "photo")
+        photo.image = UIImage(named: "noPhoto")
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 23
         photo.contentMode = .ScaleAspectFill
@@ -759,7 +759,6 @@ class MessageCell: UICollectionViewCell {
         
         bubbleWidthAnchor = bubbleView.widthAnchor.constraintEqualToConstant(200)
         bubbleWidthAnchor?.active = true
-        
         
         bubbleHeightAnchor = bubbleView.heightAnchor.constraintEqualToConstant(40)
         bubbleHeightAnchor?.active = true

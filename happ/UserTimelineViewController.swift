@@ -1,4 +1,4 @@
-//
+ //
 //  UserTimelineViewController.swift
 //  happ
 //
@@ -105,7 +105,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadTimeline:")), name: "reloadTimeline", object: nil)
         
-        self.btnViewNotif.addBadge(number: 1)
+        
         self.mytableview.addSubview(self.refreshControl)
         
         self.mytableview.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
@@ -151,6 +151,29 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.mytableview.delegate = self
         self.mytableview.dataSource = self
+        
+        
+        self.bellObserver()
+    }
+    
+    func bellObserver(){
+
+        self.btnViewNotif.addBadge(number: 0)
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        let unreadDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread")
+        unreadDB.observeEventType(.Value, withBlock: {(snap) in
+            
+            if let result = snap.value as? NSDictionary {
+                if let count = result["count"] as? Int {
+                    if count == 0 {
+                        self.btnViewNotif.removeBadge()
+                    }else{
+                        self.btnViewNotif.removeBadge()
+                        self.btnViewNotif.addBadge(number: count)
+                    }
+                }
+            }
+        })
         
     }
   
@@ -318,6 +341,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     @IBAction func btnViewNotif(sender: UIBarButtonItem) {
+        let firID = FIRAuth.auth()?.currentUser?.uid
+       FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread").child("count").setValue(0)
+        
+        self.btnViewNotif.removeBadge()
+        
         let notfif = NotifController()
         self.presentDetail(notfif)
     }
@@ -453,80 +481,83 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil{
+            if error != nil || data == nil {
                 self.getTimelineUser()
-            }
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if let resultArray = json!.valueForKey("result") as? NSArray {
+            }else{
+                do {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
-                    self.myResultArr = resultArray
-               
-                    for item in resultArray {
+                    if let resultArray = json!.valueForKey("result") as? NSArray {
                         
-                        if let resultDict = item as? NSDictionary {
-                            if let userPostId = resultDict.valueForKey("ID") {
-                                self.postID.append(userPostId as! Int)
-                            }
+                        self.myResultArr = resultArray
+                        
+                        for item in resultArray {
                             
-                            if let userPostModied = resultDict.valueForKey("post_modified") {
-                                self.postDate.append(userPostModied as! String)
-                            }
-                            
-                            if let postContent = resultDict.valueForKey("fields")  {
-                                if postContent["images"] != nil {
-                                    if let images = postContent.valueForKey("images") as? NSArray {
-                                        for index in 1...images.count {
-                                            if let img = images[index - 1].valueForKey("image"){
-                                                let imgView = UIImageView()
-                                                if index == 1 {
-                                                    self.img1.append(img["url"] as! String)
-                                                    imgView.imgForCache(img["url"] as! String)
-                                                    self.image1.append(imgView)
-                                                }
-                                                if index == 2 {
-                                                    self.img2.append(img["url"] as! String)
-                                                }
-                                                if index == 3 {
-                                                    self.img3.append(img["url"] as! String)
-                                                }
-                                            }
-                                        }
-                                        if images.count < 2 {
-                                            self.img2.append("null")
-                                        }
-                                        if images.count < 3 {
-                                            self.img3.append("null")
-                                        }
-                                    }else{
-                                        self.img1.append("null")
-                                        self.img2.append("null")
-                                        self.img3.append("null")
-                                    }
-                                }
-                                if let body = postContent.valueForKey("body") {
-                                    self.userBody.append(body as! String)
-                                }
-                                if let id = postContent.valueForKey("from_user_id") {
-                                    self.fromID.append(id as! String)
+                            if let resultDict = item as? NSDictionary {
+                                if let userPostId = resultDict.valueForKey("ID") {
+                                    self.postID.append(userPostId as! Int)
                                 }
                                 
-                                dispatch_async(dispatch_get_main_queue()){
-                                    if self.refreshControl.refreshing {
-                                        self.refreshControl.endRefreshing()
-                                        self.mytableview.contentOffset = CGPoint(x: 0,y: 0)
+                                if let userPostModied = resultDict.valueForKey("post_modified") {
+                                    self.postDate.append(userPostModied as! String)
+                                }
+                                
+                                if let postContent = resultDict.valueForKey("fields")  {
+                                    if postContent["images"] != nil {
+                                        if let images = postContent.valueForKey("images") as? NSArray {
+                                            for index in 1...images.count {
+                                                if let img = images[index - 1].valueForKey("image"){
+                                                    let imgView = UIImageView()
+                                                    if index == 1 {
+                                                        self.img1.append(img["url"] as! String)
+                                                        imgView.imgForCache(img["url"] as! String)
+                                                        self.image1.append(imgView)
+                                                    }
+                                                    if index == 2 {
+                                                        self.img2.append(img["url"] as! String)
+                                                    }
+                                                    if index == 3 {
+                                                        self.img3.append(img["url"] as! String)
+                                                    }
+                                                }
+                                            }
+                                            if images.count < 2 {
+                                                self.img2.append("null")
+                                            }
+                                            if images.count < 3 {
+                                                self.img3.append("null")
+                                            }
+                                        }else{
+                                            self.img1.append("null")
+                                            self.img2.append("null")
+                                            self.img3.append("null")
+                                        }
                                     }
-                                    self.mytableview.reloadData()
+                                    if let body = postContent.valueForKey("body") {
+                                        self.userBody.append(body as! String)
+                                    }
+                                    if let id = postContent.valueForKey("from_user_id") {
+                                        self.fromID.append(id as! String)
+                                        
+                                    }
+                                    
+                                    dispatch_async(dispatch_get_main_queue()){
+                                        if self.refreshControl.refreshing {
+                                            self.refreshControl.endRefreshing()
+                                            self.mytableview.contentOffset = CGPoint(x: 0,y: 0)
+                                        }
+                                        self.mytableview.reloadData()
+                                    }
                                 }
                             }
+                            
                         }
-                        
                     }
+                } catch {
+                    print(error)
                 }
-            } catch {
-                print(error)
             }
+            
         }
         task.resume()
     }

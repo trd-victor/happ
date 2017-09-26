@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ConfigurationViewController: UIViewController {
 
@@ -40,7 +41,6 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet var btnLogout: UIButton!
     @IBOutlet var labelLogout: UILabel!
     @IBOutlet var labelBasicInfo: UILabel!
-    
     
     var language: String!
     
@@ -284,6 +284,13 @@ class ConfigurationViewController: UIViewController {
     @IBAction func btnLogout(sender: AnyObject) {
         let myAlert = UIAlertController(title: "", message: "Are you sure you want to logout", preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: "Logout", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            
+            do {
+                try FIRAuth.auth()?.signOut()
+            } catch (let error){
+                print((error as NSError).code)
+            }
+            
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
             

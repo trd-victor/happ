@@ -14,4 +14,6 @@ target 'happ' do
     pod 'JSQMessagesViewController'
     pod 'DKImagePickerController', '<3'
     pod 'FirebaseMessaging', '<4'
+    pod 'Fabric'
+    pod 'Crashlytics'
 end

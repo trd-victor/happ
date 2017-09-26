@@ -34,9 +34,13 @@ extension UIBarButtonItem {
         
         badgeLayer?.removeFromSuperlayer()
         
+        let txtwidth = CGFloat(26)
+        
         // Initialize Badge
         let badge = CAShapeLayer()
-        let radius = CGFloat(7)
+        badge.lineWidth = 15
+        let radius = CGFloat(5)
+        
         let location = CGPoint(x: view.frame.width - (radius + offset.x), y: (radius + offset.y))
         badge.drawCircleAtLocation(location, withRadius: radius, andColor: color, filled: filled)
         view.layer.addSublayer(badge)
@@ -46,9 +50,8 @@ extension UIBarButtonItem {
         label.string = "\(number)"
         label.alignmentMode = kCAAlignmentCenter
         label.fontSize = 11
-        label.frame = CGRect(origin: CGPoint(x: location.x - 4, y: offset.y), size: CGSize(width: 8, height: 16))
+        label.frame = CGRect(origin: CGPoint(x: location.x - 13.5, y: offset.y - 2), size: CGSize(width: txtwidth, height: txtwidth))
         label.foregroundColor = filled ? UIColor.whiteColor().CGColor : color.CGColor
-        label.backgroundColor = UIColor.clearColor().CGColor
         label.contentsScale = UIScreen.mainScreen().scale
         badge.addSublayer(label)
         
@@ -56,7 +59,7 @@ extension UIBarButtonItem {
         objc_setAssociatedObject(self, &handle, badge, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    func updateBadge(number number: Int) {
+    func updateBadge(number: Int) {
         if let text = badgeLayer?.sublayers?.filter({ $0 is CATextLayer }).first as? CATextLayer {
             text.string = "\(number)"
         }
@@ -64,6 +67,12 @@ extension UIBarButtonItem {
     
     func removeBadge() {
         badgeLayer?.removeFromSuperlayer()
+    }
+    
+    func estimateFrameForText(text: String) -> CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
+        return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(16)], context: nil)
     }
     
 }

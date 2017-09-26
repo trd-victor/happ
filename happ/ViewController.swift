@@ -133,7 +133,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     func getAllUserInfo() {
         
         let config = SYSTEM_CONFIG()
-        
+        print("alluser")
         let parameters = [
             "sercret"     : "jo8nefamehisd",
             "action"      : "api",

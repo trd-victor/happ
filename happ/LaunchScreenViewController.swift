@@ -7,7 +7,8 @@
 //
 
 import UIKit
-
+import Firebase
+import Crashlytics
 
 class SYSTEM_CONFIG {
     internal var SYS_VAL = NSUserDefaults.standardUserDefaults()
@@ -51,7 +52,6 @@ class LaunchScreenViewController: UIViewController {
         let config = getSystemValue()
         config.getKey()
         
-        
         //setup Views..
         self.setUpView()
         
@@ -94,12 +94,31 @@ class LaunchScreenViewController: UIViewController {
     
     func gotoMainBoard() {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
-        self.presentViewController(mainViewController, animated:false, completion:nil)
+        
+        
+        if let firID = FIRAuth.auth()?.currentUser?.uid {
+            let userdb = FIRDatabase.database().reference().child("users").child(firID)
+            let user = ViewController()
+            user.getAllUserInfo()
+            dispatch_async(dispatch_get_main_queue()){
+                userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                    if let data = snap.value as? NSDictionary{
+                        globalUserId.userID = String(data["id"]!)
+                        
+                        let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as!
+                        MenuViewController
+                        self.presentViewController(userTimeLineController, animated:true, completion:nil)
+                    }
+                })
+            }
+        }else{
+            let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+            self.presentViewController(mainViewController, animated:false, completion:nil)
+        }
     }
     
     func delayLaunchScreen() {
-        self.delay(10.0) {
+        self.delay(5.0) {
             self.dismissViewControllerAnimated(false, completion: nil)
             self.gotoMainBoard()
         }
@@ -120,7 +139,7 @@ class LaunchScreenViewController: UIViewController {
             return true
         }else{
             defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-            self.delay(10.0){
+            self.delay(5.0){
                 self.firstload()
             }
             return false
