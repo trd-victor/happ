@@ -80,14 +80,14 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let config = SYSTEM_CONFIG()
         
         let firID = config.getSYS_VAL("FirebaseID") as! String
-        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("notification-all")
+        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
         
         notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
             
             if let result = snapshot.value as? NSDictionary {
                 let key =  snapshot.key
                 
-                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("notification-user").child(firID).child("notif-list").child(key)
+                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
                 
                 notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
                     
@@ -164,7 +164,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             cell.lblDate.text = dateFormatter(timestamp!)
             
-            if image != nil {
+            if image != nil && image! != "null" && image! != ""{
                 cell.notifPhoto.imgForCache(image!)
             }
         }
@@ -180,7 +180,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let data = self.backupData[self.backupData.count - 1 - indexPath.row] as? NSDictionary
         let type = data!["type"] as? String
         let name = data!["name"] as? String
-        let post_id = data!["postId"] as? Int
+        let post_id = data!["id"] as? Int
         let photoUrl = data!["photoUrl"] as? String
         let user_id = data!["userId"] as? String
         
@@ -348,14 +348,14 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let timestamp = FIRServerValue.timestamp()
         
         dispatch_async(dispatch_get_main_queue()){
-            let notifAllDB = FIRDatabase.database().reference().child("notifications").child("notification-all").childByAutoId()
+            let notifAllDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").childByAutoId()
             
             let notif_all_key = notifAllDB.key
             
             let notifDetail = [
                 "name": String(name),
                 "photoUrl": String(photoUrl),
-                "postId": id,
+                "id": id,
                 "timestamp": timestamp,
                 "type": type,
                 "userId": firID!
@@ -374,10 +374,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             if key as! String != firID! {
                                 
                                 // update notification user
-                                FIRDatabase.database().reference().child("notifications").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
+                                FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
                                 
                                 // get unread count on each user
-                                let readDB = FIRDatabase.database().reference().child("notifications").child("notification-user").child(key as! String).child("unread").child("count")
+                                let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread").child("count")
                                 
                                 readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
                                     let count = snapCount.value as? Int

@@ -152,6 +152,25 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.mytableview.delegate = self
         self.mytableview.dataSource = self
         
+        self.bellObserver()
+    }
+    
+    func bellObserver(){
+        self.btnViewNotif.addBadge(number: 0)
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        let unreadDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread")
+        unreadDB.observeEventType(.Value, withBlock: {(snap) in
+            if let result = snap.value as? NSDictionary {
+                if let count = result["count"] as? Int {
+                    if count == 0 {
+                        self.btnViewNotif.removeBadge()
+                    }else{
+                        self.btnViewNotif.removeBadge()
+                        self.btnViewNotif.addBadge(number: count)
+                    }
+                }
+            }
+        })
     }
   
     @IBAction func searchIcon(sender: AnyObject) {
@@ -318,6 +337,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     @IBAction func btnViewNotif(sender: UIBarButtonItem) {
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread").child("count").setValue(0)
+        
+        self.btnViewNotif.removeBadge()
+        
         let notfif = NotifController()
         self.presentDetail(notfif)
     }

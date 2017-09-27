@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ConfigurationViewController: UIViewController {
 
@@ -286,6 +287,13 @@ class ConfigurationViewController: UIViewController {
         myAlert.addAction(UIAlertAction(title: "Logout", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+            
+            do {
+                try FIRAuth.auth()?.signOut()
+            } catch (let error) {
+                print((error as NSError).code)
+            }
+            
             
             let transition = CATransition()
             transition.duration = 0.10

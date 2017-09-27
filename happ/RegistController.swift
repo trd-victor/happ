@@ -416,7 +416,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                                 self.displayMyAlertMessage(mess)
                             }
                         } else {
-                            self.displayMyAlertMessage(mess)
+                            self.successMessageAlert(mess)
                             self.loadUserData(name, userEmail: email, password: pass)
                         }
                     }
@@ -428,6 +428,25 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             task.resume()
         }
     }
+    
+    func successMessageAlert(userMessage: String) {
+        let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
+        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.userEmail.text = ""
+            self.userPassword.text = ""
+            self.userName.text = ""
+            self.userReEnterPassword.text = ""
+            self.frontEndSwitch.setOn(false, animated: true)
+            self.backEndSwitch.setOn(false, animated: true)
+            self.iosSwitch.setOn(false, animated: true)
+            self.AndroidSwitch.setOn(false, animated: true)
+            self.appdesignSwitch.setOn(false, animated: true)
+            self.webdesignSwitch.setOn(false, animated: true)
+            self.dismissViewControllerAnimated(true, completion: nil)
+        })
+        myAlert.addAction(okAction)
+        self.presentViewController(myAlert, animated: true, completion: nil)
+     }
     
     func loadUserData(sender : String, userEmail: String, password: String) {
         

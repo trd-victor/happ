@@ -32,11 +32,11 @@ class MenuViewController: UITabBarController {
     
     func badgeObserver(){
         let firID = FIRAuth.auth()?.currentUser?.uid
-        var count = 0
+        
         let lastMessageDB = FIRDatabase.database().reference().child("chat").child("last-message").child(firID!)
         
         lastMessageDB.observeEventType(.Value, withBlock: {(snapshot) in
-            
+            var count = 0
             if let result = snapshot.value as? NSDictionary {
                 for (_, value) in result {
                     let data = value as? NSDictionary
