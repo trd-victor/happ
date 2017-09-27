@@ -30,9 +30,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     
     func connectToFcm(){
         FIRMessaging.messaging().connectWithCompletion {(error) in
-        
+            
             if(error != nil){
-                 print("Unable to connect with FCM. \(error)")
+                print("Unable to connect with FCM. \(error)")
             }else{
                 FIRMessaging.messaging().subscribeToTopic("timeline-push-notification")
                 FIRMessaging.messaging().subscribeToTopic("free-time-push-notification")
@@ -51,8 +51,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        print(userInfo)
+        
         UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber + 1
+        //        if application.applicationState == UIApplicationState.Active {
+        //            print("foreground", userInfo)
+        //            self.addLocalNotification((userInfo as? NSDictionary)!)
+        //        }
+        
     }
     
     func applicationReceivedRemoteMessage(remoteMessage: FIRMessagingRemoteMessage) {
@@ -97,4 +102,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         deviceTokenStr = deviceTokenStr.uppercaseString
         return deviceTokenStr
     }
+    
+    //    func addLocalNotification(data: NSDictionary){
+    //        var body: String?
+    //        var title: String?
+    //        if ((data["notifications"] as? NSDictionary) != nil) {
+    //            print("not")
+    //        }else if ((data["aps"] as? NSDictionary) != nil) {
+    //            body = data["body"] as? String
+    //            title = data["title"] as? String
+    //        }
+    //
+    //        let notification = UILocalNotification()
+    //        notification.fireDate = NSDate()
+    //        notification.alertBody = body!
+    //        notification.alertTitle = title!
+    //        notification.soundName = UILocalNotificationDefaultSoundName
+    //        notification.userInfo = data as [NSObject : AnyObject]
+    //        UIApplication.sharedApplication().scheduleLocalNotification(notification)
+    //    }
 }

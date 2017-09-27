@@ -11,7 +11,7 @@ import Firebase
 
 
 class CreatePostViewController: UIViewController, UITextViewDelegate {
-
+    
     
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var navBack: UIBarButtonItem!
@@ -204,7 +204,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         self.saveItem.title = config.translate("button_post")
         self.content.text = config.translate("holder_post_content")
     }
-
+    
     func dismissMe(sender: UIBarButtonItem) -> () {
         self.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -326,36 +326,37 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
             data1, response1, error1 in
             
-            if error1 != nil{
-                print("\(error1)")
-                return;
-            }
-            do {
-                let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if json3!["success"] != nil {
-                    mess = json3!["success"] as! Bool
-                    let postID = json3!["result"] as? Int
+            if error1 != nil || data1 == nil{
+                self.savePost(parameters)
+            }else {
+                do {
+                    let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
-                    let notif = NotifController()
-                    notif.saveNotificationMessage(postID!, type: "timeline")
-                }
-                dispatch_async(dispatch_get_main_queue()) {
-                    if mess == true {
-                        NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
-                        self.displayMyAlertMessage(config.translate("saved_post"))
-                        self.content.text = config.translate("holder_post_content")
+                    if json3!["success"] != nil {
+                        mess = json3!["success"] as! Bool
+                        let postID = json3!["result"] as? Int
+                        
+                        let notif = NotifController()
+                        notif.saveNotificationMessage(postID!, type: "timeline")
                     }
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if mess == true {
+                            NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
+                            self.displayMyAlertMessage(config.translate("saved_post"))
+                            self.content.text = config.translate("holder_post_content")
+                        }
+                    }
+                    
+                } catch {
+                    print(error)
                 }
                 
-            } catch {
-                print(error)
             }
             
         }
         task2.resume()
         
-       
+        
     }
     
     func generateBoundaryString() -> String {
@@ -453,7 +454,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         self.scrollView.addSubview(self.content)
         
         let calcHeight = calcTextHeight(self.content.text, frame: self.content.frame.size, fontsize: 14)
-
+        
         self.content.translatesAutoresizingMaskIntoConstraints = false
         self.content.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
         self.content.topAnchor.constraintEqualToAnchor(self.scrollView.topAnchor).active = true

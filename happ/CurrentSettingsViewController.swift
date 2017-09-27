@@ -32,12 +32,12 @@ class CurrentSettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         userId = globalUserId.userID
-    
+
         //load language set.
         language = setLanguage.appLanguage
-
+        
         //set button text..
         self.loadConfigure()
         
@@ -194,6 +194,7 @@ class CurrentSettingsViewController: UIViewController {
             "targets"     : "\(targets)"
         ]
         
+        print(param)
         //adding the parameters to request body
         request.HTTPBody = createBodyWithParameters(param, boundary: boundary)
         
@@ -218,7 +219,7 @@ class CurrentSettingsViewController: UIViewController {
     
     func loadCurrentUserLang() {
         //let URL
-        let viewDataURL = "http://happ.timeriverdesign.com/wp-admin/admin-ajax.php"
+        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
         
         //created NSURL
         let requestURL = NSURL(string: viewDataURL)
@@ -249,7 +250,7 @@ class CurrentSettingsViewController: UIViewController {
             "lang"        : "\(language)",
             "user_id"     : "\(userId)"
         ]
-        
+
         //adding the parameters to request body
         request.HTTPBody = createBodyWithParameters(param, boundary: boundary)
         
@@ -260,37 +261,35 @@ class CurrentSettingsViewController: UIViewController {
             var lang: String!
 
             
-            if error != nil{
-                print("\(error)")
-                return;
-            }
-            do {
-                
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if json!["result"] != nil {
-                    lang    = json!["result"]!["lang"] as! String
-                }
-                dispatch_async(dispatch_get_main_queue()) {
+            if error != nil || data == nil{
+                self.loadCurrentUserLang()
+            }else {
+                do {
                     
-                    if changeLang.lang == "" {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    if json!["result"] != nil {
+                        lang    = json!["result"]!["lang"] as! String
+                    }
+                    dispatch_async(dispatch_get_main_queue()) {
                         
-                        if lang == "en" {
-                            self.currentSettingslang.text = "English"
+                        if changeLang.lang == "" {
+                            
+                            if lang == "en" {
+                                self.currentSettingslang.text = "English"
+                            } else {
+                                self.currentSettingslang.text = "日本語"
+                            }
+                            
                         } else {
-                            self.currentSettingslang.text = "日本語"
+                            self.currentSettingslang.text = changeLang.lang
                         }
                         
-                    } else {
-                        self.currentSettingslang.text = changeLang.lang
                     }
                     
+                } catch {
+                    print(error)
                 }
-                
-            } catch {
-                print(error)
             }
-            
         }
         task.resume()
         

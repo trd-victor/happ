@@ -82,23 +82,26 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let firID = config.getSYS_VAL("FirebaseID") as! String
         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
         
-        notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
-            
-            if let result = snapshot.value as? NSDictionary {
-                let key =  snapshot.key
-                
-                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
-                
-                notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
+        
+            notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
+                if let result = snapshot.value as? NSDictionary {
+                    let key =  snapshot.key
                     
-                    if(snap.exists()) {
-                        self.arrayData.insert(result, atIndex: 0)
-                        self.backupData.append(result)
-                        self.tblView.reloadData()
-                    }
-                })
-            }
-        })
+                    let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
+                    
+                    notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
+                        
+                        dispatch_async(dispatch_get_main_queue()){
+                            if(snap.exists()) {
+                                self.arrayData.insert(result, atIndex: 0)
+                                self.backupData.append(result)
+                                self.tblView.reloadData()
+                            }
+                        }
+                    })
+                }
+            })
+        
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
@@ -267,56 +270,57 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil{
-                print("\(error)")
-                return;
-            }
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if json!["success"] != nil {
-                    if let resultArray = json!.valueForKey("result") as? NSArray {
-                        if resultArray.count != 0 {
-                            UserDetails.username =  self.postName
-                            UserDetails.userimageURL = self.postPhotoUrl
-                            UserDetails.postDate = resultArray[0]["post_modified"] as! String
-                            UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
-                            UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
-                            
-                            dispatch_async(dispatch_get_main_queue()){
-                                if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
-                                    let images = resultArray[0]["fields"]!!["images"] as! NSArray
-                                    
-                                    if images.count == 3 {
-                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
-                                        UserDetails.img3 = images[2]["image"]!!["url"] as! String
-                                    }else if images.count == 2 {
-                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
-                                        UserDetails.img3 = "null"
-                                    }else if images.count == 1 {
-                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+            if error != nil || data == nil{
+                self.getPostDetail(postid)
+            }else {
+                do {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    
+                    if json!["success"] != nil {
+                        if let resultArray = json!.valueForKey("result") as? NSArray {
+                            if resultArray.count != 0 {
+                                UserDetails.username =  self.postName
+                                UserDetails.userimageURL = self.postPhotoUrl
+                                UserDetails.postDate = resultArray[0]["post_modified"] as! String
+                                UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
+                                UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
+                                
+                                dispatch_async(dispatch_get_main_queue()){
+                                    if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
+                                        let images = resultArray[0]["fields"]!!["images"] as! NSArray
+                                        
+                                        if images.count == 3 {
+                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                            UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                            UserDetails.img3 = images[2]["image"]!!["url"] as! String
+                                        }else if images.count == 2 {
+                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                            UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                            UserDetails.img3 = "null"
+                                        }else if images.count == 1 {
+                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                            UserDetails.img2 = "null"
+                                            UserDetails.img3 = "null"
+                                        }
+                                    }else{
+                                        UserDetails.img1 = "null"
                                         UserDetails.img2 = "null"
                                         UserDetails.img3 = "null"
                                     }
-                                }else{
-                                    UserDetails.img1 = "null"
-                                    UserDetails.img2 = "null"
-                                    UserDetails.img3 = "null"
+                                    
+                                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                                    let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+                                    
+                                    self.presentDetail(vc)
                                 }
-                                
-                                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                                let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
-                                
-                                self.presentDetail(vc)
                             }
                         }
                     }
+                } catch {
+                    print(error)
                 }
-            } catch {
-                print(error)
             }
+           
         }
         task.resume()
     }
@@ -352,7 +356,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             let notif_all_key = notifAllDB.key
             
-            let notifDetail = [
+            let detail = [
                 "name": String(name),
                 "photoUrl": String(photoUrl),
                 "id": id,
@@ -361,7 +365,17 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "userId": firID!
             ]
             
-            notifAllDB.setValue(notifDetail)
+            notifAllDB.setValue(detail)
+            
+            if type == "free-time" {
+                let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
+                pushFreeTimeDB.setValue(detail)
+            }
+            
+            if type == "timeline"{
+                let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
+                pushTimelineDB.setValue(detail)
+            }
             
             // get all user
             let userDB = FIRDatabase.database().reference().child("users")
@@ -372,22 +386,26 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     if let result = snapshot.value as? NSDictionary {
                         for (key, _) in result {
                             if key as! String != firID! {
-                                
                                 // update notification user
                                 FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
                                 
                                 // get unread count on each user
-                                let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread").child("count")
-                                
-                                readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
-                                    let count = snapCount.value as? Int
-                                    readDB.setValue(count! + 1)
-                                })
+                                let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
+                                dispatch_async(dispatch_get_main_queue()){
+                                    readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
+                                        
+                                        if let result = snapCount.value as? NSDictionary {
+                                            if let count = result["count"] as? Int {
+                                                readDB.child("count").setValue(count + 1)
+                                            }
+                                        }
+                                    })
+                                }
                             }
-                        }
-                    }
-                })
-            }
+                        }// end of loop
+                    }// end of if
+                })// end of observation
+            }// dispatch end
         }
     }
     

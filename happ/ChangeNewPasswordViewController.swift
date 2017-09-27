@@ -170,6 +170,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
     @IBAction func Save(sender: AnyObject) {
         
          let config = SYSTEM_CONFIG()
+         let email = config.getSYS_VAL("useremail_\(self.userId)")
          let currentPass1 = currentPassField.text!
          let newPass1 = newPassField.text!
          let reEnterPass1 = reenterPassField.text!
@@ -186,80 +187,87 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
             self.displayMyAlertMessage(config.translate("not_match_password"))
         }
         else {
-            //created NSURL
-            let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
-            
-            //created NSURL
-            let requestURL = NSURL(string: URL_SAVE_TEAM)
-            
-            //creating NSMutableURLRequest
-            let request = NSMutableURLRequest(URL: requestURL!)
-            
-            //set boundary string..
-            let boundary = generateBoundaryString()
-            
-            //set value for image upload
-            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            
-            //setting the method to post
-            request.HTTPMethod = "POST"
-            
-            //set targeted string
-            let targetedData: String = "passwd"
-            
-            //set parameters...
-            let param = [
-                "sercret"     : "jo8nefamehisd",
-                "action"      : "api",
-                "ac"          : "user_update",
-                "d"           : "0",
-                "lang"        : "\(language)",
-                "user_id"     : "\(userId)",
-                "passwd"      : "\(newPass1)",
-                "targets"     : "\(targetedData)"
-            ]
-            
-            //adding the parameters to request body
-            request.HTTPBody = createBodyWithParameters(param,  boundary: boundary)
-            
-            let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-                data, response, error  in
-                
-                var message: String!
-                
-                if error != nil{
-                    print("error is \(error)")
-                    return;
-                }
-                
-                do {
-                    FIRAuth.auth()?.currentUser?.updatePassword(newPass1, completion: nil)
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+            FIRAuth.auth()?.signInWithEmail(email as! String,  password: currentPass1) { (user, error) in
+                if error == nil {
+                    //created NSURL
+                    let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
                     
-                    if json!["message"] != nil {
-                        message = json!["message"] as! String
-                    }
+                    //created NSURL
+                    let requestURL = NSURL(string: URL_SAVE_TEAM)
                     
-                    if json!["result"] != nil {
-                        message = json!["result"]!["mess"] as! String
-                        self.displayMyAlertMessage(message)
-                    }
+                    //creating NSMutableURLRequest
+                    let request = NSMutableURLRequest(URL: requestURL!)
                     
-                    dispatch_async(dispatch_get_main_queue()) {
-                        var errorMessage: Int
-                        if json!["error"] != nil {
-                            errorMessage = json!["error"] as! Int
-                            if errorMessage == 1 {
-                                self.displayMyAlertMessage(message)
+                    //set boundary string..
+                    let boundary = self.generateBoundaryString()
+                    
+                    //set value for image upload
+                    request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+                    
+                    //setting the method to post
+                    request.HTTPMethod = "POST"
+                    
+                    //set targeted string
+                    let targetedData: String = "passwd"
+                    
+                    //set parameters...
+                    let param = [
+                        "sercret"     : "jo8nefamehisd",
+                        "action"      : "api",
+                        "ac"          : "user_update",
+                        "d"           : "0",
+                        "lang"        : "\(self.language)",
+                        "user_id"     : "\(self.userId)",
+                        "passwd"      : "\(newPass1)",
+                        "targets"     : "\(targetedData)"
+                    ]
+                    
+                    //adding the parameters to request body
+                    request.HTTPBody = self.createBodyWithParameters(param,  boundary: boundary)
+                    
+                    let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+                        data, response, error  in
+                        
+                        var message: String!
+                        
+                        if error != nil || data == nil{
+                            self.Save(sender)
+                        }else {
+                            do {
+                                FIRAuth.auth()?.currentUser?.updatePassword(newPass1, completion: nil)
+                                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                                
+                                if json!["message"] != nil {
+                                    message = json!["message"] as! String
+                                }
+                                
+                                if json!["result"] != nil {
+                                    message = json!["result"]!["mess"] as! String
+                                    self.displayMyAlertMessage(message)
+                                }
+                                
+                                dispatch_async(dispatch_get_main_queue()) {
+                                    var errorMessage: Int
+                                    if json!["error"] != nil {
+                                        errorMessage = json!["error"] as! Int
+                                        if errorMessage == 1 {
+                                            self.displayMyAlertMessage(message)
+                                        }
+                                    }
+                                }
+                                
+                            } catch {
+                                print(error)
                             }
+                            
                         }
+                        
                     }
-                    
-                } catch {
-                    print(error)
+                    task.resume()
+                } else {
+                    self.displayMyAlertMessage(config.translate("empty_current_password"))
                 }
             }
-            task.resume()
         }
 
     }
