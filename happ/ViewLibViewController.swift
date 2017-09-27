@@ -28,9 +28,9 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.view.backgroundColor = UIColor.whiteColor()
-        self.navBar.barTintColor = UIColor.blackColor()
+        self.view.backgroundColor = UIColor(hexString: "#272727")
+        self.navBar.barTintColor = UIColor(hexString: "#272727")
+        self.navBar.translucent = false
         self.separatorLineView.backgroundColor = UIColor(hexString: "#c0c0c0")
         
         self.layout = UICollectionViewFlowLayout()
@@ -38,10 +38,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         self.myCollectionView!.registerClass(MessageCell.self, forCellWithReuseIdentifier: "Messagecell")
         self.myCollectionView!.backgroundColor = UIColor.whiteColor()
-        
+        self.myCollectionView!.contentInset = UIEdgeInsetsMake(10, 0, 10, 0)
         self.myCollectionView!.dataSource = self
         self.myCollectionView!.delegate = self
-        
+        containerView.backgroundColor = UIColor.whiteColor()
         if(chatVar.Indicator == "MessageTable"){
             self.deleteMessage()
             self.loadMessages()
@@ -49,7 +49,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             self.deleteMessage()
             self.getChatRoomID()
         }
-        
         self.view.addSubview(self.containerView)
         self.view.addSubview(self.navBar)
         self.view.addSubview(self.myCollectionView!)
@@ -65,6 +64,11 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
+    
     func setupKeyboard(){
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handleKeyboardShow:"), name: UIKeyboardWillShowNotification, object: nil)
         
@@ -76,7 +80,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]?.doubleValue
         
         containerViewBottomAncher?.constant = -keyboardFrame!.height
-        collectioView?.constant = -114 + -keyboardFrame!.height
+        collectioView?.constant = -110 + -keyboardFrame!.height
         
         UIView.animateWithDuration(keyboardDuration!){
             self.view.layoutIfNeeded()
@@ -87,7 +91,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]?.doubleValue
         
         containerViewBottomAncher?.constant = 0
-        collectioView?.constant = -114
+        collectioView?.constant = -110
         
         UIView.animateWithDuration(keyboardDuration!){
             self.view.layoutIfNeeded()
@@ -123,7 +127,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         self.containerView.translatesAutoresizingMaskIntoConstraints = false
         self.containerView.leftAnchor.constraintEqualToAnchor(view.leftAnchor).active = true
-        
         containerViewBottomAncher = containerView.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor)
         containerViewBottomAncher?.active = true
         
@@ -153,11 +156,11 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.separatorLineView.heightAnchor.constraintEqualToConstant(1).active = true
         
         self.myCollectionView!.translatesAutoresizingMaskIntoConstraints = false
-        self.myCollectionView!.topAnchor.constraintEqualToAnchor(self.navBar.bottomAnchor, constant: 8).active = true
+        self.myCollectionView!.topAnchor.constraintEqualToAnchor(self.navBar.bottomAnchor).active = true
         self.myCollectionView!.centerXAnchor.constraintEqualToAnchor(self.view.centerXAnchor).active = true
         self.myCollectionView!.widthAnchor.constraintEqualToAnchor(self.view.widthAnchor).active = true
         
-        collectioView =  self.myCollectionView!.heightAnchor.constraintEqualToAnchor(self.view.heightAnchor, constant: -114)
+        collectioView =  self.myCollectionView!.heightAnchor.constraintEqualToAnchor(self.view.heightAnchor, constant: -110)
         collectioView?.active = true
     }
     

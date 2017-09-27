@@ -532,6 +532,12 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 //register token on firebase
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(token))
+                
+                do {
+                    try FIRAuth.auth()?.signOut()
+                } catch (let error) {
+                    print((error as NSError).code)
+                }
             }else{
                 print(error)
                 self.displayMyAlertMessage("Error: Not Successfully Registered to firebase")

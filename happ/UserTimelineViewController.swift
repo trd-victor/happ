@@ -105,7 +105,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadTimeline:")), name: "reloadTimeline", object: nil)
         
-        self.btnViewNotif.addBadge(number: 1)
         self.mytableview.addSubview(self.refreshControl)
         
         self.mytableview.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
@@ -156,7 +155,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func bellObserver(){
-        self.btnViewNotif.addBadge(number: 0)
+
         let firID = FIRAuth.auth()?.currentUser?.uid
         let unreadDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread")
         unreadDB.observeEventType(.Value, withBlock: {(snap) in
@@ -602,6 +601,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
     }
+    
+    
     
     func reloadTimeline(notification: NSNotification){
         self.page = 1

@@ -62,6 +62,12 @@ class MessageTableViewController: UITableViewController {
         
         self.getUserMessage()
         
+        preferredStatusBarStyle()
+        
+    }
+    
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     func autoLayout(){
@@ -186,7 +192,6 @@ class MessageTableViewController: UITableViewController {
         chatVar.RoomID =  room_id!
         chatVar.UserKey = user_key!
         chatVar.chatmateId = chatmate_id!
-        firebaseId.userId = chatmate_id!
         chatVar.Indicator = "MessageTable"
         globalvar.userTitle = name!
         

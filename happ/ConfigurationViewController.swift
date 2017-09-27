@@ -276,7 +276,6 @@ class ConfigurationViewController: UIViewController {
         self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.presentDetail(vc)
     }
-   
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -285,23 +284,19 @@ class ConfigurationViewController: UIViewController {
     @IBAction func btnLogout(sender: AnyObject) {
         let myAlert = UIAlertController(title: "", message: "Are you sure you want to logout", preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: "Logout", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
-            
             do {
                 try FIRAuth.auth()?.signOut()
             } catch (let error) {
                 print((error as NSError).code)
             }
             
-            
-            let transition = CATransition()
-            transition.duration = 0.10
+            let transition: CATransition = CATransition()
+            transition.duration = 0.5
             transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             transition.type = kCATransitionPush
             transition.subtype = kCATransitionFromLeft
-            self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
-            self.presentDetail(vc)
+            self.view.window!.layer.addAnimation(transition, forKey: nil)
+            self.dismissViewControllerAnimated(false, completion: nil)
         }))
         myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)

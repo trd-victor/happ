@@ -121,7 +121,7 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(4.0) {
+        self.delay(2.0) {
             self.dismissViewControllerAnimated(false, completion: nil)
             self.gotoMainBoard()
         }
@@ -142,7 +142,12 @@ class LaunchScreenViewController: UIViewController {
             return true
         }else{
             defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-            self.delay(4.0){
+            self.delay(2.0){
+                do {
+                    try FIRAuth.auth()?.signOut()
+                } catch (let error) {
+                    print((error as NSError).code)
+                }
                 self.firstload()
             }
             return false

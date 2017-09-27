@@ -99,6 +99,7 @@ class UserProfileController: UIViewController {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.backgroundColor = UIColor(hexString: "#272727")
         btn.setImage(UIImage(named: "block"), forState: .Normal)
+        btn.tag = 0
         return btn
     }()
     
@@ -112,6 +113,8 @@ class UserProfileController: UIViewController {
         let control = UIRefreshControl()
         return control
     }()
+    
+    var topConstraint: NSLayoutConstraint = NSLayoutConstraint()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -150,19 +153,68 @@ class UserProfileController: UIViewController {
         
         translate()
         
+        getBlockIds()
+        
         tblProfile.contentInset = UIEdgeInsetsMake(380, 0, 0, 0)
         
+        btnBlock.addTarget(self, action: "profileBlock:", forControlEvents: .TouchUpInside)
+        
+        if UserProfile.id == globalUserId.userID {
+            btnMessage.hidden = true
+            btnBlock.hidden = true
+        }
+        
         autoLayout()
-    }
-    
-    func translate(){
-        btnMessage.setTitle("Message", forState: .Normal)
-        btnBlock.setTitle("Block", forState: .Normal)
     }
     
     func openMessage(){
         let vc = ViewLibViewController()
         self.presentViewController(vc, animated: false, completion: nil)
+    }
+    
+    func profileBlock(sender: UIButton!){
+        if sender.tag == 0 {
+            blockUser()
+            btnBlock.backgroundColor = UIColor(hexString: "#E2041B")
+            btnBlock.setTitle("Unblock", forState: .Normal)
+            btnBlock.tag = 1
+        }else{
+            unblockUser()
+            btnBlock.backgroundColor = UIColor(hexString: "#272727")
+            btnBlock.setTitle("Block", forState: .Normal)
+            btnBlock.tag = 0
+        }
+    }
+    
+    var didScroll:Bool = false
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        if scrollView == tblProfile {
+            if scrollView.contentOffset.y < -440 && didScroll == false {
+                self.page = 1
+                didScroll = true
+                
+                for var i = 5; i < self.fromID.count; i++ {
+                    let indexPath = NSIndexPath(forRow: i, inSection: 0)
+                    self.tblProfile.beginUpdates()
+                    self.tblProfile.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+                    self.userBody.removeAtIndex(i)
+                    self.postDate.removeAtIndex(i)
+                    self.postID.removeAtIndex(i)
+                    self.fromID.removeAtIndex(i)
+                    self.img1.removeAtIndex(i)
+                    self.img2.removeAtIndex(i)
+                    self.img3.removeAtIndex(i)
+                    self.tblProfile.endUpdates()
+                }
+                reloadData()
+            }
+        }
+    }
+    
+    func translate(){
+        btnMessage.setTitle("Message", forState: .Normal)
+        btnBlock.setTitle("Block", forState: .Normal)
     }
     
     func autoLayout() {
@@ -190,11 +242,18 @@ class UserProfileController: UIViewController {
         tblProfile.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         tblProfile.bottomAnchor.constraintEqualToAnchor(tabBar.topAnchor).active = true
         
-        ProfileView.topAnchor.constraintEqualToAnchor(tblProfile.topAnchor, constant: -380).active = true
+        topConstraint = ProfileView.topAnchor.constraintEqualToAnchor(tblProfile.topAnchor, constant: -380)
+        topConstraint.active = true
         ProfileView.centerXAnchor.constraintEqualToAnchor(tblProfile.centerXAnchor).active = true
         ProfileView.widthAnchor.constraintEqualToAnchor(tblProfile.widthAnchor).active = true
         ProfileView.heightAnchor.constraintEqualToConstant(380).active = true
         ProfileView.backgroundColor = UIColor(hexString: "#E4D4B9")
+        
+        refreshControl.translatesAutoresizingMaskIntoConstraints = false
+        refreshControl.topAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: 10).active = true
+        refreshControl.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
+        refreshControl.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor).active = true
+        refreshControl.heightAnchor.constraintEqualToConstant(59).active = true
         
         ProfileImage.topAnchor.constraintEqualToAnchor(ProfileView.topAnchor, constant: 10).active = true
         ProfileImage.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
@@ -244,10 +303,54 @@ class UserProfileController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        refreshControl.beginRefreshing()
+        didScroll = true
+        topConstraint.constant = -440
+        
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
     
+    func clickMoreImage(sender: UIButton) {
+        let senderTag = sender.tag
+        let title = sender.titleLabel!.text!
+        self.deletePost(title, index: senderTag)
+    }
+    
+    var pid = ""
+    var index: Int = 0
+    
+    func deletePost(sender: String, index: Int) {
+        self.deleteAlertMessage("Delete this Post?")
+        self.pid = sender
+        self.index = index
+    }
+    
+    func deleteAlertMessage(userMessage:String){
+        let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: "Delete", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            let id = self.pid
+            let indexRow = self.index
+            
+            self.deleteTimeline(id)
+            
+            let indexPath = NSIndexPath(forRow: indexRow, inSection: 0)
+            self.tblProfile.beginUpdates()
+            self.userBody.removeAtIndex(indexPath.row)
+            self.postDate.removeAtIndex(indexPath.row)
+            self.postID.removeAtIndex(indexPath.row)
+            self.fromID.removeAtIndex(indexPath.row)
+            self.img1.removeAtIndex(indexPath.row)
+            self.img2.removeAtIndex(indexPath.row)
+            self.img3.removeAtIndex(indexPath.row)
+            self.tblProfile.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.Fade)
+            self.tblProfile.endUpdates()
+            
+            self.tblProfile.reloadData()
+        }))
+        myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
 }

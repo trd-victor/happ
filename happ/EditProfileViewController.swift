@@ -392,58 +392,59 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             var skills: String!
             var message: String!
             
-            if error != nil{
-                print("\(error)")
-                return;
-            }
-            do {
-                
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                print(json)
-                if json!["result"] != nil {
-                    name    = json!["result"]!["name"] as! String
-                    //                        image1   = json!["result"]!["icon"] as! String
+            if error != nil || data == nil{
+                self.loadUserData()
+            }else{
+                do {
                     
-                    if let _ = json!["result"]!["icon"] as? NSNull {
-                        image = ""
-                    } else {
-                        image = json!["result"]!["icon"] as? String
-                    }
-                    
-                    
-                    skills  = json!["result"]!["skills"] as! String
-                    message = json!["result"]!["mess"] as! String
-                }
-                
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
-                    
-                    let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-                    
-                    
-                    let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
-                    dispatch_async(dispatch_get_main_queue(), {() -> Void in
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    print(json)
+                    if json!["result"] != nil {
+                        name    = json!["result"]!["name"] as! String
+                        //                        image1   = json!["result"]!["icon"] as! String
                         
-                        self.userNamefield.text = name
-                        if data != nil {
-                            //save new photo on firebase database
-                            if self.checkNewImage {
-                                let uid = globalUserId.FirID
-                                FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
-                                self.checkNewImage = false
-                            }
-                            self.userImage.image = UIImage(data: data!)
+                        if let _ = json!["result"]!["icon"] as? NSNull {
+                            image = ""
                         } else {
-                            self.userImage.image = UIImage(named: "noPhoto")
+                            image = json!["result"]!["icon"] as? String
                         }
                         
-                        self.userDescription.text = message
-                        self.getSkillNotArray(self.returnSkillState(skills))
+                        
+                        skills  = json!["result"]!["skills"] as! String
+                        message = json!["result"]!["mess"] as! String
+                    }
+                    
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
+                        
+                        let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+                        
+                        
+                        let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
+                        dispatch_async(dispatch_get_main_queue(), {() -> Void in
+                            
+                            self.userNamefield.text = name
+                            if data != nil {
+                                //save new photo on firebase database
+                                if self.checkNewImage {
+                                    let uid = globalUserId.FirID
+                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
+                                    self.checkNewImage = false
+                                }
+                                self.userImage.image = UIImage(data: data!)
+                            } else {
+                                self.userImage.image = UIImage(named: "noPhoto")
+                            }
+                            
+                            self.userDescription.text = message
+                            self.getSkillNotArray(self.returnSkillState(skills))
+                        })
                     })
-                })
-                
-                
-            } catch {
-                print(error)
+                    
+                    
+                } catch {
+                    print(error)
+                }
+
             }
             
         }

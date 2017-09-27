@@ -653,7 +653,7 @@ class NotifCell: UITableViewCell {
         lblMessage.sizeToFit()
         
         lblDate.translatesAutoresizingMaskIntoConstraints = false
-        lblDate.leftAnchor.constraintEqualToAnchor(self.notifPhoto.rightAnchor, constant: 160).active = true
+        lblDate.leftAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -100).active = true
         lblDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 50).active = true
         lblDate.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
         lblDate.sizeToFit()

@@ -13,14 +13,31 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet weak var tableReserved: UITableView!
     
+    var heightForcell = [CGFloat]()
+    
+    //basepath
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    
+    var cellIndentifier = [String]()
+    var cellDate = [String]()
+    var cellTime = [String]()
+    var cellPID = [String]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableReserved.registerClass(SubtitleCell.self, forCellReuseIdentifier: "SubtitleCell")
         tableReserved.registerClass(InformationCell.self, forCellReuseIdentifier: "InformationCell")
+        tableReserved.registerClass(DataCellWithTitle.self, forCellReuseIdentifier: "DataCellWithTitle")
+        tableReserved.registerClass(DataCell.self, forCellReuseIdentifier: "DataCell")
         tableReserved.delegate = self
         tableReserved.dataSource = self
         tableReserved.backgroundColor = UIColor.whiteColor()
+        tableReserved.separatorStyle = .None
+        tableReserved.editing = false
+        
+        getReservationWithID()
+        
         autoLayout()
     }
     
@@ -35,13 +52,13 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
         tableReserved.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
         tableReserved.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         tableReserved.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        tableReserved.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        tableReserved.heightAnchor.constraintEqualToAnchor(view.heightAnchor, constant: -66).active = true
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
-
+    
     @IBAction func navBar(sender: AnyObject) {
         let transition: CATransition = CATransition()
         transition.duration = 0.25

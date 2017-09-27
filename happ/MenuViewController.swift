@@ -24,10 +24,15 @@ class MenuViewController: UITabBarController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshMenu", object: nil)
         
         self.badgeObserver()
+        preferredStatusBarStyle()
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+    }
+    
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     func badgeObserver(){
@@ -41,9 +46,13 @@ class MenuViewController: UITabBarController {
                 for (_, value) in result {
                     let data = value as? NSDictionary
                     let read = data!["read"] as? Int
-                    
+
                     if read! == 0 {
                         count++;
+                    }
+                    if count == 0 {
+                        self.menuTabBar.items![1].badgeValue = .None
+                    }else{
                         self.menuTabBar.items![1].badgeValue = String(count)
                     }
                 }

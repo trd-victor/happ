@@ -36,36 +36,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     //    @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var navTitle: UINavigationItem!
     
-    //set up static param
-    var loginParam = [
-        
-        "en": [
-            "navTitle": "Login",
-            "navBack": "Back",
-            "labelUserEmail": "Mail address",
-            "userEmailPlaceholder":"example@xxx.com",
-            "labelPassword": "Password",
-            "userPasswordPlaceholder": "Enter Password",
-            "loginButton": "Log-in",
-            "emtpyFields": "All Fields Required",
-            "forgotPass":"Click here if you have forgotten your password"
-        ],
-        
-        "ja":[
-            "navTitle": "ログイン",
-            "navBack": "バック",
-            "labelUserEmail": "メールアドレス",
-            "userEmailPlaceholder":"example@xxx.com",
-            "labelPassword": "パスワード",
-            "userPasswordPlaceholder": "半角英数字4文字以上",
-            "loginButton": "ログインする",
-            "forgotPass": "パスワードをお忘れの方はこちら",
-            "emtpyFields": "必要なすべてのフィールド"
-        ]
-    ]
-    
-    
-    
     //set up language as global variable...
     var language: String!
     var real_userID: String!
@@ -283,16 +253,28 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
                 let config = SYSTEM_CONFIG()
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
-                config.setSYS_VAL(2, key: "runningApp")
                 
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
                 
+                self.connectToFcm()
                 self.redirectLogin()
             } else {
                 self.displayMyAlertMessage("Don't have Account!")
             }
             
+        }
+    }
+    
+    func connectToFcm(){
+        FIRMessaging.messaging().connectWithCompletion {(error) in
+            
+            if(error != nil){
+                print("Unable to connect with FCM. \(error)")
+            }else{
+                FIRMessaging.messaging().subscribeToTopic("timeline-push-notification")
+                FIRMessaging.messaging().subscribeToTopic("free-time-push-notification")
+            }
         }
     }
     
@@ -306,6 +288,19 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         MenuViewController
         self.presentViewController(userTimeLineController, animated:true, completion:nil)
         
+        delay(2.0){
+            self.userEmailField.text = ""
+            self.userPasswordField.text = ""
+        }
+    }
+    
+    func delay(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
     }
     
     func generateBoundaryString() -> String {

@@ -90,11 +90,13 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
                     
                     notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
+                        dispatch_async(dispatch_get_main_queue()){
                             if(snap.exists()) {
                                 self.arrayData.insert(result, atIndex: 0)
                                 self.backupData.append(result)
                                 self.tblView.reloadData()
                             }
+                        }
                     })
                 }
             })
