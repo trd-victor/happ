@@ -352,7 +352,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             let notif_all_key = notifAllDB.key
             
-            let notifDetail = [
+            let detail = [
                 "name": String(name),
                 "photoUrl": String(photoUrl),
                 "id": id,
@@ -361,7 +361,17 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 "userId": firID!
             ]
             
-            notifAllDB.setValue(notifDetail)
+            notifAllDB.setValue(detail)
+            
+            if type == "free-time" {
+                let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
+                pushFreeTimeDB.setValue(detail)
+            }
+            
+            if type == "timeline"{
+                let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
+                pushTimelineDB.setValue(detail)
+            }
             
             // get all user
             let userDB = FIRDatabase.database().reference().child("users")
@@ -372,22 +382,26 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     if let result = snapshot.value as? NSDictionary {
                         for (key, _) in result {
                             if key as! String != firID! {
-                                
                                 // update notification user
                                 FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
                                 
                                 // get unread count on each user
-                                let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread").child("count")
-                                
-                                readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
-                                    let count = snapCount.value as? Int
-                                    readDB.setValue(count! + 1)
-                                })
+                                let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
+                                dispatch_async(dispatch_get_main_queue()){
+                                    readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
+                                        
+                                        if let result = snapCount.value as? NSDictionary {
+                                            if let count = result["count"] as? Int {
+                                                readDB.child("count").setValue(count + 1)
+                                            }
+                                        }
+                                    })
+                                }
                             }
-                        }
-                    }
-                })
-            }
+                        }// end of loop
+                    }// end of if
+                })// end of observation
+            }// dispatch end
         }
     }
     

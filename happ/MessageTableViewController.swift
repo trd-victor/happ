@@ -139,6 +139,7 @@ class MessageTableViewController: UITableViewController {
         cell.userTime.widthAnchor.constraintEqualToConstant(120).active = true
         cell.userTime.heightAnchor.constraintEqualToConstant(31).active = true
         cell.username.font = UIFont.boldSystemFontOfSize(17)
+        cell.userMessage.font = UIFont.systemFontOfSize(15)
         
         let radius = min(cell.userImage!.frame.width/2 , cell.userImage!.frame.height/2)
         cell.userImage.layer.cornerRadius = radius
@@ -179,12 +180,6 @@ class MessageTableViewController: UITableViewController {
         let user_key = FIRAuth.auth()?.currentUser?.uid
         let chatmate_id = data["chatmateId"] as? String
         let messageStatus = data["read"] as? Bool
-
-        
-        
-        
-        
-        
         
         
         chatVar.name = name!
@@ -196,6 +191,8 @@ class MessageTableViewController: UITableViewController {
         globalvar.userTitle = name!
         
         if messageStatus! == false {
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as? MessageCellDisp
+            cell?.userMessage.font = UIFont.systemFontOfSize(15)
             FIRDatabase.database().reference().child("chat").child("last-message").child(user_key!).child(room_id!).child("read").setValue(true)
         }
         
