@@ -260,7 +260,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 "lastMessage"  : mess,
                 "name"         : chatVar.name,
                 "photoUrl"     : self.chatMatePhoto,
-                "read"         : false,
+                "read"         : true,
                 "timestamp"    : timestamp
             ]
             

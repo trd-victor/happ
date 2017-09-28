@@ -12,6 +12,7 @@ extension CreateReservation {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let config = SYSTEM_CONFIG()
         let tapStartView = UITapGestureRecognizer(target: self, action: "tapStart:")
         startView.addGestureRecognizer(tapStartView)
         
@@ -28,13 +29,15 @@ extension CreateReservation {
         autoLayout()
         
         
-        roomSubtitle.text = "ルーム"
-        facilityLabel.text = "施設"
+        UINavigationController().navigationItem.rightBarButtonItem?.title = "asdasd"
+        self.navCreate.title = config.translate("button_create")
+        roomSubtitle.text = config.translate("subtitle_room")
+        facilityLabel.text =  config.translate("lbl_facility")
         facilityName.text = "FUKUOKA"
-        roomLabel.text = "ルーム"
+        roomLabel.text = config.translate("label_room")
         roomName.text = "A"
-        makeReservation.text = "予約する"
-        startLabel.text = "開始"
+        makeReservation.text = config.translate("subtitle_make_reservation")
+        startLabel.text = config.translate("label_start")
         let sdate = startTime.date
         
         let calendar = NSCalendar.currentCalendar()
@@ -46,9 +49,10 @@ extension CreateReservation {
         
         components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: edate)
         
-        endLabel.text = "終了"
+        endLabel.text = config.translate("label_end")
         endName.text = "\(components.hour):\(components.minute)"
-        reservedLabel.text = "予約済み"
+        reservedLabel.text = config.translate("title_reserved")
+
         
         getReserved()
         
