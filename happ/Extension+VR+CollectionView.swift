@@ -16,16 +16,16 @@ extension ViewReservation {
         
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCellWithIdentifier("SubtitleCell", forIndexPath: indexPath) as! SubtitleCell
-            cell.lblTitle.text = "ルーム"
+            cell.lblTitle.text = config.translate("label_room")
             return cell
         }else if indexPath.row == 1 {
             let cell = tableView.dequeueReusableCellWithIdentifier("InformationCell", forIndexPath: indexPath) as! InformationCell
-            cell.title.text = "施設"
+            cell.title.text = config.translate("lbl_facility")
             cell.name.text = "FUKUOKA"
             return cell
         }else if indexPath.row == 2 {
             let cell = tableView.dequeueReusableCellWithIdentifier("InformationCell", forIndexPath: indexPath) as! InformationCell
-            cell.title.text = "ルーム"
+            cell.title.text = config.translate("subtitle_room")
             cell.name.text = "A"
             cell.separator.hidden = true
             return cell

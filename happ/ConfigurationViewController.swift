@@ -282,8 +282,10 @@ class ConfigurationViewController: UIViewController {
     }
 
     @IBAction func btnLogout(sender: AnyObject) {
-        let myAlert = UIAlertController(title: "", message: "Are you sure you want to logout", preferredStyle: UIAlertControllerStyle.ActionSheet)
-        myAlert.addAction(UIAlertAction(title: "Logout", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+        let config = SYSTEM_CONFIG()
+        
+        let myAlert = UIAlertController(title: "", message: config.translate("logout_message"), preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             do {
                 try FIRAuth.auth()?.signOut()
             } catch (let error) {
@@ -298,7 +300,7 @@ class ConfigurationViewController: UIViewController {
             self.view.window!.layer.addAnimation(transition, forKey: nil)
             self.dismissViewControllerAnimated(false, completion: nil)
         }))
-        myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     

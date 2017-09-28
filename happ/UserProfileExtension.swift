@@ -171,14 +171,47 @@ extension UserProfileController {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
                         if json["result"] != nil {
                             dispatch_async(dispatch_get_main_queue()){
+                                let user_id = json["result"]!["user_id"]!
                                 self.userName.text = json["result"]!["name"] as? String
                                 self.h_id.text = json["result"]!["h_id"] as? String
-                                self.skills.text = json["result"]!["skills"] as? String
+                               
+                                let skill = json["result"]!["skills"] as? String
+                                
+                                if skill != nil && skill != "null" {
+                                    self.skills.text = json["result"]!["skills"] as? String
+                                }else{
+                                    self.skills.text = ""
+                                }
+                                    
                                 self.msg.text = json["result"]!["mess"] as? String
                                 if let imgUrl = json["result"]!["icon"] as? String {
                                     self.ProfileImage.profileForCache(imgUrl)
                                 }
                                 self.getTimelineUser()
+                                
+                                let userdb = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(user_id)
+                                
+                                userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+                                    let userData = snapshot.value as? NSDictionary
+                                    
+                                    if(userData != nil) {
+                                        for (key, value) in userData! {
+                                            let dataVal = value as? NSDictionary
+                                            
+                                            if dataVal != nil {
+                                                let dataID =  dataVal!["id"] as? Int
+                                                let wpID = user_id as? Int
+                                                if dataID != nil && wpID != nil{
+                                                    if dataID! == wpID! {
+                                                        chatVar.chatmateId = key as! String
+                                                        chatVar.Indicator = "Search"
+                                                        chatVar.name = self.userName.text!
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
                             }
                         }
                     }else{

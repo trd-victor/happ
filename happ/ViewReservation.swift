@@ -15,6 +15,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     var heightForcell = [CGFloat]()
     
+    var config = SYSTEM_CONFIG()
     //basepath
     let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
@@ -57,6 +58,12 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.navBar.topItem?.title = config.translate("title_reserved")
     }
     
     @IBAction func navBar(sender: AnyObject) {

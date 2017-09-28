@@ -38,7 +38,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         loadConfig()
         getNotification()
         
-        
         self.tblView.delegate = self
         self.tblView.dataSource = self
         
@@ -62,7 +61,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func loadConfig(){
-        let navItem = UINavigationItem(title: "Notification")
+        let config = SYSTEM_CONFIG()
+        let titlestr = config.translate("title_notification")
+        
+        let navItem = UINavigationItem(title: titlestr)
         let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
         btnBack.tintColor = UIColor.whiteColor()
         
@@ -82,7 +84,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let firID = config.getSYS_VAL("FirebaseID") as! String
         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
         
-        
             notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
                 if let result = snapshot.value as? NSDictionary {
                     let key =  snapshot.key
@@ -90,12 +91,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
                     
                     notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
-                        dispatch_async(dispatch_get_main_queue()){
-                            if(snap.exists()) {
-                                self.arrayData.insert(result, atIndex: 0)
-                                self.backupData.append(result)
-                                self.tblView.reloadData()
-                            }
+                        if(snap.exists()) {
+                            self.arrayData.insert(result, atIndex: 0)
+                            self.backupData.append(result)
+                            self.tblView.reloadData()
                         }
                     })
                 }
@@ -147,7 +146,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let cell = tableView.dequeueReusableCellWithIdentifier("NotifCell", forIndexPath: indexPath) as! NotifCell
         
         let data = self.arrayData[indexPath.row] as? NSDictionary
-        
+       
         if data != nil {
             let name = data!["name"] as! String
             let type = data!["type"] as! String
@@ -164,10 +163,12 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 cell.lblMessage.text = "Reservation"
             }
             
-            cell.lblDate.text = dateFormatter(timestamp!)
+            cell.lblDate.text = self.dateFormatter(timestamp!)
             
             if image != nil && image! != "null" && image! != ""{
                 cell.notifPhoto.imgForCache(image!)
+            }else{
+                cell.notifPhoto.image = UIImage(named: "noPhoto")
             }
         }
         
@@ -200,7 +201,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let seconds = timestamp.doubleValue / 1000
         let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
         let formatter = NSDateFormatter()
-        formatter.dateFormat = "hh:mm"
+        formatter.dateFormat = "H:mm"
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "MMM dd"
         let date = formatter.stringFromDate(dateTimestamp)
@@ -249,79 +250,14 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func getPostDetail(postid: Int) {
         
-        let baseUrl: NSURL = NSURL(string: "http://happ.biz/wp-admin/admin-ajax.php")!
-        let parameters = [
-            "sercret"     : "jo8nefamehisd",
-            "action"      : "api",
-            "ac"          : "get_timeline",
-            "d"           : "0",
-            "lang"        : "en",
-            "user_id"     : "\(globalUserId.userID)",
-            "post_id"     : "\(postid)",
-            "count"       : "1"
-        ]
+        UserDetails.username =  self.postName
+        UserDetails.userimageURL = self.postPhotoUrl
+        UserDetails.postID = String(postid)
         
-        let request = NSMutableURLRequest(URL: baseUrl)
-        let boundary = generateBoundaryString()
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        request.HTTPMethod = "POST"
-        request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-            data, response, error  in
-            
-            if error != nil || data == nil{
-                self.getPostDetail(postid)
-            }else {
-                do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json!["success"] != nil {
-                        if let resultArray = json!.valueForKey("result") as? NSArray {
-                            if resultArray.count != 0 {
-                                UserDetails.username =  self.postName
-                                UserDetails.userimageURL = self.postPhotoUrl
-                                UserDetails.postDate = resultArray[0]["post_modified"] as! String
-                                UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
-                                UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
-                                
-                                dispatch_async(dispatch_get_main_queue()){
-                                    if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
-                                        let images = resultArray[0]["fields"]!!["images"] as! NSArray
-                                        
-                                        if images.count == 3 {
-                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                            UserDetails.img2 = images[1]["image"]!!["url"] as! String
-                                            UserDetails.img3 = images[2]["image"]!!["url"] as! String
-                                        }else if images.count == 2 {
-                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                            UserDetails.img2 = images[1]["image"]!!["url"] as! String
-                                            UserDetails.img3 = "null"
-                                        }else if images.count == 1 {
-                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                            UserDetails.img2 = "null"
-                                            UserDetails.img3 = "null"
-                                        }
-                                    }else{
-                                        UserDetails.img1 = "null"
-                                        UserDetails.img2 = "null"
-                                        UserDetails.img3 = "null"
-                                    }
-                                    
-                                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                                    let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
-                                    
-                                    self.presentDetail(vc)
-                                }
-                            }
-                        }
-                    }
-                } catch {
-                    print(error)
-                }
-            }
-           
-        }
-        task.resume()
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+        
+        self.presentDetail(vc)
     }
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"

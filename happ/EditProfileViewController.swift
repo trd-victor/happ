@@ -385,7 +385,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
-            print("response", response);
+
             //user Data...
             var name: String!
             var image: String!
@@ -398,7 +398,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 do {
                     
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    print(json)
                     if json!["result"] != nil {
                         name    = json!["result"]!["name"] as! String
                         //                        image1   = json!["result"]!["icon"] as! String

@@ -18,6 +18,7 @@ struct UserDetails {
     static var img1: String!
     static var img2: String!
     static var img3: String!
+    static var postID: String!
 }
 
 class TimelineDetail: UIViewController {
@@ -152,12 +153,12 @@ class TimelineDetail: UIViewController {
         view2.addSubview(imgView2)
         view3.addSubview(imgView3)
         
-        btnUsername.setTitle(UserDetails.username, forState: .Normal)
-        btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
-        btnUsername.tag = Int(UserDetails.fromID)!
-        btnUsername.titleLabel?.font = UIFont.boldSystemFontOfSize(17)
         
         btnBack.addTarget(self, action: "backTimeline:", forControlEvents: .TouchUpInside)
+        
+        btnUsername.setTitle(UserDetails.username, forState: .Normal)
+        btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+        btnUsername.titleLabel?.font = UIFont.boldSystemFontOfSize(17)
         
         let imgView = UIImageView()
         
@@ -168,13 +169,23 @@ class TimelineDetail: UIViewController {
         }
         
         btnProfile.setImage(imgView.image, forState: .Normal)
-        btnProfile.tag = Int(UserDetails.fromID)!
         btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
         
-        postDate.text = UserDetails.postDate
+        self.startLayout()
         
-        body.text = UserDetails.body
+        if UserDetails.postID == nil || UserDetails.postID == ""{
+            btnUsername.tag = Int(UserDetails.fromID)!
+            btnProfile.tag = Int(UserDetails.fromID)!
+            postDate.text = UserDetails.postDate
+            body.text = UserDetails.body
+            self.postDetail()
+        }else{
+            self.getDetail()
+        }
         
+    }
+    
+    func postDetail(){
         var contentHeight: CGFloat = 0
         
         if UserDetails.img1 != "null" {
@@ -202,7 +213,85 @@ class TimelineDetail: UIViewController {
             self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 210)
             self.autoLayout()
         }
-
+    }
+    
+    func getDetail(){
+        let baseUrl: NSURL = NSURL(string: "http://happ.biz/wp-admin/admin-ajax.php")!
+        let parameters = [
+                    "sercret"     : "jo8nefamehisd",
+                    "action"      : "api",
+                    "ac"          : "get_timeline",
+                    "d"           : "0",
+                    "lang"        : "en",
+                    "user_id"     : "\(globalUserId.userID)",
+                    "post_id"     : "\(UserDetails.postID)",
+                    "count"       : "1"
+                ]
+        
+                let request = NSMutableURLRequest(URL: baseUrl)
+                let boundary = generateBoundaryString()
+                request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+                request.HTTPMethod = "POST"
+                request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
+                let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+                    data, response, error  in
+        
+                    if error != nil || data == nil{
+                        self.getDetail()
+                    }else {
+                        do {
+                            let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+        
+                            if json!["success"] != nil {
+                                if let resultArray = json!.valueForKey("result") as? NSArray {
+                                    if resultArray.count != 0 {
+                                        
+                                            UserDetails.postDate = resultArray[0]["post_modified"] as! String
+                                            UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
+                                            UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
+                                        
+                                            self.btnUsername.tag = Int(UserDetails.fromID)!
+                                            self.btnProfile.tag = Int(UserDetails.fromID)!
+                                            self.postDate.text = UserDetails.postDate
+                                            self.body.text = UserDetails.body
+                                        
+                                            dispatch_async(dispatch_get_main_queue()){
+                                                if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
+                                                    let images = resultArray[0]["fields"]!!["images"] as! NSArray
+                                                    
+                                                    if images.count == 3 {
+                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                                        UserDetails.img3 = images[2]["image"]!!["url"] as! String
+                                                    }else if images.count == 2 {
+                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                                        UserDetails.img3 = "null"
+                                                    }else if images.count == 1 {
+                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                        UserDetails.img2 = "null"
+                                                        UserDetails.img3 = "null"
+                                                    }
+                                                }else{
+                                                    UserDetails.img1 = "null"
+                                                    UserDetails.img2 = "null"
+                                                    UserDetails.img3 = "null"
+                                                }
+                                                
+                                                UserDetails.postID = ""
+                                                self.postDetail()
+                                            }
+                                        }
+                                    
+                                }
+                            }
+                        } catch {
+                            print(error)
+                        }
+                    }
+                   
+                }
+                task.resume()
     }
     
     func imgViewHeight(imgview: UIImageView, swtchCase: Int) {
@@ -229,14 +318,13 @@ class TimelineDetail: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func autoLayout(){
+    func startLayout(){
         
         topView.translatesAutoresizingMaskIntoConstraints = false
         topView.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 28).active = true
         topView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         topView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         topView.heightAnchor.constraintEqualToConstant(50).active = true
-        
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.topAnchor.constraintEqualToAnchor(topView.bottomAnchor).active = true
@@ -266,6 +354,9 @@ class TimelineDetail: UIViewController {
         body.topAnchor.constraintEqualToAnchor(scrollView.topAnchor, constant: 15).active = true
         body.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         body.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+    }
+    
+    func autoLayout(){
         
         view1.topAnchor.constraintEqualToAnchor(body.bottomAnchor,constant: 25).active = true
         view1.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
@@ -328,4 +419,25 @@ class TimelineDetail: UIViewController {
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().UUIDString)"
+    }
+    
+    func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
+        let body = NSMutableData();
+        
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString("\(value)\r\n")
+            }
+        }
+        
+        body.appendString("--\(boundary)--\r\n")
+        
+        return body
+    }
+    
 }

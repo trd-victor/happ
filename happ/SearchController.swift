@@ -54,11 +54,12 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     
     func loadTranslation(){
+        
         navBarTitle.title = config.translate("title_search_users")
         for subView in searchBar.subviews  {
             for subsubView in subView.subviews  {
                 if let textField = subsubView as? UITextField {
-                    textField.placeholder = "Wazzup"
+                    textField.placeholder = config.translate("search_placeholder")
                 }
             }
         }
@@ -184,6 +185,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         
         UserProfile.id = String(user_id[indexPath.row])
         
+
         transition.duration = 0.25
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight

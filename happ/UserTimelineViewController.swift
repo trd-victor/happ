@@ -103,7 +103,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         super.viewDidLoad()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("refreshLang:")), name: "refreshUserTimeline", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadTimeline:")), name: "reloadTimeline", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("notifTimeline:")), name: "reloadTimeline", object: nil)
         
         self.mytableview.addSubview(self.refreshControl)
         
@@ -448,6 +448,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.btnViewNotif.tintColor = UIColor.whiteColor()
+        
         if !self.firstLoad {
             self.mytableview.contentOffset = CGPointMake(0, -self.refreshControl.frame.size.height)
             
@@ -604,9 +606,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     
     
-    func reloadTimeline(notification: NSNotification){
+    func notifTimeline(notification: NSNotification){
         self.page = 1
         
+        mytableview.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: false)
+        
+        refreshControl.beginRefreshing()
         for var i = 5; i < self.fromID.count; i++ {
             let indexPath = NSIndexPath(forRow: i, inSection: 0)
             self.mytableview.beginUpdates()
@@ -620,7 +625,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             self.img3.removeAtIndex(i)
             self.mytableview.endUpdates()
         }
-        
         self.reloadTimeline()
     }
 

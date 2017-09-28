@@ -600,7 +600,6 @@ class NotifCell: UITableViewCell {
     
     let notifPhoto: UIImageView = {
         let photo = UIImageView()
-        photo.image = UIImage(named: "noPhoto")
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 23
         photo.contentMode = .ScaleAspectFill

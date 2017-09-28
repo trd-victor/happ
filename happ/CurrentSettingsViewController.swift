@@ -37,11 +37,12 @@ class CurrentSettingsViewController: UIViewController {
 
         //load language set.
         language = setLanguage.appLanguage
-        
+
         //set button text..
         self.loadConfigure()
         
-        self.loadCurrentUserLang()
+//        self.loadCurrentUserLang()
+        
         self.savelang.action = Selector("saveLang:")
         self.navBackLang.action = Selector("backToConfiguration:")
         
@@ -98,8 +99,8 @@ class CurrentSettingsViewController: UIViewController {
         btnCurrentSettings.setTitle(config.translate("label_current settings"), forState: .Normal)
         navTitle.title = config.translate("title_language_settings")
         savelang.title = config.translate("button_save")
-        let lang = changeLang.lang
-        if lang == "en" {
+        
+        if language == "en" {
             self.currentSettingslang.text = config.translate("label_en")
         } else {
             self.currentSettingslang.text = config.translate("label_ja")
@@ -146,8 +147,7 @@ class CurrentSettingsViewController: UIViewController {
     func saveLang(sender: UIBarButtonItem) ->() {
         
         let new_lang = self.currentSettingslang.text!
-        
-        
+
         if new_lang == "English" || new_lang == "EnglishJP" {
             self.changeLanguage("en")
             self.currentSettingslang.text = new_lang
@@ -194,7 +194,6 @@ class CurrentSettingsViewController: UIViewController {
             "targets"     : "\(targets)"
         ]
         
-        print(param)
         //adding the parameters to request body
         request.HTTPBody = createBodyWithParameters(param, boundary: boundary)
         
@@ -214,6 +213,8 @@ class CurrentSettingsViewController: UIViewController {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setValue(sender, forKey: "AppLanguage")
         userDefaults.synchronize()
+        setLanguage.appLanguage = sender
+        language = sender
     }
     
     
@@ -260,7 +261,6 @@ class CurrentSettingsViewController: UIViewController {
             //user Data...
             var lang: String!
 
-            
             if error != nil || data == nil{
                 self.loadCurrentUserLang()
             }else {
@@ -268,13 +268,13 @@ class CurrentSettingsViewController: UIViewController {
                     
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     if json!["result"] != nil {
-                        lang    = json!["result"]!["lang"] as! String
+                        lang = json!["result"]!["lang"] as! String
                     }
                     dispatch_async(dispatch_get_main_queue()) {
                         
                         if changeLang.lang == "" {
-                            
-                            if lang == "en" {
+  
+                            if self.language == "en" {
                                 self.currentSettingslang.text = "English"
                             } else {
                                 self.currentSettingslang.text = "日本語"

@@ -79,11 +79,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userPassword.delegate = self
         userName.delegate = self
         userReEnterPassword.delegate = self
-        
 
         //load language set.
         language = setLanguage.appLanguage
-        
         
         
         //set border for textbox and label
@@ -523,8 +521,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     "email"     : userEmail,
                     "id"        : userID,
                     "name"      : name,
-                    "photoUrl"  : "null",
-                    "token"     : token
+                    "photoUrl"  : "null"
                 ]
 //                //insert to users
                 db.setValue(userDetails)

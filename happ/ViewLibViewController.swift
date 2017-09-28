@@ -42,13 +42,16 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.myCollectionView!.dataSource = self
         self.myCollectionView!.delegate = self
         containerView.backgroundColor = UIColor.whiteColor()
+        
         if(chatVar.Indicator == "MessageTable"){
             self.deleteMessage()
             self.loadMessages()
+            print(chatVar.RoomID)
         }else if(chatVar.Indicator == "Search"){
             self.deleteMessage()
             self.getChatRoomID()
         }
+        
         self.view.addSubview(self.containerView)
         self.view.addSubview(self.navBar)
         self.view.addSubview(self.myCollectionView!)
@@ -59,7 +62,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         autoLayout()
         loadConfig()
-        getUsersImage()
+        //        getUsersImage()
         setupKeyboard()
         
     }
@@ -307,6 +310,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func getChatRoomID(){
+        chatVar.RoomID = ""
+        
         let chatmateID = chatVar.chatmateId
         let userid = FIRAuth.auth()?.currentUser?.uid
         
@@ -339,7 +344,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                             ]
                             roomDB.setValue(roomDetail)
                             chatVar.RoomID = roomDB.key
-                            self.deleteMessage()
                             self.loadMessages()
                         }
                     }

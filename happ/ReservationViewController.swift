@@ -84,6 +84,11 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         autoLayout()
     }
     
+    override func viewDidAppear(animated: Bool) {
+        let config = SYSTEM_CONFIG()
+        self.navBar.topItem?.title = config.translate("title_room_reservation")
+    }
+    
     func swipeToLeft(gest: UISwipeGestureRecognizer){
         if calendarMonth == 1 {
             calendarYear -= 1
