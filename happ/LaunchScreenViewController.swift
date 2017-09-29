@@ -31,7 +31,13 @@ class SYSTEM_CONFIG {
     internal func translate(key: String) -> String {
         let lang = self.getSYS_VAL("AppLanguage") as! String
         let textTranslate = self.getSYS_VAL("SYSTM_VAL")
-        return textTranslate![key]!![lang]!! as! String
+        
+        if textTranslate![key] != nil {
+            return textTranslate![key]!![lang]!! as! String
+        }else{
+            return ""
+        }
+        
     }
 }
 
@@ -73,6 +79,9 @@ class LaunchScreenViewController: UIViewController {
         
         self.isAppAlreadyLaunchedOnce()
         
+        let user = ViewController()
+        user.getAllUserInfo()
+        
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let systemLang = userDefaults.valueForKey("AppLanguage") {
             setLanguage.appLanguage = systemLang as! String
@@ -97,9 +106,6 @@ class LaunchScreenViewController: UIViewController {
         
         if let firID = FIRAuth.auth()?.currentUser?.uid {
             let userdb = FIRDatabase.database().reference().child("users").child(firID)
-            let user = ViewController()
-            user.getAllUserInfo()
-            
             let token = FIRInstanceID.instanceID().token()!
             
             FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
@@ -121,7 +127,7 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(2.0) {
+        self.delay(3.0) {
             self.dismissViewControllerAnimated(false, completion: nil)
             self.gotoMainBoard()
         }
@@ -142,7 +148,7 @@ class LaunchScreenViewController: UIViewController {
             return true
         }else{
             defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-            self.delay(2.0){
+            self.delay(3.0){
                 do {
                     try FIRAuth.auth()?.signOut()
                 } catch (let error) {
@@ -159,6 +165,6 @@ class LaunchScreenViewController: UIViewController {
         let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("ChooseLanguage") as! FirstLaunchLanguage
         self.presentViewController(nextViewController, animated:true, completion:nil)
     }
-
+    
     
 }

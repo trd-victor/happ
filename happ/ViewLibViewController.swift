@@ -46,7 +46,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         if(chatVar.Indicator == "MessageTable"){
             self.deleteMessage()
             self.loadMessages()
-            print(chatVar.RoomID)
         }else if(chatVar.Indicator == "Search"){
             self.deleteMessage()
             self.getChatRoomID()

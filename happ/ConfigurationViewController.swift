@@ -55,6 +55,7 @@ class ConfigurationViewController: UIViewController {
         
         self.loadConfigure()
 
+        
         //set action 
          btnEditProfile.addTarget(self, action: "viewtoEditProfile:", forControlEvents: .TouchUpInside)
         

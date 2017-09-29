@@ -1470,7 +1470,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="happ" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="92" width="320" height="77"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lqd-Oi-WpL" id="3Q3-ls-nLn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="76"/>
@@ -1569,27 +1569,11 @@
                                 </items>
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="vav-Qd-skR">
-                                <rect key="frame" x="0.0" y="69" width="320" height="450"/>
+                                <rect key="frame" x="0.0" y="69" width="320" height="499"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
-                            <tabBar contentMode="scaleToFill" itemPositioning="centered" id="K0g-8A-lat">
-                                <rect key="frame" x="0.0" y="519" width="320" height="49"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <animations/>
-                                <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="0.0" colorSpace="calibratedRGB"/>
-                                <items>
-                                    <tabBarItem title="Timeline" image="timelineIcon" id="Vge-5a-7eC"/>
-                                    <tabBarItem tag="1" title="Messages" image="messageIcon" id="Klh-Hw-2us"/>
-                                    <tabBarItem tag="2" title="Room Reservation" image="reservationIcon" id="ufc-Mc-AiS"/>
-                                    <tabBarItem tag="3" title="Situation" image="rushIcon" id="8YA-hd-Tcr"/>
-                                    <tabBarItem tag="4" title="Configuration" image="settings" id="Tf9-La-zcO"/>
-                                </items>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </tabBar>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page1" id="fPK-bI-Rlt">
                                 <rect key="frame" x="118" y="30" width="84" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1603,7 +1587,6 @@
                         <outlet property="happLogo" destination="fPK-bI-Rlt" id="77q-rI-w3Y"/>
                         <outlet property="navBack" destination="wFG-ti-xfw" id="1BG-9L-MVb"/>
                         <outlet property="navBar" destination="v8j-e9-epT" id="QVA-4N-Yx0"/>
-                        <outlet property="tabBar" destination="K0g-8A-lat" id="4Ge-XM-24B"/>
                         <outlet property="tblProfile" destination="vav-Qd-skR" id="bm1-YC-DPd"/>
                     </connections>
                 </viewController>

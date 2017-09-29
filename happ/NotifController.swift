@@ -280,12 +280,14 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func saveNotificationMessage(id: Int, type: String){
+
         let config = SYSTEM_CONFIG()
+       
         let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
         let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
         let firID = FIRAuth.auth()?.currentUser?.uid
         let timestamp = FIRServerValue.timestamp()
-        
+
         dispatch_async(dispatch_get_main_queue()){
             let notifAllDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").childByAutoId()
             

@@ -107,7 +107,6 @@ class UserProfileController: UIViewController {
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var tblProfile: UITableView!
-    @IBOutlet var tabBar: UITabBar!
     
     let refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
@@ -230,17 +229,11 @@ class UserProfileController: UIViewController {
         happLogo.widthAnchor.constraintEqualToConstant(84).active = true
         happLogo.heightAnchor.constraintEqualToConstant(33).active = true
         
-        tabBar.translatesAutoresizingMaskIntoConstraints = false
-        tabBar.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor).active = true
-        tabBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        tabBar.heightAnchor.constraintEqualToConstant(50).active = true
-        tabBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        
         tblProfile.translatesAutoresizingMaskIntoConstraints = false
         tblProfile.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
         tblProfile.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         tblProfile.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        tblProfile.bottomAnchor.constraintEqualToAnchor(tabBar.topAnchor).active = true
+        tblProfile.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor).active = true
         
         topConstraint = ProfileView.topAnchor.constraintEqualToAnchor(tblProfile.topAnchor, constant: -380)
         topConstraint.active = true

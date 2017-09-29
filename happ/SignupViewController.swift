@@ -248,6 +248,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func loginFirebase(email: String, pass : String ) {
+        let config = SYSTEM_CONFIG()
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
@@ -260,7 +261,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 self.connectToFcm()
                 self.redirectLogin()
             } else {
-                self.displayMyAlertMessage("Don't have Account!")
+                self.displayMyAlertMessage(config.translate("mess_fail_auth"))
             }
             
         }

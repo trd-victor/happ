@@ -79,7 +79,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userPassword.delegate = self
         userName.delegate = self
         userReEnterPassword.delegate = self
-
+        self.scrollView.scrollEnabled = true
         //load language set.
         language = setLanguage.appLanguage
         
@@ -296,6 +296,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func registerUser(sender: AnyObject) {
+        //scroll to top
+        self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
+        
         //setting up the textbox...
         let email = userEmail.text!
         let pass = userPassword.text!
@@ -306,14 +309,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         
         let config = SYSTEM_CONFIG()
         
-        if email == ""  {
-            displayMyAlertMessage(config.translate("empty_email"))
-        } else if pass == "" {
-            displayMyAlertMessage(config.translate("empty_passwd"))
-        } else if  name == ""  {
-            displayMyAlertMessage(config.translate("empty_name"))
-        } else if pass != reEnterpassword {
-            displayMyAlertMessage(config.translate("not_match_password"))
+        if email == "" && pass == "" && name == "" && reEnterpassword == "" {
+            displayMyAlertMessage(config.translate("mess_fill_missing_field"))
+        }else if pass != reEnterpassword {
+            displayMyAlertMessage(config.translate("mess_password_not_match"))
         }
         else {
             //created NSURL

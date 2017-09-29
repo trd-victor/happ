@@ -84,11 +84,13 @@ class FirstLaunchLanguage: UIViewController {
     
     @IBAction func langja(sender: UIButton) {
         globalvar.APP_LANGUANGE = "ja"
+        setLanguage.appLanguage = "ja"
         self.saveLanguage(globalvar.APP_LANGUANGE)
     }
     
     @IBAction func langen(sender: UIButton) {
         globalvar.APP_LANGUANGE = "en"
+        setLanguage.appLanguage = "en"
         self.saveLanguage(globalvar.APP_LANGUANGE)
     }
     
