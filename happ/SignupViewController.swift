@@ -233,6 +233,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                     self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                                 }
                             } else {
+                                
                                 self.loginFirebase(userEmail, pass: userPass)
                             }
                         }
@@ -254,6 +255,10 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
                 let config = SYSTEM_CONFIG()
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+                
+                // call
+                let vc = ViewController()
+                vc.getAllUserInfo()
                 
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))

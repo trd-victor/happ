@@ -324,21 +324,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(statust, forKey: "Freetime")
         defaults.synchronize()
-        print("statust", statust)
    
         if statust == "On" {
-            print("sulod")
             let notif = NotifController()
-            print("sunod")
             notif.saveNotificationMessage(0, type: "free-time")
-            print("hello")
+            
+            //Update Server Free Time Status
+            updateFreeTimeStatus()
         }
-        
-//        if statust == "On" {
-//            //Update Server Free Time Status
-//            print("tetete")
-//            updateFreeTimeStatus()
-//        }
+
     }
     
     @IBAction func btnViewNotif(sender: UIBarButtonItem) {

@@ -79,9 +79,6 @@ class LaunchScreenViewController: UIViewController {
         
         self.isAppAlreadyLaunchedOnce()
         
-        let user = ViewController()
-        user.getAllUserInfo()
-        
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let systemLang = userDefaults.valueForKey("AppLanguage") {
             setLanguage.appLanguage = systemLang as! String
