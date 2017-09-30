@@ -32,7 +32,11 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
         
         //load language set..
         language = setLanguage.appLanguage
-       
+        
+        if language == "ja" {
+            language = "jp"
+        }        
+        
         //add listener action to changepass button
         btnChangePass.addTarget(self, action: "changePass:", forControlEvents: .TouchUpInside)
        
@@ -165,12 +169,6 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
                 }
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if json!["message"] != nil {
-                    }
-                    if json!["result"] != nil {
-                        if json!["result"]!["mess"] != nil {
-                        }
-                    }
                     dispatch_async(dispatch_get_main_queue()) {
                         if json!["error"] != nil {
                             if json!["message"] != nil {

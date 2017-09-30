@@ -45,6 +45,9 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         //load language set.
         language = setLanguage.appLanguage
     
+        if language == "ja" {
+            language = "jp"
+        }
         
         userId = globalUserId.userID
         self.loaduserEmail()
@@ -162,37 +165,38 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
                 
                 var message: String!
                 
-                if error != nil{
-                    print("error is \(error)")
-                    return;
+                if error != nil || data == nil{
+                    self.updateEmail()
+                }else{
+                    do {
+                        
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                        
+                        if json!["message"] != nil {
+                            message = json!["message"] as! String
+                        }
+                        
+                        if json!["result"] != nil {
+                            message = json!["result"]!["mess"] as! String
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            var errorMessage: Int
+                            if json!["error"] != nil {
+                                errorMessage = json!["error"] as! Int
+                                if errorMessage == 1 {
+                                    self.displayMyAlertMessage(message)
+                                }
+                            }
+                            self.displayMyAlertMessage(message)
+                        }
+                        
+                    } catch {
+                        print(error)
+                    }
                 }
                 
-                do {
-                    
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json!["message"] != nil {
-                        message = json!["message"] as! String
-                    }
-                    
-                    if json!["result"] != nil {
-                        message = json!["result"]!["mess"] as! String
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        var errorMessage: Int
-                        if json!["error"] != nil {
-                            errorMessage = json!["error"] as! Int
-                            if errorMessage == 1 {
-                                self.displayMyAlertMessage(message)
-                            }
-                        }
-                        self.displayMyAlertMessage(message)
-                    }
-                    
-                } catch {
-                    print(error)
-                }
+                
             }
             task.resume()
         }
@@ -241,9 +245,8 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
             //user Data...
             var email: String!
             
-            if error != nil{
-                print("\(error)")
-                return;
+            if error != nil || data == nil{
+                self.loaduserEmail()
             }
             do {
                 

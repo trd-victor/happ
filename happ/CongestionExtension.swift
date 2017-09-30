@@ -37,23 +37,23 @@ extension CongestionViewController {
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                         
-                        
-                        if json["result"] != nil {
-                            let result = json["result"] as! NSArray
-                            
-                            for item in result {
-                                if let resultData = item as? NSDictionary {
-                                    
-                                    if let fields = resultData.valueForKey("fields") {
-                                        if let percent = fields.valueForKey("persentage") {
-                                            retData = Int(percent as! String)!
+                        dispatch_async(dispatch_get_main_queue()) {
+                            if json["result"] != nil {
+                                let result = json["result"] as! NSArray
+                                
+                                for item in result {
+                                    if let resultData = item as? NSDictionary {
+                                        
+                                        if let fields = resultData.valueForKey("fields") {
+                                            if let percent = fields.valueForKey("persentage") {
+                                                retData = Int(percent as! String)!
+                                            }
                                         }
+                                        
                                     }
-                                    
                                 }
                             }
-                        }
-                        dispatch_async(dispatch_get_main_queue()) {
+                            
                             self.getFreeStatus(retData)
                         }
                     }
@@ -95,26 +95,26 @@ extension CongestionViewController {
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
-                    
-                    if json!["result"] != nil {
-                        let result = json!["result"] as! NSArray
-                        
-                        for item in result {
-                            if let resultData = item as? NSDictionary {
-                                
-                                if let fields = resultData.valueForKey("fields") {
-                                    if let id = fields.valueForKey("user_id") {
-                                        let existsUser = self.userIds.contains(Int(id as! String)!)
-                                        if !existsUser {
-                                            self.userIds.append(Int(id as! String)!)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if json!["result"] != nil {
+                            let result = json!["result"] as! NSArray
+                            
+                            for item in result {
+                                if let resultData = item as? NSDictionary {
+                                    
+                                    if let fields = resultData.valueForKey("fields") {
+                                        if let id = fields.valueForKey("user_id") {
+                                            let existsUser = self.userIds.contains(Int(id as! String)!)
+                                            if !existsUser {
+                                                self.userIds.append(Int(id as! String)!)
+                                            }
                                         }
                                     }
+                                    
                                 }
-                                
                             }
                         }
-                    }
-                    dispatch_async(dispatch_get_main_queue()) {
+                        
                         self.widthPercentage = self.calculatePercentage(percent)
                         self.percentage.text = "\(percent)%"
                         self.prcentViewBlack.topAnchor.constraintEqualToAnchor(self.percentView.topAnchor).active = true

@@ -9,7 +9,7 @@
 import UIKit
 
 class NoImage: UITableViewCell {
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -117,11 +117,11 @@ class NoImage: UITableViewCell {
         btnDelete.heightAnchor.constraintEqualToConstant(34).active = true
         
     }
-
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
 }
 
 
@@ -216,6 +216,12 @@ class SingleImage: UITableViewCell {
         return imgView
     }()
     
+    let indicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .Subtitle, reuseIdentifier: reuseIdentifier)
         
@@ -228,6 +234,8 @@ class SingleImage: UITableViewCell {
         addSubview(btnDelete)
         addSubview(imgContainer)
         imgContainer.addSubview(imgView1)
+        imgContainer.addSubview(indicator)
+        imgContainer.bringSubviewToFront(indicator)
         
         btnProfile.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
         btnProfile.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
@@ -253,6 +261,9 @@ class SingleImage: UITableViewCell {
         imgContainer.leftAnchor.constraintEqualToAnchor(self.leftAnchor).active = true
         imgContainer.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
         imgContainer.heightAnchor.constraintEqualToConstant(300).active = true
+        
+        indicator.centerXAnchor.constraintEqualToAnchor(imgContainer.centerXAnchor).active = true
+        indicator.centerYAnchor.constraintEqualToAnchor(imgContainer.centerYAnchor).active = true
         
         imgView1.centerXAnchor.constraintEqualToAnchor(imgContainer.centerXAnchor).active = true
         imgView1.centerYAnchor.constraintEqualToAnchor(imgContainer.centerYAnchor).active = true
@@ -349,6 +360,12 @@ class DoubleImage: UITableViewCell {
         return view
     }()
     
+    let indicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     let imgView1: UIImageView = {
         let imgView = UIImageView()
         imgView.translatesAutoresizingMaskIntoConstraints = false
@@ -365,6 +382,12 @@ class DoubleImage: UITableViewCell {
         return imgView
     }()
     
+    let indicator2: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .Subtitle, reuseIdentifier: reuseIdentifier)
         
@@ -378,6 +401,10 @@ class DoubleImage: UITableViewCell {
         addSubview(imgContainer)
         imgContainer.addSubview(imgView1)
         imgContainer.addSubview(imgView2)
+        imgContainer.addSubview(indicator)
+        imgContainer.addSubview(indicator2)
+        imgContainer.bringSubviewToFront(indicator)
+        imgContainer.bringSubviewToFront(indicator2)
         
         btnProfile.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
         btnProfile.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
@@ -404,6 +431,16 @@ class DoubleImage: UITableViewCell {
         imgContainer.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
         imgContainer.heightAnchor.constraintEqualToConstant(300).active = true
         
+        indicator.topAnchor.constraintEqualToAnchor(imgContainer.topAnchor).active = true
+        indicator.leftAnchor.constraintEqualToAnchor(imgContainer.leftAnchor).active = true
+        indicator.widthAnchor.constraintEqualToAnchor(imgContainer.widthAnchor, multiplier: 1/2).active = true
+        indicator.heightAnchor.constraintEqualToAnchor(imgContainer.heightAnchor).active = true
+        
+        indicator2.topAnchor.constraintEqualToAnchor(imgContainer.topAnchor).active = true
+        indicator2.rightAnchor.constraintEqualToAnchor(imgContainer.rightAnchor).active = true
+        indicator2.widthAnchor.constraintEqualToAnchor(imgContainer.widthAnchor, multiplier: 1/2).active = true
+        indicator2.heightAnchor.constraintEqualToAnchor(imgContainer.heightAnchor).active = true
+        
         imgView1.topAnchor.constraintEqualToAnchor(imgContainer.topAnchor).active = true
         imgView1.leftAnchor.constraintEqualToAnchor(imgContainer.leftAnchor).active = true
         imgView1.widthAnchor.constraintEqualToAnchor(imgContainer.widthAnchor, multiplier: 1/2).active = true
@@ -423,7 +460,7 @@ class DoubleImage: UITableViewCell {
 }
 
 class TripleImage: UITableViewCell {
-        
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -505,6 +542,12 @@ class TripleImage: UITableViewCell {
         return view
     }()
     
+    let indicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     let imgView1: UIImageView = {
         let imgView = UIImageView()
         imgView.translatesAutoresizingMaskIntoConstraints = false
@@ -520,6 +563,13 @@ class TripleImage: UITableViewCell {
         imgView.contentMode = .ScaleAspectFill
         return imgView
     }()
+    
+    let indicator2: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     let imgView3: UIImageView = {
         let imgView = UIImageView()
         imgView.translatesAutoresizingMaskIntoConstraints = false
@@ -528,6 +578,11 @@ class TripleImage: UITableViewCell {
         return imgView
     }()
     
+    let indicator3: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: .Subtitle, reuseIdentifier: reuseIdentifier)
         
@@ -542,6 +597,12 @@ class TripleImage: UITableViewCell {
         imgContainer.addSubview(imgView1)
         imgContainer.addSubview(imgView2)
         imgContainer.addSubview(imgView3)
+        imgContainer.addSubview(indicator)
+        imgContainer.addSubview(indicator2)
+        imgContainer.addSubview(indicator3)
+        imgContainer.bringSubviewToFront(indicator)
+        imgContainer.bringSubviewToFront(indicator2)
+        imgContainer.bringSubviewToFront(indicator3)
         
         btnProfile.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
         btnProfile.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
@@ -567,6 +628,21 @@ class TripleImage: UITableViewCell {
         imgContainer.leftAnchor.constraintEqualToAnchor(self.leftAnchor).active = true
         imgContainer.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
         imgContainer.heightAnchor.constraintEqualToConstant(300).active = true
+        
+        indicator.topAnchor.constraintEqualToAnchor(imgContainer.topAnchor).active = true
+        indicator.leftAnchor.constraintEqualToAnchor(imgContainer.leftAnchor).active = true
+        indicator.widthAnchor.constraintEqualToAnchor(imgContainer.widthAnchor, multiplier: 1/2).active = true
+        indicator.heightAnchor.constraintEqualToAnchor(imgContainer.heightAnchor).active = true
+        
+        indicator2.topAnchor.constraintEqualToAnchor(imgContainer.topAnchor).active = true
+        indicator2.rightAnchor.constraintEqualToAnchor(imgContainer.rightAnchor).active = true
+        indicator2.widthAnchor.constraintEqualToAnchor(imgContainer.widthAnchor, multiplier: 1/2).active = true
+        indicator2.heightAnchor.constraintEqualToAnchor(imgContainer.heightAnchor, multiplier: 1/2).active = true
+        
+        indicator3.bottomAnchor.constraintEqualToAnchor(imgContainer.bottomAnchor).active = true
+        indicator3.rightAnchor.constraintEqualToAnchor(imgContainer.rightAnchor).active = true
+        indicator3.widthAnchor.constraintEqualToAnchor(imgContainer.widthAnchor, multiplier: 1/2).active = true
+        indicator3.heightAnchor.constraintEqualToAnchor(imgContainer.heightAnchor, multiplier: 1/2).active = true
         
         imgView1.topAnchor.constraintEqualToAnchor(imgContainer.topAnchor).active = true
         imgView1.leftAnchor.constraintEqualToAnchor(imgContainer.leftAnchor).active = true

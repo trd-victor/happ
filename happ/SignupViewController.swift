@@ -276,7 +276,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         FIRMessaging.messaging().connectWithCompletion {(error) in
             
             if(error != nil){
-                print("Unable to connect with FCM. \(error)")
+
             }else{
                 FIRMessaging.messaging().subscribeToTopic("timeline-push-notification")
                 FIRMessaging.messaging().subscribeToTopic("free-time-push-notification")

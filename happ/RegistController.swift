@@ -391,36 +391,37 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 data, response, error  in
 
                 var mess: String = ""
-                if error != nil{
-                    print("\(error)")
-                    return;
-                }
-                do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if json!["message"] != nil {
-                        mess = json!["message"] as! String
-                    }
-                    if json!["result"] != nil {
-                        if json!["result"]!["mess"] != nil {
-                            mess = json!["result"]!["mess"] as! String
-                        }
-                    }
-                    dispatch_async(dispatch_get_main_queue()) {
-                        var errorMessage : Bool
-                        if json!["error"] != nil {
-                            errorMessage = json!["error"] as! Bool
-                            if errorMessage == true {
-                                self.displayMyAlertMessage(mess)
+                if error != nil || data == nil{
+                    self.registerUser(sender)
+                }else{
+                    do {
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                        dispatch_async(dispatch_get_main_queue()) {
+                            var errorMessage : Bool
+                            if json!["error"] != nil {
+                                errorMessage = json!["error"] as! Bool
+                                if errorMessage == true {
+                                    
+                                    if json!["message"] != nil {
+                                        mess = json!["message"] as! String
+                                    }
+                                    
+                                    self.displayMyAlertMessage(mess)
+                                }
+                            } else {
+                                if json!["result"] != nil {
+                                    if json!["result"]!["mess"] != nil {
+                                        mess = json!["result"]!["mess"] as! String
+                                    }
+                                }
+                                self.successMessageAlert(mess)
+                                self.loadUserData(name, userEmail: email, password: pass)
                             }
-                        } else {
-                            self.successMessageAlert(mess)
-                            self.loadUserData(name, userEmail: email, password: pass)
                         }
+                    } catch {
+                        print(error)
                     }
-                } catch {
-                    print(error)
                 }
- 
             }
             task.resume()
         }
@@ -485,7 +486,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                             self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid)
                         }
                         else {
-                            
                             dispatch_async(dispatch_get_main_queue()) {
                                 let userId = data["user_id"] as! Int
                                 let uid: Int = userId
@@ -544,7 +544,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
     }
-    
     
     func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
         let body = NSMutableData();

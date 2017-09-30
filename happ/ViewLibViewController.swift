@@ -313,39 +313,50 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         let chatmateID = chatVar.chatmateId
         let userid = FIRAuth.auth()?.currentUser?.uid
-        
         let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
         
         membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             var count = 0
-            
-            for (key, value) in (snapshot.value as? [String: AnyObject])!{
-                count++
-                
-                let dataVal = value as? NSDictionary
-                
-                let firstUser = dataVal![String(chatmateID)] as? Int
-                let secondUser = dataVal![String(userid!)] as? Int
-                
-                if firstUser != nil && secondUser != nil {
-                    chatVar.RoomID = key
-                }
-                
-                if(count == snapshot.value?.count!){
-                    if chatVar.RoomID != "" {
-                        self.loadMessages()
-                    }else{
-                        let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
-                        dispatch_async(dispatch_get_main_queue()){
-                            let roomDetail = [
-                                String(chatmateID) :true,
-                                String(userid!) :true
-                            ]
-                            roomDB.setValue(roomDetail)
-                            chatVar.RoomID = roomDB.key
+
+            if let result =  snapshot.value as? [String: AnyObject] {
+                for (key, value) in result {
+                    count++
+                    let dataVal = value as? NSDictionary
+                    
+                    let firstUser = dataVal![String(chatmateID)] as? Int
+                    let secondUser = dataVal![String(userid!)] as? Int
+                    
+                    if firstUser != nil && secondUser != nil {
+                        chatVar.RoomID = key
+                    }
+                    
+                    if(count == snapshot.value?.count!){
+                        if chatVar.RoomID != "" {
                             self.loadMessages()
+                        }else{
+                            let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                            dispatch_async(dispatch_get_main_queue()){
+                                let roomDetail = [
+                                    String(chatmateID) : true,
+                                    String(userid!) : true
+                                ]
+                                roomDB.setValue(roomDetail)
+                                chatVar.RoomID = roomDB.key
+                                self.loadMessages()
+                            }
                         }
                     }
+                }
+            }else{
+                let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                dispatch_async(dispatch_get_main_queue()){
+                    let roomDetail = [
+                        String(chatmateID) : true,
+                        String(userid!) : true
+                    ]
+                    roomDB.setValue(roomDetail)
+                    chatVar.RoomID = roomDB.key
+                    self.loadMessages()
                 }
             }
         })

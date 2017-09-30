@@ -129,9 +129,8 @@ extension UserTimelineViewController {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil{
-                print("\(error)")
-                return;
+            if error != nil || data == nil{
+                self.updateFreeTimeStatus()
             }
         }
         task.resume()

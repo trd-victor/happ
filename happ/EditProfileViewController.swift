@@ -69,6 +69,10 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         //load language set.
         language = setLanguage.appLanguage
         
+        if language == "ja" {
+            language = "jp"
+        }
+        
         self.loadConfigure()
         
         let paddingView = UIView(frame: CGRectMake(0, 0, 10, self.userDescription.frame.height))
@@ -315,6 +319,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         labelAndroid.text = config.translate("label_android_application")
         labelAppDesign.text = config.translate("label_app_design")
         labelwebdesign.text = config.translate("label_web_design")
+        
+        self.StatusItem.tintColor = UIColor.whiteColor()
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -398,38 +404,34 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 do {
                     
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if json!["result"] != nil {
-                        name    = json!["result"]!["name"] as! String
-                        //                        image1   = json!["result"]!["icon"] as! String
-                        
-                        if let _ = json!["result"]!["icon"] as? NSNull {
-                            image = ""
-                        } else {
-                            image = json!["result"]!["icon"] as? String
-                        }
-                        
-                        
-                        skills  = json!["result"]!["skills"] as! String
-                        message = json!["result"]!["mess"] as! String
-                    }
                     
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
                         
-                        let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+                        if json!["result"] != nil {
+                            name    = json!["result"]!["name"] as! String
+                            //                        image1   = json!["result"]!["icon"] as! String
+                            
+                            if let _ = json!["result"]!["icon"] as? NSNull {
+                                image = ""
+                            } else {
+                                image = json!["result"]!["icon"] as? String
+                            }
+                            skills  = json!["result"]!["skills"] as! String
+                            message = json!["result"]!["mess"] as! String
+                        }
                         
-                        
-                        let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
                         dispatch_async(dispatch_get_main_queue(), {() -> Void in
                             
                             self.userNamefield.text = name
                             if data != nil {
                                 //save new photo on firebase database
                                 if self.checkNewImage {
-                                    let uid = globalUserId.FirID
-                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
+                                    let uid = FIRAuth.auth()?.currentUser?.uid
+                                    
+                                    FIRDatabase.database().reference().child("users").child("\(uid!)").child("photoUrl").setValue(image)
                                     self.checkNewImage = false
                                 }
-                                self.userImage.image = UIImage(data: data!)
+                                self.userImage.imgForCache(image)
                             } else {
                                 self.userImage.image = UIImage(named: "noPhoto")
                             }
@@ -461,6 +463,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     }
     
     @IBAction func StatusItem(sender: AnyObject) {
+        self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
         
         //setting up the textbox...
         let name = userNamefield.text!
@@ -542,6 +545,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 "skills"      : "\(skills2)",
                 "targets"     : "\(targetedData)"
             ]
+            
+            print("param",param)
             //adding the parameters to request body
             request.HTTPBody = createBodyWithParameters(param, data: UIImageJPEGRepresentation(userImage.image!, 0.7),  boundary: boundary)
             
@@ -550,43 +555,41 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 
                 var message: String!
                 
-                if error != nil{
-                    print("error is \(error)")
-                    return;
-                }
-                
-                do {
-                    
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json!["message"] != nil {
-                        message = json!["message"] as! String
-                    }
-                    
-                    if json!["result"] != nil {
-                        message = json!["result"]!["mess"] as! String
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        var errorMessage: Int
-                        if json!["error"] != nil {
-                            errorMessage = json!["error"] as! Int
-                            if errorMessage == 1 {
-                                self.displayMyAlertMessage(message)
+                if error != nil || data == nil{
+                    print("\(error)")
+                    self.StatusItem(sender)
+                }else{
+                    do {
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            var errorMessage: Int
+                            if json!["error"] != nil {
+                                errorMessage = json!["error"] as! Int
+                                if errorMessage == 1 {
+                                    if json!["message"] != nil {
+                                        message = json!["message"] as! String
+                                    }
+                                    self.displayMyAlertMessage(message)
+                                }
+                            }else{
+                                if json!["result"] != nil {
+                                    message = json!["result"]!["mess"] as! String
+                                }
+                                if json!["success"] != nil {
+                                    let uid = FIRAuth.auth()?.currentUser?.uid
+                                    FIRDatabase.database().reference().child("users").child("\(uid!)").child("name").setValue(name)
+                                    
+                                    //updating image url on firebase
+                                    self.setImageToFirebaseUser()
+                                }
                             }
+                            self.displayMyAlertMessage(message)
                         }
-                        if json!["success"] != nil {
-                            let uid = globalUserId.FirID
-                            FIRDatabase.database().reference().child("users").child("\(uid)").child("name").setValue(name)
-                            
-                            //updating image url on firebase
-                            self.setImageToFirebaseUser()
-                        }
-                        self.displayMyAlertMessage(message)
+                        
+                    } catch {
+                        print(error)
                     }
-                    
-                } catch {
-                    print(error)
                 }
             }
             task.resume()
@@ -769,8 +772,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                     }
                     
                     if self.checkNewImage {
-                        let uid = globalUserId.FirID
-                        FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
+                        let uid = FIRAuth.auth()?.currentUser?.uid
+                        FIRDatabase.database().reference().child("users").child("\(uid!)").child("photoUrl").setValue(image)
                         self.checkNewImage = false
                     }
                 }

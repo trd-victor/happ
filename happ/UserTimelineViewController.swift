@@ -22,7 +22,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     @IBOutlet var labelFree: UILabel!
     @IBOutlet var mytableview: UITableView!
-     let cellSpacingHeight: CGFloat = 5
+    let cellSpacingHeight: CGFloat = 5
     
     @IBOutlet var timeline: UILabel!
     @IBOutlet var message: UILabel!
@@ -30,7 +30,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     @IBOutlet var situation: UILabel!
     @IBOutlet var configuration: UILabel!
     @IBOutlet var btndelete: UIButton!
-
+    
     @IBOutlet var freetimeStatus: UISwitch!
     
     var pageCount : String!
@@ -38,7 +38,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     var userData: NSDictionary!
     var countData: NSArray = []
     
-
+    
     //get user Id...
     var userId: String = ""
     
@@ -118,7 +118,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         //get user data
         userId = globalUserId.userID
-       
+        
         //load language set.
         language = setLanguage.appLanguage
         
@@ -128,20 +128,20 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         //set text i am free
         labelFree.text = config.translate("subtitle_now_free")
         
-       // self.searchIcon.action = Selector("gotoSearchbar:")
+        // self.searchIcon.action = Selector("gotoSearchbar:")
         
         self.roundButton = UIButton(type: UIButtonType.Custom)
         self.roundButton.setTitleColor(UIColor.orangeColor(), forState: .Normal)
         self.roundButton.addTarget(self, action: "CreatePostButton:", forControlEvents: .TouchUpInside)
         self.view.addSubview(roundButton)
-    
+        
         
         self.scrollview = UIScrollView()
         self.scrollview.delegate = self
         self.scrollview.contentSize = CGSizeMake(1000, 1000)
         view.addSubview(scrollview)
         
-        //set switch on 
+        //set switch on
         self.setSwitchOnOff(self.freetimeStatus)
         
         self.getTimelineUser()
@@ -155,7 +155,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func bellObserver(){
-
+        
         let firID = FIRAuth.auth()?.currentUser?.uid
         let unreadDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread")
         unreadDB.observeEventType(.Value, withBlock: {(snap) in
@@ -171,7 +171,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
         })
     }
-  
+    
     @IBAction func searchIcon(sender: AnyObject) {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("SearchUserController") as! SearchController
@@ -239,7 +239,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func refreshTimelineTable() {
-       self.mytableview.reloadData()
+        self.mytableview.reloadData()
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -269,7 +269,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.deleteAlertMessage("Delete this Post?")
         self.userpostID = sender
         self.indexInt = index
-
+        
     }
     
     func deleteTimeline(sender: String) {
@@ -324,15 +324,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(statust, forKey: "Freetime")
         defaults.synchronize()
-   
+        print("statust", statust)
+        
         if statust == "On" {
             let notif = NotifController()
             notif.saveNotificationMessage(0, type: "free-time")
-            
-            //Update Server Free Time Status
             updateFreeTimeStatus()
         }
 
+        
     }
     
     @IBAction func btnViewNotif(sender: UIBarButtonItem) {
@@ -359,7 +359,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "page"        : "\(page)",
             "count"       : "5"
         ]
-       let request = NSMutableURLRequest(URL: self.baseUrl)
+        let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
@@ -627,14 +627,17 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }
         self.reloadTimeline()
     }
-
+    
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
-     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.fromID.count
     }
+    
+    let imgforPostCache = NSCache()
+    let imgforProfileCache = NSCache()
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
@@ -660,10 +663,30 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             
             if userimageURL == "null" {
                 imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                imgView.profileForCache(userimageURL)
+                if (imgforPostCache.objectForKey(userimageURL) != nil) {
+                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
+                    cell.btnProfile.setImage(imgCache, forState: .Normal)
+                }else{
+                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
+                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
+                    cell.btnProfile.contentMode = .Center
+                    let url = NSURL(string: userimageURL)
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                        if let data = NSData(contentsOfURL: url!){
+                            dispatch_async(dispatch_get_main_queue()){
+                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
+                                cell.btnProfile.contentMode = .ScaleAspectFill
+                            }
+                            let tmpImg = UIImage(data: data)
+                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
+                        }
+                        
+                    })
+                    task.resume()
+                }
             }
-            cell.btnProfile.setImage(imgView.image, forState: .Normal)
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -673,9 +696,78 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            cell.imgView1.imgForCache(self.img1[indexPath.row])
-            cell.imgView2.imgForCache(self.img2[indexPath.row])
-            cell.imgView3.imgForCache(self.img3[indexPath.row])
+            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
+                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
+                cell.imgView1.image = imgCache
+                cell.imgView1.contentMode = .ScaleAspectFill
+            }else{
+                cell.imgView1.image = UIImage(named : "photo")
+                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
+                cell.imgView1.contentMode = .Center
+                cell.indicator.startAnimating()
+                let url = NSURL(string: self.img1[indexPath.row])
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.imgView1.image = UIImage(data: data)
+                            cell.imgView1.contentMode = .ScaleAspectFill
+                            cell.indicator.stopAnimating()
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                    }
+                    
+                })
+                task.resume()
+            }
+            if (imgforPostCache.objectForKey(self.img2[indexPath.row]) != nil) {
+                let imgCache = imgforPostCache.objectForKey(self.img2[indexPath.row]) as! UIImage
+                cell.imgView2.image = imgCache
+                cell.imgView2.contentMode = .ScaleAspectFill
+            }else{
+                cell.imgView2.image = UIImage(named : "photo")
+                cell.imgView2.backgroundColor = UIColor.lightGrayColor()
+                cell.imgView2.contentMode = .Center
+                cell.indicator2.startAnimating()
+                let url = NSURL(string: self.img2[indexPath.row])
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.imgView2.image = UIImage(data: data)
+                            cell.imgView2.contentMode = .ScaleAspectFill
+                            cell.indicator2.stopAnimating()
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
+                    }
+                    
+                })
+                task.resume()
+            }
+            if (imgforPostCache.objectForKey(self.img3[indexPath.row]) != nil) {
+                let imgCache = imgforPostCache.objectForKey(self.img3[indexPath.row]) as! UIImage
+                cell.imgView3.image = imgCache
+                cell.imgView3.contentMode = .ScaleAspectFill
+            }else{
+                cell.imgView3.image = UIImage(named : "photo")
+                cell.imgView3.backgroundColor = UIColor.lightGrayColor()
+                cell.imgView3.contentMode = .Center
+                cell.indicator3.startAnimating()
+                let url = NSURL(string: self.img3[indexPath.row])
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.imgView3.image = UIImage(data: data)
+                            cell.imgView3.contentMode = .ScaleAspectFill
+                            cell.indicator3.stopAnimating()
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img3[indexPath.row])
+                    }
+                    
+                })
+                task.resume()
+            }
             cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
@@ -701,10 +793,30 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             
             if userimageURL == "null" {
                 imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                imgView.profileForCache(userimageURL)
+                if (imgforPostCache.objectForKey(userimageURL) != nil) {
+                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
+                    cell.btnProfile.setImage(imgCache, forState: .Normal)
+                }else{
+                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
+                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
+                    cell.btnProfile.contentMode = .Center
+                    let url = NSURL(string: userimageURL)
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                        if let data = NSData(contentsOfURL: url!){
+                            dispatch_async(dispatch_get_main_queue()){
+                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
+                                cell.btnProfile.contentMode = .ScaleAspectFill
+                            }
+                            let tmpImg = UIImage(data: data)
+                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
+                        }
+                        
+                    })
+                    task.resume()
+                }
             }
-            cell.btnProfile.setImage(imgView.image, forState: .Normal)
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -713,8 +825,54 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            cell.imgView1.imgForCache(self.img1[indexPath.row])
-            cell.imgView2.imgForCache(self.img2[indexPath.row])
+            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
+                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
+                cell.imgView1.image = imgCache
+                cell.imgView1.contentMode = .ScaleAspectFill
+            }else{
+                cell.imgView1.image = UIImage(named : "photo")
+                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
+                cell.imgView1.contentMode = .Center
+                cell.indicator.startAnimating()
+                let url = NSURL(string: self.img1[indexPath.row])
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.imgView1.image = UIImage(data: data)
+                            cell.imgView1.contentMode = .ScaleAspectFill
+                            cell.indicator.stopAnimating()
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                    }
+                    
+                })
+                task.resume()
+            }
+            if (imgforPostCache.objectForKey(self.img2[indexPath.row]) != nil) {
+                let imgCache = imgforPostCache.objectForKey(self.img2[indexPath.row]) as! UIImage
+                cell.imgView2.image = imgCache
+                cell.imgView2.contentMode = .ScaleAspectFill
+            }else{
+                cell.imgView2.image = UIImage(named : "photo")
+                cell.imgView2.backgroundColor = UIColor.lightGrayColor()
+                cell.imgView2.contentMode = .Center
+                cell.indicator2.startAnimating()
+                let url = NSURL(string: self.img2[indexPath.row])
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.imgView2.image = UIImage(data: data)
+                            cell.imgView2.contentMode = .ScaleAspectFill
+                            cell.indicator2.stopAnimating()
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
+                    }
+                    
+                })
+                task.resume()
+            }
             cell.imgContainer.addGestureRecognizer(imgTap)
             
             
@@ -741,10 +899,30 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             
             if userimageURL == "null" {
                 imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                imgView.profileForCache(userimageURL)
+                if (imgforPostCache.objectForKey(userimageURL) != nil) {
+                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
+                    cell.btnProfile.setImage(imgCache, forState: .Normal)
+                }else{
+                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
+                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
+                    cell.btnProfile.contentMode = .Center
+                    let url = NSURL(string: userimageURL)
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                        if let data = NSData(contentsOfURL: url!){
+                            dispatch_async(dispatch_get_main_queue()){
+                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
+                                cell.btnProfile.contentMode = .ScaleAspectFill
+                            }
+                            let tmpImg = UIImage(data: data)
+                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
+                        }
+                        
+                    })
+                    task.resume()
+                }
             }
-            cell.btnProfile.setImage(imgView.image, forState: .Normal)
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -753,7 +931,33 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            cell.imgView1.imgForCache(self.img1[indexPath.row])
+            //            cell.imgView1.imgForCache(self.img1[indexPath.row])
+            
+            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
+                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
+                cell.imgView1.image = imgCache
+                cell.imgView1.contentMode = .ScaleAspectFill
+            }else{
+                cell.imgView1.image = UIImage(named : "photo")
+                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
+                cell.imgView1.contentMode = .Center
+                cell.indicator.startAnimating()
+                let url = NSURL(string: self.img1[indexPath.row])
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.imgView1.image = UIImage(data: data)
+                            cell.imgView1.contentMode = .ScaleAspectFill
+                            cell.indicator.stopAnimating()
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                    }
+                    
+                })
+                task.resume()
+            }
+            
             cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
@@ -779,10 +983,30 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             
             if userimageURL == "null" {
                 imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                imgView.profileForCache(userimageURL)
+                if (imgforPostCache.objectForKey(userimageURL) != nil) {
+                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
+                    cell.btnProfile.setImage(imgCache, forState: .Normal)
+                }else{
+                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
+                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
+                    cell.btnProfile.contentMode = .Center
+                    let url = NSURL(string: userimageURL)
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                        if let data = NSData(contentsOfURL: url!){
+                            dispatch_async(dispatch_get_main_queue()){
+                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
+                                cell.btnProfile.contentMode = .ScaleAspectFill
+                            }
+                            let tmpImg = UIImage(data: data)
+                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
+                        }
+                        
+                    })
+                    task.resume()
+                }
             }
-            cell.btnProfile.setImage(imgView.image, forState: .Normal)
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -796,7 +1020,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 cell.btnDelete.hidden = false
             } else {
                 cell.btnDelete.hidden = true
-            
+                
             }
             
             return cell
@@ -877,7 +1101,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }
-  
+    
     
     func clickMoreImage(sender: UIButton) {
         let senderTag = sender.tag
@@ -919,7 +1143,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         return postuserID
     }
     
-
+    
     func displayMyAlertMessage(userMessage:String){
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
@@ -932,7 +1156,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         myAlert.addAction(UIAlertAction(title: "Delete", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             let id = self.userpostID
             let indexRow = self.indexInt
-    
+            
             self.deleteTimeline(id)
             
             let indexPath = NSIndexPath(forRow: indexRow, inSection: 0)
@@ -953,7 +1177,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
-
+    
 }
 
 extension String {

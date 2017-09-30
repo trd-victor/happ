@@ -53,6 +53,10 @@ class ConfigurationViewController: UIViewController {
         //load language set.
         language = setLanguage.appLanguage
         
+        if language == "ja" {
+            language = "jp"
+        }
+        
         self.loadConfigure()
 
         

@@ -41,7 +41,7 @@ extension CreateReservation {
             data, response, error  in
             
             if error != nil || data == nil {
-                
+                self.postReservation(sdate, edate: edate)
             }else{
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary

@@ -349,9 +349,8 @@ extension UserProfileController {
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
             data1, response1, error1 in
             
-            if error1 != nil{
-                print("\(error1)")
-                return;
+            if error1 != nil || data1 == nil{
+                self.deleteTimeline(sender)
             }else{
                 do {
                     let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary

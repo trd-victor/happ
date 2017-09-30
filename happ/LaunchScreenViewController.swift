@@ -105,13 +105,17 @@ class LaunchScreenViewController: UIViewController {
             let userdb = FIRDatabase.database().reference().child("users").child(firID)
             let token = FIRInstanceID.instanceID().token()!
             
+            globalUserId.FirID = firID
+            let config = SYSTEM_CONFIG()
+            config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+            
             FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
             
             dispatch_async(dispatch_get_main_queue()){
                 userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
                     if let data = snap.value as? NSDictionary{
                     globalUserId.userID = String(data["id"]!)
-                    
+                        
                     let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
                     self.presentViewController(userTimeLineController, animated:true, completion:nil)
                     }
