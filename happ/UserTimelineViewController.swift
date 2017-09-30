@@ -189,6 +189,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        navBar.tintColor = UIColor.blackColor()
         
         topImage.translatesAutoresizingMaskIntoConstraints = false
         topImage.centerXAnchor.constraintEqualToAnchor(navBar.centerXAnchor).active = true
