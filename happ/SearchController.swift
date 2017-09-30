@@ -163,7 +163,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             cell.textLabel?.text = ""
         }
         if let skills = self.userData[indexPath.row]["skills"] as? String {
-            cell.detailTextLabel?.text = skills
+            if skills != "null" {
+                cell.detailTextLabel?.text = skills
+            }
         }else{
             cell.detailTextLabel?.text = ""
         }

@@ -69,6 +69,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     var Firebaseemail : String!
     var Firebasename : String!
     var scrollview : UIScrollView!
+    var loadingScreen: UIView!
+    
+    var mess: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -136,6 +139,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userName.topAnchor.constraintEqualToAnchor(infoView.bottomAnchor).active = true
         userName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userName.heightAnchor.constraintEqualToConstant(48).active = true
+        userName.tintColor = UIColor.blackColor()
         
         labelName.translatesAutoresizingMaskIntoConstraints = false
         labelName.centerXAnchor.constraintEqualToAnchor(userName.centerXAnchor).active = true
@@ -148,6 +152,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userEmail.topAnchor.constraintEqualToAnchor(userName.bottomAnchor).active = true
         userEmail.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userEmail.heightAnchor.constraintEqualToConstant(48).active = true
+        userEmail.tintColor = UIColor.blackColor()
         
         labelEmail.translatesAutoresizingMaskIntoConstraints = false
         labelEmail.centerXAnchor.constraintEqualToAnchor(userEmail.centerXAnchor).active = true
@@ -160,6 +165,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userPassword.topAnchor.constraintEqualToAnchor(userEmail.bottomAnchor).active = true
         userPassword.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        userPassword.tintColor = UIColor.blackColor()
         
         labelPass.translatesAutoresizingMaskIntoConstraints = false
         labelPass.centerXAnchor.constraintEqualToAnchor(userPassword.centerXAnchor).active = true
@@ -172,6 +178,8 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userReEnterPassword.topAnchor.constraintEqualToAnchor(userPassword.bottomAnchor).active = true
         userReEnterPassword.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userReEnterPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        userReEnterPassword.tintColor = UIColor.blackColor()
+
         
         labelReEnterPass.translatesAutoresizingMaskIntoConstraints = false
         labelReEnterPass.centerXAnchor.constraintEqualToAnchor(userReEnterPassword.centerXAnchor).active = true
@@ -296,6 +304,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func registerUser(sender: AnyObject) {
+        loadingScreen = UIViewController.displaySpinner(self.view)
         //scroll to top
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
         
@@ -309,7 +318,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         
         let config = SYSTEM_CONFIG()
         
-        if email == "" && pass == "" && name == "" && reEnterpassword == "" {
+        if email == "" || pass == "" || name == "" || reEnterpassword == "" {
             displayMyAlertMessage(config.translate("mess_fill_missing_field"))
         }else if pass != reEnterpassword {
             displayMyAlertMessage(config.translate("mess_password_not_match"))
@@ -390,36 +399,38 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
                 data, response, error  in
 
-                var mess: String = ""
-                if error != nil{
-                    print("\(error)")
-                    return;
-                }
-                do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if json!["message"] != nil {
-                        mess = json!["message"] as! String
-                    }
-                    if json!["result"] != nil {
-                        if json!["result"]!["mess"] != nil {
-                            mess = json!["result"]!["mess"] as! String
-                        }
-                    }
-                    dispatch_async(dispatch_get_main_queue()) {
-                        var errorMessage : Bool
-                        if json!["error"] != nil {
-                            errorMessage = json!["error"] as! Bool
-                            if errorMessage == true {
-                                self.displayMyAlertMessage(mess)
+                if error != nil || data == nil{
+                    self.registerUser(sender)
+                }else{
+                    do {
+                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            if json!["message"] != nil {
+                                self.mess = json!["message"] as! String
                             }
-                        } else {
-                            self.successMessageAlert(mess)
-                            self.loadUserData(name, userEmail: email, password: pass)
+                            if json!["result"] != nil {
+                                if json!["result"]!["mess"] != nil {
+                                    self.mess = json!["result"]!["mess"] as! String
+                                }
+                            }
+                            
+                            var errorMessage : Bool
+                            if json!["error"] != nil {
+                                errorMessage = json!["error"] as! Bool
+                                if errorMessage == true {
+                                    self.displayMyAlertMessage(self.mess)
+                                }
+                            } else {
+                               
+                                self.loadUserData(name, userEmail: email, password: pass)
+                            }
                         }
+                    } catch {
+                        print(error)
                     }
-                } catch {
-                    print(error)
                 }
+               
  
             }
             task.resume()
@@ -427,6 +438,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func successMessageAlert(userMessage: String) {
+        UIViewController.removeSpinner(self.loadingScreen)
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.userEmail.text = ""
@@ -529,6 +541,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(token))
                 
+                 self.successMessageAlert(self.mess)
+                
+                
                 do {
                     try FIRAuth.auth()?.signOut()
                 } catch (let error) {
@@ -629,6 +644,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func displayMyAlertMessage(userMessage:String){
+        UIViewController.removeSpinner(self.loadingScreen)
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)

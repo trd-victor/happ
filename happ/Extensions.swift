@@ -64,3 +64,27 @@ extension UIImageView {
     }
     
 }
+
+extension UIViewController {
+    class func displaySpinner(onView : UIView) -> UIView {
+       let spinnerView = UIView.init(frame: onView.bounds)
+        spinnerView.backgroundColor = UIColor.init(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+        let ai = UIActivityIndicatorView.init(activityIndicatorStyle: .WhiteLarge)
+        ai.startAnimating()
+        ai.center = spinnerView.center
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            spinnerView.addSubview(ai)
+            onView.addSubview(spinnerView)
+        }
+        
+        return spinnerView
+          }
+  
+
+    class func removeSpinner(spinner :UIView) {
+        dispatch_async(dispatch_get_main_queue()) {
+            spinner.removeFromSuperview()
+        }
+    }
+}

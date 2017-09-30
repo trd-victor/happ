@@ -120,7 +120,7 @@ extension UserTimelineViewController {
             "office_id"        : "32",
             "status_key"       : "freetime"
         ]
-        print(parameters)
+        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -129,9 +129,8 @@ extension UserTimelineViewController {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil{
-                print("\(error)")
-                return;
+            if error != nil || data == nil{
+                self.updateFreeTimeStatus()
             }
         }
         task.resume()

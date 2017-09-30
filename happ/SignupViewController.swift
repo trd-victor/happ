@@ -41,6 +41,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     var real_userID: String!
     var emptyFields: String!
     var realID: String!
+    var loadingScreen: UIView!
     //Create Activity Indicator
     let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
@@ -163,6 +164,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func loginButton(sender: AnyObject) {
+        loadingScreen = UIViewController.displaySpinner(self.view)
         let userEmail = userEmailField.text!
         let userPass = userPasswordField.text!
         let config = SYSTEM_CONFIG()
@@ -236,7 +238,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                 self.loginFirebase(userEmail, pass: userPass)
                             }
                         }
-                        
+
+
                     } catch {
                         print(error)
                     }
@@ -252,14 +255,19 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
+                
                 let config = SYSTEM_CONFIG()
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+                
+                let vc = ViewController()
+                vc.getAllUserInfo()
                 
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
                 
                 self.connectToFcm()
                 self.redirectLogin()
+                UIViewController.removeSpinner(self.loadingScreen)
             } else {
                 self.displayMyAlertMessage(config.translate("mess_fail_auth"))
             }
@@ -271,7 +279,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         FIRMessaging.messaging().connectWithCompletion {(error) in
             
             if(error != nil){
-                print("Unable to connect with FCM. \(error)")
+             
             }else{
                 FIRMessaging.messaging().subscribeToTopic("timeline-push-notification")
                 FIRMessaging.messaging().subscribeToTopic("free-time-push-notification")
@@ -343,6 +351,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func displayMyAlertMessage(userMessage:String){
+        UIViewController.removeSpinner(loadingScreen)
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)

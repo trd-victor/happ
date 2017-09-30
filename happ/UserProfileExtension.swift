@@ -330,6 +330,7 @@ extension UserProfileController {
     // Delete Own Timeline
     
     func deleteTimeline(sender: String) {
+        
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
@@ -349,19 +350,12 @@ extension UserProfileController {
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
             data1, response1, error1 in
             
-            if error1 != nil{
-                print("\(error1)")
-                return;
+            if error1 != nil || data1 == nil{
+                self.deleteTimeline(sender)
             }else{
                 do {
-                    let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    let _ = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
-                    if json3!["message"] != nil {
-                    }
-                    if json3!["result"] != nil {
-                        if json3!["result"]!["mess"] != nil {
-                        }
-                    }
                     dispatch_async(dispatch_get_main_queue()) {
                         //self.displayMyAlertMessage(mess)
                         self.tblProfile.reloadData()

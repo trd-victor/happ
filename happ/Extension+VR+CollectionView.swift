@@ -192,7 +192,7 @@ extension ViewReservation {
             data, response, error  in
             
             if error != nil || data == nil {
-                
+                self.getReservationWithID()
             }else{
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
@@ -258,7 +258,7 @@ extension ViewReservation {
             data, response, error  in
             
             if error != nil || data == nil {
-                
+                self.removeReservation(pid)
             }else{
                 do {
                     let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary

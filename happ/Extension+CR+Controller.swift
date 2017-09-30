@@ -41,7 +41,7 @@ extension CreateReservation {
             data, response, error  in
             
             if error != nil || data == nil {
-                
+                self.postReservation(sdate, edate: edate)
             }else{
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
@@ -176,6 +176,9 @@ extension CreateReservation {
                     }else{
                         dataLabel[i].text = "\(dataTime[i]) (あなた)"
                     }
+                    
+                    dataLabel[i].textColor = UIColor.blackColor()
+                    dataLabel[i].font = UIFont.boldSystemFontOfSize(15)
                 }else{
                     dataLabel[i].text = dataTime[i]
                 }

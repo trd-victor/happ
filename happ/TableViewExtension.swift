@@ -32,73 +32,76 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil{
+            if error != nil || data == nil{
                 self.getTimelineUser()
-            }
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                
-                if let resultArray = json!.valueForKey("result") as? NSArray {
+            }else{
+                do {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
-                    for item in resultArray {
+                    if let resultArray = json!.valueForKey("result") as? NSArray {
                         
-                        if let resultDict = item as? NSDictionary {
-                            if let userPostId = resultDict.valueForKey("ID") {
-                                self.postID.append(userPostId as! Int)
-                            }
+                        for item in resultArray {
                             
-                            if let userPostModied = resultDict.valueForKey("post_modified") {
-                                self.postDate.append(userPostModied as! String)
-                            }
-                            
-                            if let postContent = resultDict.valueForKey("fields")  {
-                                if postContent["images"] != nil {
-                                    if let images = postContent.valueForKey("images") as? NSArray {
-                                        for index in 1...images.count {
-                                            if let img = images[index - 1].valueForKey("image"){
-                                                if index == 1 {
-                                                    self.img1.append(img["url"] as! String)
-                                                }
-                                                if index == 2 {
-                                                    self.img2.append(img["url"] as! String)
-                                                }
-                                                if index == 3 {
-                                                    self.img3.append(img["url"] as! String)
-                                                }
-                                            }
-                                        }
-                                        if images.count < 2 {
-                                            self.img2.append("null")
-                                        }
-                                        if images.count < 3 {
-                                            self.img3.append("null")
-                                        }
-                                    }else{
-                                        self.img1.append("null")
-                                        self.img2.append("null")
-                                        self.img3.append("null")
-                                    }
-                                }
-                                if let body = postContent.valueForKey("body") {
-                                    self.userBody.append(body as! String)
-                                }
-                                if let id = postContent.valueForKey("from_user_id") {
-                                    self.fromID.append(id as! String)
+                            if let resultDict = item as? NSDictionary {
+                                if let userPostId = resultDict.valueForKey("ID") {
+                                    self.postID.append(userPostId as! Int)
                                 }
                                 
-                                dispatch_async(dispatch_get_main_queue()){
-                                    self.tblProfile.reloadData()
-                                    self.refreshControl.endRefreshing()
-                                    self.topConstraint.constant = -380
-                                    self.didScroll = false
+                                if let userPostModied = resultDict.valueForKey("post_modified") {
+                                    self.postDate.append(userPostModied as! String)
+                                }
+                                
+                                if let postContent = resultDict.valueForKey("fields")  {
+                                    if postContent["images"] != nil {
+                                        if let images = postContent.valueForKey("images") as? NSArray {
+                                            for index in 1...images.count {
+                                                if let img = images[index - 1].valueForKey("image"){
+                                                    if index == 1 {
+                                                        self.img1.append(img["url"] as! String)
+                                                    }
+                                                    if index == 2 {
+                                                        self.img2.append(img["url"] as! String)
+                                                    }
+                                                    if index == 3 {
+                                                        self.img3.append(img["url"] as! String)
+                                                    }
+                                                }
+                                            }
+                                            if images.count < 2 {
+                                                self.img2.append("null")
+                                            }
+                                            if images.count < 3 {
+                                                self.img3.append("null")
+                                            }
+                                        }else{
+                                            self.img1.append("null")
+                                            self.img2.append("null")
+                                            self.img3.append("null")
+                                        }
+                                    }
+                                    if let body = postContent.valueForKey("body") {
+                                        self.userBody.append(body as! String)
+                                    }
+                                    if let id = postContent.valueForKey("from_user_id") {
+                                        self.fromID.append(id as! String)
+                                    }
+                                    
+                                   
                                 }
                             }
+                            
                         }
-                        
                     }
+                    dispatch_async(dispatch_get_main_queue()){
+                        self.tblProfile.reloadData()
+                        self.refreshControl.endRefreshing()
+                        self.topConstraint.constant = -380
+                        self.didScroll = false
+                    }
+                } catch {
+                    print(error)
                 }
-            } catch {
-                print(error)
+
             }
         }
         task.resume()
@@ -129,7 +132,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
-            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+//            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
@@ -141,7 +144,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.btnProfile.setImage(imgView.image, forState: .Normal)
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
-            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+//            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
             cell.profileImg.tag = Int(self.fromID[indexPath.row])!
             cell.postDate.text = self.postDate[indexPath.row]
@@ -170,7 +173,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
-            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+//            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
@@ -182,7 +185,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.btnProfile.setImage(imgView.image, forState: .Normal)
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
-            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+//            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
             cell.postDate.text = self.postDate[indexPath.row]
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
@@ -210,7 +213,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
-            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+//            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
@@ -222,7 +225,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.btnProfile.setImage(imgView.image, forState: .Normal)
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
-            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+//            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
             cell.postDate.text = self.postDate[indexPath.row]
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
@@ -248,7 +251,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
-            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+//            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
@@ -260,7 +263,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             }
             cell.btnProfile.setImage(imgView.image, forState: .Normal)
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
-            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
+//            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
             cell.postDate.text = self.postDate[indexPath.row]
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
@@ -278,6 +281,57 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             return cell
             
         }
+    }
+    
+    
+    func tapImage(sender: UITapGestureRecognizer){
+        viewDetail(sender)
+    }
+    
+    func tapBody(sender: UITapGestureRecognizer){
+        viewDetail(sender)
+    }
+    
+    func tapDate(sender: UITapGestureRecognizer){
+        viewDetail(sender)
+    }
+    
+    func tapCell(sender: UITapGestureRecognizer){
+        viewDetail(sender)
+    }
+    
+    func viewDetail(sender: AnyObject){
+        let config = SYSTEM_CONFIG()
+        if sender.state == UIGestureRecognizerState.Ended {
+            let tapLocation = sender.locationInView(self.tblProfile)
+            if let indexPath = self.tblProfile.indexPathForRowAtPoint(tapLocation) {
+                
+                UserDetails.username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String
+                UserDetails.userimageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as! String
+                UserDetails.postDate = self.postDate[indexPath.row]
+                UserDetails.fromID = self.fromID[indexPath.row]
+                UserDetails.body = String(self.userBody[indexPath.row])
+                UserDetails.img1 = self.img1[indexPath.row]
+                UserDetails.img2 = self.img2[indexPath.row]
+                UserDetails.img3 = self.img3[indexPath.row]
+                
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+                
+                self.presentDetail(vc)
+                
+            }
+        }
+    }
+
+    func presentDetail(viewControllerToPresent: UIViewController) {
+        let transition = CATransition()
+        transition.duration = 0.25
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        
+        presentViewController(viewControllerToPresent, animated: false, completion: nil)
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {

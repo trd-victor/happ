@@ -107,6 +107,13 @@ class LaunchScreenViewController: UIViewController {
         if let firID = FIRAuth.auth()?.currentUser?.uid {
             let userdb = FIRDatabase.database().reference().child("users").child(firID)
             let token = FIRInstanceID.instanceID().token()!
+            globalUserId.FirID = firID
+            
+            let user = ViewController()
+            user.getAllUserInfo()
+            
+            let config = SYSTEM_CONFIG()
+            config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
             
             FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
             

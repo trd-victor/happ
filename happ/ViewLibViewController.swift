@@ -1,5 +1,5 @@
 //
-//  NotifController.swift
+//  ViewLibView
 //  happ
 //
 //  Created by TokikawaTeppei on 13/09/2017.
@@ -43,14 +43,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.myCollectionView!.delegate = self
         containerView.backgroundColor = UIColor.whiteColor()
         
-        if(chatVar.Indicator == "MessageTable"){
-            self.deleteMessage()
-            self.loadMessages()
-        }else if(chatVar.Indicator == "Search"){
-            self.deleteMessage()
-            self.getChatRoomID()
-        }
-        
         self.view.addSubview(self.containerView)
         self.view.addSubview(self.navBar)
         self.view.addSubview(self.myCollectionView!)
@@ -61,8 +53,16 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         autoLayout()
         loadConfig()
-        //        getUsersImage()
+        getUsersImage()
         setupKeyboard()
+        
+        if(chatVar.Indicator == "MessageTable"){
+            self.deleteMessage()
+            self.loadMessages()
+        }else if(chatVar.Indicator == "Search"){
+            self.deleteMessage()
+            self.getChatRoomID()
+        }
         
     }
     
@@ -108,6 +108,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             
             if let result = snapshot.value as? NSDictionary {
                 self.userPhoto = result["photoUrl"] as! String
+                self.myCollectionView?.reloadData()
             }
         })
         
@@ -116,6 +117,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         chatmateDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             if let result = snapshot.value as? NSDictionary {
                 self.chatMatePhoto = result["photoUrl"] as! String
+                self.myCollectionView?.reloadData()
             }
         })
     }
@@ -313,39 +315,50 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         let chatmateID = chatVar.chatmateId
         let userid = FIRAuth.auth()?.currentUser?.uid
-        
         let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
         
         membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             var count = 0
             
-            for (key, value) in (snapshot.value as? [String: AnyObject])!{
-                count++
-                
-                let dataVal = value as? NSDictionary
-                
-                let firstUser = dataVal![String(chatmateID)] as? Int
-                let secondUser = dataVal![String(userid!)] as? Int
-                
-                if firstUser != nil && secondUser != nil {
-                    chatVar.RoomID = key
-                }
-                
-                if(count == snapshot.value?.count!){
-                    if chatVar.RoomID != "" {
-                        self.loadMessages()
-                    }else{
-                        let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
-                        dispatch_async(dispatch_get_main_queue()){
-                            let roomDetail = [
-                                String(chatmateID) :true,
-                                String(userid!) :true
-                            ]
-                            roomDB.setValue(roomDetail)
-                            chatVar.RoomID = roomDB.key
+            if let result =  snapshot.value as? [String: AnyObject] {
+                for (key, value) in result {
+                    count++
+                    let dataVal = value as? NSDictionary
+                    
+                    let firstUser = dataVal![String(chatmateID)] as? Int
+                    let secondUser = dataVal![String(userid!)] as? Int
+                    
+                    if firstUser != nil && secondUser != nil {
+                        chatVar.RoomID = key
+                    }
+                    
+                    if(count == snapshot.value?.count!){
+                        if chatVar.RoomID != "" {
                             self.loadMessages()
+                        }else{
+                            let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                            dispatch_async(dispatch_get_main_queue()){
+                                let roomDetail = [
+                                    String(chatmateID) : true,
+                                    String(userid!) : true
+                                ]
+                                roomDB.setValue(roomDetail)
+                                chatVar.RoomID = roomDB.key
+                                self.loadMessages()
+                            }
                         }
                     }
+                }
+            }else{
+                let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                dispatch_async(dispatch_get_main_queue()){
+                    let roomDetail = [
+                        String(chatmateID) : true,
+                        String(userid!) : true
+                    ]
+                    roomDB.setValue(roomDetail)
+                    chatVar.RoomID = roomDB.key
+                    self.loadMessages()
                 }
             }
         })
@@ -378,11 +391,9 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
             
-            if self.userPhoto == "null" || self.userPhoto == "" {
-                cell.userPhoto.image = UIImage(named: "noPhoto")
-            }else{
-                cell.userPhoto.imgForCache(self.userPhoto)
-            }
+
+            cell.userPhoto.profileForCache(self.userPhoto)
+
             
             cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
             cell.dateLblRight.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
@@ -395,11 +406,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleView.backgroundColor =  UIColor(hexString: "#E4D4B9")
             cell.txtLbl.textColor = UIColor.blackColor()
             
-            if self.chatMatePhoto == "null" || self.chatMatePhoto == "" {
-                cell.chatmatePhoto.image = UIImage(named: "noPhoto")
-            }else{
-                cell.chatmatePhoto.imgForCache(self.chatMatePhoto)
-            }
+            cell.chatmatePhoto.profileForCache(self.chatMatePhoto)
             
             cell.bubbleViewRightAnchor?.active = false
             cell.bubbleViewLeftAnchor?.active = true

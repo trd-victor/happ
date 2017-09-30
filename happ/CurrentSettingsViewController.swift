@@ -38,6 +38,10 @@ class CurrentSettingsViewController: UIViewController {
         //load language set.
         language = setLanguage.appLanguage
 
+        if language == "ja" {
+            language = "jp"
+        }
+        
         //set button text..
         self.loadConfigure()
         
@@ -200,9 +204,8 @@ class CurrentSettingsViewController: UIViewController {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil{
-                print("\(error)")
-                return;
+            if error != nil || data == nil {
+                self.saveLang(sender)
             }
         }
         task.resume()
@@ -267,10 +270,11 @@ class CurrentSettingsViewController: UIViewController {
                 do {
                     
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if json!["result"] != nil {
-                        lang = json!["result"]!["lang"] as! String
-                    }
+                    
                     dispatch_async(dispatch_get_main_queue()) {
+                        if json!["result"] != nil {
+                            lang = json!["result"]!["lang"] as! String
+                        }
                         
                         if changeLang.lang == "" {
   

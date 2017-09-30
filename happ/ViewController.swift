@@ -148,27 +148,27 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1) {
             data1, response1, error1 in
-            if error1 != nil{
-                print("\(error1)")
-                return;
-            }
-            do {
-                let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                if let info = json2!["result"] as? NSArray {
-                    
-                    for profile in info {
-                        config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
-                        config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
-                        if let url = profile["icon"] as? String {
-                            config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
-                        }else{
-                            config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+            if error1 != nil || data1 == nil{
+                self.getAllUserInfo()
+            }else{
+                do {
+                    let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    if let info = json2!["result"] as? NSArray {
+                        
+                        for profile in info {
+                            config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
+                            config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
+                            if let url = profile["icon"] as? String {
+                                config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
+                            }else{
+                                config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                            }
+                            config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
                         }
-                        config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
                     }
+                } catch {
+                    print(error)
                 }
-            } catch {
-                print(error)
             }
         }
         task2.resume()

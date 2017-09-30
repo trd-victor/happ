@@ -241,20 +241,22 @@ class TimelineDetail: UIViewController {
                     }else {
                         do {
                             let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-        
-                            if json!["success"] != nil {
-                                if let resultArray = json!.valueForKey("result") as? NSArray {
-                                    if resultArray.count != 0 {
-                                        
+                            
+                            let config = SYSTEM_CONFIG()
+                            dispatch_async(dispatch_get_main_queue()){
+                                if json!["success"] != nil {
+                                    if let resultArray = json!.valueForKey("result") as? NSArray {
+                                        if resultArray.count != 0 {
+                                            
                                             UserDetails.postDate = resultArray[0]["post_modified"] as! String
                                             UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
                                             UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
-                                        
+                                            
                                             self.btnUsername.tag = Int(UserDetails.fromID)!
                                             self.btnProfile.tag = Int(UserDetails.fromID)!
                                             self.postDate.text = UserDetails.postDate
                                             self.body.text = UserDetails.body
-                                        
+                                            
                                             dispatch_async(dispatch_get_main_queue()){
                                                 if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
                                                     let images = resultArray[0]["fields"]!!["images"] as! NSArray
@@ -282,7 +284,11 @@ class TimelineDetail: UIViewController {
                                                 self.postDetail()
                                             }
                                         }
-                                    
+                                        
+                                    }else{
+                                        self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
+                                    }
+
                                 }
                             }
                         } catch {
@@ -293,6 +299,15 @@ class TimelineDetail: UIViewController {
                 }
                 task.resume()
     }
+    
+    func displayMyAlertMessage(userMessage:String){
+       let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+        self.dismissViewControllerAnimated(false, completion: nil)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
     
     func imgViewHeight(imgview: UIImageView, swtchCase: Int) {
         let width: CGFloat = view.bounds.width

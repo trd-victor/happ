@@ -125,6 +125,10 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         //load language set.
         language = setLanguage.appLanguage
         
+        if language == "ja" {
+            language = "jp"
+        }
+        
         self.content.delegate = self
         self.content.textColor = UIColor.lightGrayColor()
         
@@ -202,6 +206,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         let config = SYSTEM_CONFIG()
         //set text
         self.saveItem.title = config.translate("button_post")
+        self.saveItem.tintColor = UIColor.whiteColor()
         self.content.text = config.translate("holder_post_content")
     }
     
@@ -215,7 +220,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
         if ( withContent == "true" || withImage == "true" ) {
             var body = self.content.text!
-            if body == "enter post content" {
+            if body == config.translate("holder_post_content") {
                 body = " "
             }
             let postTimeline = [
@@ -332,14 +337,16 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
                 do {
                     let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
-                    if json3!["success"] != nil {
-                        mess = json3!["success"] as! Bool
-                        let postID = json3!["result"] as? Int
-                        
-                        let notif = NotifController()
-                        notif.saveNotificationMessage(postID!, type: "timeline")
-                    }
+                    
                     dispatch_async(dispatch_get_main_queue()) {
+                        if json3!["success"] != nil {
+                            mess = json3!["success"] as! Bool
+                            let postID = json3!["result"] as? Int
+                            
+                            let notif = NotifController()
+                            notif.saveNotificationMessage(postID!, type: "timeline")
+                        }
+                        
                         if mess == true {
                             NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
                             self.displayMyAlertMessage(config.translate("saved_post"))

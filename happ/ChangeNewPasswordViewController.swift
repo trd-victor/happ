@@ -40,6 +40,10 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         //load language set.
         language = setLanguage.appLanguage
         
+        if language == "ja" {
+            language = "jp"
+        }
+        
         self.loadConfigure()
         
         userId = globalUserId.userID
@@ -176,12 +180,8 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
          let reEnterPass1 = reenterPassField.text!
 //         let origPass = originalPass.text!
         
-        if currentPass1 == ""  {
-            self.displayMyAlertMessage(config.translate("empty_current_password"))
-        } else if newPass1 == ""  {
-            self.displayMyAlertMessage(config.translate("empty_new_password"))
-        } else if reEnterPass1 == "" {
-            self.displayMyAlertMessage(config.translate("empty_reenter_password"))
+        if currentPass1 == "" || newPass1 == "" ||  reEnterPass1 == ""{
+            self.displayMyAlertMessage(config.translate("mess_fill_missing_field"))
         }
         else if newPass1 != reEnterPass1 {
             self.displayMyAlertMessage(config.translate("not_match_password"))
@@ -237,20 +237,20 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                                 FIRAuth.auth()?.currentUser?.updatePassword(newPass1, completion: nil)
                                 let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                                 
-                                if json!["message"] != nil {
-                                    message = json!["message"] as! String
-                                }
-                                
-                                if json!["result"] != nil {
-                                    message = json!["result"]!["mess"] as! String
-                                    self.displayMyAlertMessage(message)
-                                }
-                                
                                 dispatch_async(dispatch_get_main_queue()) {
                                     var errorMessage: Int
                                     if json!["error"] != nil {
                                         errorMessage = json!["error"] as! Int
                                         if errorMessage == 1 {
+                                            if json!["message"] != nil {
+                                                message = json!["message"] as! String
+                                            }
+
+                                            self.displayMyAlertMessage(message)
+                                        }
+                                    }else{
+                                        if json!["result"] != nil {
+                                            message = json!["result"]!["mess"] as! String
                                             self.displayMyAlertMessage(message)
                                         }
                                     }

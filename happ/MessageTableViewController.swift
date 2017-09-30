@@ -66,6 +66,12 @@ class MessageTableViewController: UITableViewController {
         
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        self.navigationController?.navigationBar.frame = CGRect(x: 0, y: 22, width: self.view.frame.size.width, height: CGFloat(44))
+    }
+    
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }

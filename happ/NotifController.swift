@@ -334,6 +334,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                         if let result = snapCount.value as? NSDictionary {
                                             if let count = result["count"] as? Int {
                                                 readDB.child("count").setValue(count + 1)
+                                            }else{
+                                                readDB.child("count").setValue(1)
                                             }
                                         }
                                     })
