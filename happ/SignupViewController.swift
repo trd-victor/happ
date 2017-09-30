@@ -41,6 +41,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     //Create Activity Indicator
     let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
+    var loadingScreen: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //setup delegate
@@ -158,7 +160,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func loginButton(sender: AnyObject) {
-        let loadingScreen = UIViewController.displaySpinner(self.view)
+        loadingScreen = UIViewController.displaySpinner(self.view)
         
         let userEmail = userEmailField.text!
         let userPass = userPasswordField.text!
@@ -232,7 +234,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                     self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                                 }
                             } else {
-                                self.loginFirebase(userEmail, pass: userPass, loadingScreen: loadingScreen)
+                                self.loginFirebase(userEmail, pass: userPass, loadingScreen: self.loadingScreen)
                             }
                         }
                         
@@ -263,12 +265,12 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 
                 self.connectToFcm()
                 self.redirectLogin()
-                
+                UIViewController.removeSpinner(loadingScreen)
                 
             } else {
                 self.displayMyAlertMessage(config.translate("mess_fail_auth"))
             }
-            UIViewController.removeSpinner(loadingScreen)
+            
         }
     }
     
@@ -348,6 +350,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func displayMyAlertMessage(userMessage:String){
+        UIViewController.removeSpinner(loadingScreen)
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)
