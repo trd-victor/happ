@@ -330,10 +330,11 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
                                 dispatch_async(dispatch_get_main_queue()){
                                     readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
-                                        
                                         if let result = snapCount.value as? NSDictionary {
                                             if let count = result["count"] as? Int {
                                                 readDB.child("count").setValue(count + 1)
+                                            }else{
+                                                readDB.child("count").setValue(1)
                                             }
                                         }
                                     })

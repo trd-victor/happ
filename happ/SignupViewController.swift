@@ -30,9 +30,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var underline_jp: UIView!
     
-    
-    
-    
     //    @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var navTitle: UINavigationItem!
     
@@ -85,7 +82,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func autoLayout(){
-        
         myActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
         myActivityIndicator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         myActivityIndicator.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
@@ -133,7 +129,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         forgetPass.topAnchor.constraintEqualToAnchor(btnLogin.bottomAnchor, constant: 25).active = true
         forgetPass.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         forgetPass.heightAnchor.constraintEqualToConstant(48).active = true
-        
     }
     
     func loadConfigure(){
@@ -163,6 +158,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func loginButton(sender: AnyObject) {
+        let loadingScreen = UIViewController.displaySpinner(self.view)
+        
         let userEmail = userEmailField.text!
         let userPass = userPasswordField.text!
         let config = SYSTEM_CONFIG()
@@ -207,6 +204,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                     print("\(error)")
                     self.loginButton(sender)
                 }else{
+                    
                     do {
                         let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                         
@@ -228,13 +226,13 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                             
                             var errorMessage : Bool
                             if json!["error"] != nil {
+                                
                                 errorMessage = json!["error"] as! Bool
                                 if errorMessage == true {
                                     self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                                 }
                             } else {
-                                
-                                self.loginFirebase(userEmail, pass: userPass)
+                                self.loginFirebase(userEmail, pass: userPass, loadingScreen: loadingScreen)
                             }
                         }
                         
@@ -248,7 +246,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    func loginFirebase(email: String, pass : String ) {
+    func loginFirebase(email: String, pass : String, loadingScreen: UIView) {
         let config = SYSTEM_CONFIG()
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
@@ -265,10 +263,12 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 
                 self.connectToFcm()
                 self.redirectLogin()
+                
+                
             } else {
                 self.displayMyAlertMessage(config.translate("mess_fail_auth"))
             }
-            
+            UIViewController.removeSpinner(loadingScreen)
         }
     }
     

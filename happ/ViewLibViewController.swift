@@ -43,14 +43,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.myCollectionView!.delegate = self
         containerView.backgroundColor = UIColor.whiteColor()
         
-        if(chatVar.Indicator == "MessageTable"){
-            self.deleteMessage()
-            self.loadMessages()
-        }else if(chatVar.Indicator == "Search"){
-            self.deleteMessage()
-            self.getChatRoomID()
-        }
-        
         self.view.addSubview(self.containerView)
         self.view.addSubview(self.navBar)
         self.view.addSubview(self.myCollectionView!)
@@ -61,8 +53,18 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         autoLayout()
         loadConfig()
-        //        getUsersImage()
+        
+        getUsersImage()
+        
         setupKeyboard()
+        
+            if(chatVar.Indicator == "MessageTable"){
+                self.deleteMessage()
+                self.loadMessages()
+            }else if(chatVar.Indicator == "Search"){
+                self.deleteMessage()
+                self.getChatRoomID()
+            }
         
     }
     
@@ -104,10 +106,12 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     func getUsersImage() {
         let userid  = FIRAuth.auth()?.currentUser?.uid
         let userDataDB = FIRDatabase.database().reference().child("users").child(userid!)
+        
         userDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             
             if let result = snapshot.value as? NSDictionary {
                 self.userPhoto = result["photoUrl"] as! String
+                self.myCollectionView!.reloadData()
             }
         })
         
@@ -115,7 +119,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         chatmateDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             if let result = snapshot.value as? NSDictionary {
+                
                 self.chatMatePhoto = result["photoUrl"] as! String
+                self.myCollectionView!.reloadData()
+               
             }
         })
     }
@@ -289,7 +296,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         messagesDb.observeEventType(.ChildAdded, withBlock: {(snapshot)  in
             if let result = snapshot.value as? NSDictionary {
                 self.messagesData.append(result)
-                
                 dispatch_async(dispatch_get_main_queue()){
                     self.myCollectionView!.reloadData()
                     if(self.messagesData.count > 0){
@@ -366,9 +372,15 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         return self.messagesData.count
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Messagecell", forIndexPath: indexPath) as! MessageCell
         let data = self.messagesData[indexPath.row]
+        
         
         self.setupCell(cell, mess_data: data)
         
@@ -388,12 +400,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
-            
-            if self.userPhoto == "null" || self.userPhoto == "" {
-                cell.userPhoto.image = UIImage(named: "noPhoto")
-            }else{
-                cell.userPhoto.imgForCache(self.userPhoto)
-            }
+
+            cell.userPhoto.profileForCache(self.userPhoto)
             
             cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
             cell.dateLblRight.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
@@ -406,11 +414,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleView.backgroundColor =  UIColor(hexString: "#E4D4B9")
             cell.txtLbl.textColor = UIColor.blackColor()
             
-            if self.chatMatePhoto == "null" || self.chatMatePhoto == "" {
-                cell.chatmatePhoto.image = UIImage(named: "noPhoto")
-            }else{
-                cell.chatmatePhoto.imgForCache(self.chatMatePhoto)
-            }
+            cell.chatmatePhoto.profileForCache(self.chatMatePhoto)
             
             cell.bubbleViewRightAnchor?.active = false
             cell.bubbleViewLeftAnchor?.active = true

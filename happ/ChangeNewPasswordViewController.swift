@@ -250,11 +250,11 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                                                 message = json!["message"] as! String
                                             }
                                             self.displayMyAlertMessage(message)
-                                        }else{
-                                            if json!["result"] != nil {
-                                                message = json!["result"]!["mess"] as! String
-                                                self.displayMyAlertMessage(message)
-                                            }
+                                        }
+                                    }else{
+                                        if json!["result"] != nil {
+                                            message = json!["result"]!["mess"] as! String
+                                            self.displayMyAlertMessage(message)
                                         }
                                     }
                                 }

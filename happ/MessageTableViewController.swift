@@ -38,16 +38,12 @@ class MessageTableViewController: UITableViewController {
     var USERUID: String!
     
     @IBOutlet var mytableview: UITableView!
-    let navBar: UINavigationBar = UINavigationBar()
-    
-    var animals = ["test", "test1"]
     
     //set variables..
     var lastMessages = [NSDictionary]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         //remove border in messages
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
@@ -71,8 +67,15 @@ class MessageTableViewController: UITableViewController {
     }
     
     func autoLayout(){
+        
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         self.navigationController?.navigationBar.barTintColor = UIColor.blackColor()
         self.navigationController?.navigationBar.titleTextAttributes =  [NSForegroundColorAttributeName : UIColor.whiteColor()]
+        self.navigationController?.navigationBar.frame = CGRect(x: 0, y: 22, width: self.view.frame.size.width, height: CGFloat(44))
     }
     
     func loadConfig(){

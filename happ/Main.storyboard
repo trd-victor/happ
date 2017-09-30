@@ -1470,7 +1470,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="happ" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="77"/>
+                                <rect key="frame" x="0.0" y="92" width="320" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lqd-Oi-WpL" id="3Q3-ls-nLn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="76"/>

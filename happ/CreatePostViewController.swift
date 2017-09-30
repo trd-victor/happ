@@ -151,6 +151,8 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     func autoLayout() {
+        self.saveItem.tintColor = UIColor.whiteColor()
+        
         self.navBar.translatesAutoresizingMaskIntoConstraints = false
         self.navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         self.navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true

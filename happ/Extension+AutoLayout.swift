@@ -160,6 +160,7 @@ extension CreateReservation {
         reservedLabel.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         reservedLabel.heightAnchor.constraintEqualToConstant(30).active = true
         
+        self.navCreate.tintColor = UIColor.whiteColor()
     }
     
 }

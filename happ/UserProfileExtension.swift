@@ -330,6 +330,9 @@ extension UserProfileController {
     // Delete Own Timeline
     
     func deleteTimeline(sender: String) {
+        
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
@@ -364,6 +367,37 @@ extension UserProfileController {
                     dispatch_async(dispatch_get_main_queue()) {
                         //self.displayMyAlertMessage(mess)
                         self.tblProfile.reloadData()
+
+//                        let notifDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").queryOrderedByChild("id").queryEqualToValue(Int(sender))
+//                        
+//                        notifDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+//                            let result = snapshot.value  as? NSDictionary
+//                            if result != nil{
+//                                for (key, value) in result! {
+//                                    let dataVal = value as? NSDictionary
+//                                    
+//                                    if dataVal != nil {
+//                                        if let id = dataVal!["id"] as? Int {
+//                                            if id == Int(sender) {
+//                                                FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(key as! String).removeValue()
+//                                                
+////                                                let userDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user")
+////                                                
+////                                                userDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+////                                                    let result = snap.value as? NSDictionary {
+////                                                        
+////                                                        if ()
+////                                                        
+////                                                    }
+////                                                })
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        })
+                    
+                        
                     }
                     
                 } catch {

@@ -423,7 +423,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                         dispatch_async(dispatch_get_main_queue(), {() -> Void in
                             
                             self.userNamefield.text = name
-                            if data != nil {
+                            if image != ""{
                                 //save new photo on firebase database
                                 if self.checkNewImage {
                                     let uid = FIRAuth.auth()?.currentUser?.uid
@@ -756,31 +756,32 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil{
-                print("\(error)")
-                return;
-            }
-            do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                if json!["result"] != nil {
-                    var image: String!
-                    
-                    if let _ = json!["result"]!["icon"] as? NSNull {
-                        image = ""
-                    } else {
-                        image = json!["result"]!["icon"] as? String
+            if error != nil || data == nil{
+                self.setImageToFirebaseUser()
+            }else {
+                do {
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    if json!["result"] != nil {
+                        var image: String!
+                        
+                        if let _ = json!["result"]!["icon"] as? NSNull {
+                            image = ""
+                        } else {
+                            image = json!["result"]!["icon"] as? String
+                        }
+                        
+                        if self.checkNewImage {
+                            let uid = FIRAuth.auth()?.currentUser?.uid
+                            FIRDatabase.database().reference().child("users").child("\(uid!)").child("photoUrl").setValue(image)
+                            self.checkNewImage = false
+                        }
                     }
-                    
-                    if self.checkNewImage {
-                        let uid = FIRAuth.auth()?.currentUser?.uid
-                        FIRDatabase.database().reference().child("users").child("\(uid!)").child("photoUrl").setValue(image)
-                        self.checkNewImage = false
-                    }
+                } catch {
+                    print(error)
                 }
-            } catch {
-                print(error)
+
             }
-        }
+                    }
         task.resume()
     }
     

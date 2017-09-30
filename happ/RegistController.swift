@@ -52,6 +52,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     @IBOutlet var webdesignSwitch: UISwitch!
     
     
+    var loadingScreen: UIView!
     
     var arrText = [
         "en": [
@@ -69,6 +70,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     var Firebaseemail : String!
     var Firebasename : String!
     var scrollview : UIScrollView!
+    var mess: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,6 +108,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func autoLayout(){
+        
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
@@ -136,6 +139,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userName.topAnchor.constraintEqualToAnchor(infoView.bottomAnchor).active = true
         userName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userName.heightAnchor.constraintEqualToConstant(48).active = true
+        userName.tintColor = UIColor.blackColor()
         
         labelName.translatesAutoresizingMaskIntoConstraints = false
         labelName.centerXAnchor.constraintEqualToAnchor(userName.centerXAnchor).active = true
@@ -148,6 +152,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userEmail.topAnchor.constraintEqualToAnchor(userName.bottomAnchor).active = true
         userEmail.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userEmail.heightAnchor.constraintEqualToConstant(48).active = true
+        userEmail.tintColor = UIColor.blackColor()
         
         labelEmail.translatesAutoresizingMaskIntoConstraints = false
         labelEmail.centerXAnchor.constraintEqualToAnchor(userEmail.centerXAnchor).active = true
@@ -160,6 +165,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userPassword.topAnchor.constraintEqualToAnchor(userEmail.bottomAnchor).active = true
         userPassword.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        userPassword.tintColor = UIColor.blackColor()
         
         labelPass.translatesAutoresizingMaskIntoConstraints = false
         labelPass.centerXAnchor.constraintEqualToAnchor(userPassword.centerXAnchor).active = true
@@ -172,6 +178,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userReEnterPassword.topAnchor.constraintEqualToAnchor(userPassword.bottomAnchor).active = true
         userReEnterPassword.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userReEnterPassword.heightAnchor.constraintEqualToConstant(48).active = true
+        userReEnterPassword.tintColor = UIColor.blackColor()
         
         labelReEnterPass.translatesAutoresizingMaskIntoConstraints = false
         labelReEnterPass.centerXAnchor.constraintEqualToAnchor(userReEnterPassword.centerXAnchor).active = true
@@ -298,7 +305,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     func registerUser(sender: AnyObject) {
         //scroll to top
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
-        
+        loadingScreen = UIViewController.displaySpinner(self.view)
         //setting up the textbox...
         let email = userEmail.text!
         let pass = userPassword.text!
@@ -309,12 +316,14 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         
         let config = SYSTEM_CONFIG()
         
-        if email == "" && pass == "" && name == "" && reEnterpassword == "" {
+        if email == "" || pass == "" || name == "" || reEnterpassword == "" {
+           
             displayMyAlertMessage(config.translate("mess_fill_missing_field"))
         }else if pass != reEnterpassword {
             displayMyAlertMessage(config.translate("mess_password_not_match"))
         }
         else {
+            
             //created NSURL
             let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
             
@@ -390,7 +399,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
                 data, response, error  in
 
-                var mess: String = ""
+                
                 if error != nil || data == nil{
                     self.registerUser(sender)
                 }else{
@@ -403,18 +412,18 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                                 if errorMessage == true {
                                     
                                     if json!["message"] != nil {
-                                        mess = json!["message"] as! String
+                                        self.mess = json!["message"] as! String
                                     }
                                     
-                                    self.displayMyAlertMessage(mess)
+                                    self.displayMyAlertMessage(self.mess)
                                 }
                             } else {
                                 if json!["result"] != nil {
                                     if json!["result"]!["mess"] != nil {
-                                        mess = json!["result"]!["mess"] as! String
+                                        self.mess = json!["result"]!["mess"] as! String
                                     }
                                 }
-                                self.successMessageAlert(mess)
+                               
                                 self.loadUserData(name, userEmail: email, password: pass)
                             }
                         }
@@ -428,6 +437,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func successMessageAlert(userMessage: String) {
+         UIViewController.removeSpinner(self.loadingScreen)
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.userEmail.text = ""
@@ -529,6 +539,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(token))
                 
+                self.successMessageAlert(self.mess)
                 do {
                     try FIRAuth.auth()?.signOut()
                 } catch (let error) {
@@ -538,6 +549,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 print(error)
                 self.displayMyAlertMessage("Error: Not Successfully Registered to firebase")
             }
+           
         })
     }
     
@@ -628,6 +640,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func displayMyAlertMessage(userMessage:String){
+        UIViewController.removeSpinner(self.loadingScreen)
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)
