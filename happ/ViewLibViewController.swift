@@ -28,10 +28,9 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor(hexString: "#272727")
+        self.view.backgroundColor = UIColor(hexString: "#dddddd")
         self.navBar.barTintColor = UIColor(hexString: "#272727")
         self.navBar.translucent = false
-        self.separatorLineView.backgroundColor = UIColor(hexString: "#c0c0c0")
         
         self.layout = UICollectionViewFlowLayout()
         self.myCollectionView = UICollectionView(frame: self.view.frame, collectionViewLayout: self.layout!)
@@ -82,7 +81,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]?.doubleValue
         
         containerViewBottomAncher?.constant = -keyboardFrame!.height
-        collectioView?.constant = -110 + -keyboardFrame!.height
+        collectioView?.constant = -112 + -keyboardFrame!.height
         
         UIView.animateWithDuration(keyboardDuration!){
             self.view.layoutIfNeeded()
@@ -93,7 +92,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let keyboardDuration = notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey]?.doubleValue
         
         containerViewBottomAncher?.constant = 0
-        collectioView?.constant = -110
+        collectioView?.constant = -112
         
         UIView.animateWithDuration(keyboardDuration!){
             self.view.layoutIfNeeded()
@@ -148,9 +147,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.txtField.leftAnchor.constraintEqualToAnchor(self.containerView.leftAnchor, constant: 5).active = true
         self.txtField.widthAnchor.constraintEqualToAnchor(self.containerView.widthAnchor, constant: -85).active = true
         self.txtField.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor, constant: -6).active = true
-        self.txtField.layer.borderColor = UIColor.blackColor().CGColor
-        self.txtField.layer.borderWidth = 1.0
-        self.txtField.layer.cornerRadius = 10
         self.txtField.font = UIFont.systemFontOfSize(16)
         
         self.separatorLineView.translatesAutoresizingMaskIntoConstraints = false
@@ -164,7 +160,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.myCollectionView!.centerXAnchor.constraintEqualToAnchor(self.view.centerXAnchor).active = true
         self.myCollectionView!.widthAnchor.constraintEqualToAnchor(self.view.widthAnchor).active = true
         
-        collectioView =  self.myCollectionView!.heightAnchor.constraintEqualToAnchor(self.view.heightAnchor, constant: -110)
+        collectioView =  self.myCollectionView!.heightAnchor.constraintEqualToAnchor(self.view.heightAnchor, constant: -112)
         collectioView?.active = true
     }
     
@@ -294,8 +290,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 
                 dispatch_async(dispatch_get_main_queue()){
                     self.myCollectionView!.reloadData()
-                    if(self.messagesData.count > 0){
-                        dispatch_async(dispatch_get_main_queue()){
+                    dispatch_async(dispatch_get_main_queue()){
+                        if(self.messagesData.count > 0){
                             let lastItemIndex = NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
                             self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
                         }
@@ -391,9 +387,9 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
             
-
+            
             cell.userPhoto.profileForCache(self.userPhoto)
-
+            
             
             cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
             cell.dateLblRight.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)

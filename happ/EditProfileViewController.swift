@@ -55,6 +55,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     var imageName: String = ""
     var checkNewImage: Bool = false
     var galleryPicker = UIImagePickerController()
+    var loadingScreen: UIView!
     //    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
@@ -353,6 +354,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     }
     
     func loadUserData() {
+        loadingScreen = UIViewController.displaySpinner(self.view)
+        
         //let URL
         let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
         
@@ -445,6 +448,11 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             
                             self.userDescription.text = message
                             self.getSkillNotArray(self.returnSkillState(skills))
+                            
+                            if self.loadingScreen != nil {
+                                UIViewController.removeSpinner(self.loadingScreen)
+                            }
+                            
                         })
                     })
                     
@@ -471,6 +479,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     
     @IBAction func StatusItem(sender: AnyObject) {
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
+        loadingScreen = UIViewController.displaySpinner(self.view)
+        
         
         //setting up the textbox...
         let name = userNamefield.text!
@@ -724,6 +734,10 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     }
     
     func displayMyAlertMessage(userMessage:String){
+        if loadingScreen != nil {
+            UIViewController.removeSpinner(loadingScreen)
+        }
+        
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)

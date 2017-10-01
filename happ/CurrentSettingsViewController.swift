@@ -156,7 +156,7 @@ class CurrentSettingsViewController: UIViewController {
             self.changeLanguage("en")
             self.currentSettingslang.text = new_lang
         } else {
-            self.changeLanguage("ja")
+            self.changeLanguage("jp")
             self.currentSettingslang.text = new_lang
         }
         

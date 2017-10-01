@@ -184,15 +184,17 @@ class UserProfileController: UIViewController {
     }
     
     func profileBlock(sender: UIButton!){
+        let config = SYSTEM_CONFIG()
+        
         if sender.tag == 0 {
             blockUser()
             btnBlock.backgroundColor = UIColor(hexString: "#E2041B")
-            btnBlock.setTitle("Unblock", forState: .Normal)
+            btnBlock.setTitle(config.translate("button_unblock"), forState: .Normal)
             btnBlock.tag = 1
         }else{
             unblockUser()
             btnBlock.backgroundColor = UIColor(hexString: "#272727")
-            btnBlock.setTitle("Block", forState: .Normal)
+            btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
             btnBlock.tag = 0
         }
     }
@@ -224,8 +226,9 @@ class UserProfileController: UIViewController {
     }
     
     func translate(){
-        btnMessage.setTitle("Message", forState: .Normal)
-        btnBlock.setTitle("Block", forState: .Normal)
+        let config = SYSTEM_CONFIG()
+        btnMessage.setTitle(config.translate("title:message"), forState: .Normal)
+        btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
     }
     
     func autoLayout() {
@@ -329,14 +332,16 @@ class UserProfileController: UIViewController {
     var index: Int = 0
     
     func deletePost(sender: String, index: Int) {
-        self.deleteAlertMessage("Delete this Post?")
+        let config = SYSTEM_CONFIG()
+        self.deleteAlertMessage(config.translate("delete_post_mess"))
         self.pid = sender
         self.index = index
     }
     
     func deleteAlertMessage(userMessage:String){
+        let config = SYSTEM_CONFIG()
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.ActionSheet)
-        myAlert.addAction(UIAlertAction(title: "Delete", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+        myAlert.addAction(UIAlertAction(title: config.translate("button_delete"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             let id = self.pid
             let indexRow = self.index
             

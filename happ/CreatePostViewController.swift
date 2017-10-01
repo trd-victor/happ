@@ -26,7 +26,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     var imgList = [UIImage]()
     var imgView = [UIImageView]()
-    
+    var loadingScreen: UIView!
     
     //basepath
     let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
@@ -169,6 +169,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         self.content.topAnchor.constraintEqualToAnchor(self.scrollView.topAnchor).active = true
         self.content.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
         self.content.heightAnchor.constraintEqualToAnchor(self.scrollView.heightAnchor).active = true
+        self.content.tintColor = UIColor.blackColor()
         
         self.separator.translatesAutoresizingMaskIntoConstraints = false
         self.separator.topAnchor.constraintEqualToAnchor(self.kboardView.topAnchor).active = true
@@ -194,6 +195,11 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
     }
     
+    override func viewWillAppear(animated: Bool){
+        super.viewWillAppear(animated)
+        loadConfigure()
+    }
+    
     @IBAction func btnGallery(sender: AnyObject) {
         handlerGallery()
     }
@@ -215,7 +221,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     @IBAction func saveItem(sender: UIBarButtonItem) {
-        
+        loadingScreen = UIViewController.displaySpinner(self.view)
         let config = SYSTEM_CONFIG()
         
         if ( withContent == "true" || withImage == "true" ) {
@@ -350,7 +356,6 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
                         if mess == true {
                             NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
                             self.displayMyAlertMessage(config.translate("saved_post"))
-                            self.content.text = config.translate("holder_post_content")
                         }
                     }
                     
@@ -430,6 +435,11 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     func displayMyAlertMessage(userMessage:String){
+        
+        if loadingScreen != nil {
+            UIViewController.removeSpinner(loadingScreen)
+        }
+        
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default) {
             UIAlertAction in

@@ -137,6 +137,12 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.loadConfigure()
+    }
+    
     func loadConfigure(){
         let config = SYSTEM_CONFIG()
         
