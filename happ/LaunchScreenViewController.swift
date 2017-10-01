@@ -29,7 +29,12 @@ class SYSTEM_CONFIG {
      * System Language
     **/
     internal func translate(key: String) -> String {
-        let lang = self.getSYS_VAL("AppLanguage") as! String
+        var lang = self.getSYS_VAL("AppLanguage") as! String
+        
+        if lang == "ja" {
+            lang = "jp"
+        }
+        
         let textTranslate = self.getSYS_VAL("SYSTM_VAL")
         
         if textTranslate![key] != nil {

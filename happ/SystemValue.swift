@@ -51,7 +51,7 @@ class getSystemValue {
                                 
                                 self.sysVals[key] = [
                                     "en" : en,
-                                    "ja" : ja
+                                    "jp" : ja
                                 ]
                             }
                         }

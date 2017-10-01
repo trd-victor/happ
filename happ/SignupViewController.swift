@@ -154,6 +154,11 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         forgetPass.setTitle(config.translate("label_forgot_password"), forState: .Normal)
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.loadConfigure()
+    }
     
     func backHome(sender: UIBarButtonItem) ->() {
         self.dismissViewControllerAnimated(true, completion: nil)

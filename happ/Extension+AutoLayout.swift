@@ -41,6 +41,7 @@ extension CreateReservation {
     
     func autoLayout(){
         self.navCreate.tintColor = UIColor.whiteColor()
+        self.navCreate.titleTextAttributesForState(.Normal)
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true

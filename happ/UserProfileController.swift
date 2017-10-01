@@ -224,8 +224,9 @@ class UserProfileController: UIViewController {
     }
     
     func translate(){
-        btnMessage.setTitle("Message", forState: .Normal)
-        btnBlock.setTitle("Block", forState: .Normal)
+        let config = SYSTEM_CONFIG()
+        btnMessage.setTitle(config.translate("title:message"), forState: .Normal)
+        btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
     }
     
     func autoLayout() {

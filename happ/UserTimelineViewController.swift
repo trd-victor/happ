@@ -1090,7 +1090,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         if !loadingData && indexPath.row == self.fromID.count - 1 {
-            print("true2")
             self.getOlderPostTimeline()
             self.loadingData = true
         }

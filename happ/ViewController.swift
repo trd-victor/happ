@@ -53,8 +53,13 @@ class ViewController: UIViewController, UIScrollViewDelegate {
                 self.btnCLang.hidden = true
             }
         }
-        self.btnCLang.setTitle(config.translate("sys_change_lang"), forState: .Normal)
+        
         self.btnCLang.addTarget(self, action: Selector("gotoLang"), forControlEvents: .TouchUpInside)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        self.loadConfigure()
     }
     
     func setupAllViews() {
@@ -180,6 +185,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         // Set Translations
         btn_register.setTitle(config.translate("button_regist"), forState: .Normal)
         btn_login.setTitle(config.translate("subtitle_Login"),forState: .Normal)
+        self.btnCLang.setTitle(config.translate("sys_change_lang"), forState: .Normal)
     }
     
     //get sysetm value

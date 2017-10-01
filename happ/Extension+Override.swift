@@ -28,8 +28,6 @@ extension CreateReservation {
         // set all Layout for views and Labels
         autoLayout()
         
-        
-        UINavigationController().navigationItem.rightBarButtonItem?.title = "asdasd"
         self.navCreate.title = config.translate("button_create")
         roomSubtitle.text = config.translate("subtitle_room")
         facilityLabel.text =  config.translate("lbl_facility")

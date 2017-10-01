@@ -210,10 +210,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.tblViewSearch.hidden = false
         searchBar.showsCancelButton = true
         
-        
         let uiButton = searchBar.valueForKey("cancelButton") as! UIButton
         uiButton.setTitle("CANCEL", forState: UIControlState.Normal)
-        
+        uiButton.setTitleColor(UIColor(hexString: "#0076FF"), forState: .Normal)
         
         view.backgroundColor = UIColor(hexString: "#C9C9CE")
         setNeedsStatusBarAppearanceUpdate()
