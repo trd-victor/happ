@@ -422,19 +422,17 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                         if let body = postContent.valueForKey("from_user_id") {
                                             self.fromID.append(body as! String)
                                         }
-                                        
-                                        
-                                        dispatch_async(dispatch_get_main_queue()){
-                                            if self.loadingData {
-                                                self.loadingData = false
-                                            }
-                                            self.mytableview.reloadData()
-                                        }
                                     }
                                 }
                                 
                             }
                         }
+                    }
+                    dispatch_async(dispatch_get_main_queue()){
+                        if self.loadingData {
+                            self.loadingData = false
+                        }
+                        self.mytableview.reloadData()
                     }
                 } catch {
                     print(error)
@@ -480,6 +478,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             data, response, error  in
             
             if error != nil && data == nil {
+                print(true)
                 self.getTimelineUser()
             }else{
                 do {
@@ -536,18 +535,17 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                     if let id = postContent.valueForKey("from_user_id") {
                                         self.fromID.append(id as! String)
                                     }
-                                    
-                                    dispatch_async(dispatch_get_main_queue()){
-                                        if self.refreshControl.refreshing {
-                                            self.refreshControl.endRefreshing()
-                                            self.mytableview.contentOffset = CGPoint(x: 0,y: 0)
-                                        }
-                                        self.mytableview.reloadData()
-                                    }
                                 }
                             }
                             
                         }
+                    }
+                    dispatch_async(dispatch_get_main_queue()){
+                        if self.refreshControl.refreshing {
+                            self.refreshControl.endRefreshing()
+                            self.mytableview.contentOffset = CGPoint(x: 0,y: 0)
+                        }
+                        self.mytableview.reloadData()
                     }
                 } catch {
                     print(error)
@@ -586,7 +584,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 self.page = 1
                 self.scrollLoad = true
                 
-                for var i = 5; i < self.fromID.count; i++ {
+                for var i = 5; i > self.fromID.count; i++ {
                     let indexPath = NSIndexPath(forRow: i, inSection: 0)
                     self.mytableview.beginUpdates()
                     self.mytableview.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)

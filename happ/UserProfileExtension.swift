@@ -230,6 +230,14 @@ extension UserProfileController {
     
     func reloadData() {
         
+        postID.removeAll()
+        postDate.removeAll()
+        img1.removeAll()
+        img2.removeAll()
+        img3.removeAll()
+        userBody.removeAll()
+        fromID.removeAll()
+        
         let parameters = [
             "sercret"     : "jo8nefamehisd",
             "action"      : "api",
@@ -263,60 +271,56 @@ extension UserProfileController {
                             
                             indexArr += 1
                             
-                            if indexArr < self.postID.count {
-                                if let resultDict = item as? NSDictionary {
-                                    if let userPostId = resultDict.valueForKey("ID") {
-                                        self.postID[indexArr] = userPostId as! Int
-                                    }
-                                    
-                                    if let userPostModied = resultDict.valueForKey("post_modified") {
-                                        self.postDate[indexArr] = userPostModied as! String
-                                    }
-                                    
-                                    if let postContent = resultDict.valueForKey("fields")  {
-                                        if postContent["images"] != nil {
-                                            if let images = postContent.valueForKey("images") as? NSArray {
-                                                for index in 1...images.count {
-                                                    if let img = images[index - 1].valueForKey("image"){
-                                                        if index == 1 {
-                                                            self.img1[indexArr] = img["url"] as! String
-                                                        }
-                                                        if index == 2 {
-                                                            self.img2[indexArr] = img["url"] as! String
-                                                        }
-                                                        if index == 3 {
-                                                            self.img3[indexArr] = img["url"] as! String
-                                                        }
+                            if let resultDict = item as? NSDictionary {
+                                if let userPostId = resultDict.valueForKey("ID") {
+                                    self.postID.append(userPostId as! Int)
+                                }
+                                
+                                if let userPostModied = resultDict.valueForKey("post_modified") {
+                                    self.postDate.append(userPostModied as! String)
+                                }
+                                
+                                if let postContent = resultDict.valueForKey("fields")  {
+                                    if postContent["images"] != nil {
+                                        if let images = postContent.valueForKey("images") as? NSArray {
+                                            for index in 1...images.count {
+                                                if let img = images[index - 1].valueForKey("image"){
+                                                    if index == 1 {
+                                                        self.img1.append(img["url"] as! String)
+                                                    }
+                                                    if index == 2 {
+                                                        self.img2.append(img["url"] as! String)
+                                                    }
+                                                    if index == 3 {
+                                                        self.img3.append(img["url"] as! String)
                                                     }
                                                 }
-                                                if images.count < 2 {
-                                                    self.img2[indexArr] = "null"
-                                                }
-                                                if images.count < 3 {
-                                                    self.img3[indexArr] = "null"
-                                                }
-                                            }else{
-                                                self.img1[indexArr] = "null"
-                                                self.img2[indexArr] = "null"
-                                                self.img3[indexArr] = "null"
                                             }
+                                            if images.count < 2 {
+                                                self.img2.append("null")
+                                            }
+                                            if images.count < 3 {
+                                                self.img3.append("null")
+                                            }
+                                        }else{
+                                            self.img1.append("null")
+                                            self.img2.append("null")
+                                            self.img3.append("null")
                                         }
-                                        if let body = postContent.valueForKey("body") {
-                                            self.userBody[indexArr] = body as! String
-                                        }
-                                        if let body = postContent.valueForKey("from_user_id") {
-                                            self.fromID[indexArr] = body as! String
-                                        }
+                                    }
+                                    if let body = postContent.valueForKey("body") {
+                                        self.userBody.append( body as! String )
+                                    }
+                                    if let body = postContent.valueForKey("from_user_id") {
+                                        self.fromID.append( body as! String )
                                     }
                                 }
                             }
-                            dispatch_async(dispatch_get_main_queue()) {
-                                self.tblProfile.reloadData()
-                                self.refreshControl.endRefreshing()
-                                self.topConstraint.constant = -380
-                                self.didScroll = false
-                            }
                         }
+                    }
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.tblProfile.reloadData()
+                        self.topReload.stopAnimating()
                     }
                 } catch {
                     print(error)

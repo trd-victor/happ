@@ -94,9 +94,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
                     }
                     dispatch_async(dispatch_get_main_queue()){
                         self.tblProfile.reloadData()
-                        self.refreshControl.endRefreshing()
-                        self.topConstraint.constant = -380
-                        self.didScroll = false
+                        self.topReload.stopAnimating()
                     }
                 } catch {
                     print(error)

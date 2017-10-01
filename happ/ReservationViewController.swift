@@ -73,13 +73,13 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         calendarCollectionView.dataSource = self
         calendarCollectionView.backgroundColor = UIColor.clearColor()
         
-        let swipeToLeft = UISwipeGestureRecognizer(target: self, action: "swipeToLeft:")
-        swipeToLeft.direction = .Right
-        let swipeToRight = UISwipeGestureRecognizer(target: self, action: "swipeToRight:")
-        swipeToRight.direction = .Left
+        let swipeUpward = UISwipeGestureRecognizer(target: self, action: "swipeUpward:")
+        swipeUpward.direction = .Down
+        let swipeDownward = UISwipeGestureRecognizer(target: self, action: "swipeDownward:")
+        swipeDownward.direction = .Up
         
-        view.addGestureRecognizer(swipeToLeft)
-        view.addGestureRecognizer(swipeToRight)
+        view.addGestureRecognizer(swipeUpward)
+        view.addGestureRecognizer(swipeDownward)
         loadCalendar()
         autoLayout()
     }
@@ -89,7 +89,7 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         self.navBar.topItem?.title = config.translate("title_room_reservation")
     }
     
-    func swipeToLeft(gest: UISwipeGestureRecognizer){
+    func swipeUpward(gest: UISwipeGestureRecognizer){
         if calendarMonth == 1 {
             calendarYear -= 1
             calendarMonth = 12
@@ -99,7 +99,7 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         loadCalendar()
     }
     
-    func swipeToRight(gest: UISwipeGestureRecognizer){
+    func swipeDownward(gest: UISwipeGestureRecognizer){
         if calendarMonth == 12 {
             calendarYear += 1
             calendarMonth = 1

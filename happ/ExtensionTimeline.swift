@@ -10,6 +10,14 @@ extension UserTimelineViewController {
 
     func reloadTimeline() {
         
+        postID.removeAll()
+        postDate.removeAll()
+        img1.removeAll()
+        img2.removeAll()
+        img3.removeAll()
+        userBody.removeAll()
+        fromID.removeAll()
+        
         let parameters = [
             "sercret"     : "jo8nefamehisd",
             "action"      : "api",
@@ -29,6 +37,7 @@ extension UserTimelineViewController {
             data, response, error  in
             
             if error != nil || data == nil {
+                print(true)
                 self.reloadTimeline()
             }else{
                 do {
@@ -44,11 +53,11 @@ extension UserTimelineViewController {
                             
                             if let resultDict = item as? NSDictionary {
                                 if let userPostId = resultDict.valueForKey("ID") {
-                                    self.postID[indexArr] = userPostId as! Int
+                                    self.postID.append(userPostId as! Int)
                                 }
                                 
                                 if let userPostModied = resultDict.valueForKey("post_modified") {
-                                    self.postDate[indexArr] = userPostModied as! String
+                                    self.postDate.append(userPostModied as! String)
                                 }
                                 
                                 if let postContent = resultDict.valueForKey("fields")  {
@@ -57,48 +66,46 @@ extension UserTimelineViewController {
                                             for index in 1...images.count {
                                                 if let img = images[index - 1].valueForKey("image"){
                                                     if index == 1 {
-                                                        self.img1[indexArr] = img["url"] as! String
+                                                        self.img1.append(img["url"] as! String)
                                                     }
                                                     if index == 2 {
-                                                        self.img2[indexArr] = img["url"] as! String
+                                                        self.img2.append(img["url"] as! String)
                                                     }
                                                     if index == 3 {
-                                                        self.img3[indexArr] = img["url"] as! String
+                                                        self.img3.append(img["url"] as! String)
                                                     }
                                                 }
                                             }
                                             if images.count < 2 {
-                                                self.img2[indexArr] = "null"
+                                                self.img2.append("null")
                                             }
                                             if images.count < 3 {
-                                                self.img3[indexArr] = "null"
+                                                self.img3.append("null")
                                             }
                                         }else{
-                                            self.img1[indexArr] = "null"
-                                            self.img2[indexArr] = "null"
-                                            self.img3[indexArr] = "null"
+                                            self.img1.append("null")
+                                            self.img2.append("null")
+                                            self.img3.append("null")
                                         }
                                     }
                                     if let body = postContent.valueForKey("body") {
-                                        self.userBody[indexArr] = body as! String
+                                        self.userBody.append( body as! String )
                                     }
                                     if let body = postContent.valueForKey("from_user_id") {
-                                        self.fromID[indexArr] = body as! String
+                                        self.fromID.append( body as! String )
                                     }
                                 }
                             }
-                            
-                            
-                            dispatch_async(dispatch_get_main_queue()) {
-                                self.mytableview.reloadData()
-                                if self.loadingData {
-                                    self.loadingData = false
-                                }
-                                self.refreshControl.endRefreshing()
-                                if self.scrollLoad {
-                                    self.scrollLoad = false
-                                }
-                            }
+                        }
+                    }
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.mytableview.reloadData()
+                        if self.loadingData {
+                            self.loadingData = false
+                        }
+                        self.refreshControl.endRefreshing()
+                        if self.scrollLoad {
+                            self.scrollLoad = false
                         }
                     }
                 } catch {

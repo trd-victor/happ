@@ -113,6 +113,14 @@ class UserProfileController: UIViewController {
         return control
     }()
     
+    let topReload: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.color = UIColor.grayColor()
+        return view
+    }()
+    
     var topConstraint: NSLayoutConstraint = NSLayoutConstraint()
     
     override func viewDidLoad() {
@@ -134,6 +142,8 @@ class UserProfileController: UIViewController {
         loadUserinfo(UserProfile.id)
         
         tblProfile.addSubview(ProfileView)
+        tblProfile.addSubview(topReload)
+        tblProfile.bringSubviewToFront(topReload)
         ProfileView.addSubview(ProfileImage)
         ProfileView.addSubview(userName)
         ProfileView.addSubview(h_id)
@@ -143,6 +153,8 @@ class UserProfileController: UIViewController {
         ProfileView.addSubview(btnBlock)
         
         tblProfile.addSubview(self.refreshControl)
+        
+        topReload.startAnimating()
         
         tblProfile.separatorStyle = .None
         tblProfile.backgroundColor = UIColor(hexString: "#E4D4B9")
@@ -189,11 +201,11 @@ class UserProfileController: UIViewController {
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         if scrollView == tblProfile {
-            if scrollView.contentOffset.y < -440 && didScroll == false {
+            if scrollView.contentOffset.y < -440 {
                 self.page = 1
                 didScroll = true
                 
-                for var i = 5; i < self.fromID.count; i++ {
+                for var i = 5; i > self.fromID.count; i++ {
                     let indexPath = NSIndexPath(forRow: i, inSection: 0)
                     self.tblProfile.beginUpdates()
                     self.tblProfile.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
@@ -241,6 +253,11 @@ class UserProfileController: UIViewController {
         ProfileView.widthAnchor.constraintEqualToAnchor(tblProfile.widthAnchor).active = true
         ProfileView.heightAnchor.constraintEqualToConstant(380).active = true
         ProfileView.backgroundColor = UIColor(hexString: "#E4D4B9")
+        
+        topReload.topAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: -50).active = true
+        topReload.centerXAnchor.constraintEqualToAnchor(tblProfile.centerXAnchor).active = true
+        topReload.widthAnchor.constraintEqualToAnchor(tblProfile.widthAnchor).active = true
+        topReload.heightAnchor.constraintEqualToConstant(50).active = true
         
         refreshControl.translatesAutoresizingMaskIntoConstraints = false
         refreshControl.topAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: 10).active = true
@@ -295,10 +312,6 @@ class UserProfileController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
-        refreshControl.beginRefreshing()
-        didScroll = true
-        topConstraint.constant = -440
         
     }
     

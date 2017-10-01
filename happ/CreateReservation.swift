@@ -240,7 +240,7 @@ class CreateReservation: UIViewController {
         let components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: date)
 
         
-        startName.text = "\(components.hour):\(components.minute)"
+        startName.text = "\(String(format: "%02d", components.hour)):\(String(format: "%02d", components.minute))"
     }
     
     func endPicker(sender: UIDatePicker!){
@@ -250,7 +250,7 @@ class CreateReservation: UIViewController {
         let components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: date)
         
         
-        endName.text = "\(components.hour):\(components.minute)"
+        endName.text = "\(String(format: "%02d", components.hour)):\(String(format: "%02d", components.minute))"
     }
     
     @IBAction func navCreate(sender: AnyObject) {

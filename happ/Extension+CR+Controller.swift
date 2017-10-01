@@ -176,9 +176,8 @@ extension CreateReservation {
                     }else{
                         dataLabel[i].text = "\(dataTime[i]) (あなた)"
                     }
-                    
-                    dataLabel[i].textColor = UIColor.blackColor()
                     dataLabel[i].font = UIFont.boldSystemFontOfSize(15)
+                    dataLabel[i].textColor = UIColor.blackColor()
                 }else{
                     dataLabel[i].text = dataTime[i]
                 }

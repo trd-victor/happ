@@ -43,14 +43,14 @@ extension CreateReservation {
         let calendar = NSCalendar.currentCalendar()
         var components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: sdate)
         
-        startName.text = "\(components.hour):\(components.minute)"
+        startName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
         
         let edate = endTime.date
         
         components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: edate)
         
         endLabel.text = config.translate("label_end")
-        endName.text = "\(components.hour):\(components.minute)"
+        endName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
         reservedLabel.text = config.translate("title_reserved")
 
         
