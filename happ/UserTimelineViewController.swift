@@ -583,8 +583,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if scrollView.contentOffset.y < -70 && self.scrollLoad == false {
                 self.page = 1
                 self.scrollLoad = true
-                
-                for var i = 5; i > self.fromID.count; i++ {
+                for var i = 5; i < self.fromID.count; i++ {
                     let indexPath = NSIndexPath(forRow: i, inSection: 0)
                     self.mytableview.beginUpdates()
                     self.mytableview.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
@@ -1091,6 +1090,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
         if !loadingData && indexPath.row == self.fromID.count - 1 {
+            print("true2")
             self.getOlderPostTimeline()
             self.loadingData = true
         }

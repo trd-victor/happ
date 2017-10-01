@@ -205,7 +205,7 @@ class UserProfileController: UIViewController {
                 self.page = 1
                 didScroll = true
                 
-                for var i = 5; i > self.fromID.count; i++ {
+                for var i = 5; i < self.fromID.count; i++ {
                     let indexPath = NSIndexPath(forRow: i, inSection: 0)
                     self.tblProfile.beginUpdates()
                     self.tblProfile.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
