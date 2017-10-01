@@ -19,6 +19,12 @@ extension CreateReservation {
         let tapEndView = UITapGestureRecognizer(target: self, action: "tapEnd:")
         endView.addGestureRecognizer(tapEndView)
         
+        let tapOfficeView = UITapGestureRecognizer(target: self, action: "tapOffice:")
+        selectFacilityView.addGestureRecognizer(tapOfficeView)
+        
+        let tapRoomView = UITapGestureRecognizer(target: self, action: "tapRoom:")
+        selectRoomView.addGestureRecognizer(tapRoomView)
+        
         startTime.addTarget(self, action: "startPicker:", forControlEvents: .ValueChanged)
         endTime.addTarget(self, action: "endPicker:", forControlEvents: .ValueChanged)
         
@@ -28,14 +34,17 @@ extension CreateReservation {
         // set all Layout for views and Labels
         autoLayout()
         
+        facilitySelect.delegate = self
+        facilitySelect.dataSource = self
+        
+        roomSelect.delegate = self
+        roomSelect.dataSource = self
         
         UINavigationController().navigationItem.rightBarButtonItem?.title = "asdasd"
         self.navCreate.title = config.translate("button_create")
         roomSubtitle.text = config.translate("subtitle_room")
         facilityLabel.text =  config.translate("lbl_facility")
-        facilityName.text = "FUKUOKA"
         roomLabel.text = config.translate("label_room")
-        roomName.text = "A"
         makeReservation.text = config.translate("subtitle_make_reservation")
         startLabel.text = config.translate("label_start")
         let sdate = startTime.date
@@ -53,9 +62,7 @@ extension CreateReservation {
         endName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
         reservedLabel.text = config.translate("title_reserved")
 
-        
-        getReserved()
-        
+        getOffice()
     }
     
     override func viewWillAppear(animated: Bool) {

@@ -116,8 +116,8 @@ class UserProfileController: UIViewController {
     let topReload: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView()
         view.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.color = UIColor.grayColor()
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     

@@ -15,6 +15,7 @@
 		3D0A4C111F7B129400D6D73D /* Extension+VR+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C101F7B129400D6D73D /* Extension+VR+CollectionView.swift */; };
 		3D2D6BE51F7BAE5200F05BE6 /* NavigationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */; };
 		3D42C2CB1F6B6F9200EBD674 /* CongestionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D42C2CA1F6B6F9200EBD674 /* CongestionExtension.swift */; };
+		3D4B3B211F80BC8400DE89A0 /* pickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B3B201F80BC8400DE89A0 /* pickerController.swift */; };
 		3D544EF71F68E6370055019A /* TimelineDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D544EF61F68E6370055019A /* TimelineDetail.swift */; };
 		3D7AA5B11F63704F00E16CAC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B01F63704F00E16CAC /* Extensions.swift */; };
 		3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */; };
@@ -86,6 +87,7 @@
 		3D0A4C101F7B129400D6D73D /* Extension+VR+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+VR+CollectionView.swift"; sourceTree = "<group>"; };
 		3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NavigationMessage.swift; path = ../NavigationMessage.swift; sourceTree = "<group>"; };
 		3D42C2CA1F6B6F9200EBD674 /* CongestionExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CongestionExtension.swift; sourceTree = "<group>"; };
+		3D4B3B201F80BC8400DE89A0 /* pickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerController.swift; sourceTree = "<group>"; };
 		3D544EF61F68E6370055019A /* TimelineDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineDetail.swift; sourceTree = "<group>"; };
 		3D7AA5B01F63704F00E16CAC /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 				3D0A4C081F7A8F0A00D6D73D /* Extension+AutoLayout.swift */,
 				3D0A4C0A1F7A9A0000D6D73D /* Extension+Override.swift */,
 				3D0A4C0C1F7A9A7900D6D73D /* Extension+CR+Controller.swift */,
+				3D4B3B201F80BC8400DE89A0 /* pickerController.swift */,
 			);
 			name = Create;
 			sourceTree = "<group>";
@@ -555,6 +558,7 @@
 				A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */,
 				3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */,
 				3DD40F7B1F708F1800968896 /* SearchExtensionController.swift in Sources */,
+				3D4B3B211F80BC8400DE89A0 /* pickerController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,12 +14,15 @@ extension CreateReservation {
         
         scrollView.addSubview(roomView)
         roomView.addSubview(roomSubtitle)
-        
-        scrollView.addSubview(facilityLabel)
-        scrollView.addSubview(facilityName)
+        scrollView.addSubview(selectFacilityView)
+        selectFacilityView.addSubview(facilityLabel)
+        selectFacilityView.addSubview(facilityName)
+        scrollView.addSubview(facilitySelect)
         scrollView.addSubview(separator)
-        scrollView.addSubview(roomLabel)
-        scrollView.addSubview(roomName)
+        scrollView.addSubview(selectRoomView)
+        selectRoomView.addSubview(roomLabel)
+        selectRoomView.addSubview(roomName)
+        scrollView.addSubview(roomSelect)
         scrollView.addSubview(makeReservation)
         scrollView.addSubview(startView)
         startView.addSubview(startLabel)
@@ -31,11 +34,15 @@ extension CreateReservation {
         endView.addSubview(endLabel)
         endView.addSubview(endName)
         scrollView.addSubview(separator4)
+        scrollView.addSubview(separator5)
+        scrollView.addSubview(separator6)
         scrollView.addSubview(endTime)
         scrollView.addSubview(reservedLabel)
         
         separator3.hidden = true
         separator4.hidden = true
+        separator5.hidden = true
+        separator6.hidden = true
         
     }
     
@@ -65,34 +72,68 @@ extension CreateReservation {
         roomSubtitle.widthAnchor.constraintEqualToAnchor(roomView.widthAnchor).active = true
         roomSubtitle.heightAnchor.constraintEqualToConstant(30).active = true
         
+        selectFacilityView.topAnchor.constraintEqualToAnchor(roomView.bottomAnchor).active = true
+        selectFacilityView.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor).active = true
+        selectFacilityView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        selectFacilityView.heightAnchor.constraintEqualToConstant(50).active = true
+        
         facilityLabel.topAnchor.constraintEqualToAnchor(roomView.bottomAnchor).active = true
         facilityLabel.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 10).active = true
         facilityLabel.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         facilityLabel.heightAnchor.constraintEqualToConstant(50).active = true
         
         facilityName.topAnchor.constraintEqualToAnchor(roomView.bottomAnchor).active = true
-        facilityName.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor).active = true
-        facilityName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -10).active = true
+        facilityName.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 100).active = true
+        facilityName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -110).active = true
         facilityName.heightAnchor.constraintEqualToConstant(50).active = true
+        
+        separator5.translatesAutoresizingMaskIntoConstraints = false
+        separator5.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 10).active = true
+        separator5.topAnchor.constraintEqualToAnchor(selectFacilityView.bottomAnchor).active = true
+        separator5.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator5.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        facilitySelect.topAnchor.constraintEqualToAnchor(separator5.bottomAnchor).active = true
+        facilitySelect.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        facilitySelect.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        facilityConstraint = facilitySelect.heightAnchor.constraintEqualToConstant(0)
+        facilityConstraint.active = true
         
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 10).active = true
-        separator.topAnchor.constraintEqualToAnchor(facilityLabel.bottomAnchor).active = true
+        separator.topAnchor.constraintEqualToAnchor(facilitySelect.bottomAnchor).active = true
         separator.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator.heightAnchor.constraintEqualToConstant(1).active = true
         
+        selectRoomView.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
+        selectRoomView.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor).active = true
+        selectRoomView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        selectRoomView.heightAnchor.constraintEqualToConstant(50).active = true
+        
         roomLabel.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
-        roomLabel.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 20).active = true
-        roomLabel.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        roomLabel.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 10).active = true
+        roomLabel.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -10).active = true
         roomLabel.heightAnchor.constraintEqualToConstant(50).active = true
         
         roomName.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
-        roomName.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor).active = true
-        roomName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
+        roomName.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 100).active = true
+        roomName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -110).active = true
         roomName.heightAnchor.constraintEqualToConstant(50).active = true
         
+        separator6.translatesAutoresizingMaskIntoConstraints = false
+        separator6.leftAnchor.constraintEqualToAnchor(scrollView.leftAnchor, constant: 10).active = true
+        separator6.topAnchor.constraintEqualToAnchor(selectRoomView.bottomAnchor).active = true
+        separator6.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        separator6.heightAnchor.constraintEqualToConstant(1).active = true
+        
+        roomSelect.topAnchor.constraintEqualToAnchor(roomName.bottomAnchor).active = true
+        roomSelect.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        roomSelect.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        roomConstraint = roomSelect.heightAnchor.constraintEqualToConstant(0)
+        roomConstraint.active = true
+        
         makeReservation.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        makeReservation.topAnchor.constraintEqualToAnchor(roomLabel.bottomAnchor).active = true
+        makeReservation.topAnchor.constraintEqualToAnchor(roomSelect.bottomAnchor).active = true
         makeReservation.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         makeReservation.heightAnchor.constraintEqualToConstant(30).active = true
         

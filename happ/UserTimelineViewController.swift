@@ -94,6 +94,16 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         return control
     }()
     
+    let btmRefresh: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        view.color = UIColor.grayColor()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    var noData: Bool = false
+    
     var page:Int = 1
     var userProfile = NSCache()
     
@@ -114,7 +124,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.mytableview.backgroundColor = UIColor.clearColor()
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
-        self.mytableview.contentInset = UIEdgeInsetsMake(0, 0, 60, 0)
+        self.mytableview.contentInset = UIEdgeInsetsMake(0, 0, 90, 0)
         
         //get user data
         userId = globalUserId.userID
@@ -135,6 +145,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.roundButton.addTarget(self, action: "CreatePostButton:", forControlEvents: .TouchUpInside)
         self.view.addSubview(roundButton)
         
+        mytableview.addSubview(btmRefresh)
         
         self.scrollview = UIScrollView()
         self.scrollview.delegate = self
@@ -220,6 +231,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         mytableview.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         mytableview.heightAnchor.constraintEqualToAnchor(view.heightAnchor, constant: -120).active = true
         
+        btmRefresh.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btmRefresh.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant:  -50).active = true
+        btmRefresh.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        btmRefresh.heightAnchor.constraintEqualToConstant(50).active = true
     }
     
     override func viewWillLayoutSubviews() {
@@ -244,9 +259,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
+        
         let transition = CATransition()
         transition.duration = 0.25
         transition.type = kCATransitionPush
+        transition.fillMode = kCAFillModeBoth
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
         
@@ -260,7 +277,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let transition = CATransition()
         transition.duration = 0.10
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        transition.type = kCATransitionPush
+        transition.type = kCATransitionReveal
         transition.subtype = kCATransitionFromRight
         self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.presentDetail(vc)
@@ -325,7 +342,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let defaults = NSUserDefaults.standardUserDefaults()
         defaults.setObject(statust, forKey: "Freetime")
         defaults.synchronize()
-        print("statust", statust)
         
         if statust == "On" {
             let notif = NotifController()
@@ -373,10 +389,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }else {
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
-                        
                         if let resultArray = json.valueForKey("result") as? NSArray {
                             
-                            self.myResultArr = resultArray
+                            if resultArray.count == 0 {
+                                self.noData = true
+                                self.btmRefresh.stopAnimating()
+                            }
                             
                             for item in resultArray {
                                 if let resultDict = item as? NSDictionary {
@@ -424,7 +442,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                         }
                                     }
                                 }
-                                
                             }
                         }
                     }
@@ -432,6 +449,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                         if self.loadingData {
                             self.loadingData = false
                         }
+                        self.btmRefresh.stopAnimating()
                         self.mytableview.reloadData()
                     }
                 } catch {
@@ -478,7 +496,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             data, response, error  in
             
             if error != nil && data == nil {
-                print(true)
                 self.getTimelineUser()
             }else{
                 do {
@@ -708,8 +725,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
+                            cell.imgView1.layoutIfNeeded()
                             cell.imgView1.contentMode = .ScaleAspectFill
+                            cell.imgView1.layoutIfNeeded()
+                            cell.imgView1.image = UIImage(data: data)
                             cell.indicator.stopAnimating()
                         }
                         let tmpImg = UIImage(data: data)
@@ -732,8 +751,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView2.image = UIImage(data: data)
+                            cell.imgView2.layoutIfNeeded()
                             cell.imgView2.contentMode = .ScaleAspectFill
+                            cell.imgView2.layoutIfNeeded()
+                            cell.imgView2.image = UIImage(data: data)
                             cell.indicator2.stopAnimating()
                         }
                         let tmpImg = UIImage(data: data)
@@ -756,8 +777,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView3.image = UIImage(data: data)
+                            cell.imgView3.layoutIfNeeded()
                             cell.imgView3.contentMode = .ScaleAspectFill
+                            cell.imgView3.layoutIfNeeded()
+                            cell.imgView3.image = UIImage(data: data)
                             cell.indicator3.stopAnimating()
                         }
                         let tmpImg = UIImage(data: data)
@@ -768,7 +791,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 task.resume()
             }
             cell.imgContainer.addGestureRecognizer(imgTap)
-            
+            cell.imgView1.contentMode = .ScaleAspectFill
+            cell.imgView2.contentMode = .ScaleAspectFill
+            cell.imgView3.contentMode = .ScaleAspectFill
             if self.fromID[indexPath.row] == globalUserId.userID {
                 cell.btnDelete.hidden = false
             } else {
@@ -837,8 +862,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
+                            cell.imgView1.layoutIfNeeded()
                             cell.imgView1.contentMode = .ScaleAspectFill
+                            cell.imgView1.layoutIfNeeded()
+                            cell.imgView1.image = UIImage(data: data)
                             cell.indicator.stopAnimating()
                         }
                         let tmpImg = UIImage(data: data)
@@ -861,8 +888,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView2.image = UIImage(data: data)
+                            cell.imgView2.layoutIfNeeded()
                             cell.imgView2.contentMode = .ScaleAspectFill
+                            cell.imgView2.layoutIfNeeded()
+                            cell.imgView2.image = UIImage(data: data)
                             cell.indicator2.stopAnimating()
                         }
                         let tmpImg = UIImage(data: data)
@@ -873,7 +902,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 task.resume()
             }
             cell.imgContainer.addGestureRecognizer(imgTap)
-            
+            cell.imgView1.contentMode = .ScaleAspectFill
+            cell.imgView2.contentMode = .ScaleAspectFill
             
             if self.fromID[indexPath.row] == globalUserId.userID {
                 cell.btnDelete.hidden = false
@@ -945,12 +975,16 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
+                            cell.imgView1.layoutIfNeeded()
                             cell.imgView1.contentMode = .ScaleAspectFill
+                            cell.imgView1.layoutIfNeeded()
+                            cell.imgView1.image = UIImage(data: data)
                             cell.indicator.stopAnimating()
                         }
                         let tmpImg = UIImage(data: data)
-                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                        if self.img1.indices.contains(indexPath.row) {
+                            self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                        }
                     }
                     
                 })
@@ -1077,8 +1111,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         var height: CGFloat = 90
-        let textsize = calcTextHeight(self.userBody[indexPath.row], frame: tableView.frame.size, fontsize: 16)
-        height += textsize.height
+        if self.userBody.indices.contains(indexPath.row) {
+            let textsize = calcTextHeight(self.userBody[indexPath.row], frame: tableView.frame.size, fontsize: 16)
+            height += textsize.height
+        }
         if self.img1[indexPath.row] != "null" {
             height += 320
         }
@@ -1089,10 +1125,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     var loadingData = false
     
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        if !loadingData && indexPath.row == self.fromID.count - 1 {
-            print("true2")
+        if !loadingData && indexPath.row == self.fromID.count - 1 && noData == false {
             self.getOlderPostTimeline()
             self.loadingData = true
+            btmRefresh.startAnimating()
         }
     }
     

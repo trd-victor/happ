@@ -56,6 +56,19 @@ class CreateReservation: UIViewController {
         return label
     }()
     
+    let selectFacilityView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.whiteColor()
+        return view
+    }()
+    
+    let facilitySelect: UIPickerView = {
+        let picker = UIPickerView()
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
+    }()
+    
     let roomLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .Left
@@ -72,6 +85,19 @@ class CreateReservation: UIViewController {
         label.backgroundColor = UIColor.clearColor()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    let selectRoomView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor.whiteColor()
+        return view
+    }()
+    
+    let roomSelect: UIPickerView = {
+        let picker = UIPickerView()
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        return picker
     }()
     
     let separator: UIView = {
@@ -186,6 +212,22 @@ class CreateReservation: UIViewController {
         return label
     }()
     
+    let separator5: UIView = {
+        let view = UIView()
+        view.alpha = 0.8
+        view.backgroundColor = UIColor.grayColor()
+        return view
+    }()
+    
+    let separator6: UIView = {
+        let view = UIView()
+        view.alpha = 0.8
+        view.backgroundColor = UIColor.grayColor()
+        return view
+    }()
+    
+    var facilityConstraint: NSLayoutConstraint = NSLayoutConstraint()
+    var roomConstraint: NSLayoutConstraint = NSLayoutConstraint()
     var startTimeConstraint: NSLayoutConstraint = NSLayoutConstraint()
     var endTimeConstraint: NSLayoutConstraint = NSLayoutConstraint()
     
@@ -199,6 +241,8 @@ class CreateReservation: UIViewController {
         self.dismissViewControllerAnimated(false, completion: nil)
     }
     
+    var roomSample = ["Test","Test","Test","Test"]
+    var officeSample = ["TestOffice","TestOffice","TestOffice","TestOffice"]
     //basepath
     let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
@@ -209,14 +253,28 @@ class CreateReservation: UIViewController {
     var dataTime = [String]()
     var dataUserId = [String]()
     
+    var officeIdData = [String]()
+    var officeNameEnData = [String]()
+    var officeNameJpData = [String]()
+    var roomIdData = [String]()
+    var roomNameEnData = [String]()
+    var roomNameJpData = [String]()
+    
+    var postRoomId = String()
+    
+    var firstLoad:Bool = false
+    
     func tapStart(sender: UITapGestureRecognizer){
         if startTimeConstraint.constant == 0 {
             startTimeConstraint.constant = 200
+//            scrollView.contentSize = CGRectM
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height + 200)
             separator3.hidden = false
             startName.textColor = UIColor.redColor()
         }else{
             startTimeConstraint.constant = 0
             separator3.hidden = true
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height - 200)
             startName.textColor = UIColor.blackColor()
         }
     }
@@ -224,11 +282,13 @@ class CreateReservation: UIViewController {
     func tapEnd(sender: UITapGestureRecognizer){
         if endTimeConstraint.constant == 0 {
             endTimeConstraint.constant = 200
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height + 200)
             separator4.hidden = false
             endName.textColor = UIColor.redColor()
         }else{
             endTimeConstraint.constant = 0
             separator4.hidden = true
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height - 200)
             endName.textColor = UIColor.blackColor()
         }
     }
@@ -253,10 +313,38 @@ class CreateReservation: UIViewController {
         endName.text = "\(String(format: "%02d", components.hour)):\(String(format: "%02d", components.minute))"
     }
     
+    func tapOffice(sender: UIPickerView!){
+        if facilityConstraint.constant == 0 {
+            facilityConstraint.constant = 100
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height + 100)
+            facilityName.textColor = UIColor.redColor()
+            separator5.hidden = false
+        }else{
+            facilityConstraint.constant = 0
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height - 100)
+            facilityName.textColor = UIColor.blackColor()
+            separator5.hidden = true
+        }
+    }
+
+    func tapRoom(sender: UIPickerView!){
+        if roomConstraint.constant == 0 {
+            roomConstraint.constant = 100
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height + 100)
+            roomName.textColor = UIColor.redColor()
+            separator6.hidden = false
+        }else{
+            roomConstraint.constant = 0
+            scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height - 100)
+            roomName.textColor = UIColor.blackColor()
+            separator6.hidden = true
+        }
+    }
+    
     @IBAction func navCreate(sender: AnyObject) {
         let sdate = "\(CreateDetails.date) \(startName.text!)"
         let edate = "\(CreateDetails.date) \(endName.text!)"
-        postReservation(sdate, edate: edate)
+        postReservation(postRoomId,sdate: sdate, edate: edate)
     }
     
     

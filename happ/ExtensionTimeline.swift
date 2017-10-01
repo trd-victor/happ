@@ -9,7 +9,7 @@
 extension UserTimelineViewController {
 
     func reloadTimeline() {
-        
+        self.noData = false
         var tmppostDate = [String]()
         var tmpimg1 = [String]()
         var tmpimg2 = [String]()
@@ -91,25 +91,25 @@ extension UserTimelineViewController {
                                         }
                                     }
                                 }
-                                dispatch_async(dispatch_get_main_queue()){
-                                    self.img1 = tmpimg1
-                                    self.img2 = tmpimg2
-                                    self.img3 = tmpimg3
-                                    self.userBody = tmpuserBody
-                                    self.fromID = tmpfromID
-                                    self.postID = tmppostID
-                                    self.postDate = tmppostDate
-                                    
-                                    self.refreshControl.endRefreshing()
-                                    self.mytableview.reloadData()
-                                    if self.loadingData {
-                                        self.loadingData = false
-                                    }
-                                    if self.scrollLoad {
-                                        self.scrollLoad = false
-                                    }
-                                    
+                            }
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.img1 = tmpimg1
+                                self.img2 = tmpimg2
+                                self.img3 = tmpimg3
+                                self.userBody = tmpuserBody
+                                self.fromID = tmpfromID
+                                self.postID = tmppostID
+                                self.postDate = tmppostDate
+                                
+                                self.refreshControl.endRefreshing()
+                                self.mytableview.reloadData()
+                                if self.loadingData {
+                                    self.loadingData = false
                                 }
+                                if self.scrollLoad {
+                                    self.scrollLoad = false
+                                }
+                                
                             }
                         }
                     }
