@@ -190,6 +190,8 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         
         if currentPass1 == "" || newPass1 == "" ||  reEnterPass1 == ""{
             self.displayMyAlertMessage(config.translate("mess_fill_missing_field"))
+        }else if newPass1.characters.count < 6 {
+            self.displayMyAlertMessage(config.translate("mess_password_min_char"))
         }
         else if newPass1 != reEnterPass1 {
             self.displayMyAlertMessage(config.translate("not_match_password"))
