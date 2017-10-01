@@ -22,6 +22,7 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet var separator3: UIView!
     @IBOutlet var separator4: UIView!
     @IBOutlet var imgRightLang: UIImageView!
+    @IBOutlet var scrollView: UIScrollView!
     
     //set button variable... builder interface..
     @IBOutlet var btnEditProfile: UIButton!
@@ -69,8 +70,30 @@ class ConfigurationViewController: UIViewController {
         
          btnLanguageSettings.addTarget(self, action: "viewChangeLanguage:", forControlEvents: .TouchUpInside)
         
+        scrollView.addSubview(infoView)
+        scrollView.addSubview(labelBasicInfo)
+        scrollView.addSubview(btnEditProfile)
+        scrollView.addSubview(imgRightProfile)
+        scrollView.addSubview(separator)
+        scrollView.addSubview(btnMailAddressChange)
+        scrollView.addSubview(imgRightEmail)
+        scrollView.addSubview(separator2)
+        scrollView.addSubview(btnChangePass)
+        scrollView.addSubview(imgRightPass)
+        scrollView.addSubview(separator3)
+        scrollView.addSubview(btnLanguageSettings)
+        scrollView.addSubview(imgRightLang)
+        scrollView.addSubview(logoutView)
+        scrollView.addSubview(labelLogout)
+        scrollView.addSubview(btnLogout)
+        scrollView.addSubview(separator4)
+        
         autoLayout()
         
+    }
+    
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     func autoLayout() {
@@ -80,10 +103,18 @@ class ConfigurationViewController: UIViewController {
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
         
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        scrollView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        scrollView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        scrollView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        scrollView.contentSize = CGSizeMake(320, 400)
+        scrollView.backgroundColor = UIColor.whiteColor()
+        
         infoView.translatesAutoresizingMaskIntoConstraints = false
-        infoView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        infoView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
-        infoView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        infoView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        infoView.topAnchor.constraintEqualToAnchor(scrollView.topAnchor).active = true
+        infoView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         infoView.heightAnchor.constraintEqualToConstant(38).active = true
         
         labelBasicInfo.translatesAutoresizingMaskIntoConstraints = false
@@ -93,9 +124,9 @@ class ConfigurationViewController: UIViewController {
         labelBasicInfo.heightAnchor.constraintEqualToConstant(38).active = true
         
         btnEditProfile.translatesAutoresizingMaskIntoConstraints = false
-        btnEditProfile.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnEditProfile.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         btnEditProfile.topAnchor.constraintEqualToAnchor(infoView.bottomAnchor).active = true
-        btnEditProfile.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -10).active = true
+        btnEditProfile.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -10).active = true
         btnEditProfile.heightAnchor.constraintEqualToConstant(38).active = true
         
         imgRightProfile.translatesAutoresizingMaskIntoConstraints = false
@@ -105,15 +136,15 @@ class ConfigurationViewController: UIViewController {
         imgRightProfile.heightAnchor.constraintEqualToConstant(30).active = true
         
         separator.translatesAutoresizingMaskIntoConstraints = false
-        separator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         separator.topAnchor.constraintEqualToAnchor(btnEditProfile.bottomAnchor).active = true
-        separator.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator.heightAnchor.constraintEqualToConstant(1).active = true
         
         btnMailAddressChange.translatesAutoresizingMaskIntoConstraints = false
-        btnMailAddressChange.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnMailAddressChange.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         btnMailAddressChange.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
-        btnMailAddressChange.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -10).active = true
+        btnMailAddressChange.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -10).active = true
         btnMailAddressChange.heightAnchor.constraintEqualToConstant(38).active = true
         
         imgRightEmail.translatesAutoresizingMaskIntoConstraints = false
@@ -123,15 +154,15 @@ class ConfigurationViewController: UIViewController {
         imgRightEmail.heightAnchor.constraintEqualToConstant(30).active = true
         
         separator2.translatesAutoresizingMaskIntoConstraints = false
-        separator2.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator2.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         separator2.topAnchor.constraintEqualToAnchor(btnMailAddressChange.bottomAnchor).active = true
-        separator2.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator2.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator2.heightAnchor.constraintEqualToConstant(1).active = true
         
         btnChangePass.translatesAutoresizingMaskIntoConstraints = false
-        btnChangePass.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnChangePass.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         btnChangePass.topAnchor.constraintEqualToAnchor(separator2.bottomAnchor).active = true
-        btnChangePass.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -10).active = true
+        btnChangePass.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -10).active = true
         btnChangePass.heightAnchor.constraintEqualToConstant(38).active = true
         
         imgRightPass.translatesAutoresizingMaskIntoConstraints = false
@@ -141,15 +172,15 @@ class ConfigurationViewController: UIViewController {
         imgRightPass.heightAnchor.constraintEqualToConstant(30).active = true
         
         separator3.translatesAutoresizingMaskIntoConstraints = false
-        separator3.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator3.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         separator3.topAnchor.constraintEqualToAnchor(btnChangePass.bottomAnchor).active = true
-        separator3.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator3.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator3.heightAnchor.constraintEqualToConstant(1).active = true
         
         btnLanguageSettings.translatesAutoresizingMaskIntoConstraints = false
-        btnLanguageSettings.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnLanguageSettings.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         btnLanguageSettings.topAnchor.constraintEqualToAnchor(separator3.bottomAnchor).active = true
-        btnLanguageSettings.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -10).active = true
+        btnLanguageSettings.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -10).active = true
         btnLanguageSettings.heightAnchor.constraintEqualToConstant(38).active = true
         
         //Incorrect Name should be for Language
@@ -160,9 +191,9 @@ class ConfigurationViewController: UIViewController {
         imgRightLang.heightAnchor.constraintEqualToConstant(30).active = true
         
         logoutView.translatesAutoresizingMaskIntoConstraints = false
-        logoutView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        logoutView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         logoutView.topAnchor.constraintEqualToAnchor(btnLanguageSettings.bottomAnchor).active = true
-        logoutView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        logoutView.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         logoutView.heightAnchor.constraintEqualToConstant(38).active = true
         
         labelLogout.translatesAutoresizingMaskIntoConstraints = false
@@ -172,15 +203,15 @@ class ConfigurationViewController: UIViewController {
         labelLogout.heightAnchor.constraintEqualToConstant(38).active = true
         
         btnLogout.translatesAutoresizingMaskIntoConstraints = false
-        btnLogout.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnLogout.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         btnLogout.topAnchor.constraintEqualToAnchor(logoutView.bottomAnchor).active = true
-        btnLogout.widthAnchor.constraintEqualToAnchor(view.widthAnchor, constant: -10).active = true
+        btnLogout.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -10).active = true
         btnLogout.heightAnchor.constraintEqualToConstant(38).active = true
         
         separator4.translatesAutoresizingMaskIntoConstraints = false
-        separator4.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        separator4.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         separator4.topAnchor.constraintEqualToAnchor(btnLogout.bottomAnchor).active = true
-        separator4.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        separator4.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator4.heightAnchor.constraintEqualToConstant(1).active = true
         
     }
@@ -223,7 +254,7 @@ class ConfigurationViewController: UIViewController {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.25
+        transition.duration = 0.05
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -236,7 +267,7 @@ class ConfigurationViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("EditProfile") as! EditProfileViewController
         
         let transition = CATransition()
-        transition.duration = 0.10
+        transition.duration = 0.05
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
@@ -248,7 +279,7 @@ class ConfigurationViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("MailChange") as! MailChangeViewController
         
         let transition = CATransition()
-        transition.duration = 0.10
+        transition.duration = 0.05
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
@@ -261,7 +292,7 @@ class ConfigurationViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("ChangeNewPassword") as! ChangeNewPasswordViewController
         
         let transition = CATransition()
-        transition.duration = 0.10
+        transition.duration = 0.05
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
@@ -274,7 +305,7 @@ class ConfigurationViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
         
         let transition = CATransition()
-        transition.duration = 0.10
+        transition.duration = 0.05
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
@@ -298,7 +329,7 @@ class ConfigurationViewController: UIViewController {
             }
             
             let transition: CATransition = CATransition()
-            transition.duration = 0.5
+            transition.duration = 0.05
             transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             transition.type = kCATransitionPush
             transition.subtype = kCATransitionFromLeft

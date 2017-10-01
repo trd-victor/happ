@@ -202,7 +202,7 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         collectionView.topAnchor.constraintEqualToAnchor(topView.bottomAnchor).active = true
         collectionView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         collectionView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        collectionView.heightAnchor.constraintEqualToAnchor(view.heightAnchor, constant: -100).active = true
+        collectionView.heightAnchor.constraintEqualToAnchor(view.heightAnchor, constant: -50).active = true
         collectionView.backgroundColor = UIColor.whiteColor()
         
         situationView.topAnchor.constraintEqualToAnchor(collectionView.topAnchor, constant: -280).active = true
@@ -280,7 +280,7 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
                 
                 UserProfile.id = String(self.userIds[indexPath.row])
                 
-                transition.duration = 0.25
+                transition.duration = 0.05
                 transition.type = kCATransitionPush
                 transition.subtype = kCATransitionFromRight
                 self.view.window!.layer.addAnimation(transition, forKey: nil)

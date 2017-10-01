@@ -66,18 +66,13 @@ class MessageTableViewController: UITableViewController {
         
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        self.navigationController?.navigationBar.frame = CGRect(x: 0, y: 22, width: self.view.frame.size.width, height: CGFloat(44))
-    }
-    
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
     
     func autoLayout(){
-        self.navigationController?.navigationBar.barTintColor = UIColor.blackColor()
+        self.navigationController?.navigationBar.translucent = false
+        self.navigationController?.navigationBar.barTintColor = UIColor(hexString: "#272727")
         self.navigationController?.navigationBar.titleTextAttributes =  [NSForegroundColorAttributeName : UIColor.whiteColor()]
     }
     
@@ -213,7 +208,7 @@ class MessageTableViewController: UITableViewController {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.25
+        transition.duration = 0.05
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")

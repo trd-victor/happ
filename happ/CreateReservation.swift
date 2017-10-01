@@ -233,7 +233,7 @@ class CreateReservation: UIViewController {
     
     @IBAction func navBar(sender: AnyObject) {
         let transition: CATransition = CATransition()
-        transition.duration = 0.25
+        transition.duration = 0.05
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -243,6 +243,7 @@ class CreateReservation: UIViewController {
     
     var roomSample = ["Test","Test","Test","Test"]
     var officeSample = ["TestOffice","TestOffice","TestOffice","TestOffice"]
+    
     //basepath
     let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     

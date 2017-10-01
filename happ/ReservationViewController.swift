@@ -74,9 +74,9 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         calendarCollectionView.backgroundColor = UIColor.clearColor()
         
         let swipeUpward = UISwipeGestureRecognizer(target: self, action: "swipeUpward:")
-        swipeUpward.direction = .Down
+        swipeUpward.direction = .Right
         let swipeDownward = UISwipeGestureRecognizer(target: self, action: "swipeDownward:")
-        swipeDownward.direction = .Up
+        swipeDownward.direction = .Left
         
         view.addGestureRecognizer(swipeUpward)
         view.addGestureRecognizer(swipeDownward)
@@ -255,6 +255,8 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
     var calendarDates = [String]()
     var calendarDaysWords = [String]()
     
+    var checkDate:Bool = false
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CalendarCell", forIndexPath: indexPath) as! CalendarCell
         if indexPath.row >= (startDate - 1) && indexPath.row <= (lastDay + (startDate - 2) ) {
@@ -306,10 +308,11 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyBoard.instantiateViewControllerWithIdentifier("CreateReservation") as! CreateReservation
             let transition = CATransition()
-            transition.duration = 0.25
+            transition.duration = 0.05
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             transition.type = kCATransitionPush
             transition.subtype = kCATransitionFromRight
-            self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+            self.view.window!.layer.addAnimation(transition, forKey: nil)
             presentViewController(vc, animated: false, completion: nil)
         }
     }
@@ -428,11 +431,32 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("ViewReservation") as! ViewReservation
         let transition = CATransition()
-        transition.duration = 0.25
+        transition.duration = 0.05
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
         
         presentViewController(vc, animated: false, completion: nil)
     }
+    
+    func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
+        let body = NSMutableData();
+        
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString("\(value)\r\n")
+            }
+        }
+        
+        body.appendString("--\(boundary)--\r\n")
+        
+        return body
+    }
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().UUIDString)"
+    }
+    
 }

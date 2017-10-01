@@ -16,13 +16,12 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var saveItem: UIBarButtonItem!
-    @IBOutlet var saveContent: UITextField!
     @IBOutlet var content: UITextView!
     @IBOutlet var btnCamera: UIButton!
     @IBOutlet var btnGallery: UIButton!
     @IBOutlet var separator: UIView!
-    
     @IBOutlet var scrollView: UIScrollView!
+    
     
     var imgList = [UIImage]()
     var imgView = [UIImageView]()
@@ -131,13 +130,12 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
         self.content.delegate = self
         self.content.textColor = UIColor.lightGrayColor()
-        
+        self.content.returnKeyType = .Default
         self.content.inputAccessoryView = self.kboardView
         
         //set navback transition...
         self.navBack.action = Selector("dismissMe:")
         
-        self.content.delegate = self
         self.loadConfigure()
         
         let btnTap1: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "removeImage1")
@@ -146,6 +144,8 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         self.btnRemove2.addGestureRecognizer(btnTap2)
         let btnTap3: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "removeImage3")
         self.btnRemove3.addGestureRecognizer(btnTap3)
+        
+        loadConfigure()
         
         autoLayout()
     }
@@ -195,10 +195,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
     }
     
-    override func viewWillAppear(animated: Bool){
-        super.viewWillAppear(animated)
-        loadConfigure()
-    }
+    var didCameraGallery: Bool = false
     
     @IBAction func btnGallery(sender: AnyObject) {
         handlerGallery()
@@ -209,11 +206,13 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     func loadConfigure() {
-        let config = SYSTEM_CONFIG()
-        //set text
-        self.saveItem.title = config.translate("button_post")
-        self.saveItem.tintColor = UIColor.whiteColor()
-        self.content.text = config.translate("holder_post_content")
+        if !didCameraGallery {
+            let config = SYSTEM_CONFIG()
+            //set text
+            self.saveItem.title = config.translate("button_post")
+            self.saveItem.tintColor = UIColor.whiteColor()
+            self.content.text = config.translate("holder_post_content")
+        }
     }
     
     func dismissMe(sender: UIBarButtonItem) -> () {
@@ -295,7 +294,8 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         if(text == "\n") {
-            textView.resignFirstResponder()
+            textView.becomeFirstResponder()
+            textView.text = NSString(format: "%@\n", textView.text) as String
             return false
         }
         return true
@@ -637,5 +637,6 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
         loadTimelineImagePost()
     }
+    
     
 }

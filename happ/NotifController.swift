@@ -107,7 +107,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let vc = storyBoard.instantiateViewControllerWithIdentifier("UserTimeline") as! UserTimelineViewController
         
         let transition = CATransition()
-        transition.duration = 0.10
+        transition.duration = 0.05
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -117,7 +117,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func presentBackDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.25
+        transition.duration = 0.05
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -126,7 +126,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.25
+        transition.duration = 0.05
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -237,7 +237,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
                         let transition = CATransition()
                         
-                        transition.duration = 0.25
+                        transition.duration = 0.05
                         transition.type = kCATransitionPush
                         transition.subtype = kCATransitionFromRight
                         self.view.window!.layer.addAnimation(transition, forKey: nil)

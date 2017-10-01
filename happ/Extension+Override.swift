@@ -74,6 +74,7 @@ extension CreateReservation {
         }else{
             navTitle.title = "\(tmpArr[0])年\(tmpArr[1])月\(tmpArr[2])日 (\(CreateDetails.day))"
         }
+        
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

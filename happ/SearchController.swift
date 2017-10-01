@@ -67,11 +67,11 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     
     @IBAction func backButton(sender: AnyObject) {
-        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(red: 0, green: 118, blue: 255, alpha: 1)]
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
         
         let transition: CATransition = CATransition()
-        transition.duration = 0.5
+        transition.duration = 0.05
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -192,7 +192,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         UserProfile.id = String(user_id[indexPath.row])
         
 
-        transition.duration = 0.25
+        transition.duration = 0.05
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: nil)
@@ -216,7 +216,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         
         
         let uiButton = searchBar.valueForKey("cancelButton") as! UIButton
-        uiButton.setTitle("CANCEL", forState: UIControlState.Normal)
+        uiButton.setTitle(config.translate("btn_cancel"), forState: UIControlState.Normal)
          uiButton.setTitleColor(UIColor(hexString: "#0076FF"), forState: .Normal)
         
         view.backgroundColor = UIColor(hexString: "#C9C9CE")

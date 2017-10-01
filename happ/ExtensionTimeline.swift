@@ -102,6 +102,7 @@ extension UserTimelineViewController {
                                 self.postDate = tmppostDate
                                 
                                 self.refreshControl.endRefreshing()
+                                
                                 self.mytableview.reloadData()
                                 if self.loadingData {
                                     self.loadingData = false
@@ -109,9 +110,10 @@ extension UserTimelineViewController {
                                 if self.scrollLoad {
                                     self.scrollLoad = false
                                 }
-                                
                             }
                         }
+                    }else{
+                        self.reloadTimeline()
                     }
                 } catch {
                     print(error)

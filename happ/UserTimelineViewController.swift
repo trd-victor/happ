@@ -122,9 +122,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.mytableview.registerClass(DoubleImage.self, forCellReuseIdentifier: "DoubleImage")
         self.mytableview.registerClass(TripleImage.self, forCellReuseIdentifier: "TripleImage")
         
-        self.mytableview.backgroundColor = UIColor.clearColor()
+        self.mytableview.backgroundColor = UIColor(hexString: "#E4D4B9")
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
-        self.mytableview.contentInset = UIEdgeInsetsMake(0, 0, 90, 0)
+        self.mytableview.contentInset = UIEdgeInsetsMake(10, 0, 30, 0)
         
         //get user data
         userId = globalUserId.userID
@@ -194,6 +194,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.labelFree.text = config.translate("subtitle_now_free")
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
     func autoLayout(){
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -226,13 +230,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         freetimeStatus.rightAnchor.constraintEqualToAnchor(topView.rightAnchor, constant: -10).active = true
         
         mytableview.translatesAutoresizingMaskIntoConstraints = false
-        mytableview.topAnchor.constraintEqualToAnchor(topView.bottomAnchor, constant: 10).active = true
+        mytableview.topAnchor.constraintEqualToAnchor(topView.bottomAnchor).active = true
         mytableview.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         mytableview.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        mytableview.heightAnchor.constraintEqualToAnchor(view.heightAnchor, constant: -120).active = true
+        mytableview.heightAnchor.constraintEqualToAnchor(view.heightAnchor, constant: -110).active = true
         
         btmRefresh.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        btmRefresh.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor, constant:  -50).active = true
+        btmRefresh.bottomAnchor.constraintEqualToAnchor(view.bottomAnchor).active = true
         btmRefresh.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         btmRefresh.heightAnchor.constraintEqualToConstant(50).active = true
     }
@@ -248,7 +252,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         roundButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activateConstraints([
             roundButton.trailingAnchor.constraintEqualToAnchor(self.view.trailingAnchor, constant: -3),
-            roundButton.bottomAnchor.constraintEqualToAnchor(self.view.bottomAnchor, constant:  -56),
+            roundButton.bottomAnchor.constraintEqualToAnchor(self.view.bottomAnchor, constant:  -10),
             roundButton.widthAnchor.constraintEqualToConstant(80),
             roundButton.heightAnchor.constraintEqualToConstant(80)
             ])
@@ -261,11 +265,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func presentDetail(viewControllerToPresent: UIViewController) {
         
         let transition = CATransition()
-        transition.duration = 0.25
+        transition.duration = 0.05
         transition.type = kCATransitionPush
-        transition.fillMode = kCAFillModeBoth
         transition.subtype = kCATransitionFromRight
-        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
         
         presentViewController(viewControllerToPresent, animated: false, completion: nil)
     }
@@ -273,13 +276,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func CreatePostButton (sender: UIButton) ->() {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CreatePostController") as! CreatePostViewController
-        
-        let transition = CATransition()
-        transition.duration = 0.10
-        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        transition.type = kCATransitionReveal
-        transition.subtype = kCATransitionFromRight
-        self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.presentDetail(vc)
     }
     
@@ -597,22 +593,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func scrollViewDidScroll(scrollView: UIScrollView) {
         self.scrollOffset = scrollView.contentOffset.y
         if scrollView == self.mytableview {
-            if scrollView.contentOffset.y < -70 && self.scrollLoad == false {
+            if scrollView.contentOffset.y < -80 && self.scrollLoad == false {
+                refreshControl.beginRefreshing()
                 self.page = 1
                 self.scrollLoad = true
-                for var i = 5; i < self.fromID.count; i++ {
-                    let indexPath = NSIndexPath(forRow: i, inSection: 0)
-                    self.mytableview.beginUpdates()
-                    self.mytableview.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
-                    self.userBody.removeAtIndex(i)
-                    self.postDate.removeAtIndex(i)
-                    self.postID.removeAtIndex(i)
-                    self.fromID.removeAtIndex(i)
-                    self.img1.removeAtIndex(i)
-                    self.img2.removeAtIndex(i)
-                    self.img3.removeAtIndex(i)
-                    self.mytableview.endUpdates()
-                }
                 self.reloadTimeline()
             }
         }
@@ -628,19 +612,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         refreshControl.beginRefreshing()
-        for var i = 5; i < self.fromID.count; i++ {
-            let indexPath = NSIndexPath(forRow: i, inSection: 0)
-            self.mytableview.beginUpdates()
-            self.mytableview.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
-            self.userBody.removeAtIndex(i)
-            self.postDate.removeAtIndex(i)
-            self.postID.removeAtIndex(i)
-            self.fromID.removeAtIndex(i)
-            self.img1.removeAtIndex(i)
-            self.img2.removeAtIndex(i)
-            self.img3.removeAtIndex(i)
-            self.mytableview.endUpdates()
-        }
         self.reloadTimeline()
     }
     
@@ -656,6 +627,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     let imgforProfileCache = NSCache()
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
         
         let config = SYSTEM_CONFIG()
         let username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String

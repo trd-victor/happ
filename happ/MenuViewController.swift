@@ -16,7 +16,6 @@ class MenuViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         //load config
         self.configLoad()
         
@@ -25,6 +24,7 @@ class MenuViewController: UITabBarController {
         
         self.badgeObserver()
         preferredStatusBarStyle()
+        
     }
     
     override func viewWillAppear(animated: Bool) {

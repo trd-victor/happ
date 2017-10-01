@@ -12,7 +12,15 @@ class NavigationMessage: UINavigationController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        navigationBar.barStyle = .Black
+        navigationBar.translatesAutoresizingMaskIntoConstraints = false
+        navigationBar.topAnchor.constraintEqualToAnchor(view.topAnchor,constant: 22).active = true
+        navigationBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navigationBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navigationBar.heightAnchor.constraintEqualToConstant(44).active = true
+    }
+    
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
 }
