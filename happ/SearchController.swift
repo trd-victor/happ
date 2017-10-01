@@ -67,6 +67,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     
     @IBAction func backButton(sender: AnyObject) {
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+        
         let transition: CATransition = CATransition()
         transition.duration = 0.5
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -75,6 +78,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         self.view.window!.layer.addAnimation(transition, forKey: nil)
         self.dismissViewControllerAnimated(false, completion: nil)
     }
+
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         if self.navBar.hidden {
