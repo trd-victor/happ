@@ -76,7 +76,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     override func viewWillAppear(animated: Bool) {
-        self.viewWillAppear(animated)
+        super.viewWillAppear(animated)
         
         self.loadConfigure()
     }

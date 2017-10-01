@@ -283,6 +283,8 @@ class TimelineDetail: UIViewController {
                                                 UserDetails.postID = ""
                                                 self.postDetail()
                                             }
+                                        }else{
+                                            self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
                                         }
                                         
                                     }else{
