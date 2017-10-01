@@ -19,6 +19,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var backupData: [NSObject] = []
     var postName: String = ""
     var postPhotoUrl: String = ""
+    var freeTimeMessage: String = ""
+    var postTimelineMessage: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,6 +65,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     func loadConfig(){
         let config = SYSTEM_CONFIG()
         let titlestr = config.translate("title_notification")
+        
+        self.postTimelineMessage = config.translate("notif_timeline_mess")
+        self.freeTimeMessage = config.translate("notif_freetime_mess")
         
         let navItem = UINavigationItem(title: titlestr)
         let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
@@ -148,15 +153,17 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let data = self.arrayData[indexPath.row] as? NSDictionary
        
         if data != nil {
+            
+            
             let name = data!["name"] as! String
             let type = data!["type"] as! String
             let timestamp = data!["timestamp"] as? NSNumber
             let image = data!["photoUrl"] as? String
             
             if type == "timeline" || type == "post-timeline"{
-                cell.lblMessage.text = "\(name) posted it on the timeline."
+                cell.lblMessage.text = "\(name) \(self.postTimelineMessage)"
             }else if type == "free-time" {
-                cell.lblMessage.text = "\(name) turned \"now\" free."
+                cell.lblMessage.text = "\(name) \(self.freeTimeMessage)"
             }else if type == "message" {
                 cell.lblMessage.text = "You have a message from \(name)."
             }else if type == "reservation" {
@@ -201,7 +208,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let seconds = timestamp.doubleValue / 1000
         let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
         let formatter = NSDateFormatter()
-        formatter.dateFormat = "H:mm"
+        formatter.dateFormat = "HH:mm"
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "MMM dd"
         let date = formatter.stringFromDate(dateTimestamp)

@@ -170,6 +170,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userNamefield.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
         userNamefield.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userNamefield.heightAnchor.constraintEqualToConstant(38).active = true
+        userNamefield.setRightPaddingPoints(10)
+        userNamefield.setLeftPaddingPoints(65)
         
         labelName.translatesAutoresizingMaskIntoConstraints = false
         labelName.centerXAnchor.constraintEqualToAnchor(userNamefield.centerXAnchor).active = true
@@ -183,12 +185,12 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         separator2.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator2.heightAnchor.constraintEqualToConstant(1).active = true
         
-        
         userDescription.translatesAutoresizingMaskIntoConstraints = false
         userDescription.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         userDescription.topAnchor.constraintEqualToAnchor(userNamefield.bottomAnchor, constant: 5).active = true
         userDescription.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userDescription.heightAnchor.constraintEqualToConstant(100).active = true
+        userDescription.setRightPaddingPoints(5)
         
         skillView.translatesAutoresizingMaskIntoConstraints = false
         skillView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true

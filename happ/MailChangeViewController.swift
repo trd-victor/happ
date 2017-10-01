@@ -79,6 +79,8 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         txtMail.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor, constant: 10).active = true
         txtMail.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         txtMail.heightAnchor.constraintEqualToConstant(44).active = true
+        txtMail.setLeftPaddingPoints(135)
+        txtMail.setRightPaddingPoints(10)
         
         labelMail.translatesAutoresizingMaskIntoConstraints = false
         labelMail.centerXAnchor.constraintEqualToAnchor(txtMail.centerXAnchor).active = true

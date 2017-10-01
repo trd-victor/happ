@@ -75,6 +75,8 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         currentPassField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
         currentPassField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         currentPassField.heightAnchor.constraintEqualToConstant(44).active = true
+        currentPassField.setRightPaddingPoints(10)
+        currentPassField.setLeftPaddingPoints(160)
         
         currentPass.translatesAutoresizingMaskIntoConstraints = false
         currentPass.centerXAnchor.constraintEqualToAnchor(currentPassField.centerXAnchor).active = true
@@ -93,6 +95,8 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         newPassField.topAnchor.constraintEqualToAnchor(separator.bottomAnchor).active = true
         newPassField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         newPassField.heightAnchor.constraintEqualToConstant(44).active = true
+        newPassField.setRightPaddingPoints(10)
+        newPassField.setLeftPaddingPoints(160)
         
         newPass.translatesAutoresizingMaskIntoConstraints = false
         newPass.centerXAnchor.constraintEqualToAnchor(newPassField.centerXAnchor).active = true
@@ -111,6 +115,8 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         reenterPassField.topAnchor.constraintEqualToAnchor(separator2.bottomAnchor).active = true
         reenterPassField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         reenterPassField.heightAnchor.constraintEqualToConstant(44).active = true
+        reenterPassField.setRightPaddingPoints(10)
+        reenterPassField.setLeftPaddingPoints(160)
         
         reenterpass.translatesAutoresizingMaskIntoConstraints = false
         reenterpass.centerXAnchor.constraintEqualToAnchor(reenterPassField.centerXAnchor).active = true

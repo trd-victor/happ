@@ -143,7 +143,7 @@ class MessageTableViewController: UITableViewController {
         cell.separator.bottomAnchor.constraintEqualToAnchor(cell.contentView.bottomAnchor, constant: -5).active = true
         cell.separator.leftAnchor.constraintEqualToAnchor(cell.contentView.leftAnchor, constant: 55).active = true
         cell.separator.widthAnchor.constraintEqualToConstant(view.frame.size.width - 65).active = true
-        cell.separator.heightAnchor.constraintEqualToConstant(1).active = true
+        cell.separator.heightAnchor.constraintEqualToConstant(0.5).active = true
         
         cell.userTime.translatesAutoresizingMaskIntoConstraints = false
         cell.userTime.topAnchor.constraintEqualToAnchor(cell.contentView.topAnchor, constant: 3).active = true
@@ -225,7 +225,7 @@ class MessageTableViewController: UITableViewController {
         let seconds = timestamp.doubleValue / 1000
         let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
         let formatter = NSDateFormatter()
-        formatter.dateFormat = "hh:mm"
+        formatter.dateFormat = "HH:mm"
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "MMM dd"
         let date = formatter.stringFromDate(dateTimestamp)

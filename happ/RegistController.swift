@@ -140,6 +140,8 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userName.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userName.heightAnchor.constraintEqualToConstant(48).active = true
         userName.tintColor = UIColor.blackColor()
+        userName.setRightPaddingPoints(10)
+        userName.setLeftPaddingPoints(75)
         
         labelName.translatesAutoresizingMaskIntoConstraints = false
         labelName.centerXAnchor.constraintEqualToAnchor(userName.centerXAnchor).active = true
@@ -153,6 +155,8 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userEmail.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userEmail.heightAnchor.constraintEqualToConstant(48).active = true
         userEmail.tintColor = UIColor.blackColor()
+        userEmail.setLeftPaddingPoints(140)
+        userEmail.setRightPaddingPoints(10)
         
         labelEmail.translatesAutoresizingMaskIntoConstraints = false
         labelEmail.centerXAnchor.constraintEqualToAnchor(userEmail.centerXAnchor).active = true
@@ -166,6 +170,8 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userPassword.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userPassword.heightAnchor.constraintEqualToConstant(48).active = true
         userPassword.tintColor = UIColor.blackColor()
+        userPassword.setLeftPaddingPoints(110)
+        userPassword.setRightPaddingPoints(10)
         
         labelPass.translatesAutoresizingMaskIntoConstraints = false
         labelPass.centerXAnchor.constraintEqualToAnchor(userPassword.centerXAnchor).active = true
@@ -179,7 +185,8 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userReEnterPassword.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userReEnterPassword.heightAnchor.constraintEqualToConstant(48).active = true
         userReEnterPassword.tintColor = UIColor.blackColor()
-
+        userReEnterPassword.setLeftPaddingPoints(175)
+        userReEnterPassword.setRightPaddingPoints(10)
         
         labelReEnterPass.translatesAutoresizingMaskIntoConstraints = false
         labelReEnterPass.centerXAnchor.constraintEqualToAnchor(userReEnterPassword.centerXAnchor).active = true
@@ -317,9 +324,11 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
 //        let registError = Error()
         
         let config = SYSTEM_CONFIG()
-        
+        print(pass.characters.count < 5)
         if email == "" || pass == "" || name == "" || reEnterpassword == "" {
             displayMyAlertMessage(config.translate("mess_fill_missing_field"))
+        }else if pass.characters.count < 6 {
+            displayMyAlertMessage(config.translate("mess_password_min_char"))
         }else if pass != reEnterpassword {
             displayMyAlertMessage(config.translate("mess_password_not_match"))
         }
@@ -655,6 +664,20 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     
     
 }
+
+extension UITextField {
+    func setLeftPaddingPoints(amount:CGFloat){
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: amount, height: self.frame.size.height))
+        self.leftView = paddingView
+        self.leftViewMode = .Always
+    }
+    func setRightPaddingPoints(amount:CGFloat) {
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: amount, height: self.frame.size.height))
+        self.rightView = paddingView
+        self.rightViewMode = .Always
+    }
+}
+
 
 extension NSMutableData {
     
