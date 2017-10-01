@@ -65,6 +65,8 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
         userEmailField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         userEmailField.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
+        userEmailField.setRightPaddingPoints(10)
+        userEmailField.setLeftPaddingPoints(130)
         userEmailField.clearsOnBeginEditing = false
         
         labelUserEmail.translatesAutoresizingMaskIntoConstraints = false
