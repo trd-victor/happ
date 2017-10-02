@@ -52,13 +52,24 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
         self.loadConfigure()
     }
     
+    @IBOutlet var mainView: UIView!
+    
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
     func autoLayout() {
-        
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        mainView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        mainView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        mainView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        mainView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
         
         userEmailField.translatesAutoresizingMaskIntoConstraints = false
         userEmailField.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true

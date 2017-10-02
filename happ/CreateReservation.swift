@@ -233,7 +233,7 @@ class CreateReservation: UIViewController {
     
     @IBAction func navBar(sender: AnyObject) {
         let transition: CATransition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft

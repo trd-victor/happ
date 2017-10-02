@@ -308,7 +308,7 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyBoard.instantiateViewControllerWithIdentifier("CreateReservation") as! CreateReservation
             let transition = CATransition()
-            transition.duration = 0.15
+            transition.duration = 0.40
             transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             transition.type = kCATransitionPush
             transition.subtype = kCATransitionFromRight
@@ -431,7 +431,8 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("ViewReservation") as! ViewReservation
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")

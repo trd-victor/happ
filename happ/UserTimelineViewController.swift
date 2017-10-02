@@ -265,7 +265,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func presentDetail(viewControllerToPresent: UIViewController) {
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: nil)
@@ -280,7 +281,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func deletePost(sender: String, index: Int) {
-        self.deleteAlertMessage("Delete this Post?")
+        let config = SYSTEM_CONFIG()
+        self.deleteAlertMessage(config.translate("mess_discard_post"))
         self.userpostID = sender
         self.indexInt = index
         
@@ -687,24 +689,21 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
                 let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
                 cell.imgView1.image = imgCache
-                cell.imgView1.contentMode = .ScaleAspectFill
             }else{
-                cell.imgView1.image = UIImage(named : "photo")
+                cell.imgView1.image = nil
                 cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.imgView1.contentMode = .Center
                 cell.indicator.startAnimating()
                 let url = NSURL(string: self.img1[indexPath.row])
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.layoutIfNeeded()
-                            cell.imgView1.contentMode = .ScaleAspectFill
-                            cell.imgView1.layoutIfNeeded()
                             cell.imgView1.image = UIImage(data: data)
                             cell.indicator.stopAnimating()
+                            let tmpImg = UIImage(data: data)
+                            if self.img1.indices.contains(indexPath.row) {
+                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                            }
                         }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
                     }
                     
                 })
@@ -713,24 +712,21 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if (imgforPostCache.objectForKey(self.img2[indexPath.row]) != nil) {
                 let imgCache = imgforPostCache.objectForKey(self.img2[indexPath.row]) as! UIImage
                 cell.imgView2.image = imgCache
-                cell.imgView2.contentMode = .ScaleAspectFill
             }else{
-                cell.imgView2.image = UIImage(named : "photo")
+                cell.imgView2.image = nil
                 cell.imgView2.backgroundColor = UIColor.lightGrayColor()
-                cell.imgView2.contentMode = .Center
                 cell.indicator2.startAnimating()
                 let url = NSURL(string: self.img2[indexPath.row])
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView2.layoutIfNeeded()
-                            cell.imgView2.contentMode = .ScaleAspectFill
-                            cell.imgView2.layoutIfNeeded()
                             cell.imgView2.image = UIImage(data: data)
                             cell.indicator2.stopAnimating()
+                            let tmpImg = UIImage(data: data)
+                            if self.img2.indices.contains(indexPath.row) {
+                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
+                            }
                         }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
                     }
                     
                 })
@@ -739,33 +735,28 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if (imgforPostCache.objectForKey(self.img3[indexPath.row]) != nil) {
                 let imgCache = imgforPostCache.objectForKey(self.img3[indexPath.row]) as! UIImage
                 cell.imgView3.image = imgCache
-                cell.imgView3.contentMode = .ScaleAspectFill
             }else{
-                cell.imgView3.image = UIImage(named : "photo")
+                cell.imgView3.image = nil
                 cell.imgView3.backgroundColor = UIColor.lightGrayColor()
-                cell.imgView3.contentMode = .Center
                 cell.indicator3.startAnimating()
                 let url = NSURL(string: self.img3[indexPath.row])
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView3.layoutIfNeeded()
-                            cell.imgView3.contentMode = .ScaleAspectFill
-                            cell.imgView3.layoutIfNeeded()
                             cell.imgView3.image = UIImage(data: data)
                             cell.indicator3.stopAnimating()
+                            let tmpImg = UIImage(data: data)
+                            if self.img3.indices.contains(indexPath.row) {
+                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img3[indexPath.row])
+                            }
                         }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img3[indexPath.row])
                     }
                     
                 })
                 task.resume()
             }
             cell.imgContainer.addGestureRecognizer(imgTap)
-            cell.imgView1.contentMode = .ScaleAspectFill
-            cell.imgView2.contentMode = .ScaleAspectFill
-            cell.imgView3.contentMode = .ScaleAspectFill
+            
             if self.fromID[indexPath.row] == globalUserId.userID {
                 cell.btnDelete.hidden = false
             } else {
@@ -824,24 +815,21 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
                 let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
                 cell.imgView1.image = imgCache
-                cell.imgView1.contentMode = .ScaleAspectFill
             }else{
-                cell.imgView1.image = UIImage(named : "photo")
+                cell.imgView1.image = nil
                 cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.imgView1.contentMode = .Center
                 cell.indicator.startAnimating()
                 let url = NSURL(string: self.img1[indexPath.row])
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.layoutIfNeeded()
-                            cell.imgView1.contentMode = .ScaleAspectFill
-                            cell.imgView1.layoutIfNeeded()
                             cell.imgView1.image = UIImage(data: data)
                             cell.indicator.stopAnimating()
+                            let tmpImg = UIImage(data: data)
+                            if self.img1.indices.contains(indexPath.row) {
+                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                            }
                         }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
                     }
                     
                 })
@@ -850,32 +838,27 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if (imgforPostCache.objectForKey(self.img2[indexPath.row]) != nil) {
                 let imgCache = imgforPostCache.objectForKey(self.img2[indexPath.row]) as! UIImage
                 cell.imgView2.image = imgCache
-                cell.imgView2.contentMode = .ScaleAspectFill
             }else{
-                cell.imgView2.image = UIImage(named : "photo")
+                cell.imgView2.image = nil
                 cell.imgView2.backgroundColor = UIColor.lightGrayColor()
-                cell.imgView2.contentMode = .Center
                 cell.indicator2.startAnimating()
                 let url = NSURL(string: self.img2[indexPath.row])
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView2.layoutIfNeeded()
-                            cell.imgView2.contentMode = .ScaleAspectFill
-                            cell.imgView2.layoutIfNeeded()
                             cell.imgView2.image = UIImage(data: data)
                             cell.indicator2.stopAnimating()
+                            let tmpImg = UIImage(data: data)
+                            if self.img2.indices.contains(indexPath.row) {
+                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
+                            }
                         }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
                     }
                     
                 })
                 task.resume()
             }
             cell.imgContainer.addGestureRecognizer(imgTap)
-            cell.imgView1.contentMode = .ScaleAspectFill
-            cell.imgView2.contentMode = .ScaleAspectFill
             
             if self.fromID[indexPath.row] == globalUserId.userID {
                 cell.btnDelete.hidden = false
@@ -937,25 +920,20 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
                 let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
                 cell.imgView1.image = imgCache
-                cell.imgView1.contentMode = .ScaleAspectFill
             }else{
-                cell.imgView1.image = UIImage(named : "photo")
+                cell.imgView1.image = nil
                 cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.imgView1.contentMode = .Center
                 cell.indicator.startAnimating()
                 let url = NSURL(string: self.img1[indexPath.row])
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.layoutIfNeeded()
-                            cell.imgView1.contentMode = .ScaleAspectFill
-                            cell.imgView1.layoutIfNeeded()
                             cell.imgView1.image = UIImage(data: data)
                             cell.indicator.stopAnimating()
-                        }
-                        let tmpImg = UIImage(data: data)
-                        if self.img1.indices.contains(indexPath.row) {
-                            self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                            let tmpImg = UIImage(data: data)
+                            if self.img1.indices.contains(indexPath.row) {
+                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
+                            }
                         }
                     }
                     

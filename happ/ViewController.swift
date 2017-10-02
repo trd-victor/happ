@@ -87,7 +87,8 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         let nextViewController = storyBoard.instantiateViewControllerWithIdentifier("ChooseLanguage") as! FirstLaunchLanguage
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         view.window!.layer.addAnimation(transition, forKey: kCATransition)

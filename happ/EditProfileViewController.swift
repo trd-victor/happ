@@ -110,6 +110,10 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
     func openGallery(){
         galleryPicker.allowsEditing = false
         galleryPicker.sourceType = .PhotoLibrary
@@ -139,6 +143,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     func autoLayout() {
         
         self.StatusItem.tintColor = UIColor.whiteColor()
+        view.backgroundColor = UIColor(hexString: "#272727")
+        navBar.tintColor = UIColor(hexString: "#272727")
         
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -330,7 +336,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -343,7 +350,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         let vc = storyBoard.instantiateViewControllerWithIdentifier("Configuration") as! ConfigurationViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -488,10 +495,10 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         //setting up the textbox...
         let name = userNamefield.text!
         let userDesc = userDescription.text!
-        
+        let config = SYSTEM_CONFIG()
         
         if name == "" || userDesc == ""  {
-            displayMyAlertMessage("All Fields Required")
+            displayMyAlertMessage(config.translate("mess_fill_missing_field"))
         }
         else {
             //created NSURL

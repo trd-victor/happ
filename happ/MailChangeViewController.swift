@@ -17,6 +17,7 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var txtMail: UITextField!
     @IBOutlet var labelMail: UILabel!
     @IBOutlet var userRealEmail: UITextField!
+    @IBOutlet var mainView: UIView!
     
     @IBOutlet var navBack: UIBarButtonItem!
     
@@ -63,7 +64,9 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         txtMail.delegate = self
         
         view.endEditing(true)
-
+        
+        view.sendSubviewToBack(mainView)
+        
         autoLayout()
     }
     
@@ -73,6 +76,12 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        mainView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        mainView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        mainView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        mainView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
         
         txtMail.translatesAutoresizingMaskIntoConstraints = false
         txtMail.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -273,6 +282,10 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         task.resume()
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
@@ -284,7 +297,8 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -298,7 +312,7 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("Configuration") as! ConfigurationViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft

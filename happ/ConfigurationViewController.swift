@@ -254,7 +254,8 @@ class ConfigurationViewController: UIViewController {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -267,7 +268,7 @@ class ConfigurationViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("EditProfile") as! EditProfileViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
@@ -279,7 +280,7 @@ class ConfigurationViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("MailChange") as! MailChangeViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
@@ -292,7 +293,7 @@ class ConfigurationViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("ChangeNewPassword") as! ChangeNewPasswordViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
@@ -305,7 +306,7 @@ class ConfigurationViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
@@ -329,7 +330,7 @@ class ConfigurationViewController: UIViewController {
             }
             
             let transition: CATransition = CATransition()
-            transition.duration = 0.15
+            transition.duration = 0.40
             transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             transition.type = kCATransitionPush
             transition.subtype = kCATransitionFromLeft

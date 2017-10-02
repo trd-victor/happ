@@ -25,8 +25,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = UIColor.whiteColor()
-        self.navBar.barTintColor = UIColor.blackColor()
+        self.view.backgroundColor = UIColor(hexString: "#272727")
+        self.navBar.barTintColor = UIColor(hexString: "#272727")
+        self.navBar.translucent = false
         self.tblView.backgroundColor = UIColor.whiteColor()
         
         self.view.addSubview(navBar)
@@ -44,6 +45,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         self.tblView.dataSource = self
         
         self.tblView.reloadData()
+    }
+    
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
     }
     
     func autoLayout(){
@@ -112,7 +117,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let vc = storyBoard.instantiateViewControllerWithIdentifier("UserTimeline") as! UserTimelineViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -122,7 +127,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func presentBackDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -131,7 +137,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -242,7 +249,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
                         let transition = CATransition()
                         
-                        transition.duration = 0.15
+                        transition.duration = 0.40
+                        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
                         transition.type = kCATransitionPush
                         transition.subtype = kCATransitionFromRight
                         self.view.window!.layer.addAnimation(transition, forKey: nil)

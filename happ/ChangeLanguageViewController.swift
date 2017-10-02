@@ -17,7 +17,8 @@ class ChangeLanguageViewController: UIViewController {
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var separator: UIView!
     @IBOutlet var separator2: UIView!
-
+    @IBOutlet var mainView: UIView!
+    
     @IBOutlet var navTitle: UINavigationItem!
     @IBOutlet var btnenglish: UIButton!
     @IBOutlet var btnJapanese: UIButton!
@@ -47,6 +48,9 @@ class ChangeLanguageViewController: UIViewController {
         autoLayout()
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
     
     func autoLayout() {
         navBar.translatesAutoresizingMaskIntoConstraints = false
@@ -54,6 +58,12 @@ class ChangeLanguageViewController: UIViewController {
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        mainView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        mainView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        mainView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        mainView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
         
         btnenglish.translatesAutoresizingMaskIntoConstraints = false
         btnenglish.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -92,7 +102,8 @@ class ChangeLanguageViewController: UIViewController {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -102,7 +113,8 @@ class ChangeLanguageViewController: UIViewController {
     
     func presentDetail2 (viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -121,7 +133,7 @@ class ChangeLanguageViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -142,7 +154,7 @@ class ChangeLanguageViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -157,7 +169,7 @@ class ChangeLanguageViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft

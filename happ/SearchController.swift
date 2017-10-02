@@ -67,11 +67,11 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     
     @IBAction func backButton(sender: AnyObject) {
-        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(red: 0, green: 118, blue: 255, alpha: 1)]
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
         
         let transition: CATransition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -123,7 +123,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.blueColor()]
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(red: 0, green: 118, blue: 255, alpha: 1)]
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
         
     }
@@ -192,7 +192,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         UserProfile.id = String(user_id[indexPath.row])
         
 
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: nil)

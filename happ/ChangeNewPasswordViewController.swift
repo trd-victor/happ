@@ -15,7 +15,8 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var separator: UIView!
     @IBOutlet var separator2: UIView!
     @IBOutlet var separator3: UIView!
-
+    @IBOutlet var mainView: UIView!
+    
     @IBOutlet var save: UIBarButtonItem!
     @IBOutlet var navTitle: UINavigationItem!
     @IBOutlet var currentPass: UILabel!
@@ -63,12 +64,22 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         autoLayout()
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
     func autoLayout() {
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        mainView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        mainView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        mainView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        mainView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
         
         currentPassField.translatesAutoresizingMaskIntoConstraints = false
         currentPassField.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -151,7 +162,8 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -165,7 +177,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("Configuration") as! ConfigurationViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft

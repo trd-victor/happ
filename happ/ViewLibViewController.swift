@@ -28,7 +28,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor(hexString: "#dddddd")
+        self.view.backgroundColor = UIColor(hexString: "#272727")
         self.navBar.barTintColor = UIColor(hexString: "#272727")
         self.navBar.translucent = false
         
@@ -195,7 +195,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func presentBackDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")

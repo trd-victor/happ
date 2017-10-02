@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="FDg-6c-3EA">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="FDg-6c-3EA">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
@@ -13,11 +13,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" id="0lB-59-spR">
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="0lB-59-spR">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="74"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </textAttributes>
@@ -302,6 +302,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="bl8-HT-ZhK">
+                                <rect key="frame" x="0.0" y="28" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </textAttributes>
+                                <items>
+                                    <navigationItem title="Title" id="xKp-IF-j8X">
+                                        <barButtonItem key="leftBarButtonItem" image="Image" id="vml-bv-jpI">
+                                            <inset key="imageInsets" minX="-16" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <view contentMode="scaleToFill" id="leD-RD-8Z6">
+                                <rect key="frame" x="0.0" y="72" width="320" height="452"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" textAlignment="right" minimumFontSize="17" id="We3-4y-fQN">
                                 <rect key="frame" x="0.0" y="123" width="319" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -314,22 +336,6 @@
                                     <outlet property="delegate" destination="7Ym-L0-Qw6" id="f2b-Lf-WOm"/>
                                 </connections>
                             </textField>
-                            <navigationBar contentMode="scaleToFill" id="bl8-HT-ZhK">
-                                <rect key="frame" x="0.0" y="28" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
-                                <textAttributes key="titleTextAttributes">
-                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </textAttributes>
-                                <items>
-                                    <navigationItem title="Title" id="xKp-IF-j8X">
-                                        <barButtonItem key="leftBarButtonItem" image="Image" id="vml-bv-jpI">
-                                            <inset key="imageInsets" minX="-16" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="aFc-xI-rra">
                                 <rect key="frame" x="25" y="189" width="270" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -382,7 +388,7 @@
                             </button>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" red="0.99607843139999996" green="0.99607843139999996" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <toolbarItems/>
@@ -394,6 +400,7 @@
                         <outlet property="forgetPass" destination="vzD-dg-bu2" id="2pf-Gs-Hy5"/>
                         <outlet property="labelPassword" destination="QlV-uK-HJz" id="OEf-EY-Cnv"/>
                         <outlet property="labelUserEmail" destination="lfY-FD-krE" id="Cbr-LK-EMi"/>
+                        <outlet property="mainView" destination="leD-RD-8Z6" id="ZSQ-TS-zE4"/>
                         <outlet property="navBar" destination="bl8-HT-ZhK" id="1md-H5-mDe"/>
                         <outlet property="navTitle" destination="xKp-IF-j8X" id="Lsl-fj-Qaq"/>
                         <outlet property="userEmailField" destination="hlC-bZ-hNC" id="Glx-ze-M3z"/>
@@ -412,11 +419,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" id="oG6-ct-QnF">
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="oG6-ct-QnF">
                                 <rect key="frame" x="0.0" y="34" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </textAttributes>
@@ -429,6 +436,12 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <view contentMode="scaleToFill" id="tKd-5T-Iig">
+                                <rect key="frame" x="0.0" y="78" width="320" height="490"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="u4G-LO-Fqb">
                                 <rect key="frame" x="10" y="134" width="301" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -467,11 +480,12 @@
                             </button>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
                         <outlet property="btnChangePass" destination="vxd-Ge-UnT" id="FkO-rK-Uea"/>
                         <outlet property="labelUserEmail" destination="zEX-4A-RA6" id="iW8-CU-AFF"/>
+                        <outlet property="mainView" destination="tKd-5T-Iig" id="Amv-3M-5hb"/>
                         <outlet property="navBackLogin" destination="6Jd-vu-Hlo" id="doQ-wn-xsm"/>
                         <outlet property="navBar" destination="oG6-ct-QnF" id="DLE-nU-6U9"/>
                         <outlet property="navTitle" destination="vcU-01-bed" id="cRH-sV-yQh"/>
@@ -491,6 +505,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="lhE-iL-apc">
+                                <rect key="frame" x="0.0" y="19" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </textAttributes>
+                                <items>
+                                    <navigationItem id="8JU-sH-RP2">
+                                        <nil key="title"/>
+                                        <barButtonItem key="leftBarButtonItem" image="Image" width="11" id="epN-3U-z4Q">
+                                            <inset key="imageInsets" minX="-15" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                            <color key="tintColor" red="0.99607843137254903" green="0.99607843137254903" blue="0.9882352941176471" alpha="1" colorSpace="calibratedRGB"/>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Item" id="nDZ-lF-Jsy">
+                                            <color key="tintColor" red="0.99607843139999996" green="0.99607843139999996" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="Save:" destination="2AT-LM-HTz" id="lAO-d6-vlm"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" textAlignment="right" minimumFontSize="17" id="KlA-7Y-HYb">
                                 <rect key="frame" x="0.0" y="63" width="320" height="39"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -519,38 +557,22 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <navigationBar contentMode="scaleToFill" id="lhE-iL-apc">
-                                <rect key="frame" x="0.0" y="19" width="320" height="44"/>
+                            <view contentMode="scaleToFill" id="5fI-ip-3YW">
+                                <rect key="frame" x="0.0" y="63" width="320" height="505"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
-                                <textAttributes key="titleTextAttributes">
-                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </textAttributes>
-                                <items>
-                                    <navigationItem id="8JU-sH-RP2">
-                                        <nil key="title"/>
-                                        <barButtonItem key="leftBarButtonItem" image="Image" width="11" id="epN-3U-z4Q">
-                                            <inset key="imageInsets" minX="-15" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                            <color key="tintColor" red="0.99607843137254903" green="0.99607843137254903" blue="0.9882352941176471" alpha="1" colorSpace="calibratedRGB"/>
-                                        </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" title="Item" id="nDZ-lF-Jsy">
-                                            <color key="tintColor" red="0.99607843139999996" green="0.99607843139999996" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
-                                            <connections>
-                                                <action selector="Save:" destination="2AT-LM-HTz" id="lAO-d6-vlm"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <navigationItem key="navigationItem" id="9T5-Qd-ZXI"/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
                         <outlet property="Save" destination="nDZ-lF-Jsy" id="YyY-ZG-foA"/>
                         <outlet property="labelMail" destination="fB2-OX-yNP" id="7GL-XD-q0E"/>
+                        <outlet property="mainView" destination="5fI-ip-3YW" id="tos-ZR-usw"/>
                         <outlet property="navBack" destination="epN-3U-z4Q" id="5QQ-eF-KFP"/>
                         <outlet property="navBar" destination="lhE-iL-apc" id="fim-q3-OAU"/>
                         <outlet property="navTitle" destination="8JU-sH-RP2" id="Y3O-Dx-da5"/>
@@ -571,11 +593,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" id="N7e-4t-d2d">
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="N7e-4t-d2d">
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </textAttributes>
@@ -595,6 +617,12 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <view contentMode="scaleToFill" id="iMS-ba-9XN">
+                                <rect key="frame" x="0.0" y="64" width="321" height="504"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" textAlignment="right" minimumFontSize="17" id="Mtw-eC-yao">
                                 <rect key="frame" x="0.0" y="64" width="319" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -670,11 +698,12 @@
                             </label>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
                         <outlet property="currentPass" destination="HqC-9d-nGL" id="T3B-7C-l3Q"/>
                         <outlet property="currentPassField" destination="Mtw-eC-yao" id="89m-TA-NIe"/>
+                        <outlet property="mainView" destination="iMS-ba-9XN" id="w1G-9a-wFO"/>
                         <outlet property="navBackChangePass" destination="vWu-XB-jU4" id="IqM-ol-r8F"/>
                         <outlet property="navBar" destination="N7e-4t-d2d" id="oke-aS-Gfz"/>
                         <outlet property="navTitle" destination="AZL-YD-beQ" id="2kG-fP-OTo"/>
@@ -701,11 +730,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" barStyle="black" id="Szt-oQ-Qb6">
+                            <navigationBar contentMode="scaleToFill" barStyle="black" translucent="NO" id="Szt-oQ-Qb6">
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </textAttributes>
@@ -722,6 +751,12 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <view contentMode="scaleToFill" id="jnd-MR-yIc">
+                                <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="HTA-mg-X0e">
                                 <rect key="frame" x="6" y="64" width="309" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -754,12 +789,13 @@
                             </label>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
                         <outlet property="btnCurrentSettings" destination="HTA-mg-X0e" id="Cib-58-TGh"/>
                         <outlet property="currentSettingslang" destination="XEJ-Nf-elc" id="qMv-oM-eqX"/>
                         <outlet property="imgRightLang" destination="tr5-8Z-uHM" id="IGu-bv-0Wh"/>
+                        <outlet property="mainView" destination="jnd-MR-yIc" id="PgO-zq-VTj"/>
                         <outlet property="navBackLang" destination="RgQ-he-yAi" id="z3l-IX-5lT"/>
                         <outlet property="navBar" destination="Szt-oQ-Qb6" id="sE3-1Q-wKz"/>
                         <outlet property="navTitle" destination="Zf6-eX-wdZ" id="g5P-ke-hQx"/>
@@ -779,11 +815,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" id="5a5-bH-3Gb">
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="5a5-bH-3Gb">
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </textAttributes>
@@ -797,6 +833,12 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <view contentMode="scaleToFill" id="aZi-XL-RbT">
+                                <rect key="frame" x="0.0" y="64" width="321" height="504"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
                             <view contentMode="scaleToFill" id="bPB-fY-OKY">
                                 <rect key="frame" x="0.0" y="108" width="320" height="1"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -827,11 +869,12 @@
                             </button>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
                         <outlet property="btnJapanese" destination="fPt-Ld-0jS" id="Zul-Hn-BNa"/>
                         <outlet property="btnenglish" destination="bis-Dr-CEb" id="dXr-bX-oKT"/>
+                        <outlet property="mainView" destination="aZi-XL-RbT" id="Myn-V2-8Pz"/>
                         <outlet property="navBackSettings" destination="b2S-Gp-a5q" id="I93-8g-3Xl"/>
                         <outlet property="navBar" destination="5a5-bH-3Gb" id="IvO-u4-F71"/>
                         <outlet property="navTitle" destination="JGc-17-dwB" id="iPa-eB-dN9"/>
@@ -851,30 +894,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" id="cwx-gA-PE0">
-                                <rect key="frame" x="0.0" y="20" width="320" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
-                                <textAttributes key="titleTextAttributes">
-                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </textAttributes>
-                                <items>
-                                    <navigationItem id="VsE-VE-iB6">
-                                        <nil key="title"/>
-                                        <barButtonItem key="leftBarButtonItem" image="Image" id="BDy-HJ-rs5">
-                                            <inset key="imageInsets" minX="-16" minY="-2" maxX="0.0" maxY="-2"/>
-                                            <color key="tintColor" red="1" green="0.99607843139999996" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
-                                        </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" title="Item" id="NQ1-tN-wfO">
-                                            <color key="tintColor" red="1" green="0.99607843139999996" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
-                                            <connections>
-                                                <action selector="StatusItem:" destination="AFE-Ok-3yh" id="c38-oP-McT"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="7KS-nH-aH7">
                                 <rect key="frame" x="40" y="220" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1051,11 +1070,37 @@
                                     </label>
                                 </subviews>
                                 <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </scrollView>
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="cwx-gA-PE0">
+                                <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </textAttributes>
+                                <items>
+                                    <navigationItem id="VsE-VE-iB6">
+                                        <nil key="title"/>
+                                        <barButtonItem key="leftBarButtonItem" image="Image" id="BDy-HJ-rs5">
+                                            <inset key="imageInsets" minX="-16" minY="-2" maxX="0.0" maxY="-2"/>
+                                            <color key="tintColor" red="1" green="0.99607843139999996" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="Item" id="NQ1-tN-wfO">
+                                            <color key="tintColor" red="1" green="0.99607843139999996" blue="0.98823529409999999" alpha="1" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="StatusItem:" destination="AFE-Ok-3yh" id="c38-oP-McT"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="568"/>
                     <connections>
@@ -1235,7 +1280,9 @@
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="barTintColor" red="0.15294117647058825" green="0.15294117647058825" blue="0.15294117647058825" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </textAttributes>
@@ -1247,7 +1294,7 @@
                             </navigationBar>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" red="0.15294117647058825" green="0.15294117647058825" blue="0.15294117647058825" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="Configuration" image="settings" id="d2g-TV-6Aq"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
@@ -1665,6 +1712,8 @@
                         <outlet property="mainView" destination="SZc-tK-Iby" id="7lq-KQ-Kov"/>
                         <outlet property="navBar" destination="3k6-jh-3ce" id="cdB-Yv-fcM"/>
                         <outlet property="viewDaysoftheWeeks" destination="JD6-G6-2UI" id="T29-jT-J3U"/>
+                        <segue destination="dBQ-OE-aFc" kind="custom" customClass="TrasitionLeft" id="ihb-UZ-0yD"/>
+                        <segue destination="UeB-Jq-GqC" kind="custom" customClass="TrasitionLeft" id="qKj-c2-Atd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="owZ-ez-Swd" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1867,7 +1916,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.15294117647058825" green="0.15294117647058825" blue="0.15294117647058825" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
                     <navigationItem key="navigationItem" id="aEK-v3-O2R"/>
                 </viewController>
@@ -2158,12 +2207,13 @@
                                     </label>
                                 </subviews>
                                 <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </scrollView>
-                            <navigationBar contentMode="scaleToFill" id="tsb-ip-bIl">
+                            <navigationBar contentMode="scaleToFill" translucent="NO" id="tsb-ip-bIl">
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
-                                <color key="barTintColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="barTintColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </textAttributes>
@@ -2181,7 +2231,7 @@
                             </navigationBar>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="750"/>
@@ -2287,6 +2337,7 @@
                         <animations/>
                         <color key="backgroundColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
+                    <navigationItem key="navigationItem" id="bBM-E9-18u"/>
                     <connections>
                         <outlet property="navBar" destination="pAw-DG-O5T" id="f8Q-aw-3Vu"/>
                         <outlet property="tableReserved" destination="h1r-2g-9ie" id="jWU-aL-lZe"/>
@@ -2294,7 +2345,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="XCd-fe-2ZW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1117" y="2242"/>
+            <point key="canvasLocation" x="1126" y="2330"/>
         </scene>
         <!--Create Reservation-->
         <scene sceneID="j3x-tL-dZo">
@@ -2350,7 +2401,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cyx-UU-hq1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1469" y="2242"/>
+            <point key="canvasLocation" x="1469" y="2330"/>
         </scene>
     </scenes>
     <resources>

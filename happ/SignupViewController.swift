@@ -85,13 +85,24 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
     }
     
-    func autoLayout(){
+    @IBOutlet var mainView: UIView!
+    
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
+    func autoLayout() {
+        navBar.translatesAutoresizingMaskIntoConstraints = false
+        navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
+        navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        navBar.heightAnchor.constraintEqualToConstant(44).active = true
         
-        myActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        myActivityIndicator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        myActivityIndicator.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
-        myActivityIndicator.widthAnchor.constraintEqualToConstant(50).active = true
-        myActivityIndicator.heightAnchor.constraintEqualToConstant(50).active = true
+        mainView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        mainView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        mainView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        mainView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
         
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true

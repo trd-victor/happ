@@ -108,6 +108,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         self.loadConfigure()
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
     func autoLayout(){
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true

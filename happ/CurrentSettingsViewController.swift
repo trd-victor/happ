@@ -17,6 +17,8 @@ class CurrentSettingsViewController: UIViewController {
     @IBOutlet var imgRightLang: UIImageView!
     @IBOutlet var currentSettingslang: UILabel!
     @IBOutlet var btnCurrentSettings: UIButton!
+    @IBOutlet var mainView: UIView!
+    
     
     @IBOutlet var navBackLang:
     UIBarButtonItem!
@@ -32,7 +34,10 @@ class CurrentSettingsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        view.backgroundColor = UIColor(hexString: "#272727")
+        navBar.tintColor = UIColor(hexString: "#272727")
+        
         userId = globalUserId.userID
 
         //load language set.
@@ -54,12 +59,22 @@ class CurrentSettingsViewController: UIViewController {
         autoLayout()
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
     func autoLayout(){
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         navBar.topAnchor.constraintEqualToAnchor(view.topAnchor, constant: 22).active = true
         navBar.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
         navBar.heightAnchor.constraintEqualToConstant(44).active = true
+        
+        mainView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.topAnchor.constraintEqualToAnchor(navBar.bottomAnchor).active = true
+        mainView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        mainView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        mainView.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
         
         btnCurrentSettings.translatesAutoresizingMaskIntoConstraints = false
         btnCurrentSettings.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -113,7 +128,8 @@ class CurrentSettingsViewController: UIViewController {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -125,7 +141,7 @@ class CurrentSettingsViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("Configuration") as! ConfigurationViewController
         
         let transition = CATransition()
-        transition.duration = 0.15
+        transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
