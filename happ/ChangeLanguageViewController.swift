@@ -92,7 +92,7 @@ class ChangeLanguageViewController: UIViewController {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -102,7 +102,7 @@ class ChangeLanguageViewController: UIViewController {
     
     func presentDetail2 (viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -121,7 +121,7 @@ class ChangeLanguageViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
         
         let transition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -142,7 +142,7 @@ class ChangeLanguageViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
         
         let transition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -157,7 +157,7 @@ class ChangeLanguageViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CurrentSettings") as! CurrentSettingsViewController
         
         let transition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft

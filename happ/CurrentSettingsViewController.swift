@@ -113,7 +113,7 @@ class CurrentSettingsViewController: UIViewController {
     
     func presentDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
@@ -125,7 +125,7 @@ class CurrentSettingsViewController: UIViewController {
         let vc = storyBoard.instantiateViewControllerWithIdentifier("Configuration") as! ConfigurationViewController
         
         let transition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft

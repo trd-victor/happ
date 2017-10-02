@@ -195,7 +195,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func presentBackDetail(viewControllerToPresent: UIViewController) {
         let transition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
         self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")

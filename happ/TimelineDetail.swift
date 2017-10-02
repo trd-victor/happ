@@ -414,7 +414,7 @@ class TimelineDetail: UIViewController {
         
         UserProfile.id = String(sender.tag)
         
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: nil)
@@ -423,7 +423,7 @@ class TimelineDetail: UIViewController {
     
     func backTimeline(sender: UIButton!){
         let transition: CATransition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft

@@ -71,7 +71,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
         
         let transition: CATransition = CATransition()
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromLeft
@@ -192,7 +192,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         UserProfile.id = String(user_id[indexPath.row])
         
 
-        transition.duration = 0.05
+        transition.duration = 0.15
         transition.type = kCATransitionPush
         transition.subtype = kCATransitionFromRight
         self.view.window!.layer.addAnimation(transition, forKey: nil)
