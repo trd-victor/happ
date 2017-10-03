@@ -220,31 +220,40 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     @IBAction func saveItem(sender: UIBarButtonItem) {
-        loadingScreen = UIViewController.displaySpinner(self.view)
+        
         let config = SYSTEM_CONFIG()
         
-        if ( withContent == "true" || withImage == "true" ) {
-            var body = self.content.text!
-            if body == config.translate("holder_post_content") {
-                body = " "
-            }
-            let postTimeline = [
-                "sercret"     : "jo8nefamehisd",
-                "action"      : "api",
-                "ac"          : "update_timeline",
-                "d"           : "0",
-                "lang"        : "en",
-                "user_id"     : "\(globalUserId.userID)",
-                "body"        : "\(body)"
-            ]
+        let myAlert = UIAlertController(title: "", message: config.translate("mess_send_post_promt"), preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             
-            //save post data
-            empty_post = "false"
-            self.savePost(postTimeline)
-        }else{
-            empty_post = "true"
-            self.displayMyAlertMessage(config.translate("empty_post"))
-        }
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+            
+            if (self.withContent == "true" || self.withImage == "true" ) {
+                var body = self.content.text!
+                if body == config.translate("holder_post_content") {
+                    body = " "
+                }
+                let postTimeline = [
+                    "sercret"     : "jo8nefamehisd",
+                    "action"      : "api",
+                    "ac"          : "update_timeline",
+                    "d"           : "0",
+                    "lang"        : "en",
+                    "user_id"     : "\(globalUserId.userID)",
+                    "body"        : "\(body)"
+                ]
+                
+                //save post data
+                self.empty_post = "false"
+                self.savePost(postTimeline)
+            }else{
+                self.empty_post = "true"
+                self.displayMyAlertMessage(config.translate("empty_post"))
+            }
+            
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
+        self.presentViewController(myAlert, animated: true, completion: nil)
         
     }
     

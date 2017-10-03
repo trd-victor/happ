@@ -8,6 +8,7 @@
 import UIKit
 import Firebase
 import FirebaseAuth
+import Crashlytics
 
 struct globalUserId {
     static var userID: String = ""
@@ -190,9 +191,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         let userPass = userPasswordField.text!
         let config = SYSTEM_CONFIG()
         
-        
-        //        let error = Error()
-        
         if userEmail == ""  {
             displayMyAlertMessage(config.translate("mess_fail_auth"))
         }else if userPass == "" {
@@ -217,14 +215,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             let httpRequest = HttpDataRequest(postData: param)
             let request = httpRequest.requestGet()
             
-            self.myActivityIndicator.startAnimating()
-            
             let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
                 data, response, error  in
-                
-                var mess: String = ""
-                var user_id: NSNumber
-                var value: Int
                 
                 if error != nil || data == nil{
                     print("\(error)")
@@ -233,25 +225,28 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                     do {
                         let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                         
-                        if json!["message"] != nil {
-                            mess = json!["message"] as! String
-                        }
-                        if json!["result"] != nil {
-                            if json!["result"]!["user_id"] != nil {
-                                value = json!["result"]!["user_id"] as! Int
-                                user_id = value
-                                mess = user_id.stringValue
-                                globalUserId.userID = mess
-                            }
-                        }
                         
                         dispatch_async(dispatch_get_main_queue()) {
-                            self.myActivityIndicator.stopAnimating()
-                            self.myActivityIndicator.hidesWhenStopped = true
+                            var mess: String = ""
+                            var user_id: NSNumber
+                            var value: Int
+                            
+                            if json!["result"] != nil {
+                                if json!["result"]!["user_id"] != nil {
+                                    value = json!["result"]!["user_id"] as! Int
+                                    user_id = value
+                                    mess = user_id.stringValue
+                                    globalUserId.userID = mess
+                                }
+                            }
+                            
                             
                             var errorMessage : Bool
                             if json!["error"] != nil {
                                 errorMessage = json!["error"] as! Bool
+                                if json!["message"] != nil {
+                                    mess = json!["message"] as! String
+                                }
                                 if errorMessage == true {
                                     self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                                 }
@@ -288,7 +283,11 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 
                 self.connectToFcm()
                 self.redirectLogin()
-                UIViewController.removeSpinner(self.loadingScreen)
+                
+                if self.loadingScreen != nil {
+                     UIViewController.removeSpinner(self.loadingScreen)
+                }
+                
             } else {
                 self.displayMyAlertMessage(config.translate("mess_fail_auth"))
             }
@@ -372,7 +371,9 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func displayMyAlertMessage(userMessage:String){
-        UIViewController.removeSpinner(loadingScreen)
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+        }
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)

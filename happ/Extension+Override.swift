@@ -11,57 +11,57 @@ import UIKit
 extension CreateReservation {
     override func viewDidLoad() {
         super.viewDidLoad()
+        dispatch_async(dispatch_get_main_queue()){
+            // all custom views and labels
+            self.addViewsLayout()
+            // set all Layout for views and Labels
+            self.autoLayout()
+        }
         
         let config = SYSTEM_CONFIG()
         let tapStartView = UITapGestureRecognizer(target: self, action: "tapStart:")
-        startView.addGestureRecognizer(tapStartView)
+        self.startView.addGestureRecognizer(tapStartView)
         
         let tapEndView = UITapGestureRecognizer(target: self, action: "tapEnd:")
-        endView.addGestureRecognizer(tapEndView)
+        self.endView.addGestureRecognizer(tapEndView)
         
         let tapOfficeView = UITapGestureRecognizer(target: self, action: "tapOffice:")
-        selectFacilityView.addGestureRecognizer(tapOfficeView)
+        self.selectFacilityView.addGestureRecognizer(tapOfficeView)
         
         let tapRoomView = UITapGestureRecognizer(target: self, action: "tapRoom:")
-        selectRoomView.addGestureRecognizer(tapRoomView)
+        self.selectRoomView.addGestureRecognizer(tapRoomView)
         
-        startTime.addTarget(self, action: "startPicker:", forControlEvents: .ValueChanged)
-        endTime.addTarget(self, action: "endPicker:", forControlEvents: .ValueChanged)
+        self.startTime.addTarget(self, action: "startPicker:", forControlEvents: .ValueChanged)
+        self.endTime.addTarget(self, action: "endPicker:", forControlEvents: .ValueChanged)
         
-        // all custom views and labels
-        addViewsLayout()
+        self.facilitySelect.delegate = self
+        self.facilitySelect.dataSource = self
         
-        // set all Layout for views and Labels
-        autoLayout()
-        
-        facilitySelect.delegate = self
-        facilitySelect.dataSource = self
-        
-        roomSelect.delegate = self
-        roomSelect.dataSource = self
+        self.roomSelect.delegate = self
+        self.roomSelect.dataSource = self
         
         self.navCreate.title = config.translate("button_create")
-        roomSubtitle.text = config.translate("subtitle_room")
-        facilityLabel.text =  config.translate("lbl_facility")
-        roomLabel.text = config.translate("label_room")
-        makeReservation.text = config.translate("subtitle_make_reservation")
-        startLabel.text = config.translate("label_start")
-        let sdate = startTime.date
+        self.roomSubtitle.text = config.translate("subtitle_room")
+        self.facilityLabel.text =  config.translate("lbl_facility")
+        self.roomLabel.text = config.translate("label_room")
+        self.makeReservation.text = config.translate("subtitle_make_reservation")
+        self.startLabel.text = config.translate("label_start")
+        let sdate = self.startTime.date
         
         let calendar = NSCalendar.currentCalendar()
         var components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: sdate)
         
-        startName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
+        self.startName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
         
-        let edate = endTime.date
+        let edate = self.endTime.date
         
         components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: edate)
         
-        endLabel.text = config.translate("label_end")
-        endName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
-        reservedLabel.text = config.translate("title_reserved")
-
-        getOffice()
+        self.endLabel.text = config.translate("label_end")
+        self.endName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
+        self.reservedLabel.text = config.translate("title_reserved")
+        
+         self.getOffice()
     }
     
     override func viewWillAppear(animated: Bool) {

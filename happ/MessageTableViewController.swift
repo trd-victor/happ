@@ -221,6 +221,7 @@ class MessageTableViewController: UITableViewController {
         let seconds = timestamp.doubleValue / 1000
         let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
         let formatter = NSDateFormatter()
+        formatter.timeZone = NSTimeZone(name: "Asia/Tokyo")
         formatter.dateFormat = "HH:mm"
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "MMM dd"

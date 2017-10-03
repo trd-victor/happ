@@ -20,7 +20,7 @@ class SYSTEM_CONFIG {
         self.SYS_VAL.synchronize()
     }
     
-    internal func getSYS_VAL(key: String) -> AnyObject?{
+    internal func                                                                                                                        getSYS_VAL(key: String) -> AnyObject?{
         return self.SYS_VAL.valueForKey(key)
     }
     
@@ -126,8 +126,11 @@ class LaunchScreenViewController: UIViewController {
                     if let data = snap.value as? NSDictionary{
                     globalUserId.userID = String(data["id"]!)
                     
-                    let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
-                    self.presentViewController(userTimeLineController, animated:true, completion:nil)
+                        let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+                        self.presentViewController(userTimeLineController, animated:true, completion:nil)
+                    }else{
+                        let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+                        self.presentViewController(mainViewController, animated:false, completion:nil)
                     }
                 })
             }

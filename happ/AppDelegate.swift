@@ -9,6 +9,8 @@
 import UIKit
 import Firebase
 import FirebaseMessaging
+import Fabric
+import Crashlytics
 
 
 @UIApplicationMain
@@ -20,6 +22,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Badge, .Sound, .Alert], categories: nil))
         UIApplication.sharedApplication().registerForRemoteNotifications()
+        
+        
+        Fabric.with([Crashlytics.self])
+        
         
         FIRApp.configure()
         UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber

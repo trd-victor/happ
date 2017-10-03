@@ -305,15 +305,18 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         if calendarDates[indexPath.row] != "NoDates" {
             CreateDetails.date = calendarDates[indexPath.row]
             CreateDetails.day = getDayOfWeek(calendarDates[indexPath.row])
-            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyBoard.instantiateViewControllerWithIdentifier("CreateReservation") as! CreateReservation
-            let transition = CATransition()
-            transition.duration = 0.40
-            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-            transition.type = kCATransitionPush
-            transition.subtype = kCATransitionFromRight
-            self.view.window!.layer.addAnimation(transition, forKey: nil)
-            presentViewController(vc, animated: false, completion: nil)
+            
+            dispatch_async(dispatch_get_main_queue()){
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let vc = storyBoard.instantiateViewControllerWithIdentifier("CreateReservation") as! CreateReservation
+                let transition = CATransition()
+                transition.duration = 0.40
+                transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                transition.type = kCATransitionPush
+                transition.subtype = kCATransitionFromRight
+                self.view.window!.layer.addAnimation(transition, forKey: nil)
+                self.presentViewController(vc, animated: false, completion: nil)
+            }
         }
     }
     

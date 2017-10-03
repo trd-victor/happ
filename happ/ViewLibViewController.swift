@@ -148,6 +148,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.txtField.widthAnchor.constraintEqualToAnchor(self.containerView.widthAnchor, constant: -85).active = true
         self.txtField.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor, constant: -6).active = true
         self.txtField.font = UIFont.systemFontOfSize(16)
+     
         
         self.separatorLineView.translatesAutoresizingMaskIntoConstraints = false
         self.separatorLineView.leftAnchor.constraintEqualToAnchor(self.containerView.leftAnchor).active = true
@@ -168,6 +169,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let config = SYSTEM_CONFIG()
         let navtitle = chatVar.name
         let sendStr = config.translate("label_send")
+        
+        self.txtField.addPlaceholder(config.translate("label_enter_message"))
         
         let navItem = UINavigationItem(title: navtitle)
         let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
@@ -448,6 +451,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let seconds = timestamp.doubleValue / 1000
         let dateTimestamp = NSDate(timeIntervalSince1970: seconds)
         let formatter = NSDateFormatter()
+        formatter.timeZone = NSTimeZone(name: "Asia/Tokyo")
         formatter.dateFormat = "HH:mm"
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "MMM dd"
@@ -474,3 +478,4 @@ extension UIColor {
         self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
     }
 }
+
