@@ -16,6 +16,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     let containerView: UIView = UIView()
     let txtField: UITextView = UITextView()
     let separatorLineView: UIView = UIView()
+    let blockTextView: UILabel = UILabel()
     var myCollectionView:UICollectionView?
     var layout: UICollectionViewFlowLayout?
     
@@ -46,10 +47,12 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.view.addSubview(self.navBar)
         self.view.addSubview(self.myCollectionView!)
         
+        
         self.containerView.addSubview(self.separatorLineView)
         self.containerView.addSubview(self.sendBtn)
         self.containerView.addSubview(self.txtField)
-        
+        self.containerView.addSubview(self.blockTextView)
+        self.blockTextView.hidden = true
         autoLayout()
         loadConfig()
         getUsersImage()
@@ -58,11 +61,31 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         if(chatVar.Indicator == "MessageTable"){
             self.deleteMessage()
             self.loadMessages()
+            self.addBlockObserver()
         }else if(chatVar.Indicator == "Search"){
             self.deleteMessage()
             self.getChatRoomID()
         }
+    }
+    
+    func addBlockObserver(){
+        let memberDB = FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID)
         
+        memberDB.observeEventType(.Value, withBlock: {(snapshot) in
+            if let result = snapshot.value as? NSDictionary {
+                if let block = result["blocked"] as? Bool {
+                    if block {
+                        self.blockTextView.hidden = false
+                        self.txtField.hidden = true
+                        self.sendBtn.hidden = true
+                    }else{
+                        self.blockTextView.hidden = true
+                        self.txtField.hidden = false
+                        self.sendBtn.hidden = false
+                    }
+                }
+            }
+        })
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -149,6 +172,14 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.txtField.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor, constant: -6).active = true
         self.txtField.font = UIFont.systemFontOfSize(16)
      
+        self.blockTextView.translatesAutoresizingMaskIntoConstraints = false
+        self.blockTextView.topAnchor.constraintEqualToAnchor(self.containerView.topAnchor).active = true
+        self.blockTextView.leftAnchor.constraintEqualToAnchor(self.containerView.leftAnchor, constant: 5).active = true
+        self.blockTextView.centerYAnchor.constraintEqualToAnchor(self.containerView.centerYAnchor).active = true
+        self.blockTextView.widthAnchor.constraintEqualToAnchor(self.containerView.widthAnchor).active = true
+        self.blockTextView.heightAnchor.constraintEqualToAnchor(self.containerView.heightAnchor).active = true
+        self.blockTextView.backgroundColor = UIColor.whiteColor()
+        self.blockTextView.textColor = UIColor.blueColor()
         
         self.separatorLineView.translatesAutoresizingMaskIntoConstraints = false
         self.separatorLineView.leftAnchor.constraintEqualToAnchor(self.containerView.leftAnchor).active = true
@@ -189,6 +220,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.sendBtn.setTitle(sendStr, forState: .Normal)
         self.sendBtn.addTarget(self, action: Selector("handleSend"), forControlEvents: .TouchUpInside)
         
+        self.blockTextView.text = config.translate("mess_block_convo")
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
@@ -335,16 +367,19 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                     if(count == snapshot.value?.count!){
                         if chatVar.RoomID != "" {
                             self.loadMessages()
+                            self.addBlockObserver()
                         }else{
                             let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
                             dispatch_async(dispatch_get_main_queue()){
                                 let roomDetail = [
                                     String(chatmateID) : true,
-                                    String(userid!) : true
+                                    String(userid!) : true,
+                                    "blocked" : false
                                 ]
                                 roomDB.setValue(roomDetail)
                                 chatVar.RoomID = roomDB.key
                                 self.loadMessages()
+                                self.addBlockObserver()
                             }
                         }
                     }
@@ -354,11 +389,13 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 dispatch_async(dispatch_get_main_queue()){
                     let roomDetail = [
                         String(chatmateID) : true,
-                        String(userid!) : true
+                        String(userid!) : true,
+                        "blocked" : false
                     ]
                     roomDB.setValue(roomDetail)
                     chatVar.RoomID = roomDB.key
                     self.loadMessages()
+                    self.addBlockObserver()
                 }
             }
         })
@@ -391,9 +428,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
             
-            
             cell.userPhoto.profileForCache(self.userPhoto)
-            
             
             cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
             cell.dateLblRight.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)

@@ -76,10 +76,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         self.loadConfigure()
         
-        let paddingView = UIView(frame: CGRectMake(0, 0, 10, self.userDescription.frame.height))
-        userDescription.leftView = paddingView
-        userDescription.leftViewMode = UITextFieldViewMode.Always
-        
         //get user Id...
         userId = globalUserId.userID
         
@@ -197,7 +193,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userDescription.topAnchor.constraintEqualToAnchor(userNamefield.bottomAnchor, constant: 5).active = true
         userDescription.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userDescription.heightAnchor.constraintEqualToConstant(100).active = true
-        userDescription.setRightPaddingPoints(5)
+        userDescription.setRightPaddingPoints(10)
+        userDescription.setLeftPaddingPoints(10)
         
         skillView.translatesAutoresizingMaskIntoConstraints = false
         skillView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
