@@ -69,6 +69,7 @@
 		A3B046471F38E283003789CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3B046461F38E283003789CC /* Main.storyboard */; };
 		A3D387C11F21FD590011E323 /* UserTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D387C01F21FD590011E323 /* UserTimelineViewController.swift */; };
 		A3D90D9C1F49678800DB5624 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D90D9B1F49678800DB5624 /* Constants.swift */; };
+		A3DDD7F91F875DB400C2A692 /* SelectSkillViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3DDD7F81F875DB400C2A692 /* SelectSkillViewController.swift */; };
 		A3E124AA1F40B9F30053B2CC /* MessageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124A91F40B9F30053B2CC /* MessageTableViewController.swift */; };
 		A3E124AE1F40BA300053B2CC /* CongestionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */; };
 		A3E124B01F40BDDA0053B2CC /* searchdetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124AF1F40BDDA0053B2CC /* searchdetails.swift */; };
@@ -145,6 +146,7 @@
 		A3D387C01F21FD590011E323 /* UserTimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTimelineViewController.swift; sourceTree = "<group>"; };
 		A3D90D9B1F49678800DB5624 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A3D90D9D1F496B9E00DB5624 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
+		A3DDD7F81F875DB400C2A692 /* SelectSkillViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectSkillViewController.swift; sourceTree = "<group>"; };
 		A3E124A91F40B9F30053B2CC /* MessageTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageTableViewController.swift; sourceTree = "<group>"; };
 		A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CongestionViewController.swift; sourceTree = "<group>"; };
 		A3E124AF1F40BDDA0053B2CC /* searchdetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = searchdetails.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				A3D387C01F21FD590011E323 /* UserTimelineViewController.swift */,
 				A3A343A61F09F8B600DC55FC /* ViewController.swift */,
 				A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */,
+				A3DDD7F81F875DB400C2A692 /* SelectSkillViewController.swift */,
 			);
 			path = happ;
 			sourceTree = "<group>";
@@ -527,6 +530,7 @@
 				A302AA5C1F27007400D8FBA8 /* CustomCell.swift in Sources */,
 				3D0A4C0F1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift in Sources */,
 				A33893781F31A60D0094F983 /* FirstLaunchLanguage.swift in Sources */,
+				A3DDD7F91F875DB400C2A692 /* SelectSkillViewController.swift in Sources */,
 				A366EB841F2996EF000C574C /* TransitionDown.swift in Sources */,
 				A38E96F01F5525FE00AE3D66 /* SystemValue.swift in Sources */,
 				A3E124AA1F40B9F30053B2CC /* MessageTableViewController.swift in Sources */,

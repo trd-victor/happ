@@ -115,7 +115,7 @@ class LaunchScreenViewController: UIViewController {
         
         if let firID = FIRAuth.auth()?.currentUser?.uid {
             let userdb = FIRDatabase.database().reference().child("users").child(firID)
-            let token = FIRInstanceID.instanceID().token()!
+            
             globalUserId.FirID = firID
             
             let user = ViewController()
@@ -124,7 +124,9 @@ class LaunchScreenViewController: UIViewController {
             let config = SYSTEM_CONFIG()
             config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
             
-            FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
+            if let token = FIRInstanceID.instanceID().token() {
+                FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
+            }
             
             dispatch_async(dispatch_get_main_queue()){
                 userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
@@ -138,6 +140,12 @@ class LaunchScreenViewController: UIViewController {
                         self.presentViewController(mainViewController, animated:false, completion:nil)
                     }
                 })
+            }
+            
+            
+            self.delay(12.0){
+                let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+                self.presentViewController(mainViewController, animated:false, completion:nil)
             }
         }else {
             let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController

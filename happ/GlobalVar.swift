@@ -23,6 +23,7 @@ struct globalvar {
     static var GET_FREETIME_STATUS_ACTION : String = "get_freetime_status_for_me"
     static var GET_CONGESTION_ACTION : String = "get_congestion"
     static var GET_SYSTEM_VALUE : String = "get_system_value_all"
+    static var GET_SKILL: String = "get_skill"
     static var APP_LANGUANGE: String = ""
     static var API_URL: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
     static var userTitle: String = ""

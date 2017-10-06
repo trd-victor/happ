@@ -56,6 +56,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     var checkNewImage: Bool = false
     var galleryPicker = UIImagePickerController()
     var loadingScreen: UIView!
+    var firstLoad: Bool = false
     //    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
@@ -361,7 +362,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     }
     
     func loadUserData() {
-        loadingScreen = UIViewController.displaySpinner(self.view)
+        if !self.firstLoad {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
         //let URL
         let viewDataURL = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"

@@ -38,7 +38,7 @@ extension UserProfileController {
             }else{
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                            self.getChatRoomID("block")
+                        FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).child("blocked").setValue(true)
                     }else{
                         self.getBlockIds()
                     }
@@ -78,7 +78,7 @@ extension UserProfileController {
             }else{
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                        self.getChatRoomID("unblock")
+                        FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).child("blocked").setValue(false)
                     }else{
                         self.getBlockIds()
                     }
@@ -90,82 +90,6 @@ extension UserProfileController {
         task.resume()
     }
     
-    func getChatRoomID(status: String){
-        chatVar.RoomID = ""
-        
-        let chatmateID = chatVar.chatmateId
-        let userid = FIRAuth.auth()?.currentUser?.uid
-        let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
-        
-        membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-            var count = 0
-            
-            if let result =  snapshot.value as? [String: AnyObject] {
-                for (key, value) in result {
-                    count++
-                    let dataVal = value as? NSDictionary
-                    
-                    let firstUser = dataVal![String(chatmateID)] as? Int
-                    let secondUser = dataVal![String(userid!)] as? Int
-                    
-                    if firstUser != nil && secondUser != nil {
-                        chatVar.RoomID = key
-                        if status == "block" {
-                            FIRDatabase.database().reference().child("chat").child("members").child(key).child("blocked").setValue(true)
-                        }else{
-                            FIRDatabase.database().reference().child("chat").child("members").child(key).child("blocked").setValue(false)
-                        }
-                    }
-                    
-                    if(count == snapshot.value?.count!){
-                        if chatVar.RoomID != "" {
-                        }else{
-                            let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
-                            dispatch_async(dispatch_get_main_queue()){
-                                var roomDetail: NSDictionary
-                                if status == "block" {
-                                    roomDetail = [
-                                        String(chatmateID) : true,
-                                        String(userid!) : true,
-                                        "blocked" : true
-                                    ]
-                                }else{
-                                    roomDetail = [
-                                        String(chatmateID) : true,
-                                        String(userid!) : true,
-                                        "blocked" : false
-                                    ]
-                                }
-                                roomDB.setValue(roomDetail)
-                                chatVar.RoomID = roomDB.key
-                            }
-                        }
-                    }
-                }
-            }else{
-                let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
-                dispatch_async(dispatch_get_main_queue()){
-                    var roomDetail: NSDictionary
-                    if status == "block" {
-                        roomDetail = [
-                            String(chatmateID) : true,
-                            String(userid!) : true,
-                            "blocked" : true
-                        ]
-                    }else{
-                        roomDetail = [
-                            String(chatmateID) : true,
-                            String(userid!) : true,
-                            "blocked" : false
-                        ]
-                    }
-                    roomDB.setValue(roomDetail)
-                    chatVar.RoomID = roomDB.key
-                }
-            }
-        })
-    }
-
     
     //
     // GET BLOCK ID's
@@ -280,9 +204,12 @@ extension UserProfileController {
                                                 let wpID = user_id as? Int
                                                 if dataID != nil && wpID != nil{
                                                     if dataID! == wpID! {
-                                                            chatVar.chatmateId = key as! String
-                                                            chatVar.Indicator = "Search"
-                                                            chatVar.name = self.userName.text!
+                                                        chatVar.chatmateId = key as! String
+                                                        chatVar.Indicator = "Search"
+                                                        chatVar.name = self.userName.text!
+                                                        if !self.firstLoad {
+                                                            self.getChatRoomID()
+                                                        }
                                                     }
                                                 }
                                             }
@@ -301,6 +228,67 @@ extension UserProfileController {
         }
         task.resume()
         
+    }
+    
+    func getChatRoomID(){
+        firstLoad = true
+        chatVar.RoomID = ""
+        
+        let chatmateID = chatVar.chatmateId
+        let userid = FIRAuth.auth()?.currentUser?.uid
+        let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
+        
+        membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            var count = 0
+            
+            if let result =  snapshot.value as? [String: AnyObject] {
+                for (key, value) in result {
+                    count++
+                    let dataVal = value as? NSDictionary
+                    
+                    let firstUser = dataVal![String(chatmateID)] as? Int
+                    let secondUser = dataVal![String(userid!)] as? Int
+                    
+                    if firstUser != nil && secondUser != nil {
+                        chatVar.RoomID = key
+                    }
+                    
+                    if(count == snapshot.value?.count!){
+                        if chatVar.RoomID != "" {
+                            self.firstLoad = false
+                        }else{
+                            let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                            dispatch_async(dispatch_get_main_queue()){
+                                var roomDetail: NSDictionary
+                                roomDetail = [
+                                    String(chatmateID) : true,
+                                    String(userid!) : true,
+                                    "blocked" : false
+                                ]
+                                
+                                roomDB.setValue(roomDetail)
+                                chatVar.RoomID = roomDB.key
+                                self.firstLoad = false
+                            }
+                        }
+                    }
+                }
+            }else{
+                let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                dispatch_async(dispatch_get_main_queue()){
+                    var roomDetail: NSDictionary
+                    
+                    roomDetail = [
+                        String(chatmateID) : true,
+                        String(userid!) : true,
+                        "blocked" : false
+                    ]
+                    roomDB.setValue(roomDetail)
+                    chatVar.RoomID = roomDB.key
+                    self.firstLoad = false
+                }
+            }
+        })
     }
     
     // Reload User Profile Timeline
