@@ -133,7 +133,7 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
             emptyEmail = config.translate("empty_email")
             displayMyAlertMessage("\(emptyEmail)")
         } else {
-            let changePassUrl = "https://happ.biz/wp-admin/admin-ajax.php"
+            let changePassUrl = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
             
             //created NSURL
             let requestURL = NSURL(string: changePassUrl)

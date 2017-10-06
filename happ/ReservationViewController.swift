@@ -25,14 +25,24 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
     let lblMonth: UILabel = UILabel()
     
     var layoutwidth: CGFloat = 0
-    var startDate:Int = 0
-    var numDays:Int = 0
-    var lastDay: Int = 0
     
     var calendarYear:Int = 0
     var calendarDay:Int = 0
     var calendarMonth:Int = 0
     var calendarCurrent: String = ""
+    
+    var lang: String = ""
+    
+    var monthString = [String]()
+    var yearString = [String]()
+    var dayString = [String]()
+    
+    
+    var calendarDays = [String]()
+    var calendarDates = [String]()
+    var calendarDaysWords = [String]()
+    
+    var checkDate:Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,41 +82,28 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
         calendarCollectionView.backgroundColor = UIColor.clearColor()
+        calendarCollectionView.showsVerticalScrollIndicator = false
+        configCalendar(calendarMonth, year: calendarYear)
         
-        let swipeUpward = UISwipeGestureRecognizer(target: self, action: "swipeUpward:")
-        swipeUpward.direction = .Right
-        let swipeDownward = UISwipeGestureRecognizer(target: self, action: "swipeDownward:")
-        swipeDownward.direction = .Left
-        
-        view.addGestureRecognizer(swipeUpward)
-        view.addGestureRecognizer(swipeDownward)
-        loadCalendar()
         autoLayout()
+    }
+    
+    var firstLoad:Bool = false
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !firstLoad {
+            dispatch_async(dispatch_get_main_queue()){
+                let indexPath = NSIndexPath(forItem: 43, inSection: 0)
+                self.calendarCollectionView.scrollToItemAtIndexPath(indexPath, atScrollPosition: UICollectionViewScrollPosition.Top, animated: false)
+            }
+            firstLoad = true
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
         let config = SYSTEM_CONFIG()
         self.navBar.topItem?.title = config.translate("title_room_reservation")
-    }
-    
-    func swipeUpward(gest: UISwipeGestureRecognizer){
-        if calendarMonth == 1 {
-            calendarYear -= 1
-            calendarMonth = 12
-        }else{
-            calendarMonth -= 1
-        }
-        loadCalendar()
-    }
-    
-    func swipeDownward(gest: UISwipeGestureRecognizer){
-        if calendarMonth == 12 {
-            calendarYear += 1
-            calendarMonth = 1
-        }else{
-            calendarMonth += 1
-        }
-        loadCalendar()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -141,32 +138,6 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         
         self.lblMonth.text = String(month)
         
-    }
-    
-    var lang: String = ""
-    
-    func loadCalendar(){
-        
-        var month = ""
-        
-        if lang == "en" {
-            let tmpArr = ["January","February","March","April","May","June","July","August","September","October","November","December"]
-            month = "\(tmpArr[self.calendarMonth-1]) \(self.calendarYear)"
-        }else{
-            month = "\(self.calendarYear)年\(self.calendarMonth)月"
-        }
-        
-        self.lblMonth.text = String(month)
-        
-        self.numDays = 0
-        
-        self.startDate = self.getStartDay(Int(self.calendarMonth),forYear: Int(self.calendarYear))
-        self.getLastDay(Int(self.calendarMonth),forYear: Int(self.calendarYear))
-        self.lastDay = self.getLastDay(Int(self.calendarMonth),forYear: Int(self.calendarYear))!
-        self.calendarDays.removeAll()
-        self.calendarDates.removeAll()
-        self.calendarDaysWords.removeAll()
-        self.calendarCollectionView.reloadData()
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -244,60 +215,42 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         calendarCollectionView.topAnchor.constraintEqualToAnchor(lblMonth.bottomAnchor).active = true
         calendarCollectionView.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         calendarCollectionView.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
-        calendarCollectionView.heightAnchor.constraintEqualToConstant(400).active = true
+        calendarCollectionView.heightAnchor.constraintEqualToConstant(264).active = true
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 42
+        return dayString.count
     }
-    
-    var calendarDays = [String]()
-    var calendarDates = [String]()
-    var calendarDaysWords = [String]()
-    
-    var checkDate:Bool = false
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("CalendarCell", forIndexPath: indexPath) as! CalendarCell
-        if indexPath.row >= (startDate - 1) && indexPath.row <= (lastDay + (startDate - 2) ) {
-            if numDays < lastDay  {
-                numDays += 1
+        
+        let count = dayString.count / 42
+        for var x = 1 ; x <= count ; x++ {
+            if ( indexPath.row) >= (19 + ((x - 1) * 42)) {
+                if ( indexPath.row) <= (31 + ((x - 1) * 42)) {
+                    lblMonth.text = getDateString(Int(monthString[indexPath.row])!,year: Int(yearString[indexPath.row])!)
+                }
             }
-            if calendarDays.indices.contains(indexPath.row) {
-                cell.lblDate.text = calendarDays[indexPath.row]
-            }else{
-                calendarDays.append(String(numDays))
-                cell.lblDate.text = String(numDays)
-            }
-            
+        }
+        if dayString[indexPath.row] != "" {
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-d"
-            let date2 = "\(calendarYear)-\(calendarMonth)-\(numDays)"
+            let date2 = "\(yearString[indexPath.row])-\(monthString[indexPath.row])-\(dayString[indexPath.row])"
             
             if checkDate(calendarCurrent, string2: date2) == "GreaterThan" {
-                calendarDates.append("\(calendarYear)-\(calendarMonth)-\(numDays)")
+                calendarDates[indexPath.row] = date2
                 cell.lblDate.textColor = UIColor.blackColor()
                 cell.lblDate.font = UIFont.systemFontOfSize(16)
             }else if checkDate(calendarCurrent, string2: date2) == "LessThan" {
-                calendarDates.append("NoDates")
                 cell.lblDate.textColor = UIColor.grayColor()
                 cell.lblDate.font = UIFont.systemFontOfSize(16)
             }else{
-                calendarDates.append("NoDates")
                 cell.lblDate.font = UIFont.boldSystemFontOfSize(16)
                 cell.lblDate.textColor = UIColor.blackColor()
             }
-            
-        }else{
-            if calendarDays.indices.contains(indexPath.row) {
-                cell.lblDate.text = calendarDays[indexPath.row]
-            }else{
-                calendarDates.append("NoDates")
-                calendarDaysWords.append("None")
-                calendarDays.append("")
-                cell.lblDate.text = ""
-            }
         }
+        cell.lblDate.text = dayString[indexPath.row]
         return cell
     }
     
@@ -318,6 +271,206 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
                 self.presentViewController(vc, animated: false, completion: nil)
             }
         }
+    }
+    var contentOffset: CGFloat = 0.0
+    
+    func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
+        if collectionView.contentOffset.y < 264 && collectionView.contentOffset.y > contentOffset {
+            contentOffset = collectionView.contentOffset.y
+            collectionView.contentOffset.y = collectionView.contentOffset.y + 264
+            configureCalendarWithEvents("Top", month: Int(monthString[indexPath.row])!,year: Int(yearString[indexPath.row])!)
+        }
+        if indexPath.row == (dayString.count - 16) {
+            configureCalendarWithEvents("append", month: Int(monthString[indexPath.row])!,year: Int(yearString[indexPath.row])!)
+        }
+    }
+    
+    func configureCalendarWithEvents(type: String, var month: Int, var year: Int) {
+        switch(type) {
+        case "Top":
+            month -= 1
+            if month == 0 {
+                month = 12
+                year -= 1
+            }
+            // Variable to check if start date is set on cell
+            var startBool:Bool = false
+            // Get starting day of the month
+            let startDay = getStartDay(month, forYear: year)
+            // Get ending day of the month
+            let endDay = getLastDay(month, forYear: year)
+            // Number of Days to present
+            var numDays:Int = 1
+            //Loop 42 Cell Data ( 6 weeks Calendar )
+            for var x = 1 ; x <= 42 ; x++ {
+                // Check if x is equal to startday by using modulo
+                // and if start date isn't set on cell
+                if (x % startDay) == 0 && !startBool {
+                    // Add Data to Global Variable
+                    dayString.insert(String(numDays), atIndex: (x - 1))
+                    calendarDates.insert("NoDates", atIndex: (x - 1))
+                    // Set Start Bool to true
+                    startBool = true
+                    // add numDays
+                    numDays += 1
+                }else{
+                    // If start date not yet set
+                    if !startBool {
+                        // append empty string
+                        dayString.insert("", atIndex: (x - 1))
+                        calendarDates.insert("NoDates", atIndex: (x - 1))
+                    }else if numDays <= endDay {
+                        dayString.insert(String(numDays), atIndex: (x - 1))
+                        calendarDates.insert("NoDates", atIndex: (x - 1))
+                        numDays += 1
+                    } else if numDays > endDay {
+                        dayString.insert("", atIndex: (x - 1))
+                        calendarDates.insert("NoDates", atIndex: (x - 1))
+                    }
+                }
+                monthString.insert(String(month), atIndex: (x - 1))
+                yearString.insert(String(year), atIndex: (x - 1))
+            }
+            dispatch_async(dispatch_get_main_queue()){
+                self.calendarCollectionView.reloadData()
+                self.contentOffset = 0.0
+            }
+            break
+        default:
+            // Add 1 to month
+            month += 1
+            // Check Month is equal to 13
+            if month == 13 {
+                // Set Month to 1
+                month = 1
+                // Add Year with 1
+                year += 1
+            }
+            // Variable to check if start date is set on cell
+            var startBool:Bool = false
+            // Get starting day of the month
+            let startDay = getStartDay(month, forYear: year)
+            // Get ending day of the month
+            let endDay = getLastDay(month, forYear: year)
+            // Number of Days to present
+            var numDays:Int = 1
+            //Loop 42 Cell Data ( 6 weeks Calendar )
+            for var x = 1 ; x <= 42 ; x++ {
+                // Check if x is equal to startday by using modulo
+                // and if start date isn't set on cell
+                if (x % startDay) == 0 && !startBool {
+                    // Add Data to Global Variable
+                    dayString.append(String(numDays))
+                    calendarDates.append("NoDates")
+                    // Set Start Bool to true
+                    startBool = true
+                    // add numDays
+                    numDays += 1
+                }else{
+                    // If start date not yet set
+                    if !startBool {
+                        // append empty string
+                        dayString.append("")
+                        calendarDates.append("NoDates")
+                    }else if numDays <= endDay {
+                        dayString.append(String(numDays))
+                        calendarDates.append("NoDates")
+                        numDays += 1
+                    } else if numDays > endDay {
+                        dayString.append("")
+                        calendarDates.append("NoDates")
+                    }
+                }
+                monthString.append(String(month))
+                yearString.append(String(year))
+            }
+            dispatch_async(dispatch_get_main_queue()){
+                self.calendarCollectionView.reloadData()
+            }
+            break
+        }
+    }
+    
+    func configCalendar(var month: Int, var year: Int){
+        // Prepare variables
+        // Minus month with 2
+        month -= 2
+        //Check Month is equal to 0
+        if month == 0 {
+            // Set month to 12
+            month == 0
+            // Subtract Year
+            year -= 1
+        }else if month == -1 { // Check Month is equal to -1
+            // Set month to 11
+            month == 11
+            // Subtract Year
+            year -= 1
+        }
+        
+        // Loop and create Caledar Data
+        for _ in 1...3 {
+            // Add 1 to month
+            month += 1
+            // Check Month is equal to 13
+            if month == 13 {
+                // Set Month to 1
+                month = 1
+                // Add Year with 1
+                year += 1
+            }
+            // Variable to check if start date is set on cell
+            var startBool:Bool = false
+            // Get starting day of the month
+            let startDay = getStartDay(month, forYear: year)
+            // Get ending day of the month
+            let endDay = getLastDay(month, forYear: year)
+            // Number of Days to present
+            var numDays:Int = 1
+            //Loop 42 Cell Data ( 6 weeks Calendar )
+            for var x = 1 ; x <= 42 ; x++ {
+                // Check if x is equal to startday by using modulo
+                // and if start date isn't set on cell
+                if (x % startDay) == 0 && !startBool {
+                    // Add Data to Global Variable
+                    dayString.append(String(numDays))
+                    calendarDates.append("NoDates")
+                    // Set Start Bool to true
+                    startBool = true
+                    // add numDays
+                    numDays += 1
+                }else{
+                    // If start date not yet set
+                    if !startBool {
+                        // append empty string
+                        dayString.append("")
+                        calendarDates.append("NoDates")
+                    }else if numDays <= endDay {
+                        dayString.append(String(numDays))
+                        calendarDates.append("NoDates")
+                        numDays += 1
+                    } else if numDays > endDay {
+                        dayString.append("")
+                        calendarDates.append("NoDates")
+                    }
+                }
+                monthString.append(String(month))
+                yearString.append(String(year))
+                
+            }
+        }
+    }
+    
+    func getDateString(month: Int, year: Int)->String {
+        let config = SYSTEM_CONFIG()
+        lang = config.getSYS_VAL("AppLanguage") as! String
+        if lang == "en" {
+            let tmpArr = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+            return "\(tmpArr[month - 1]) \(year)"
+        }else{
+            return "\(month)年\(year)月"
+        }
+        
     }
     
     func getWeeks(month: Int, forYear year: Int) -> Int? {
@@ -428,7 +581,7 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
         }
         
     }
-
+    
     
     @IBAction func viewReservation(sender: AnyObject) {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)

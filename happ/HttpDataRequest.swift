@@ -13,7 +13,7 @@ class HttpDataRequest
     var httpMethod: String = "POST"
     var language: String!
     var request: NSMutableURLRequest
-    var api_url: String = "https://happ.biz/wp-admin/admin-ajax.php"
+    var api_url: String = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
     
     init(postData: [String: String]?) {
         self.request = NSMutableURLRequest(URL: NSURL (string: self.api_url)!)

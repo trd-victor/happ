@@ -364,7 +364,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         loadingScreen = UIViewController.displaySpinner(self.view)
         
         //let URL
-        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
+        let viewDataURL = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
         
         //created NSURL
         let requestURL = NSURL(string: viewDataURL)
@@ -499,7 +499,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         }
         else {
             //created NSURL
-            let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
+            let URL_SAVE_TEAM = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
             
             //created NSURL
             let requestURL = NSURL(string: URL_SAVE_TEAM)
@@ -753,7 +753,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     
     func setImageToFirebaseUser(){
         //let URL
-        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
+        let viewDataURL = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
         
         //created NSURL
         let requestURL = NSURL(string: viewDataURL)

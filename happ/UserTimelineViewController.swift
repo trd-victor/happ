@@ -46,7 +46,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     var dataResult: AnyObject?
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
     
     var image1 = [UIImageView]()
     
@@ -637,7 +637,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let cellTap = UITapGestureRecognizer(target: self, action: "tapCell:")
         let bodyTap = UITapGestureRecognizer(target: self, action: "tapBody:")
         let imgTap = UITapGestureRecognizer(target: self, action: "tapImage:")
-        
+        print(self.img1[indexPath.row])
         if self.img3[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("TripleImage", forIndexPath: indexPath) as! TripleImage
             

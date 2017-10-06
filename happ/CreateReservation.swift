@@ -245,7 +245,7 @@ class CreateReservation: UIViewController {
     var officeSample = ["TestOffice","TestOffice","TestOffice","TestOffice"]
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
     
     var dataView = [UIView]()
     var dataLabel = [UILabel]()

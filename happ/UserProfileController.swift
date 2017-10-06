@@ -28,7 +28,7 @@ class UserProfileController: UIViewController {
     var postID = [Int]()
     var page: Int = 1
     
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
     
     
     let ProfileView: UIView = {

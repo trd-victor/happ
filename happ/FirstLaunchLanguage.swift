@@ -31,6 +31,10 @@ class FirstLaunchLanguage: UIViewController {
         
     }
     
+    override func  preferredStatusBarStyle()-> UIStatusBarStyle {
+        return UIStatusBarStyle.LightContent
+    }
+    
     func autoLayout(){
         
         navBar.translatesAutoresizingMaskIntoConstraints = false

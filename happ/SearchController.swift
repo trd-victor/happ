@@ -19,7 +19,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     let mainView: UIView = UIView()
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
     
     var user_id = [Int]()
     var userData = []

@@ -27,7 +27,7 @@ class SYSTEM_CONFIG {
     /**
      * @param key as String
      * System Language
-    **/
+     **/
     internal func translate(key: String) -> String {
         var lang = self.getSYS_VAL("AppLanguage") as! String
         let textTranslate = self.getSYS_VAL("SYSTM_VAL")
@@ -51,16 +51,17 @@ class LaunchScreenViewController: UIViewController {
     var myTimer : NSTimer!
     var language: String!
     
-
+    let activityIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.activityIndicatorViewStyle = .Gray
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.addSubview(activityIndicator)
         autoLayout()
-        
-//        self.delayLaunchScreen()
-        let config = getSystemValue()
-        config.getKey()
-        
         
         //setup Views..
         self.setUpView()
@@ -77,10 +78,14 @@ class LaunchScreenViewController: UIViewController {
         logo.heightAnchor.constraintEqualToConstant(130).active = true
         
         logo.image = UIImage(named: "logo")
+        activityIndicator.topAnchor.constraintEqualToAnchor(logo.bottomAnchor, constant: 5).active = true
+        activityIndicator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        activityIndicator.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        activityIndicator.heightAnchor.constraintEqualToConstant(50).active = true
     }
     
     override func viewDidAppear(animated: Bool) {
-        
+        activityIndicator.startAnimating()
         self.isAppAlreadyLaunchedOnce()
         
         let user = ViewController()
@@ -124,8 +129,8 @@ class LaunchScreenViewController: UIViewController {
             dispatch_async(dispatch_get_main_queue()){
                 userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
                     if let data = snap.value as? NSDictionary{
-                    globalUserId.userID = String(data["id"]!)
-                    
+                        globalUserId.userID = String(data["id"]!)
+                        
                         let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
                         self.presentViewController(userTimeLineController, animated:true, completion:nil)
                     }else{
@@ -142,8 +147,11 @@ class LaunchScreenViewController: UIViewController {
     
     func delayLaunchScreen() {
         self.delay(3.0) {
-            self.dismissViewControllerAnimated(false, completion: nil)
-            self.gotoMainBoard()
+            self.activityIndicator.stopAnimating()
+            dispatch_async(dispatch_get_main_queue()){
+                self.dismissViewControllerAnimated(false, completion: nil)
+                self.gotoMainBoard()
+            }
         }
     }
     
@@ -154,6 +162,10 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func isAppAlreadyLaunchedOnce()->Bool{
+        
+        //        self.delayLaunchScreen()
+        
+        
         let defaults = NSUserDefaults.standardUserDefaults()
         
         if let _ = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
@@ -162,13 +174,18 @@ class LaunchScreenViewController: UIViewController {
             return true
         }else{
             defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-            self.delay(3.0){
+            let config = getSystemValue()
+            config.getKey()
+            self.delay(5.0){
+                self.activityIndicator.stopAnimating()
                 do {
                     try FIRAuth.auth()?.signOut()
                 } catch (let error) {
                     print((error as NSError).code)
                 }
-                self.firstload()
+                dispatch_async(dispatch_get_main_queue()){
+                    self.firstload()
+                }
             }
             return false
         }

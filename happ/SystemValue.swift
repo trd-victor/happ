@@ -57,8 +57,10 @@ class getSystemValue {
                         }
                     }
                 }
-                let config = SYSTEM_CONFIG()
-                config.setSYS_VAL(self.sysVals, key: "SYSTM_VAL")
+                dispatch_async(dispatch_get_main_queue()){
+                    let config = SYSTEM_CONFIG()
+                    config.setSYS_VAL(self.sysVals, key: "SYSTM_VAL")
+                }
             } catch {
                 print(error)
             }
