@@ -27,6 +27,7 @@ class UserProfileController: UIViewController {
     var postDate = [String]()
     var postID = [Int]()
     var page: Int = 1
+    var firstLoad: Bool = false
     
     let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
@@ -139,7 +140,9 @@ class UserProfileController: UIViewController {
         msg.text = ""
         ProfileImage.image = UIImage(named: "noPhoto")
         
-        loadUserinfo(UserProfile.id)
+        dispatch_async(dispatch_get_main_queue()){
+           self.loadUserinfo(UserProfile.id)
+        }
         
         tblProfile.addSubview(ProfileView)
         tblProfile.addSubview(topReload)

@@ -52,6 +52,7 @@ class MessageTableViewController: UITableViewController {
         //remove border in messages
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
         
+        
         self.autoLayout()
         self.loadConfig()
         
@@ -74,6 +75,7 @@ class MessageTableViewController: UITableViewController {
         self.navigationController?.navigationBar.translucent = false
         self.navigationController?.navigationBar.barTintColor = UIColor(hexString: "#272727")
         self.navigationController?.navigationBar.titleTextAttributes =  [NSForegroundColorAttributeName : UIColor.whiteColor()]
+
     }
     
     func loadConfig(){
@@ -147,6 +149,7 @@ class MessageTableViewController: UITableViewController {
         cell.userTime.heightAnchor.constraintEqualToConstant(31).active = true
         cell.username.font = UIFont.boldSystemFontOfSize(17)
         cell.userMessage.font = UIFont.systemFontOfSize(15)
+        
         
         let radius = min(cell.userImage!.frame.width/2 , cell.userImage!.frame.height/2)
         cell.userImage.layer.cornerRadius = radius

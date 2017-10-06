@@ -56,6 +56,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     var checkNewImage: Bool = false
     var galleryPicker = UIImagePickerController()
     var loadingScreen: UIView!
+    var firstLoad: Bool = false
     //    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
@@ -361,8 +362,11 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     }
     
     func loadUserData() {
-        loadingScreen = UIViewController.displaySpinner(self.view)
-        
+        if !firstLoad {
+            loadingScreen = UIViewController.displaySpinner(self.view)
+            self.firstLoad = true
+        }
+  
         //let URL
         let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
         
@@ -415,7 +419,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 do {
                     
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                   
                     
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
                         if json!["result"] != nil {
@@ -459,7 +462,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             if self.loadingScreen != nil {
                                 UIViewController.removeSpinner(self.loadingScreen)
                             }
-                            
                         })
                     })
                     

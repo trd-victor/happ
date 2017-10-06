@@ -66,6 +66,13 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             self.deleteMessage()
             self.getChatRoomID()
         }
+        
+        
+        self.myCollectionView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: Selector("hideKeyboard")))
+    }
+    
+    func hideKeyboard(){
+        self.txtField.resignFirstResponder()
     }
     
     func addBlockObserver(){
@@ -92,7 +99,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         return UIStatusBarStyle.LightContent
     }
     
-    
     func setupKeyboard(){
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handleKeyboardShow:"), name: UIKeyboardWillShowNotification, object: nil)
         
@@ -116,9 +122,11 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         containerViewBottomAncher?.constant = 0
         collectioView?.constant = -112
-        
-        UIView.animateWithDuration(keyboardDuration!){
-            self.view.layoutIfNeeded()
+      
+        if keyboardDuration != nil {
+            UIView.animateWithDuration(keyboardDuration!){
+                self.view.layoutIfNeeded()
+            }
         }
     }
     
@@ -194,6 +202,11 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         collectioView =  self.myCollectionView!.heightAnchor.constraintEqualToAnchor(self.view.heightAnchor, constant: -112)
         collectioView?.active = true
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
     }
     
     func loadConfig(){

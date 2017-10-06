@@ -191,7 +191,6 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         
         UserProfile.id = String(user_id[indexPath.row])
         
-
         transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         transition.type = kCATransitionPush
@@ -206,7 +205,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             self.userData = []
             tblViewSearch.reloadData()
         }else{
-            getSearchUser(searchText)
+            self.getSearchUser(searchText)
         }
     }
     

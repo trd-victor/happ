@@ -160,7 +160,6 @@ class ViewController: UIViewController, UIScrollViewDelegate {
                 do {
                     let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     if let info = json2!["result"] as? NSArray {
-                        
                         for profile in info {
                             config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
                             config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")

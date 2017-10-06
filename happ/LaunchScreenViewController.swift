@@ -123,8 +123,9 @@ class LaunchScreenViewController: UIViewController {
             
             dispatch_async(dispatch_get_main_queue()){
                 userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                    
                     if let data = snap.value as? NSDictionary{
-                    globalUserId.userID = String(data["id"]!)
+                        globalUserId.userID = String(data["id"]!)
                     
                         let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
                         self.presentViewController(userTimeLineController, animated:true, completion:nil)
@@ -133,6 +134,11 @@ class LaunchScreenViewController: UIViewController {
                         self.presentViewController(mainViewController, animated:false, completion:nil)
                     }
                 })
+            }
+            
+            self.delay(12.0){
+                let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+                self.presentViewController(mainViewController, animated:false, completion:nil)
             }
         }else {
             let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
