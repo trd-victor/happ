@@ -90,6 +90,7 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         txtMail.heightAnchor.constraintEqualToConstant(44).active = true
         txtMail.setLeftPaddingPoints(135)
         txtMail.setRightPaddingPoints(10)
+        txtMail.tintColor = UIColor.blackColor()
         
         labelMail.translatesAutoresizingMaskIntoConstraints = false
         labelMail.centerXAnchor.constraintEqualToAnchor(txtMail.centerXAnchor).active = true

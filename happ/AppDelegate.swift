@@ -34,28 +34,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        let deviceTokenStr = convertDeviceTokenToString(deviceToken)
-        //getting device token
-        print("Device Token", deviceTokenStr)
     }
     
-    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {        print("APN registration failed: \(error.description)")
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        
-        UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber + 1
-        //        if application.applicationState == UIApplicationState.Active {
-        //            print("foreground", userInfo)
-        //            self.addLocalNotification((userInfo as? NSDictionary)!)
-        //        }
-        
+    
     }
     
     func applicationReceivedRemoteMessage(remoteMessage: FIRMessagingRemoteMessage) {
         // Receive message
-        
-        print("PUSH NOTIFICATION",remoteMessage.appData)
     }
     
     func applicationWillResignActive(application: UIApplication) {
@@ -71,7 +60,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     
     func applicationWillEnterForeground(application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
         
     }
     

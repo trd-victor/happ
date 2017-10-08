@@ -88,6 +88,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         currentPassField.heightAnchor.constraintEqualToConstant(44).active = true
         currentPassField.setRightPaddingPoints(10)
         currentPassField.setLeftPaddingPoints(160)
+        currentPassField.tintColor = UIColor.blackColor()
         
         currentPass.translatesAutoresizingMaskIntoConstraints = false
         currentPass.centerXAnchor.constraintEqualToAnchor(currentPassField.centerXAnchor).active = true
@@ -109,6 +110,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         newPassField.heightAnchor.constraintEqualToConstant(44).active = true
         newPassField.setRightPaddingPoints(10)
         newPassField.setLeftPaddingPoints(160)
+        newPassField.tintColor = UIColor.blackColor()
         
         newPass.translatesAutoresizingMaskIntoConstraints = false
         newPass.centerXAnchor.constraintEqualToAnchor(newPassField.centerXAnchor).active = true
@@ -129,6 +131,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         reenterPassField.heightAnchor.constraintEqualToConstant(44).active = true
         reenterPassField.setRightPaddingPoints(10)
         reenterPassField.setLeftPaddingPoints(160)
+        reenterPassField.tintColor = UIColor.blackColor()
         
         reenterpass.translatesAutoresizingMaskIntoConstraints = false
         reenterpass.centerXAnchor.constraintEqualToAnchor(reenterPassField.centerXAnchor).active = true

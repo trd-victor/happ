@@ -45,8 +45,6 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         self.setupAllViews()
         self.getAllUserInfo()
         
-        
-        
         let config = SYSTEM_CONFIG()
         if let count = config.getSYS_VAL("runningApp") as? Int {
             if count > 1 {

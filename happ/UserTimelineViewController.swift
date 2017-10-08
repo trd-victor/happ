@@ -277,7 +277,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func CreatePostButton (sender: UIButton) ->() {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CreatePostController") as! CreatePostViewController
-        self.presentDetail(vc)
+        self.presentViewController(vc, animated: true, completion: nil)
     }
     
     func deletePost(sender: String, index: Int) {

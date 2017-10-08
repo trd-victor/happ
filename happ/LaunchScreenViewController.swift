@@ -20,7 +20,7 @@ class SYSTEM_CONFIG {
         self.SYS_VAL.synchronize()
     }
     
-    internal func                                                                                                                        getSYS_VAL(key: String) -> AnyObject?{
+    internal func getSYS_VAL(key: String) -> AnyObject?{
         return self.SYS_VAL.valueForKey(key)
     }
     
@@ -34,6 +34,10 @@ class SYSTEM_CONFIG {
         
         if lang == "ja" {
             lang = "jp"
+        }else if lang == "en"{
+            lang = "en"
+        }else{
+            lang = "jp"
         }
         
         if textTranslate![key] != nil {
@@ -41,7 +45,25 @@ class SYSTEM_CONFIG {
         }else{
             return ""
         }
+    }
+    
+    internal func getSkillByID(id: String) -> String {
+        var lang = self.getSYS_VAL("AppLanguage") as? String
+        let skills = self.getSYS_VAL("SYSTM_SKILL")
         
+        if lang! == "ja" {
+            lang = "jp"
+        }
+        
+        if (Int(id) != nil){
+            if skills![id] != nil {
+                return skills![id]!![lang!]!! as! String
+            }else{
+                return ""
+            }
+        }else{
+            return id
+        }
     }
 }
 
@@ -118,9 +140,6 @@ class LaunchScreenViewController: UIViewController {
             
             globalUserId.FirID = firID
             
-            let user = ViewController()
-            user.getAllUserInfo()
-            
             let config = SYSTEM_CONFIG()
             config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
             
@@ -184,6 +203,7 @@ class LaunchScreenViewController: UIViewController {
             defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
             let config = getSystemValue()
             config.getKey()
+            config.getSkill()
             self.delay(5.0){
                 self.activityIndicator.stopAnimating()
                 do {

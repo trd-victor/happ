@@ -921,63 +921,6 @@
                                         <animations/>
                                         <color key="backgroundColor" red="0.89411764709999997" green="0.83137254900000002" blue="0.72549019609999998" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="P9L-oB-rvi">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZvE-KA-rO0">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="D1i-AW-RZh">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Yhp-cy-5dV">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="MoU-aP-nbq">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nPo-Ty-aE4">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="ghG-B1-nFJ">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dXW-7Z-QNP">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="AgR-TX-zXK">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
                                     <view contentMode="scaleToFill" id="GDP-aW-7oR">
                                         <rect key="frame" x="-36" y="64" width="312" height="1"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -990,50 +933,6 @@
                                         <animations/>
                                         <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>
-                                    <view contentMode="scaleToFill" id="SgR-Av-fYO">
-                                        <rect key="frame" x="-37" y="64" width="314" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="cPu-mK-MLv">
-                                        <rect key="frame" x="-38" y="64" width="315" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="IKa-n7-vLf">
-                                        <rect key="frame" x="-43" y="64" width="326" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="utj-NU-JlM">
-                                        <rect key="frame" x="-43" y="64" width="325" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="zCg-Vu-HOU">
-                                        <rect key="frame" x="-37" y="64" width="313" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="Gsq-bu-P8y">
-                                        <rect key="frame" x="-36" y="64" width="312" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="LhR-yK-r1f">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="CHF-vP-mRm">
                                         <rect key="frame" x="80" y="24" width="80" height="80"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1055,19 +954,6 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="zEF-ZP-8NW">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="mx1-FE-1wR">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                 </subviews>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1105,32 +991,14 @@
                     <size key="freeformSize" width="320" height="568"/>
                     <connections>
                         <outlet property="StatusItem" destination="NQ1-tN-wfO" id="5RQ-Ac-Yx8"/>
-                        <outlet property="androidswitch" destination="zEF-ZP-8NW" id="GVG-2R-JBe"/>
-                        <outlet property="appdesignswitch" destination="ghG-B1-nFJ" id="h5n-Hl-hh8"/>
-                        <outlet property="backdesignswithc" destination="AgR-TX-zXK" id="gkU-oa-2B4"/>
-                        <outlet property="backendswitch" destination="D1i-AW-RZh" id="nRP-ef-mKy"/>
-                        <outlet property="fronendswitch" destination="P9L-oB-rvi" id="BWZ-ls-vgd"/>
-                        <outlet property="iosswitch" destination="MoU-aP-nbq" id="c05-Sv-75V"/>
-                        <outlet property="labelAndroid" destination="LhR-yK-r1f" id="py8-0m-z6T"/>
-                        <outlet property="labelAppDesign" destination="nPo-Ty-aE4" id="YVw-Sr-Vxo"/>
-                        <outlet property="labelIOS" destination="Yhp-cy-5dV" id="goC-XX-gyi"/>
                         <outlet property="labelName" destination="qSR-fN-OOc" id="xmm-Vr-iZV"/>
                         <outlet property="labelSkills" destination="YbF-LJ-Nex" id="RDn-Wq-mcO"/>
-                        <outlet property="labelbackend" destination="ZvE-KA-rO0" id="yHX-Mn-XHw"/>
-                        <outlet property="labelfrontEnd" destination="mx1-FE-1wR" id="RgK-W2-Xkv"/>
-                        <outlet property="labelwebdesign" destination="dXW-7Z-QNP" id="tZ9-cW-xpW"/>
                         <outlet property="navBackProfile" destination="BDy-HJ-rs5" id="1Ie-we-S9M"/>
                         <outlet property="navBar" destination="cwx-gA-PE0" id="TRs-ca-fxr"/>
                         <outlet property="navTitle" destination="VsE-VE-iB6" id="K3G-QF-LU1"/>
                         <outlet property="scrollView" destination="7KS-nH-aH7" id="2UI-1u-G6H"/>
                         <outlet property="separator" destination="GDP-aW-7oR" id="bMV-xc-uiz"/>
                         <outlet property="separator2" destination="Vgb-I6-S9f" id="1Az-gY-g7Q"/>
-                        <outlet property="separator3" destination="SgR-Av-fYO" id="eMk-n0-UXg"/>
-                        <outlet property="separator4" destination="cPu-mK-MLv" id="0cK-NV-xuZ"/>
-                        <outlet property="separator5" destination="IKa-n7-vLf" id="0rO-qZ-9rh"/>
-                        <outlet property="separator6" destination="utj-NU-JlM" id="bHJ-M4-z8W"/>
-                        <outlet property="separator7" destination="zCg-Vu-HOU" id="azU-Kf-ypj"/>
-                        <outlet property="separator8" destination="Gsq-bu-P8y" id="2kg-Xk-McX"/>
                         <outlet property="skillView" destination="5Bk-wv-vh9" id="Wrn-lz-1bW"/>
                         <outlet property="userDescription" destination="gAR-Aq-mrm" id="bh4-7k-NXs"/>
                         <outlet property="userImage" destination="CHF-vP-mRm" id="VfR-WU-wEq"/>

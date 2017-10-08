@@ -10,8 +10,9 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
-struct skills {
-    static var selectedSkills: NSDictionary = NSDictionary()
+struct reg_user {
+    static var selectedSkills = [Int]()
+    static var didUpdate: Bool = false
 }
 
 class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDelegate {
@@ -57,7 +58,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     var Firebasename : String!
     var scrollview : UIScrollView!
     var loadingScreen: UIView!
-    
     var mess: String = ""
     
     override func viewDidLoad() {
@@ -81,7 +81,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         //load language set.
         language = setLanguage.appLanguage
         
-        
         //set border for textbox and label
         setBorder(userName)
         setBorder(userEmail)
@@ -98,15 +97,59 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         self.selectContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectSkills"))
         
         self.loadConfigure()
+        
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        var skills = ""
+        let config = SYSTEM_CONFIG()
+        
+        self.selectSkillLbl.text = config.translate("select_skill")
+        self.selectedSkillsLbl.text = config.translate("selected_skill")
+        
+        if reg_user.selectedSkills.count == 0{
+            self.listOfSkills.text = config.translate("empty_skills")
+            self.listOfSkills.textAlignment = .Center
+        }else{
+            self.listOfSkills.textAlignment = .Justified
+        }
+        
+        for var i = 0; i < reg_user.selectedSkills.count; i++ {
+            skills = skills + config.getSkillByID(String(reg_user.selectedSkills[i]))
+            
+            if i == reg_user.selectedSkills.count - 1 {
+                self.listOfSkills.text = skills
+            }else{
+                skills = skills + ", "
+            }
+        }
+    }
+    
     func selectSkills(){
         let vc = SelectSkillViewController()
-        presentViewController(vc, animated: false, completion: nil)
+        let transition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        self.presentDetail(vc)
+    }
+    
+    func presentDetail(viewControllerToPresent: UIViewController) {
+        let transition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        
+        presentViewController(viewControllerToPresent, animated: false, completion: nil)
     }
     
     func autoLayout(){
@@ -226,7 +269,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         self.selectSkillLbl.topAnchor.constraintEqualToAnchor(self.selectContainer.topAnchor, constant: 5).active = true
         self.selectSkillLbl.widthAnchor.constraintEqualToAnchor(self.selectContainer.widthAnchor, constant: -40).active = true
         self.selectSkillLbl.heightAnchor.constraintEqualToConstant(38).active = true
-        self.selectSkillLbl.text = "Select Skill"
         self.selectSkillLbl.textColor = UIColor.blackColor()
         
         self.goToSelectSkill.image = UIImage(named: "right-icon")
@@ -241,22 +283,20 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         self.selectedSkillsLbl.topAnchor.constraintEqualToAnchor(self.selectContainer.bottomAnchor, constant: 10).active = true
         self.selectedSkillsLbl.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
         self.selectedSkillsLbl.widthAnchor.constraintEqualToAnchor(self.selectContainer.widthAnchor).active = true
-        self.selectedSkillsLbl.text = "Selected Skills"
         self.selectedSkillsLbl.textAlignment = .Center
         self.selectedSkillsLbl.textColor = UIColor.blackColor()
         
         self.listOfSkills.translatesAutoresizingMaskIntoConstraints = false
         self.listOfSkills.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor, constant: 10).active = true
-        self.listOfSkills.topAnchor.constraintEqualToAnchor(self.selectedSkillsLbl.bottomAnchor).active = true
+        self.listOfSkills.topAnchor.constraintEqualToAnchor(self.selectedSkillsLbl.bottomAnchor, constant: 10).active = true
         self.listOfSkills.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -20).active = true
-        self.listOfSkills.text = " Not YET available "
         self.listOfSkills.textColor = UIColor(hexString: "#888888")
         self.listOfSkills.numberOfLines = 0
         self.listOfSkills.lineBreakMode = .ByWordWrapping
         
         self.btnUpdate.translatesAutoresizingMaskIntoConstraints = false
         self.btnUpdate.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        self.btnUpdate.topAnchor.constraintEqualToAnchor(self.listOfSkills.bottomAnchor, constant: 5).active = true
+        self.btnUpdate.topAnchor.constraintEqualToAnchor(self.listOfSkills.bottomAnchor, constant: 10).active = true
         self.btnUpdate.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -40).active = true
         self.btnUpdate.heightAnchor.constraintEqualToConstant(48).active = true
     }
@@ -283,6 +323,8 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func backHome(sender: UIBarButtonItem) -> () {
+        reg_user.selectedSkills = []
+        reg_user.didUpdate = false
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -327,37 +369,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             //setting the method to post
             request.HTTPMethod = "POST"
             
-//            //declaring button state
-//            let frontEndSkill   = frontEndSwitch
-//            let backEndSkill    = backEndSwitch
-//            let iosSkill        = iosSwitch
-//            let androidSkill    = AndroidSwitch
-//            let appDesignSkill  = appdesignSwitch
-//            let webDesignSkill  = webdesignSwitch
-//            
-//            //get state
-//            let frontEndState   = switchButtonCheck(frontEndSkill)
-//            let backEndState    = switchButtonCheck(backEndSkill)
-//            let iosState        = switchButtonCheck(iosSkill)
-//            let androidState    = switchButtonCheck(androidSkill)
-//            let appDesignState  = switchButtonCheck(appDesignSkill)
-//            let webDesignState  = switchButtonCheck(webDesignSkill)
-//            
-//            let skills: [Int: String] = [
-//                1  : "\(frontEndState)",
-//                2  : "\(backEndState)",
-//                3  : "\(iosState)",
-//                4  : "\(androidState)",
-//                5  : "\(appDesignState)",
-//                6  : "\(webDesignState)"
-//            ]
-            
+           
             //set skill into variable and targets...
-//            var keyskill = returnSkillValue(skills)
-            var keyskill = ""
-            if keyskill != "" {
-                keyskill = String(keyskill.characters.dropLast())
-            }
+            
+            let keyskill = reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
             
             let targetedData: String = "email,passwd,name,skills,change_lang"
             if language == "ja" {

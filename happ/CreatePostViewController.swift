@@ -303,9 +303,9 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         if(text == "\n") {
-//            textView.becomeFirstResponder()
-//            textView.text = NSString(format: "%@\n", textView.text) as String
-            textView.resignFirstResponder()
+            textView.becomeFirstResponder()
+            textView.text = NSString(format: "%@\n", textView.text) as String
+//            textView.resignFirstResponder()
             return false
         }
         return true

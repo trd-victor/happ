@@ -168,7 +168,18 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
         if let skills = self.userData[indexPath.row]["skills"] as? String {
             if skills != "null" {
-                cell.detailTextLabel?.text = skills
+                let all_skills = skills.characters.split(",")
+                var skill = ""
+                var count = 0
+                for (value) in all_skills {
+                    count++
+                     skill = skill + config.getSkillByID(String(value))
+                    if count == all_skills.count {
+                        cell.detailTextLabel?.text = skill
+                    }else{
+                       skill = skill + ", "
+                    }
+                }
             }
         }else{
             cell.detailTextLabel?.text = ""
