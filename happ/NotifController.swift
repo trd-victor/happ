@@ -21,6 +21,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var postPhotoUrl: String = ""
     var freeTimeMessage: String = ""
     var postTimelineMessage: String = ""
+    var loadingScreen: UIView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,37 +94,37 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         let firID = config.getSYS_VAL("FirebaseID") as! String
         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
+       
         
-            notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
-                if let result = snapshot.value as? NSDictionary {
-                    let key =  snapshot.key
-                    
-                    let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
-                    
-                    notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
-                        if(snap.exists()) {
-                            self.arrayData.insert(result, atIndex: 0)
-                            self.backupData.append(result)
-                            dispatch_async(dispatch_get_main_queue()){
-                                 self.tblView.reloadData()
-                            }
-                        }
-                    })
+        notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
+            if let result = snapshot.value as? NSDictionary {
+                if self.loadingScreen == nil {
+                     self.loadingScreen = UIViewController.displaySpinner(self.view)
                 }
-            })
+                
+                let key =  snapshot.key
+                
+                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
+                
+                notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
+                    if(snap.exists()) {
+                        self.arrayData.insert(result, atIndex: 0)
+                        self.backupData.append(result)
+                        self.tblView.reloadData()
+                        if self.loadingScreen != nil  {
+                            UIViewController.removeSpinner(self.loadingScreen!)
+                        }
+                    }
+                })
+            }
+        })
+
         
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("UserTimeline") as! UserTimelineViewController
-        
-        let transition = CATransition()
-        transition.duration = 0.40
-        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        transition.type = kCATransitionPush
-        transition.subtype = kCATransitionFromLeft
-        self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.presentBackDetail(vc)
     }
     
@@ -272,9 +273,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
-        
-        
-        
         self.presentDetail(vc)
     }
     func generateBoundaryString() -> String {

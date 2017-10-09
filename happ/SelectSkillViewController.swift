@@ -50,7 +50,9 @@ class SelectSkillViewController: UIViewController {
     }
     
     func loadSkill(){
-        loadingScreen = UIViewController.displaySpinner(self.view)
+        if loadingScreen == nil {
+            loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
         var language = setLanguage.appLanguage
         

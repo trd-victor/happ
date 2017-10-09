@@ -335,7 +335,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func registerUser(sender: AnyObject) {
-        loadingScreen = UIViewController.displaySpinner(self.view)
+        if loadingScreen == nil {
+            loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
         //scroll to top
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
         
@@ -377,7 +380,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             
 
             //set skill into variable and targets...
-            var keyskill = reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
+            let keyskill = reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
             
             let targetedData: String = "email,passwd,name,skills,change_lang"
             if language == "ja" {

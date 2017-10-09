@@ -350,9 +350,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     }
     
     func loadUserData() {
-        if !firstLoad {
+        if loadingScreen == nil {
             loadingScreen = UIViewController.displaySpinner(self.view)
-            self.firstLoad = true
         }
         
         let config = SYSTEM_CONFIG()
@@ -497,8 +496,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     
     @IBAction func StatusItem(sender: AnyObject) {
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
-        loadingScreen = UIViewController.displaySpinner(self.view)
-        
+        if loadingScreen == nil {
+            loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
         //setting up the textbox...
         let name = userNamefield.text!
