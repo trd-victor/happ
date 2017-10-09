@@ -209,6 +209,8 @@ extension UserProfileController {
     
     func loadUserinfo(sender: String) {
         
+        let config = SYSTEM_CONFIG()
+        
         let param = [
             "sercret"     : "jo8nefamehisd",
             "action"      : "api",
@@ -237,12 +239,28 @@ extension UserProfileController {
                                 self.userName.text = json["result"]!["name"] as? String
                                 self.h_id.text = json["result"]!["h_id"] as? String
                                
-                                let skill = json["result"]!["skills"] as? String
-                                
-                                if skill != nil && skill != "null" {
-                                    self.skills.text = json["result"]!["skills"] as? String
-                                }else{
-                                    self.skills.text = ""
+                                if let skill = json["result"]!["skills"] as? String {
+                                    if skill != "" && skill != "null" {
+                                        let all_skills = skill.characters.split(",")
+                                        var skillstr = ""
+                                        var count = 0
+                                        if all_skills.count == 0 {
+                                            self.skills.text = skill
+                                        }else{
+                                            for (value) in all_skills {
+                                                count++
+                                                skillstr += config.getSkillByID(String(value))
+                                                if count == all_skills.count {
+                                                    self.skills.text = skillstr
+                                                    self.skills.sizeToFit()
+                                                }else{
+                                                    skillstr += ", "
+                                                }
+                                            }
+                                        }
+                                    }else{
+                                        self.skills.text = ""
+                                    }
                                 }
                                     
                                 self.msg.text = json["result"]!["mess"] as? String

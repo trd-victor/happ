@@ -153,6 +153,7 @@ class TimelineDetail: UIViewController {
         view2.addSubview(imgView2)
         view3.addSubview(imgView3)
         
+         self.startLayout()
         
         btnBack.addTarget(self, action: "backTimeline:", forControlEvents: .TouchUpInside)
         
@@ -171,7 +172,6 @@ class TimelineDetail: UIViewController {
         btnProfile.setImage(imgView.image, forState: .Normal)
         btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
         
-        self.startLayout()
         
         if UserDetails.postID == nil || UserDetails.postID == ""{
             btnUsername.tag = Int(UserDetails.fromID)!
@@ -180,6 +180,8 @@ class TimelineDetail: UIViewController {
             body.text = UserDetails.body
             self.postDetail()
         }else{
+            print(UserDetails.postID)
+            print("notif")
             self.getDetail()
         }
         
@@ -227,7 +229,7 @@ class TimelineDetail: UIViewController {
                     "post_id"     : "\(UserDetails.postID)",
                     "count"       : "1"
                 ]
-        
+            print(parameters)
                 let request = NSMutableURLRequest(URL: baseUrl)
                 let boundary = generateBoundaryString()
                 request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -235,13 +237,13 @@ class TimelineDetail: UIViewController {
                 request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
                 let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
                     data, response, error  in
-        
+                    
                     if error != nil || data == nil{
                         self.getDetail()
                     }else {
                         do {
                             let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                            
+                            print(json)
                             let config = SYSTEM_CONFIG()
                             dispatch_async(dispatch_get_main_queue()){
                                 if json!["success"] != nil {
@@ -305,7 +307,13 @@ class TimelineDetail: UIViewController {
     func displayMyAlertMessage(userMessage:String){
        let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-        self.dismissViewControllerAnimated(false, completion: nil)
+            let transition = CATransition()
+            transition.duration = 0.40
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionPush
+            transition.subtype = kCATransitionFromLeft
+            self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+            self.dismissViewControllerAnimated(false, completion: nil)
         }))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }

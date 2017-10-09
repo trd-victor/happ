@@ -771,6 +771,7 @@ class MessageCell: UICollectionViewCell {
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 16
         photo.layer.masksToBounds = true
+        photo.contentMode = .ScaleAspectFill
         return photo
     }()
     
@@ -780,6 +781,7 @@ class MessageCell: UICollectionViewCell {
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 16
         photo.layer.masksToBounds = true
+        photo.contentMode = .ScaleAspectFill
         return photo
     }()
     

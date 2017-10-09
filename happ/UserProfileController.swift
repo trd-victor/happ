@@ -277,6 +277,7 @@ class UserProfileController: UIViewController {
         skills.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
         skills.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -40).active = true
         skills.heightAnchor.constraintEqualToConstant(45).active = true
+        skills.textAlignment = .Justified
         
         msg.topAnchor.constraintEqualToAnchor(skills.bottomAnchor, constant: 5).active = true
         msg.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true

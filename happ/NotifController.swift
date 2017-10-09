@@ -273,6 +273,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
         
+        
+        
         self.presentDetail(vc)
     }
     func generateBoundaryString() -> String {

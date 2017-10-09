@@ -52,9 +52,12 @@ class MenuViewController: UITabBarController {
                     }
                     if count == 0 {
                         self.menuTabBar.items![1].badgeValue = .None
+                        globalvar.badgeMessNumber = 0
                     }else{
                         self.menuTabBar.items![1].badgeValue = String(count)
+                        globalvar.badgeMessNumber = count
                     }
+                    UIApplication.sharedApplication().applicationIconBadgeNumber = globalvar.badgeBellNumber + globalvar.badgeMessNumber
                 }
             }
         })

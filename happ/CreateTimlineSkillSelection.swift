@@ -263,9 +263,10 @@ class CreateTimelineSkillSelection: UIViewController {
     
     func switchBtnToggle(sender: UISwitch) {
         
-        timeline_post_skills.selectedSkills.removeAll()
+        
         if sender.on {
             if sender.tag == 0 {
+                timeline_post_skills.selectedSkills.removeAll()
                 for subviews in view.subviews {
                     if let scrollview = subviews as? UIScrollView {
                         for subsubviews in scrollview.subviews {
@@ -286,9 +287,9 @@ class CreateTimelineSkillSelection: UIViewController {
                 timeline_post_skills.selectedSkills.append(sender.tag)
                 sender.setOn(true, animated: true)
             }
-            print(timeline_post_skills.selectedSkills)
         }else{
             if sender.tag == 0 {
+                
                 for subviews in view.subviews {
                     if let scrollview = subviews as? UIScrollView {
                         for subsubviews in scrollview.subviews {
@@ -311,7 +312,6 @@ class CreateTimelineSkillSelection: UIViewController {
                 }
                 sender.setOn(false, animated: true)
             }
-            print(timeline_post_skills.selectedSkills)
         }
     }
     
@@ -339,7 +339,7 @@ class CreateTimelineSkillSelection: UIViewController {
         
         if timeline_post_skills.selectedSkills.count == 0 {
             let config = SYSTEM_CONFIG()
-            self.displayMyAlertMessage(config.translate("no_selected_skill"))
+            self.displayErrorMessage(config.translate("no_selected_skill"))
             return
         }
         
@@ -561,6 +561,17 @@ class CreateTimelineSkillSelection: UIViewController {
             self.dismissViewControllerAnimated(false, completion: {
                 presentingViewController!.dismissViewControllerAnimated(true, completion: {})
             })
+        }
+        myAlert.addAction(okAction)
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func displayErrorMessage(userMessage:String){
+        let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
+        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default) {
+            UIAlertAction in
+            self.viewLoading.hidden = true
+            self.activityLoading.stopAnimating()
         }
         myAlert.addAction(okAction)
         self.presentViewController(myAlert, animated: true, completion: nil)
