@@ -101,6 +101,21 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         return label
     }()
     
+    let viewLoading: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.alpha = 0.6
+        view.hidden = true
+        return view
+    }()
+    
+    let activityLoading: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.activityIndicatorViewStyle = .WhiteLarge
+        return view
+    }()
+    
     var widthPercentage: CGFloat = 0
     
     var userIds = [Int]()
@@ -149,6 +164,11 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         situationView.addSubview(percentage)
         situationView.addSubview(freeView)
         freeView.addSubview(freeTitle)
+        
+        view.addSubview(viewLoading)
+        view.bringSubviewToFront(viewLoading)
+        viewLoading.backgroundColor = UIColor.grayColor()
+        viewLoading.addSubview(activityLoading)
         
         percentage.text = "0%"
         congestiontitle.text = config.translate("title_situation")
@@ -249,6 +269,16 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         freeTitle.centerXAnchor.constraintEqualToAnchor(freeView.centerXAnchor).active = true
         freeTitle.widthAnchor.constraintEqualToAnchor(freeView.widthAnchor).active = true
         freeTitle.heightAnchor.constraintEqualToConstant(21).active = true
+        
+        viewLoading.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        viewLoading.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
+        viewLoading.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        viewLoading.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        
+        activityLoading.centerXAnchor.constraintEqualToAnchor(viewLoading.centerXAnchor).active = true
+        activityLoading.centerYAnchor.constraintEqualToAnchor(viewLoading.centerYAnchor).active = true
+        activityLoading.widthAnchor.constraintEqualToAnchor(viewLoading.widthAnchor).active = true
+        activityLoading.heightAnchor.constraintEqualToAnchor(viewLoading.heightAnchor).active = true
         
     }
     

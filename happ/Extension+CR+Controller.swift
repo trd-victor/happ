@@ -9,8 +9,11 @@
 import UIKit
 
 extension CreateReservation {
-
+    
     func getOffice(){
+        
+        viewLoading.hidden = false
+        activityLoading.startAnimating()
         
         officeIdData.removeAll()
         officeNameEnData.removeAll()
@@ -54,16 +57,24 @@ extension CreateReservation {
                             dispatch_async(dispatch_get_main_queue()){
                                 let config = SYSTEM_CONFIG()
                                 let syslang = config.getSYS_VAL("AppLanguage") as! String
-                                if syslang == "en" {
-                                    if self.officeNameEnData.indices.contains(0){
-                                        self.facilityName.text = self.officeNameEnData[0]
-                                    }
+                                if CreateDetails.office != "" {
+                                    self.facilityName.text = CreateDetails.office
                                 }else{
-                                    if self.officeNameJpData.indices.contains(0){
-                                        self.facilityName.text = self.officeNameJpData[0]
+                                    if syslang == "en" {
+                                        if self.officeNameEnData.indices.contains(0){
+                                            self.facilityName.text = self.officeNameEnData[0]
+                                        }
+                                    }else{
+                                        if self.officeNameJpData.indices.contains(0){
+                                            self.facilityName.text = self.officeNameJpData[0]
+                                        }
                                     }
                                 }
-                                self.getRoomByOffice(self.officeIdData[0],lang: syslang)
+                                if CreateDetails.officeId != "" {
+                                    self.getRoomByOffice(CreateDetails.officeId,lang: syslang)
+                                }else{
+                                    self.getRoomByOffice(self.officeIdData[0],lang: syslang)
+                                }
                             }
                         }
                     }
@@ -76,6 +87,10 @@ extension CreateReservation {
     }
     
     func getRoomByOffice(id: String, lang: String){
+        
+        viewLoading.hidden = false
+        activityLoading.startAnimating()
+        
         self.roomIdData.removeAll()
         self.roomNameEnData.removeAll()
         self.roomNameJpData.removeAll()
@@ -116,18 +131,29 @@ extension CreateReservation {
                                             self.roomNameJpData.append(String(fields["room_name_jp"]!))
                                         }
                                         dispatch_async(dispatch_get_main_queue()){
-                                            if lang == "en" {
-                                                if self.roomNameEnData.indices.contains(0) {
-                                                    self.roomName.text = self.roomNameEnData[0]
-                                                }
+                                            if CreateDetails.room != "" && !self.didSelectChange {
+                                                self.roomName.text = CreateDetails.room
                                             }else{
-                                                if self.roomNameJpData.indices.contains(0) {
-                                                    self.roomName.text = self.roomNameJpData[0]
+                                                if lang == "en" {
+                                                    if self.roomNameEnData.indices.contains(0) {
+                                                        self.roomName.text = self.roomNameEnData[0]
+                                                    }
+                                                }else{
+                                                    if self.roomNameJpData.indices.contains(0) {
+                                                        self.roomName.text = self.roomNameJpData[0]
+                                                    }
                                                 }
                                             }
+                                            
                                             if self.roomIdData.indices.contains(0) {
                                                 if !self.firstLoad {
-                                                    self.getReserved(self.roomIdData[0])
+                                                    if CreateDetails.roomId != "" && !self.didSelectChange {
+                                                        self.postRoomId = CreateDetails.roomId
+                                                        self.getReserved(CreateDetails.roomId)
+                                                    }else{
+                                                        self.postRoomId = self.roomIdData[0]
+                                                        self.getReserved(self.roomIdData[0])
+                                                    }
                                                 }
                                             }
                                         }
@@ -182,7 +208,7 @@ extension CreateReservation {
                     
                     if json!["error"] == nil {
                         dispatch_async(dispatch_get_main_queue()){
-                            let msg = self.config.translate("done_reservation") 
+                            let msg = self.config.translate("done_reservation")
                             self.displayMyAlertMessage(msg,error: false)
                         }
                     }else{
@@ -202,8 +228,13 @@ extension CreateReservation {
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default) {
             UIAlertAction in
+            self.viewLoading.hidden = true
+            self.activityLoading.stopAnimating()
             if !error {
-                self.dismissViewControllerAnimated(true, completion: nil)
+                let presentingViewController = self.presentingViewController
+                self.dismissViewControllerAnimated(false, completion: {
+                    presentingViewController!.dismissViewControllerAnimated(true, completion: {})
+                })
             }
         }
         myAlert.addAction(okAction)
@@ -211,6 +242,9 @@ extension CreateReservation {
     }
     
     func getReserved(roomId: String){
+        
+        viewLoading.hidden = false
+        activityLoading.startAnimating()
         
         firstLoad = true
         
@@ -308,7 +342,7 @@ extension CreateReservation {
             view.tag = 10
             label.tag = 10
             separator.tag = 10
-            	
+            
             dataView.append(view)
             dataLabel.append(label)
             dataSeparator.append(separator)
@@ -344,7 +378,7 @@ extension CreateReservation {
                     }else{
                         dataLabel[i].text = dataTime[i]
                     }
-
+                    
                 }
                 
                 dataSeparator[i].translatesAutoresizingMaskIntoConstraints = false
@@ -353,8 +387,11 @@ extension CreateReservation {
                 dataSeparator[i].widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
                 dataSeparator[i].heightAnchor.constraintEqualToConstant(1).active = true
             }
-
+            
         }
+        
+        viewLoading.hidden = true
+        activityLoading.stopAnimating()
     }
     
     func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {

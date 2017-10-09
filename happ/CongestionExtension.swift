@@ -12,6 +12,10 @@ import Firebase
 extension CongestionViewController {
 
     func getCongestion(){
+        
+        viewLoading.hidden = false
+        activityLoading.startAnimating()
+        
         //set parameter for
         let param = [
             "sercret"     : "jo8nefamehisd",
@@ -94,9 +98,7 @@ extension CongestionViewController {
             }else{
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    
-                     dispatch_async(dispatch_get_main_queue()) {
+                    dispatch_async(dispatch_get_main_queue()) {
                         if json!["result"] != nil {
                             let result = json!["result"] as! NSArray
                             
@@ -124,6 +126,9 @@ extension CongestionViewController {
                         self.prcentViewBlack.heightAnchor.constraintEqualToConstant(146).active = true
                         self.prcentViewBlack.backgroundColor = UIColor(hexString: "#272727")
                         self.collectionView.reloadData()
+                        
+                        self.viewLoading.hidden = true
+                        self.activityLoading.stopAnimating()
                     }
                     
                 } catch {

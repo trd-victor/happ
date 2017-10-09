@@ -12,7 +12,7 @@ import Firebase
 extension SearchController {
 
     func getSearchUser(value: String) {
-        
+        user_id.removeAll()
 //        let config = SYSTEM_CONFIG()
         
         let parameters = [

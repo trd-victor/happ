@@ -11,6 +11,10 @@ import UIKit
 struct CreateDetails {
     static var date:String = ""
     static var day:String = ""
+    static var office:String = ""
+    static var officeId: String = ""
+    static var room:String = ""
+    static var roomId: String = ""
 }
 
 class CreateReservation: UIViewController {
@@ -19,6 +23,8 @@ class CreateReservation: UIViewController {
     @IBOutlet var scrollView: UIScrollView!
     @IBOutlet var navTitle: UINavigationItem!
     @IBOutlet var navCreate: UIBarButtonItem!
+    
+    var didSelectChange: Bool = false
     
     let config = SYSTEM_CONFIG()
     var lang = ""
@@ -226,24 +232,33 @@ class CreateReservation: UIViewController {
         return view
     }()
     
+    let viewLoading: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.alpha = 0.6
+        view.hidden = true
+        return view
+    }()
+    
+    let activityLoading: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.activityIndicatorViewStyle = .WhiteLarge
+        return view
+    }()
+    
+    var facility = String()
+    var room = String()
+    
     var facilityConstraint: NSLayoutConstraint = NSLayoutConstraint()
     var roomConstraint: NSLayoutConstraint = NSLayoutConstraint()
     var startTimeConstraint: NSLayoutConstraint = NSLayoutConstraint()
     var endTimeConstraint: NSLayoutConstraint = NSLayoutConstraint()
     
     @IBAction func navBar(sender: AnyObject) {
-        let transition: CATransition = CATransition()
-        transition.duration = 0.40
-        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        transition.type = kCATransitionPush
-        transition.subtype = kCATransitionFromLeft
-        self.view.window!.layer.addAnimation(transition, forKey: nil)
-        self.dismissViewControllerAnimated(false, completion: nil)
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
-    
-    var roomSample = ["Test","Test","Test","Test"]
-    var officeSample = ["TestOffice","TestOffice","TestOffice","TestOffice"]
-    
+     
     //basepath
     let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
     
@@ -265,10 +280,15 @@ class CreateReservation: UIViewController {
     
     var firstLoad:Bool = false
     
+    var facilityEn = String()
+    var facilityJp = String()
+    var roomEn = String()
+    var roomJp = String()
+    
     func tapStart(sender: UITapGestureRecognizer){
         if startTimeConstraint.constant == 0 {
             startTimeConstraint.constant = 200
-//            scrollView.contentSize = CGRectM
+            //            scrollView.contentSize = CGRectM
             scrollView.contentSize = CGSizeMake(scrollView.contentSize.width, scrollView.contentSize.height + 200)
             separator3.hidden = false
             startName.textColor = UIColor.redColor()
@@ -299,7 +319,7 @@ class CreateReservation: UIViewController {
         
         let calendar = NSCalendar.currentCalendar()
         let components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: date)
-
+        
         
         startName.text = "\(String(format: "%02d", components.hour)):\(String(format: "%02d", components.minute))"
     }
@@ -327,7 +347,7 @@ class CreateReservation: UIViewController {
             separator5.hidden = true
         }
     }
-
+    
     func tapRoom(sender: UIPickerView!){
         if roomConstraint.constant == 0 {
             roomConstraint.constant = 100
@@ -343,6 +363,8 @@ class CreateReservation: UIViewController {
     }
     
     @IBAction func navCreate(sender: AnyObject) {
+        viewLoading.hidden = false
+        activityLoading.startAnimating()
         let sdate = "\(CreateDetails.date) \(startName.text!)"
         let edate = "\(CreateDetails.date) \(endName.text!)"
         postReservation(postRoomId,sdate: sdate, edate: edate)

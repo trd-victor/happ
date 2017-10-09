@@ -37,7 +37,6 @@ class SearchCustomCell: UITableViewCell {
         
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
         detailTextLabel?.textColor = UIColor.grayColor()
-        detailTextLabel?.numberOfLines = 0
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

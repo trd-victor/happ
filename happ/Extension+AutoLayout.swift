@@ -9,7 +9,7 @@
 import UIKit
 
 extension CreateReservation {
-
+    
     func addViewsLayout(){
         
         scrollView.addSubview(roomView)
@@ -38,6 +38,11 @@ extension CreateReservation {
         scrollView.addSubview(separator6)
         scrollView.addSubview(endTime)
         scrollView.addSubview(reservedLabel)
+        
+        view.addSubview(viewLoading)
+        view.bringSubviewToFront(viewLoading)
+        viewLoading.backgroundColor = UIColor.grayColor()
+        viewLoading.addSubview(activityLoading)
         
         separator3.hidden = true
         separator4.hidden = true
@@ -202,6 +207,16 @@ extension CreateReservation {
         reservedLabel.topAnchor.constraintEqualToAnchor(endTime.bottomAnchor).active = true
         reservedLabel.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         reservedLabel.heightAnchor.constraintEqualToConstant(30).active = true
+        
+        viewLoading.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        viewLoading.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
+        viewLoading.widthAnchor.constraintEqualToAnchor(view.widthAnchor).active = true
+        viewLoading.heightAnchor.constraintEqualToAnchor(view.heightAnchor).active = true
+        
+        activityLoading.centerXAnchor.constraintEqualToAnchor(viewLoading.centerXAnchor).active = true
+        activityLoading.centerYAnchor.constraintEqualToAnchor(viewLoading.centerYAnchor).active = true
+        activityLoading.widthAnchor.constraintEqualToAnchor(viewLoading.widthAnchor).active = true
+        activityLoading.heightAnchor.constraintEqualToAnchor(viewLoading.heightAnchor).active = true
         
     }
     

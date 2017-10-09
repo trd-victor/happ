@@ -1,14 +1,12 @@
 //
-//  pickerController.swift
+//  pickerViewController.swift
 //  happ
 //
-//  Created by TimeRiverDesign on 2017/10/01.
+//  Created by TimeRiverDesign on 2017/10/09.
 //  Copyright © 2017 H-FUKUOKA. All rights reserved.
 //
 
-import UIKit
-
-extension CreateReservation: UIPickerViewDelegate, UIPickerViewDataSource {
+extension ViewReservation: UIPickerViewDelegate, UIPickerViewDataSource {
     
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
         return 1
@@ -46,10 +44,8 @@ extension CreateReservation: UIPickerViewDelegate, UIPickerViewDataSource {
         
         if pickerView == facilitySelect {
             firstLoad = false
-            didSelectChange = true
             if syslang == "en" {
                 if officeNameEnData[row] != facilityEn {
-                    CreateDetails.officeId = ""
                     facilityName.text = officeNameEnData[row]
                     facilityEn = officeNameEnData[row]
                     
@@ -57,11 +53,11 @@ extension CreateReservation: UIPickerViewDelegate, UIPickerViewDataSource {
                         roomConstraint.constant = 0
                         roomName.textColor = UIColor.blackColor()
                     }
+                    postOfficeId = officeIdData[row]
                     getRoomByOffice(officeIdData[row], lang: syslang)
                 }
             }else {
                 if officeNameJpData[row] != facilityJp {
-                    CreateDetails.officeId = ""
                     facilityName.text = officeNameJpData[row]
                     facilityJp = officeNameJpData[row]
                     
@@ -69,25 +65,24 @@ extension CreateReservation: UIPickerViewDelegate, UIPickerViewDataSource {
                         roomConstraint.constant = 0
                         roomName.textColor = UIColor.blackColor()
                     }
+                    postOfficeId = officeIdData[row]
                     getRoomByOffice(officeIdData[row], lang: syslang)
                 }
             }
         }else{
             if syslang == "en" {
                 if roomNameEnData[row] != roomEn {
-                    CreateDetails.roomId = ""
                     roomName.text = roomNameEnData[row]
                     roomEn = roomNameEnData[row]
                     postRoomId = roomIdData[row]
-                    getReserved(roomIdData[row])
+                    getReservationWithID(roomIdData[row])
                 }
             }else {
                 if roomNameJpData[row] != roomJp {
-                    CreateDetails.roomId = ""
                     roomName.text = roomNameJpData[row]
                     roomJp = roomNameJpData[row]
                     postRoomId = roomIdData[row]
-                    getReserved(roomIdData[row])
+                    getReservationWithID(roomIdData[row])
                 }
             }
         }

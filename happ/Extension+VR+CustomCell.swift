@@ -104,7 +104,7 @@ class DataCellWithTitle: UITableViewCell {
     let lblTitle: UILabel = {
         let label = UILabel()
         label.textAlignment = .Center
-        label.font = UIFont.systemFontOfSize(14)
+        label.font = UIFont.boldSystemFontOfSize(14)
         label.backgroundColor = UIColor(hexString: "#E4D4B9")
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -121,6 +121,7 @@ class DataCellWithTitle: UITableViewCell {
         let label = UILabel()
         label.textAlignment = .Left
         label.backgroundColor = UIColor.clearColor()
+        label.font = UIFont.boldSystemFontOfSize(14)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -170,6 +171,7 @@ class DataCell: UITableViewCell {
         let label = UILabel()
         label.textAlignment = .Left
         label.backgroundColor = UIColor.clearColor()
+        label.font = UIFont.boldSystemFontOfSize(14)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

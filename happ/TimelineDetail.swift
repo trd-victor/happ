@@ -216,7 +216,7 @@ class TimelineDetail: UIViewController {
     }
     
     func getDetail(){
-        let baseUrl: NSURL = NSURL(string: "http://happ.biz/wp-admin/admin-ajax.php")!
+        let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
         let parameters = [
                     "sercret"     : "jo8nefamehisd",
                     "action"      : "api",

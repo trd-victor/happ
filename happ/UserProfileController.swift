@@ -109,11 +109,6 @@ class UserProfileController: UIViewController {
     @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var tblProfile: UITableView!
     
-    let refreshControl: UIRefreshControl = {
-        let control = UIRefreshControl()
-        return control
-    }()
-    
     let topReload: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView()
         view.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.WhiteLarge
@@ -154,8 +149,6 @@ class UserProfileController: UIViewController {
         ProfileView.addSubview(msg)
         ProfileView.addSubview(btnMessage)
         ProfileView.addSubview(btnBlock)
-        
-        tblProfile.addSubview(self.refreshControl)
         
         topReload.startAnimating()
         
@@ -209,7 +202,7 @@ class UserProfileController: UIViewController {
             if scrollView.contentOffset.y < -440 {
                 self.page = 1
                 didScroll = true
-                
+                topReload.startAnimating()
                 for var i = 5; i < self.fromID.count; i++ {
                     let indexPath = NSIndexPath(forRow: i, inSection: 0)
                     self.tblProfile.beginUpdates()
@@ -265,12 +258,6 @@ class UserProfileController: UIViewController {
         topReload.widthAnchor.constraintEqualToAnchor(tblProfile.widthAnchor).active = true
         topReload.heightAnchor.constraintEqualToConstant(50).active = true
         
-        refreshControl.translatesAutoresizingMaskIntoConstraints = false
-        refreshControl.topAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: 10).active = true
-        refreshControl.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
-        refreshControl.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor).active = true
-        refreshControl.heightAnchor.constraintEqualToConstant(59).active = true
-        
         ProfileImage.topAnchor.constraintEqualToAnchor(ProfileView.topAnchor, constant: 10).active = true
         ProfileImage.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
         ProfileImage.widthAnchor.constraintEqualToConstant(100).active = true
@@ -307,6 +294,10 @@ class UserProfileController: UIViewController {
     }
     
     @IBAction func navBar(sender: AnyObject) {
+        
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(red: 0, green: 118, blue: 255, alpha: 1)]
+        UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+        
         let transition: CATransition = CATransition()
         transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)

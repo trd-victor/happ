@@ -296,13 +296,13 @@ extension UserProfileController {
     
     func reloadData() {
         
-        postID.removeAll()
-        postDate.removeAll()
-        img1.removeAll()
-        img2.removeAll()
-        img3.removeAll()
-        userBody.removeAll()
-        fromID.removeAll()
+        var tmppostDate = [String]()
+        var tmpimg1 = [String]()
+        var tmpimg2 = [String]()
+        var tmpimg3 = [String]()
+        var tmpuserBody = [String]()
+        var tmpfromID = [String]()
+        var tmppostID = [Int]()
         
         let parameters = [
             "sercret"     : "jo8nefamehisd",
@@ -327,74 +327,82 @@ extension UserProfileController {
                 self.reloadData()
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    var indexArr:Int = -1
-                    
-                    if let resultArray = json!.valueForKey("result") as? NSArray {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                         
-                        for item in resultArray {
+                        if let resultArray = json.valueForKey("result") as? NSArray {
                             
-                            indexArr += 1
-                            
-                            if let resultDict = item as? NSDictionary {
-                                if let userPostId = resultDict.valueForKey("ID") {
-                                    self.postID.append(userPostId as! Int)
-                                }
+                            for item in resultArray {
                                 
-                                if let userPostModied = resultDict.valueForKey("post_modified") {
-                                    self.postDate.append(userPostModied as! String)
-                                }
-                                
-                                if let postContent = resultDict.valueForKey("fields")  {
-                                    if postContent["images"] != nil {
-                                        if let images = postContent.valueForKey("images") as? NSArray {
-                                            for index in 1...images.count {
-                                                if let img = images[index - 1].valueForKey("image"){
-                                                    if index == 1 {
-                                                        self.img1.append(img["url"] as! String)
-                                                    }
-                                                    if index == 2 {
-                                                        self.img2.append(img["url"] as! String)
-                                                    }
-                                                    if index == 3 {
-                                                        self.img3.append(img["url"] as! String)
+                                if let resultDict = item as? NSDictionary {
+                                    if let userPostId = resultDict.valueForKey("ID") {
+                                        tmppostID.append(userPostId as! Int)
+                                    }
+                                    
+                                    if let userPostModied = resultDict.valueForKey("post_modified") {
+                                        tmppostDate.append(userPostModied as! String)
+                                    }
+                                    
+                                    if let postContent = resultDict.valueForKey("fields")  {
+                                        if postContent["images"] != nil {
+                                            if let images = postContent.valueForKey("images") as? NSArray {
+                                                for index in 1...images.count {
+                                                    if let img = images[index - 1].valueForKey("image"){
+                                                        if index == 1 {
+                                                            tmpimg1.append(img["url"] as! String)
+                                                        }
+                                                        if index == 2 {
+                                                            tmpimg2.append(img["url"] as! String)
+                                                        }
+                                                        if index == 3 {
+                                                            tmpimg3.append(img["url"] as! String)
+                                                        }
                                                     }
                                                 }
+                                                if images.count < 2 {
+                                                    tmpimg2.append("null")
+                                                }
+                                                if images.count < 3 {
+                                                    tmpimg3.append("null")
+                                                }
+                                            }else{
+                                                tmpimg1.append("null")
+                                                tmpimg2.append("null")
+                                                tmpimg3.append("null")
                                             }
-                                            if images.count < 2 {
-                                                self.img2.append("null")
-                                            }
-                                            if images.count < 3 {
-                                                self.img3.append("null")
-                                            }
-                                        }else{
-                                            self.img1.append("null")
-                                            self.img2.append("null")
-                                            self.img3.append("null")
                                         }
-                                    }
-                                    if let body = postContent.valueForKey("body") {
-                                        self.userBody.append( body as! String )
-                                    }
-                                    if let body = postContent.valueForKey("from_user_id") {
-                                        self.fromID.append( body as! String )
+                                        if let body = postContent.valueForKey("body") {
+                                            tmpuserBody.append( body as! String )
+                                        }
+                                        if let body = postContent.valueForKey("from_user_id") {
+                                            tmpfromID.append( body as! String )
+                                        }
                                     }
                                 }
                             }
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.img1 = tmpimg1
+                                self.img2 = tmpimg2
+                                self.img3 = tmpimg3
+                                self.userBody = tmpuserBody
+                                self.fromID = tmpfromID
+                                self.postID = tmppostID
+                                self.postDate = tmppostDate
+                                
+                                self.tblProfile.reloadData()
+                                self.topReload.stopAnimating()
+                                
+                            }
                         }
-                    }
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.tblProfile.reloadData()
-                        self.topReload.stopAnimating()
+                    }else{
+                        self.reloadData()
                     }
                 } catch {
                     print(error)
                 }
             }
-            
         }
         task.resume()
+        
     }
     
     // Delete Own Timeline

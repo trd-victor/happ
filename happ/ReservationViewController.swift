@@ -256,19 +256,14 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if calendarDates[indexPath.row] != "NoDates" {
-            CreateDetails.date = calendarDates[indexPath.row]
-            CreateDetails.day = getDayOfWeek(calendarDates[indexPath.row])
+            ReservationPrepareCreate.calendar = true
+            ReservationPrepareCreate.date = calendarDates[indexPath.row]
+            ReservationPrepareCreate.day = getDayOfWeek(calendarDates[indexPath.row])
             
             dispatch_async(dispatch_get_main_queue()){
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                let vc = storyBoard.instantiateViewControllerWithIdentifier("CreateReservation") as! CreateReservation
-                let transition = CATransition()
-                transition.duration = 0.40
-                transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-                transition.type = kCATransitionPush
-                transition.subtype = kCATransitionFromRight
-                self.view.window!.layer.addAnimation(transition, forKey: nil)
-                self.presentViewController(vc, animated: false, completion: nil)
+                let vc = storyBoard.instantiateViewControllerWithIdentifier("ViewReservation") as! ViewReservation
+                self.presentViewController(vc, animated: true, completion: nil)
             }
         }
     }
@@ -584,6 +579,7 @@ class ReservationViewController: UIViewController, UICollectionViewDelegate, UIC
     
     
     @IBAction func viewReservation(sender: AnyObject) {
+        ReservationPrepareCreate.calendar = false
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("ViewReservation") as! ViewReservation
         let transition = CATransition()

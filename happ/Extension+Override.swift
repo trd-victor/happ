@@ -61,7 +61,7 @@ extension CreateReservation {
         self.endName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
         self.reservedLabel.text = config.translate("title_reserved")
         
-         self.getOffice()
+        self.getOffice()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -80,5 +80,5 @@ extension CreateReservation {
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
     }
-
+    
 }

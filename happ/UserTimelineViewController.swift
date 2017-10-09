@@ -192,6 +192,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func refreshLang(notification: NSNotification) {
         let config = SYSTEM_CONFIG()
         self.labelFree.text = config.translate("subtitle_now_free")
+        mytableview.reloadData()
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -680,7 +681,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
             cell.profileImg.tag = Int(self.fromID[indexPath.row])!
-            cell.postDate.text = self.postDate[indexPath.row]
+            cell.postDate.text =  dateTransform(self.postDate[indexPath.row])
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
@@ -806,7 +807,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
-            cell.postDate.text = self.postDate[indexPath.row]
+            cell.postDate.text =  dateTransform(self.postDate[indexPath.row])
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
@@ -909,7 +910,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
-            cell.postDate.text = self.postDate[indexPath.row]
+            cell.postDate.text = dateTransform(self.postDate[indexPath.row])
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
@@ -992,7 +993,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
-            cell.postDate.text = self.postDate[indexPath.row]
+            cell.postDate.text = dateTransform(self.postDate[indexPath.row])
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
@@ -1008,6 +1009,19 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
             
         }
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
     }
     
     func tapImage(sender: UITapGestureRecognizer){

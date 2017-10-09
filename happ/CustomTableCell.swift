@@ -71,6 +71,7 @@ class NoImage: UITableViewCell {
     let postDate: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFontOfSize(12)
+        label.textAlignment = .Right
         label.textColor = UIColor.grayColor()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -189,6 +190,7 @@ class SingleImage: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFontOfSize(12)
         label.textColor = UIColor.grayColor()
+        label.textAlignment = .Right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -341,6 +343,7 @@ class DoubleImage: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFontOfSize(12)
         label.textColor = UIColor.grayColor()
+        label.textAlignment = .Right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -523,6 +526,7 @@ class TripleImage: UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFontOfSize(12)
         label.textColor = UIColor.grayColor()
+        label.textAlignment = .Right
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
