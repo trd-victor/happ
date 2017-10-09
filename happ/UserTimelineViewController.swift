@@ -136,7 +136,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         //calll system value...
         let config = SYSTEM_CONFIG()
-        globalUserId.skills = String(config.getSYS_VAL("userskills_\(globalUserId.userID)")!)
+        globalUserId.skills = String(config.getSYS_VAL("user_skills_\(globalUserId.userID)")!)
         
         //set text i am free
         labelFree.text = config.translate("subtitle_now_free")

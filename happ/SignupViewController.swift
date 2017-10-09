@@ -278,9 +278,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 let config = SYSTEM_CONFIG()
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
                 
-                let vc = ViewController()
-                vc.getAllUserInfo()
-                
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
                 

@@ -109,13 +109,6 @@ class LaunchScreenViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         activityIndicator.startAnimating()
         self.isAppAlreadyLaunchedOnce()
-        print("running")
-        let config = getSystemValue()
-        config.getKey()
-        config.getSkill()
-        
-        let user = ViewController()
-        user.getAllUserInfo()
         
         let userDefaults = NSUserDefaults.standardUserDefaults()
         if let systemLang = userDefaults.valueForKey("AppLanguage") {
@@ -143,9 +136,6 @@ class LaunchScreenViewController: UIViewController {
             let userdb = FIRDatabase.database().reference().child("users").child(firID)
             globalUserId.FirID = firID
             
-            let user = ViewController()
-            user.getAllUserInfo()
-            
             let config = SYSTEM_CONFIG()
             config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
             
@@ -167,7 +157,7 @@ class LaunchScreenViewController: UIViewController {
                 })
             }
             
-            self.delay(12.0){
+            self.delay(6.0){
                 let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
                 self.presentViewController(mainViewController, animated:false, completion:nil)
             }
@@ -178,7 +168,7 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(3.0) {
+        self.delay(6.0) {
             self.activityIndicator.stopAnimating()
             dispatch_async(dispatch_get_main_queue()){
                 self.dismissViewControllerAnimated(false, completion: nil)
@@ -195,8 +185,10 @@ class LaunchScreenViewController: UIViewController {
     
     func isAppAlreadyLaunchedOnce()->Bool{
         
-        //        self.delayLaunchScreen()
-        
+        let config = getSystemValue()
+        config.getKey()
+        config.getSkill()
+        getAllUserInfo()
         
         let defaults = NSUserDefaults.standardUserDefaults()
         
@@ -207,7 +199,7 @@ class LaunchScreenViewController: UIViewController {
         }else{
             defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
 
-            self.delay(5.0){
+            self.delay(6.0){
                 self.activityIndicator.stopAnimating()
                 do {
                     try FIRAuth.auth()?.signOut()
@@ -220,6 +212,74 @@ class LaunchScreenViewController: UIViewController {
             }
             return false
         }
+    }
+    
+    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    
+    func getAllUserInfo() {
+        
+        let config = SYSTEM_CONFIG()
+        
+        let parameters = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "user_search",
+            "d"           : "0",
+            "lang"        : "en"
+        ]
+        
+        let request1 = NSMutableURLRequest(URL: self.baseUrl)
+        let boundary1 = generateBoundaryString()
+        request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
+        request1.HTTPMethod = "POST"
+        request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
+        let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1) {
+            data1, response1, error1 in
+            if error1 != nil || data1 == nil{
+                self.getAllUserInfo()
+            }else{
+                do {
+                    let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    if let info = json2!["result"] as? NSArray {
+                        
+                        for profile in info {
+                            config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
+                            config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
+                            if let url = profile["icon"] as? String {
+                                config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
+                            }else{
+                                config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                            }
+                            config.setSYS_VAL(profile["skills"]!!, key: "user_skills_\(profile["user_id"]!!)")
+                            config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
+                        }
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+        }
+        task2.resume()
+    }
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().UUIDString)"
+    }
+    
+    func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
+        let body = NSMutableData();
+        
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString("\(value)\r\n")
+            }
+        }
+        
+        body.appendString("--\(boundary)--\r\n")
+        
+        return body
     }
     
     func firstload() {
