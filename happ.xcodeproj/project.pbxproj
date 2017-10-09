@@ -60,6 +60,7 @@
 		A366EB841F2996EF000C574C /* TransitionDown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A366EB831F2996EF000C574C /* TransitionDown.swift */; };
 		A36804B21F0B85490032BF49 /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36804B11F0B85490032BF49 /* RegisterController.swift */; };
 		A36AD9E81F46CF4500620C05 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A36AD9E71F46CF4500620C05 /* GoogleService-Info.plist */; };
+		A38C2AB71F8B1A5C001BB58E /* SelectSkillViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C2AB61F8B1A5C001BB58E /* SelectSkillViewController.swift */; };
 		A38E96F01F5525FE00AE3D66 /* SystemValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38E96EF1F5525FE00AE3D66 /* SystemValue.swift */; };
 		A38E96F41F55703D00AE3D66 /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38E96F31F55703D00AE3D66 /* LaunchScreenViewController.swift */; };
 		A39EC1EE1F6BC04E00D9126D /* NotifController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39EC1ED1F6BC04E00D9126D /* NotifController.swift */; };
@@ -132,6 +133,7 @@
 		A366EB831F2996EF000C574C /* TransitionDown.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionDown.swift; sourceTree = "<group>"; };
 		A36804B11F0B85490032BF49 /* RegisterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
 		A36AD9E71F46CF4500620C05 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A38C2AB61F8B1A5C001BB58E /* SelectSkillViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectSkillViewController.swift; sourceTree = "<group>"; };
 		A38E96EF1F5525FE00AE3D66 /* SystemValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemValue.swift; sourceTree = "<group>"; };
 		A38E96F31F55703D00AE3D66 /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
 		A39EC1ED1F6BC04E00D9126D /* NotifController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotifController.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				A3D387C01F21FD590011E323 /* UserTimelineViewController.swift */,
 				A3A343A61F09F8B600DC55FC /* ViewController.swift */,
 				A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */,
+				A38C2AB61F8B1A5C001BB58E /* SelectSkillViewController.swift */,
 			);
 			path = happ;
 			sourceTree = "<group>";
@@ -527,6 +530,7 @@
 				A302AA5C1F27007400D8FBA8 /* CustomCell.swift in Sources */,
 				3D0A4C0F1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift in Sources */,
 				A33893781F31A60D0094F983 /* FirstLaunchLanguage.swift in Sources */,
+				A38C2AB71F8B1A5C001BB58E /* SelectSkillViewController.swift in Sources */,
 				A366EB841F2996EF000C574C /* TransitionDown.swift in Sources */,
 				A38E96F01F5525FE00AE3D66 /* SystemValue.swift in Sources */,
 				A3E124AA1F40B9F30053B2CC /* MessageTableViewController.swift in Sources */,

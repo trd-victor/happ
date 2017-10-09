@@ -166,13 +166,28 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }else{
             cell.textLabel?.text = ""
         }
+        
         if let skills = self.userData[indexPath.row]["skills"] as? String {
             if skills != "null" {
-                cell.detailTextLabel?.text = skills
+                let all_skills = skills.characters.split(",")
+                var skill = ""
+                var count = 0
+                for (value) in all_skills {
+                    count++
+                    skill = skill + config.getSkillByID(String(value))
+                    if count == all_skills.count {
+                        cell.detailTextLabel?.text = skill
+                    }else{
+                        skill = skill + ", "
+                    }
+                }
+            }else{
+                cell.detailTextLabel?.text = ""
             }
         }else{
             cell.detailTextLabel?.text = ""
         }
+        
         if let imgString = self.userData[indexPath.row]["icon"] as? String {
             cell.profileImg.profileForCache(imgString)
         }else{

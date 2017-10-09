@@ -12,7 +12,6 @@ import FirebaseMessaging
 import Fabric
 import Crashlytics
 
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     var window: UIWindow?
@@ -23,9 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         UIApplication.sharedApplication().registerUserNotificationSettings(UIUserNotificationSettings(forTypes: [.Badge, .Sound, .Alert], categories: nil))
         UIApplication.sharedApplication().registerForRemoteNotifications()
         
-        
         Fabric.with([Crashlytics.self])
-        
         
         FIRApp.configure()
         UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber
@@ -34,28 +31,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
     
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
-        let deviceTokenStr = convertDeviceTokenToString(deviceToken)
-        //getting device token
-        print("Device Token", deviceTokenStr)
     }
     
-    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {        print("APN registration failed: \(error.description)")
+    func application(application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: NSError) {
+        
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
-        
-        UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber + 1
-        //        if application.applicationState == UIApplicationState.Active {
-        //            print("foreground", userInfo)
-        //            self.addLocalNotification((userInfo as? NSDictionary)!)
-        //        }
-        
     }
     
     func applicationReceivedRemoteMessage(remoteMessage: FIRMessagingRemoteMessage) {
-        // Receive message
-        
-        print("PUSH NOTIFICATION",remoteMessage.appData)
+
     }
     
     func applicationWillResignActive(application: UIApplication) {

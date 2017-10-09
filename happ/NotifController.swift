@@ -104,7 +104,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         if(snap.exists()) {
                             self.arrayData.insert(result, atIndex: 0)
                             self.backupData.append(result)
-                            self.tblView.reloadData()
+                            dispatch_async(dispatch_get_main_queue()){
+                                 self.tblView.reloadData()
+                            }
                         }
                     })
                 }

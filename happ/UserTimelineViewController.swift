@@ -277,7 +277,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func CreatePostButton (sender: UIButton) ->() {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("CreatePostController") as! CreatePostViewController
-        self.presentDetail(vc)
+        self.presentViewController(vc, animated: true, completion: nil)
     }
     
     func deletePost(sender: String, index: Int) {
@@ -637,7 +637,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         let cellTap = UITapGestureRecognizer(target: self, action: "tapCell:")
         let bodyTap = UITapGestureRecognizer(target: self, action: "tapBody:")
         let imgTap = UITapGestureRecognizer(target: self, action: "tapImage:")
-        print(self.img1[indexPath.row])
         if self.img3[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("TripleImage", forIndexPath: indexPath) as! TripleImage
             

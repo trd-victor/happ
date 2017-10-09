@@ -118,6 +118,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
         userEmailField.setLeftPaddingPoints(125)
         userEmailField.setRightPaddingPoints(10)
+        userEmailField.tintColor = UIColor.blackColor()
         
         labelUserEmail.translatesAutoresizingMaskIntoConstraints = false
         labelUserEmail.centerXAnchor.constraintEqualToAnchor(userEmailField.centerXAnchor).active = true
@@ -132,6 +133,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         userPasswordField.heightAnchor.constraintEqualToConstant(48).active = true
         userPasswordField.setLeftPaddingPoints(125)
         userPasswordField.setRightPaddingPoints(10)
+        userPasswordField.tintColor = UIColor.blackColor()
         
         labelPassword.translatesAutoresizingMaskIntoConstraints = false
         labelPassword.centerXAnchor.constraintEqualToAnchor(userPasswordField.centerXAnchor).active = true

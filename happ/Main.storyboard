@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="FDg-6c-3EA">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="FDg-6c-3EA">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
@@ -8,7 +8,7 @@
         <!--First Launch Language-->
         <scene sceneID="nqK-hs-BZq">
             <objects>
-                <viewController storyboardIdentifier="ChooseLanguage" id="mKb-Jj-Ppc" customClass="FirstLaunchLanguage" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChooseLanguage" id="mKb-Jj-Ppc" customClass="FirstLaunchLanguage" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="YzK-jw-Lf8">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -87,7 +87,7 @@
         <!--Search Controller-->
         <scene sceneID="eTe-s0-Pna">
             <objects>
-                <viewController storyboardIdentifier="SearchUserController" id="IiA-8u-i3I" customClass="SearchController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SearchUserController" id="IiA-8u-i3I" customClass="SearchController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HwW-zc-Gtz">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -172,7 +172,7 @@
         <!--Launch Screen View Controller-->
         <scene sceneID="aZm-Ap-z0B">
             <objects>
-                <viewController id="FDg-6c-3EA" customClass="LaunchScreenViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="FDg-6c-3EA" customClass="LaunchScreenViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="XNF-6h-YNi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -199,7 +199,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="MainBoard" id="BYZ-38-t0r" customClass="ViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainBoard" id="BYZ-38-t0r" customClass="ViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="500" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -297,7 +297,7 @@
         <!--Signup View Controller-->
         <scene sceneID="IpD-YZ-FYz">
             <objects>
-                <viewController storyboardIdentifier="LoginBoard" id="7Ym-L0-Qw6" customClass="SignupViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginBoard" id="7Ym-L0-Qw6" customClass="SignupViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Xdc-3h-fv5">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -414,7 +414,7 @@
         <!--Change Pass View Controller-->
         <scene sceneID="2HQ-OL-3mS">
             <objects>
-                <viewController id="BLD-QW-CAN" customClass="ChangePassViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BLD-QW-CAN" customClass="ChangePassViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="nUH-rw-C69">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -500,7 +500,7 @@
         <!--Mail Change View Controller-->
         <scene sceneID="twx-Jn-LVF">
             <objects>
-                <viewController storyboardIdentifier="MailChange" id="2AT-LM-HTz" customClass="MailChangeViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MailChange" id="2AT-LM-HTz" customClass="MailChangeViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="u1J-yC-mr8">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -588,7 +588,7 @@
         <!--Change New Password View Controller-->
         <scene sceneID="eXL-O1-AtS">
             <objects>
-                <viewController storyboardIdentifier="ChangeNewPassword" id="Tcn-G2-Cfq" customClass="ChangeNewPasswordViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChangeNewPassword" id="Tcn-G2-Cfq" customClass="ChangeNewPasswordViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="e3E-rb-AqA">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -725,7 +725,7 @@
         <!--Current Settings View Controller-->
         <scene sceneID="elA-8r-wdG">
             <objects>
-                <viewController storyboardIdentifier="CurrentSettings" id="V7P-KY-26P" customClass="CurrentSettingsViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CurrentSettings" id="V7P-KY-26P" customClass="CurrentSettingsViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="P6Z-5P-m4l">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -765,7 +765,7 @@
                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="4T4-zJ-38w" kind="custom" identifier="ChangeLangView" customClass="TransitionRight" customModule="happ" customModuleProvider="target" id="zyd-Hc-EId"/>
+                                    <segue destination="4T4-zJ-38w" kind="custom" identifier="ChangeLangView" customClass="TransitionRight" customModule="Happ" customModuleProvider="target" id="zyd-Hc-EId"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" id="mYq-7y-8yz">
@@ -810,7 +810,7 @@
         <!--Change Language View Controller-->
         <scene sceneID="qRc-pJ-3SR">
             <objects>
-                <viewController id="4T4-zJ-38w" customClass="ChangeLanguageViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="4T4-zJ-38w" customClass="ChangeLanguageViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HYf-R9-Cyj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -889,7 +889,7 @@
         <!--Edit Profile View Controller-->
         <scene sceneID="cBa-Dd-WdL">
             <objects>
-                <viewController storyboardIdentifier="EditProfile" id="AFE-Ok-3yh" customClass="EditProfileViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EditProfile" id="AFE-Ok-3yh" customClass="EditProfileViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="opR-zf-cbD">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -921,63 +921,6 @@
                                         <animations/>
                                         <color key="backgroundColor" red="0.89411764709999997" green="0.83137254900000002" blue="0.72549019609999998" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="P9L-oB-rvi">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ZvE-KA-rO0">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="D1i-AW-RZh">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Yhp-cy-5dV">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="MoU-aP-nbq">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nPo-Ty-aE4">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="ghG-B1-nFJ">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dXW-7Z-QNP">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="AgR-TX-zXK">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
                                     <view contentMode="scaleToFill" id="GDP-aW-7oR">
                                         <rect key="frame" x="-36" y="64" width="312" height="1"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -990,50 +933,6 @@
                                         <animations/>
                                         <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>
-                                    <view contentMode="scaleToFill" id="SgR-Av-fYO">
-                                        <rect key="frame" x="-37" y="64" width="314" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="cPu-mK-MLv">
-                                        <rect key="frame" x="-38" y="64" width="315" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="IKa-n7-vLf">
-                                        <rect key="frame" x="-43" y="64" width="326" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="utj-NU-JlM">
-                                        <rect key="frame" x="-43" y="64" width="325" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="zCg-Vu-HOU">
-                                        <rect key="frame" x="-37" y="64" width="313" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" id="Gsq-bu-P8y">
-                                        <rect key="frame" x="-36" y="64" width="312" height="1"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <color key="backgroundColor" red="0.86666666670000003" green="0.86666666670000003" blue="0.87843137250000003" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="LhR-yK-r1f">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="CHF-vP-mRm">
                                         <rect key="frame" x="80" y="24" width="80" height="80"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -1055,19 +954,6 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="zEF-ZP-8NW">
-                                        <rect key="frame" x="94" y="49" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="mx1-FE-1wR">
-                                        <rect key="frame" x="-4" y="49" width="248" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                 </subviews>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1105,32 +991,14 @@
                     <size key="freeformSize" width="320" height="568"/>
                     <connections>
                         <outlet property="StatusItem" destination="NQ1-tN-wfO" id="5RQ-Ac-Yx8"/>
-                        <outlet property="androidswitch" destination="zEF-ZP-8NW" id="GVG-2R-JBe"/>
-                        <outlet property="appdesignswitch" destination="ghG-B1-nFJ" id="h5n-Hl-hh8"/>
-                        <outlet property="backdesignswithc" destination="AgR-TX-zXK" id="gkU-oa-2B4"/>
-                        <outlet property="backendswitch" destination="D1i-AW-RZh" id="nRP-ef-mKy"/>
-                        <outlet property="fronendswitch" destination="P9L-oB-rvi" id="BWZ-ls-vgd"/>
-                        <outlet property="iosswitch" destination="MoU-aP-nbq" id="c05-Sv-75V"/>
-                        <outlet property="labelAndroid" destination="LhR-yK-r1f" id="py8-0m-z6T"/>
-                        <outlet property="labelAppDesign" destination="nPo-Ty-aE4" id="YVw-Sr-Vxo"/>
-                        <outlet property="labelIOS" destination="Yhp-cy-5dV" id="goC-XX-gyi"/>
                         <outlet property="labelName" destination="qSR-fN-OOc" id="xmm-Vr-iZV"/>
                         <outlet property="labelSkills" destination="YbF-LJ-Nex" id="RDn-Wq-mcO"/>
-                        <outlet property="labelbackend" destination="ZvE-KA-rO0" id="yHX-Mn-XHw"/>
-                        <outlet property="labelfrontEnd" destination="mx1-FE-1wR" id="RgK-W2-Xkv"/>
-                        <outlet property="labelwebdesign" destination="dXW-7Z-QNP" id="tZ9-cW-xpW"/>
                         <outlet property="navBackProfile" destination="BDy-HJ-rs5" id="1Ie-we-S9M"/>
                         <outlet property="navBar" destination="cwx-gA-PE0" id="TRs-ca-fxr"/>
                         <outlet property="navTitle" destination="VsE-VE-iB6" id="K3G-QF-LU1"/>
                         <outlet property="scrollView" destination="7KS-nH-aH7" id="2UI-1u-G6H"/>
                         <outlet property="separator" destination="GDP-aW-7oR" id="bMV-xc-uiz"/>
                         <outlet property="separator2" destination="Vgb-I6-S9f" id="1Az-gY-g7Q"/>
-                        <outlet property="separator3" destination="SgR-Av-fYO" id="eMk-n0-UXg"/>
-                        <outlet property="separator4" destination="cPu-mK-MLv" id="0cK-NV-xuZ"/>
-                        <outlet property="separator5" destination="IKa-n7-vLf" id="0rO-qZ-9rh"/>
-                        <outlet property="separator6" destination="utj-NU-JlM" id="bHJ-M4-z8W"/>
-                        <outlet property="separator7" destination="zCg-Vu-HOU" id="azU-Kf-ypj"/>
-                        <outlet property="separator8" destination="Gsq-bu-P8y" id="2kg-Xk-McX"/>
                         <outlet property="skillView" destination="5Bk-wv-vh9" id="Wrn-lz-1bW"/>
                         <outlet property="userDescription" destination="gAR-Aq-mrm" id="bh4-7k-NXs"/>
                         <outlet property="userImage" destination="CHF-vP-mRm" id="VfR-WU-wEq"/>
@@ -1144,7 +1012,7 @@
         <!--Configuration-->
         <scene sceneID="QlB-R6-3i6">
             <objects>
-                <viewController storyboardIdentifier="Configuration" id="Fqd-1L-vKV" customClass="ConfigurationViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Configuration" id="Fqd-1L-vKV" customClass="ConfigurationViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="VWf-n7-9KB">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1328,7 +1196,7 @@
         <!--Item-->
         <scene sceneID="5eH-ZD-mHb">
             <objects>
-                <viewController storyboardIdentifier="TimelineDetail" id="gSR-qy-5f3" customClass="TimelineDetail" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TimelineDetail" id="gSR-qy-5f3" customClass="TimelineDetail" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ses-Pg-Gon">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1350,7 +1218,7 @@
         <!--Timeline-->
         <scene sceneID="0ve-g9-4rp">
             <objects>
-                <viewController storyboardIdentifier="UserTimeline" id="dx6-VY-Iwv" customClass="UserTimelineViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UserTimeline" id="dx6-VY-Iwv" customClass="UserTimelineViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="WSX-j1-22Y">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1418,7 +1286,7 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RowCell" rowHeight="360" id="yfa-CB-HsB" customClass="CustomCell" customModule="happ" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RowCell" rowHeight="360" id="yfa-CB-HsB" customClass="CustomCell" customModule="Happ" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="320" height="360"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yfa-CB-HsB" id="Ses-7y-XWK">
@@ -1503,15 +1371,15 @@
         <!--Messages-->
         <scene sceneID="Lgw-6h-FPr">
             <objects>
-                <tableViewController storyboardIdentifier="Messages" id="YfB-Db-28d" customClass="MessageTableViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Messages" id="YfB-Db-28d" customClass="MessageTableViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="77" sectionHeaderHeight="28" sectionFooterHeight="28" id="yr3-f7-HtK">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="happ" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="92" width="320" height="77"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="Happ" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="320" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lqd-Oi-WpL" id="3Q3-ls-nLn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="76"/>
@@ -1583,7 +1451,7 @@
         <!--User Profile Controller-->
         <scene sceneID="nE7-Ar-IYG">
             <objects>
-                <viewController storyboardIdentifier="UserProfile" id="4zf-eY-eub" customClass="UserProfileController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UserProfile" id="4zf-eY-eub" customClass="UserProfileController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="GxR-cQ-Roq">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1638,7 +1506,7 @@
         <!--Room Reservation-->
         <scene sceneID="BHK-Ba-UOG">
             <objects>
-                <viewController storyboardIdentifier="Reservation" id="QjW-QP-TU2" customClass="ReservationViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Reservation" id="QjW-QP-TU2" customClass="ReservationViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U85-z9-cI1">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1679,7 +1547,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gS5-QU-9Og" customClass="CalendarCell" customModule="happ" customModuleProvider="target">
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gS5-QU-9Og" customClass="CalendarCell" customModule="Happ" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="106" height="107"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -1723,7 +1591,7 @@
         <!--Situation-->
         <scene sceneID="4Hm-uC-bX4">
             <objects>
-                <viewController storyboardIdentifier="Congestion" id="4XE-5Z-DDm" customClass="CongestionViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Congestion" id="4XE-5Z-DDm" customClass="CongestionViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="6Ta-9y-hok">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1739,7 +1607,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gl9-By-nGZ" customClass="UserCollection" customModule="happ" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gl9-By-nGZ" customClass="UserCollection" customModule="Happ" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -1768,7 +1636,7 @@
         <!--Menu View Controller-->
         <scene sceneID="C55-A6-18z">
             <objects>
-                <tabBarController storyboardIdentifier="Menu" id="FJA-uw-7aU" customClass="MenuViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="Menu" id="FJA-uw-7aU" customClass="MenuViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" translucent="NO" id="PEM-8e-9Li">
@@ -1861,7 +1729,7 @@
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </view>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="incomingmessage" id="I0f-J6-pN5" customClass="MessagIncoming" customModule="happ" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="incomingmessage" id="I0f-J6-pN5" customClass="MessagIncoming" customModule="Happ" customModuleProvider="target">
                                         <rect key="frame" x="8" y="9" width="304" height="49"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -1911,7 +1779,7 @@
         <!--View Lib View Controller-->
         <scene sceneID="hho-Hq-kpu">
             <objects>
-                <viewController storyboardIdentifier="ChatMessage" id="BYC-fe-J7H" customClass="ViewLibViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatMessage" id="BYC-fe-J7H" customClass="ViewLibViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="38P-N9-6HP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1927,7 +1795,7 @@
         <!--Create Post View Controller-->
         <scene sceneID="fYJ-LI-MEP">
             <objects>
-                <viewController storyboardIdentifier="CreatePostController" id="AZm-Nu-zGn" customClass="CreatePostViewController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CreatePostController" id="AZm-Nu-zGn" customClass="CreatePostViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KgR-Ip-rag">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2017,7 +1885,7 @@
         <!--RegistController-->
         <scene sceneID="FcB-gb-ro4">
             <objects>
-                <viewController storyboardIdentifier="RegistController" title="RegistController" id="oiE-AQ-YM2" customClass="RegistController" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RegistController" title="RegistController" id="oiE-AQ-YM2" customClass="RegistController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Mwg-pK-uxj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="750"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2026,32 +1894,6 @@
                                 <rect key="frame" x="0.0" y="64" width="320" height="686"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="RVu-SA-cW7">
-                                        <rect key="frame" x="10" y="403" width="304" height="40"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="yE6-dS-3uH">
-                                        <rect key="frame" x="258" y="364" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DG1-1M-s0Z">
-                                        <rect key="frame" x="10" y="446" width="304" height="40"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="g0d-q8-A5U">
-                                        <rect key="frame" x="257" y="493" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
                                     <view contentMode="scaleToFill" id="wQt-hv-O99">
                                         <rect key="frame" x="0.0" y="-2" width="320" height="34"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2068,42 +1910,6 @@
                                         <animations/>
                                         <color key="backgroundColor" red="0.89411764709999997" green="0.83137254900000002" blue="0.72549019609999998" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="0LM-ec-2Ss">
-                                        <rect key="frame" x="258" y="278" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="mNv-hl-sRh">
-                                        <rect key="frame" x="258" y="321" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="v0c-4W-erL">
-                                        <rect key="frame" x="10" y="361" width="304" height="40"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="6eC-8d-8Rq">
-                                        <rect key="frame" x="257" y="407" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="cSn-DA-yRe">
-                                        <rect key="frame" x="9" y="317" width="303" height="40"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="9By-JX-f8Y">
-                                        <rect key="frame" x="258" y="450" width="51" height="31"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                    </switch>
                                     <view contentMode="scaleToFill" id="pLW-9B-P1P">
                                         <rect key="frame" x="0.0" y="238" width="320" height="33"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2120,14 +1926,6 @@
                                         <animations/>
                                         <color key="backgroundColor" red="0.89411764709999997" green="0.83137254900000002" blue="0.72549019609999998" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Mr3-jZ-wFZ">
-                                        <rect key="frame" x="9" y="276" width="303" height="36"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" textAlignment="right" minimumFontSize="17" id="ttH-xt-jNe">
                                         <rect key="frame" x="1" y="183" width="320" height="48"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2182,14 +1980,6 @@
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="l7O-1R-adR">
-                                        <rect key="frame" x="10" y="489" width="304" height="40"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" textAlignment="right" minimumFontSize="17" id="eAf-oK-ys9">
                                         <rect key="frame" x="0.0" y="31" width="320" height="48"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2236,24 +2026,13 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="750"/>
                     <connections>
-                        <outlet property="AndroidSwitch" destination="6eC-8d-8Rq" id="wQk-rm-9Bl"/>
-                        <outlet property="appdesignSwitch" destination="9By-JX-f8Y" id="Mcm-Iy-WoQ"/>
-                        <outlet property="backEndSwitch" destination="mNv-hl-sRh" id="kfx-1u-peT"/>
                         <outlet property="btnUpdate" destination="i4i-tI-qyA" id="a61-gu-lTb"/>
-                        <outlet property="frontEndSwitch" destination="0LM-ec-2Ss" id="DtS-NC-DSk"/>
                         <outlet property="infoView" destination="wQt-hv-O99" id="SiE-mk-qnx"/>
-                        <outlet property="iosSwitch" destination="yE6-dS-3uH" id="NNa-9o-q3g"/>
-                        <outlet property="labelAndroid" destination="v0c-4W-erL" id="LLX-iT-tUx"/>
-                        <outlet property="labelAppDesign" destination="DG1-1M-s0Z" id="2ZJ-Ul-7DP"/>
-                        <outlet property="labelBackEnd" destination="cSn-DA-yRe" id="jwD-dP-GE0"/>
                         <outlet property="labelEmail" destination="8Cf-rz-K4g" id="l3L-fT-w01"/>
-                        <outlet property="labelFrontEnd" destination="Mr3-jZ-wFZ" id="NZM-nv-LUg"/>
-                        <outlet property="labelIOS" destination="RVu-SA-cW7" id="GPD-JM-C6P"/>
                         <outlet property="labelName" destination="yRN-s5-c4g" id="yOp-nx-ZnQ"/>
                         <outlet property="labelPass" destination="PX8-Un-crp" id="3db-Kw-RYQ"/>
                         <outlet property="labelReEnterPass" destination="3Ut-Zp-dtH" id="CFa-oz-jPl"/>
                         <outlet property="labelSkill" destination="gIp-OY-RhL" id="iSy-13-gZE"/>
-                        <outlet property="labelWebDesign" destination="l7O-1R-adR" id="3lm-M0-Hzf"/>
                         <outlet property="labeltopTitle" destination="2Hu-CY-Nda" id="wCv-d2-xvm"/>
                         <outlet property="navBack" destination="gpN-PQ-nyb" id="5dh-uq-gE1"/>
                         <outlet property="navBar" destination="tsb-ip-bIl" id="SQa-Ck-3cq"/>
@@ -2264,7 +2043,6 @@
                         <outlet property="userName" destination="eAf-oK-ys9" id="pEQ-Ue-MBg"/>
                         <outlet property="userPassword" destination="mak-Lz-0b0" id="if1-v7-GHN"/>
                         <outlet property="userReEnterPassword" destination="ttH-xt-jNe" id="LMC-BL-IR5"/>
-                        <outlet property="webdesignSwitch" destination="g0d-q8-A5U" id="tyR-zc-AJf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Otp-DK-SON" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2274,7 +2052,7 @@
         <!--Messages-->
         <scene sceneID="MEG-HG-6vq">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="fHb-3J-ySl" customClass="NavigationMessage" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="fHb-3J-ySl" customClass="NavigationMessage" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Messages" image="messageIcon" id="1Nr-fn-BCl"/>
                     <toolbarItems/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
@@ -2301,7 +2079,7 @@
         <!--View Reservation-->
         <scene sceneID="fag-60-KCT">
             <objects>
-                <viewController storyboardIdentifier="ViewReservation" id="dBQ-OE-aFc" customClass="ViewReservation" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ViewReservation" id="dBQ-OE-aFc" customClass="ViewReservation" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rwK-jF-Duw">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2350,7 +2128,7 @@
         <!--Create Reservation-->
         <scene sceneID="j3x-tL-dZo">
             <objects>
-                <viewController storyboardIdentifier="CreateReservation" id="UeB-Jq-GqC" customClass="CreateReservation" customModule="happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CreateReservation" id="UeB-Jq-GqC" customClass="CreateReservation" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bXg-XC-erT">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

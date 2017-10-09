@@ -10,6 +10,11 @@ import UIKit
 import Firebase
 import FirebaseAuth
 
+struct reg_user {
+    static var selectedSkills = [Int]()
+    static var didUpdate: Bool = false
+}
+
 class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDelegate {
     
 //    @IBOutlet var navBack: UIBarButtonItem!
@@ -23,12 +28,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var labeltopTitle: UILabel!
     @IBOutlet var labelSkill: UILabel!
-    @IBOutlet var labelFrontEnd: UILabel!
-    @IBOutlet var labelBackEnd: UILabel!
-    @IBOutlet var labelAndroid: UILabel!
-    @IBOutlet var labelIOS: UILabel!
-    @IBOutlet var labelAppDesign: UILabel!
-    @IBOutlet var labelWebDesign: UILabel!
     @IBOutlet var btnUpdate: UIButton!
     
     
@@ -42,25 +41,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     @IBOutlet var userEmail: UITextField!
     @IBOutlet var userReEnterPassword: UITextField!
     @IBOutlet var userPassword: UITextField!
-    
 
-    @IBOutlet var frontEndSwitch: UISwitch!
-    @IBOutlet var backEndSwitch: UISwitch!
-    @IBOutlet var iosSwitch: UISwitch!
-    @IBOutlet var AndroidSwitch: UISwitch!
-    @IBOutlet var appdesignSwitch: UISwitch!
-    @IBOutlet var webdesignSwitch: UISwitch!
-    
-    
-    
-    var arrText = [
-        "en": [
-            "notMatchPassword": "Password did not match"
-        ],
-        "ja": [
-            "notMatchPassword": "パスワードが一致しませんでした"
-        ]
-    ]
     var emptyString: String!
     var language: String!
     var notmatchPass: String!
@@ -70,11 +51,27 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     var Firebasename : String!
     var scrollview : UIScrollView!
     var loadingScreen: UIView!
+    let separatorLine: UIView = UIView()
+    let selectContainer: UIView = UIView()
+    let selectSkillLbl: UILabel = UILabel()
+    let goToSelectSkill: UIImageView = UIImageView()
+    let selectedSkillsLbl: UILabel = UILabel()
+    let listOfSkills: UILabel = UILabel()
     
     var mess: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.scrollView.addSubview(self.selectContainer)
+        self.selectContainer.addSubview(self.selectSkillLbl)
+        self.selectContainer.addSubview(self.goToSelectSkill)
+        self.selectContainer.addSubview(self.separatorLine)
+        self.scrollView.addSubview(self.selectedSkillsLbl)
+        self.scrollView.addSubview(self.listOfSkills)
+        
+        self.selectContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectSkills"))
+        
         autoLayout()
         
         //delegate textfield..
@@ -110,6 +107,54 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        var skills = ""
+        let config = SYSTEM_CONFIG()
+        
+        self.selectSkillLbl.text = config.translate("select_skill")
+        self.selectedSkillsLbl.text = config.translate("selected_skill")
+        
+        if reg_user.selectedSkills.count == 0{
+            self.listOfSkills.text = config.translate("empty_skills")
+            self.listOfSkills.textAlignment = .Center
+        }else{
+            self.listOfSkills.textAlignment = .Justified
+        }
+        
+        for var i = 0; i < reg_user.selectedSkills.count; i++ {
+            skills = skills + config.getSkillByID(String(reg_user.selectedSkills[i]))
+            
+            if i == reg_user.selectedSkills.count - 1 {
+                self.listOfSkills.text = skills
+            }else{
+                skills = skills + ", "
+            }
+        }
+    }
+    
+    func selectSkills(){
+        let vc = SelectSkillViewController()
+        let transition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        self.presentDetail(vc)
+    }
+    
+    func presentDetail(viewControllerToPresent: UIViewController) {
+        let transition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        
+        presentViewController(viewControllerToPresent, animated: false, completion: nil)
     }
     
     func autoLayout(){
@@ -210,77 +255,56 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         labelSkill.widthAnchor.constraintEqualToAnchor(skillView.widthAnchor).active = true
         labelSkill.heightAnchor.constraintEqualToConstant(38).active = true
         
-        labelFrontEnd.translatesAutoresizingMaskIntoConstraints = false
-        labelFrontEnd.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelFrontEnd.topAnchor.constraintEqualToAnchor(skillView.bottomAnchor, constant: 10).active = true
-        labelFrontEnd.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelFrontEnd.heightAnchor.constraintEqualToConstant(31).active = true
+        self.separatorLine.translatesAutoresizingMaskIntoConstraints = false
+        self.separatorLine.topAnchor.constraintEqualToAnchor(self.selectContainer.bottomAnchor).active = true
+        self.separatorLine.leftAnchor.constraintEqualToAnchor(self.selectContainer.leftAnchor).active = true
+        self.separatorLine.widthAnchor.constraintEqualToAnchor(self.selectContainer.widthAnchor).active = true
+        self.separatorLine.heightAnchor.constraintEqualToConstant(1).active = true
+        self.separatorLine.backgroundColor = UIColor(hexString: "#DDDDDD")
         
-        labelBackEnd.translatesAutoresizingMaskIntoConstraints = false
-        labelBackEnd.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelBackEnd.topAnchor.constraintEqualToAnchor(labelFrontEnd.bottomAnchor, constant: 10).active = true
-        labelBackEnd.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelBackEnd.heightAnchor.constraintEqualToConstant(31).active = true
+        self.selectContainer.translatesAutoresizingMaskIntoConstraints = false
+        self.selectContainer.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor).active = true
+        self.selectContainer.topAnchor.constraintEqualToAnchor(self.labelSkill.bottomAnchor).active = true
+        self.selectContainer.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        self.selectContainer.heightAnchor.constraintEqualToConstant(48).active = true
+        self.selectContainer.backgroundColor = UIColor.whiteColor()
         
-        labelAndroid.translatesAutoresizingMaskIntoConstraints = false
-        labelAndroid.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelAndroid.topAnchor.constraintEqualToAnchor(labelBackEnd.bottomAnchor, constant: 10).active = true
-        labelAndroid.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelAndroid.heightAnchor.constraintEqualToConstant(31).active = true
+        self.selectSkillLbl.translatesAutoresizingMaskIntoConstraints = false
+        self.selectSkillLbl.leftAnchor.constraintEqualToAnchor(self.selectContainer.leftAnchor, constant: 5).active = true
+        self.selectSkillLbl.topAnchor.constraintEqualToAnchor(self.selectContainer.topAnchor, constant: 5).active = true
+        self.selectSkillLbl.widthAnchor.constraintEqualToAnchor(self.selectContainer.widthAnchor, constant: -40).active = true
+        self.selectSkillLbl.heightAnchor.constraintEqualToConstant(38).active = true
+        self.selectSkillLbl.textColor = UIColor.blackColor()
         
-        labelIOS.translatesAutoresizingMaskIntoConstraints = false
-        labelIOS.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelIOS.topAnchor.constraintEqualToAnchor(labelAndroid.bottomAnchor, constant: 10).active = true
-        labelIOS.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelIOS.heightAnchor.constraintEqualToConstant(31).active = true
+        self.goToSelectSkill.image = UIImage(named: "right-icon")
+        self.goToSelectSkill.tintColor = UIColor(hexString: "#C7C7CC")
+        self.goToSelectSkill.translatesAutoresizingMaskIntoConstraints = false
+        self.goToSelectSkill.rightAnchor.constraintEqualToAnchor(self.selectContainer.rightAnchor, constant: -10).active = true
+        self.goToSelectSkill.centerYAnchor.constraintEqualToAnchor(self.selectContainer.centerYAnchor).active = true
+        self.goToSelectSkill.widthAnchor.constraintEqualToConstant(25).active = true
+        self.goToSelectSkill.heightAnchor.constraintEqualToConstant(25).active = true
         
-        labelAppDesign.translatesAutoresizingMaskIntoConstraints = false
-        labelAppDesign.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelAppDesign.topAnchor.constraintEqualToAnchor(labelIOS.bottomAnchor, constant: 10).active = true
-        labelAppDesign.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelAppDesign.heightAnchor.constraintEqualToConstant(31).active = true
+        self.selectedSkillsLbl.translatesAutoresizingMaskIntoConstraints = false
+        self.selectedSkillsLbl.topAnchor.constraintEqualToAnchor(self.selectContainer.bottomAnchor, constant: 10).active = true
+        self.selectedSkillsLbl.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
+        self.selectedSkillsLbl.widthAnchor.constraintEqualToAnchor(self.selectContainer.widthAnchor).active = true
+        self.selectedSkillsLbl.textAlignment = .Center
+        self.selectedSkillsLbl.textColor = UIColor.blackColor()
         
-        labelWebDesign.translatesAutoresizingMaskIntoConstraints = false
-        labelWebDesign.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelWebDesign.topAnchor.constraintEqualToAnchor(labelAppDesign.bottomAnchor, constant: 10).active = true
-        labelWebDesign.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelWebDesign.heightAnchor.constraintEqualToConstant(31).active = true
+        self.listOfSkills.translatesAutoresizingMaskIntoConstraints = false
+        self.listOfSkills.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor, constant: 10).active = true
+        self.listOfSkills.topAnchor.constraintEqualToAnchor(self.selectedSkillsLbl.bottomAnchor, constant: 10).active = true
+        self.listOfSkills.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -20).active = true
+        self.listOfSkills.textColor = UIColor(hexString: "#888888")
+        self.listOfSkills.numberOfLines = 0
+        self.listOfSkills.lineBreakMode = .ByWordWrapping
         
-        btnUpdate.translatesAutoresizingMaskIntoConstraints = false
-        btnUpdate.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        btnUpdate.topAnchor.constraintEqualToAnchor(labelWebDesign.bottomAnchor, constant: 25).active = true
-        btnUpdate.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -40).active = true
-        btnUpdate.heightAnchor.constraintEqualToConstant(48).active = true
-        
-        frontEndSwitch.translatesAutoresizingMaskIntoConstraints = false
-        frontEndSwitch.frame.size = CGSizeMake(51, 31)
-        frontEndSwitch.topAnchor.constraintEqualToAnchor(skillView.bottomAnchor, constant: 10).active = true
-        frontEndSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        backEndSwitch.translatesAutoresizingMaskIntoConstraints = false
-        backEndSwitch.frame.size = CGSizeMake(51, 31)
-        backEndSwitch.topAnchor.constraintEqualToAnchor(frontEndSwitch.bottomAnchor, constant: 10).active = true
-        backEndSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        AndroidSwitch.translatesAutoresizingMaskIntoConstraints = false
-        AndroidSwitch.frame.size = CGSizeMake(51, 31)
-        AndroidSwitch.topAnchor.constraintEqualToAnchor(backEndSwitch.bottomAnchor, constant: 10).active = true
-        AndroidSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        iosSwitch.translatesAutoresizingMaskIntoConstraints = false
-        iosSwitch.frame.size = CGSizeMake(51, 31)
-        iosSwitch.topAnchor.constraintEqualToAnchor(AndroidSwitch.bottomAnchor, constant: 10).active = true
-        iosSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        appdesignSwitch.translatesAutoresizingMaskIntoConstraints = false
-        appdesignSwitch.frame.size = CGSizeMake(51, 31)
-        appdesignSwitch.topAnchor.constraintEqualToAnchor(iosSwitch.bottomAnchor, constant: 10).active = true
-        appdesignSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        webdesignSwitch.translatesAutoresizingMaskIntoConstraints = false
-        webdesignSwitch.frame.size = CGSizeMake(51, 31)
-        webdesignSwitch.topAnchor.constraintEqualToAnchor(appdesignSwitch.bottomAnchor, constant: 10).active = true
-        webdesignSwitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        self.btnUpdate.translatesAutoresizingMaskIntoConstraints = false
+        self.btnUpdate.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        self.btnUpdate.topAnchor.constraintEqualToAnchor(self.listOfSkills.bottomAnchor, constant: 10).active = true
+        self.btnUpdate.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -40).active = true
+        self.btnUpdate.heightAnchor.constraintEqualToConstant(48).active = true
+
     }
     
     func loadConfigure() {
@@ -300,17 +324,13 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         userReEnterPassword.placeholder = config.translate("holder_re-enter_password")
         
         labelSkill.text = config.translate("subtitle_skills")
-        labelFrontEnd.text = config.translate("label_front_end")
-        labelBackEnd.text = config.translate("label_server_side")
-        labelIOS.text = config.translate("label_IOS_application")
-        labelAndroid.text = config.translate("label_android_application")
-        labelAppDesign.text = config.translate("label_app design")
-        labelWebDesign.text = config.translate("label_web_design")
         
         btnUpdate.setTitle(config.translate("btn_regist_new_member"), forState: .Normal)
     }
     
     func backHome(sender: UIBarButtonItem) -> () {
+        reg_user.selectedSkills = []
+        reg_user.didUpdate = false
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -355,36 +375,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             //setting the method to post
             request.HTTPMethod = "POST"
             
-            //declaring button state
-            let frontEndSkill   = frontEndSwitch
-            let backEndSkill    = backEndSwitch
-            let iosSkill        = iosSwitch
-            let androidSkill    = AndroidSwitch
-            let appDesignSkill  = appdesignSwitch
-            let webDesignSkill  = webdesignSwitch
-            
-            //get state
-            let frontEndState   = switchButtonCheck(frontEndSkill)
-            let backEndState    = switchButtonCheck(backEndSkill)
-            let iosState        = switchButtonCheck(iosSkill)
-            let androidState    = switchButtonCheck(androidSkill)
-            let appDesignState  = switchButtonCheck(appDesignSkill)
-            let webDesignState  = switchButtonCheck(webDesignSkill)
-            
-            let skills: [Int: String] = [
-                1  : "\(frontEndState)",
-                2  : "\(backEndState)",
-                3  : "\(iosState)",
-                4  : "\(androidState)",
-                5  : "\(appDesignState)",
-                6  : "\(webDesignState)"
-            ]
-            
+
             //set skill into variable and targets...
-            var keyskill = returnSkillValue(skills)
-            if keyskill != "" {
-                keyskill = String(keyskill.characters.dropLast())
-            }
+            var keyskill = reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
             
             let targetedData: String = "email,passwd,name,skills,change_lang"
             if language == "ja" {
@@ -458,12 +451,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             self.userPassword.text = ""
             self.userName.text = ""
             self.userReEnterPassword.text = ""
-            self.frontEndSwitch.setOn(false, animated: true)
-            self.backEndSwitch.setOn(false, animated: true)
-            self.iosSwitch.setOn(false, animated: true)
-            self.AndroidSwitch.setOn(false, animated: true)
-            self.appdesignSwitch.setOn(false, animated: true)
-            self.webdesignSwitch.setOn(false, animated: true)
             self.dismissViewControllerAnimated(true, completion: nil)
         })
         myAlert.addAction(okAction)

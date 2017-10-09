@@ -78,6 +78,7 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
         userEmailField.heightAnchor.constraintEqualToConstant(48).active = true
         userEmailField.setRightPaddingPoints(10)
         userEmailField.setLeftPaddingPoints(130)
+        userEmailField.tintColor = UIColor.blackColor()
         userEmailField.clearsOnBeginEditing = false
         
         labelUserEmail.translatesAutoresizingMaskIntoConstraints = false
@@ -96,7 +97,7 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
         btnChangePass.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
         btnChangePass.widthAnchor.constraintEqualToConstant(280).active = true
         btnChangePass.heightAnchor.constraintEqualToConstant(40).active = true
-        
+    
     }
     
     func loadConfigure() {

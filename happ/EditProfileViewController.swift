@@ -15,12 +15,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     @IBOutlet var skillView: UIView!
     @IBOutlet var separator: UIView!
     @IBOutlet var separator2: UIView!
-    @IBOutlet var separator3: UIView!
-    @IBOutlet var separator4: UIView!
-    @IBOutlet var separator5: UIView!
-    @IBOutlet var separator6: UIView!
-    @IBOutlet var separator7: UIView!
-    @IBOutlet var separator8: UIView!
     @IBOutlet var scrollView: UIScrollView!
     
     @IBOutlet var navBackProfile: UIBarButtonItem!
@@ -33,22 +27,12 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     @IBOutlet var labelName: UILabel!
     @IBOutlet var userNamefield: UITextField!
     
-    //skills label..
-    @IBOutlet var labelfrontEnd: UILabel!
-    @IBOutlet var labelbackend: UILabel!
-    @IBOutlet var labelAndroid: UILabel!
-    @IBOutlet var labelIOS: UILabel!
-    @IBOutlet var labelAppDesign: UILabel!
-    @IBOutlet var labelwebdesign: UILabel!
-    
-    
-    //Switch variabel...
-    @IBOutlet var fronendswitch: UISwitch!
-    @IBOutlet var backendswitch: UISwitch!
-    @IBOutlet var androidswitch: UISwitch!
-    @IBOutlet var iosswitch: UISwitch!
-    @IBOutlet var appdesignswitch: UISwitch!
-    @IBOutlet var backdesignswithc: UISwitch!
+    let separatorLine: UIView = UIView()
+    let selectContainer: UIView = UIView()
+    let selectSkillLbl: UILabel = UILabel()
+    let goToSelectSkill: UIImageView = UIImageView()
+    let selectedSkillsLbl: UILabel = UILabel()
+    let listOfSkills: UILabel = UILabel()
     
     var language: String!
     var userId: String = ""
@@ -56,11 +40,20 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     var checkNewImage: Bool = false
     var galleryPicker = UIImagePickerController()
     var loadingScreen: UIView!
+    var firstLoad: Bool = false
     //    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.scrollView.addSubview(self.selectContainer)
+        self.selectContainer.addSubview(self.selectSkillLbl)
+        self.selectContainer.addSubview(self.goToSelectSkill)
+        self.selectContainer.addSubview(self.separatorLine)
+        self.scrollView.addSubview(self.selectedSkillsLbl)
+        self.scrollView.addSubview(self.listOfSkills)
+        
+        self.selectContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectSkill"))
         
         //set delegate ..
         userDescription.delegate = self
@@ -103,7 +96,49 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         view.endEditing(true)
         
         autoLayout()
+        reg_user.didUpdate = false
         
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        var skills = ""
+        let config = SYSTEM_CONFIG()
+        
+        self.selectSkillLbl.text = config.translate("select_skill")
+        self.selectedSkillsLbl.text = config.translate("selected_skill")
+        if reg_user.didUpdate {
+            if reg_user.selectedSkills.count == 0{
+                self.listOfSkills.text = config.translate("empty_skills")
+                self.listOfSkills.textAlignment = .Center
+            }else{
+                self.listOfSkills.textAlignment = .Justified
+            }
+            
+            for var i = 0; i < reg_user.selectedSkills.count; i++ {
+                skills = skills + config.getSkillByID(String(reg_user.selectedSkills[i]))
+                
+                if i == reg_user.selectedSkills.count - 1 {
+                    self.listOfSkills.text = skills
+                }else{
+                    skills = skills + ", "
+                }
+            }
+            reg_user.didUpdate = false
+        }
+        
+    }
+    
+    func selectSkill(){
+        let vc = SelectSkillViewController()
+        let transition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        self.presentDetail(vc)
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -174,6 +209,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userNamefield.heightAnchor.constraintEqualToConstant(38).active = true
         userNamefield.setRightPaddingPoints(10)
         userNamefield.setLeftPaddingPoints(65)
+        userNamefield.tintColor = UIColor.blackColor()
         
         labelName.translatesAutoresizingMaskIntoConstraints = false
         labelName.centerXAnchor.constraintEqualToAnchor(userNamefield.centerXAnchor).active = true
@@ -187,7 +223,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         separator2.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator2.heightAnchor.constraintEqualToConstant(1).active = true
         
-        
         userDescription.translatesAutoresizingMaskIntoConstraints = false
         userDescription.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
         userDescription.topAnchor.constraintEqualToAnchor(userNamefield.bottomAnchor, constant: 5).active = true
@@ -195,6 +230,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userDescription.heightAnchor.constraintEqualToConstant(100).active = true
         userDescription.setRightPaddingPoints(10)
         userDescription.setLeftPaddingPoints(10)
+        userDescription.tintColor = UIColor.blackColor()
         
         skillView.translatesAutoresizingMaskIntoConstraints = false
         skillView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
@@ -208,107 +244,49 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         labelSkills.widthAnchor.constraintEqualToAnchor(skillView.widthAnchor).active = true
         labelSkills.heightAnchor.constraintEqualToConstant(38).active = true
         
-        labelfrontEnd.translatesAutoresizingMaskIntoConstraints = false
-        labelfrontEnd.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelfrontEnd.topAnchor.constraintEqualToAnchor(skillView.bottomAnchor, constant: 10).active = true
-        labelfrontEnd.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelfrontEnd.heightAnchor.constraintEqualToConstant(31).active = true
+        self.separatorLine.translatesAutoresizingMaskIntoConstraints = false
+        self.separatorLine.topAnchor.constraintEqualToAnchor(self.selectContainer.bottomAnchor).active = true
+        self.separatorLine.leftAnchor.constraintEqualToAnchor(self.selectContainer.leftAnchor).active = true
+        self.separatorLine.widthAnchor.constraintEqualToAnchor(self.selectContainer.widthAnchor).active = true
+        self.separatorLine.heightAnchor.constraintEqualToConstant(1).active = true
+        self.separatorLine.backgroundColor = UIColor(hexString: "#DDDDDD")
         
-        fronendswitch.translatesAutoresizingMaskIntoConstraints = false
-        fronendswitch.frame.size = CGSizeMake(51, 31)
-        fronendswitch.topAnchor.constraintEqualToAnchor(skillView.bottomAnchor, constant: 10).active = true
-        fronendswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        self.selectContainer.translatesAutoresizingMaskIntoConstraints = false
+        self.selectContainer.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor).active = true
+        self.selectContainer.topAnchor.constraintEqualToAnchor(self.labelSkills.bottomAnchor).active = true
+        self.selectContainer.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        self.selectContainer.heightAnchor.constraintEqualToConstant(48).active = true
+        self.selectContainer.backgroundColor = UIColor.whiteColor()
         
-        separator3.translatesAutoresizingMaskIntoConstraints = false
-        separator3.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        separator3.topAnchor.constraintEqualToAnchor(labelfrontEnd.bottomAnchor, constant: 5).active = true
-        separator3.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        separator3.heightAnchor.constraintEqualToConstant(1).active = true
+        self.selectSkillLbl.translatesAutoresizingMaskIntoConstraints = false
+        self.selectSkillLbl.leftAnchor.constraintEqualToAnchor(self.selectContainer.leftAnchor, constant: 5).active = true
+        self.selectSkillLbl.topAnchor.constraintEqualToAnchor(self.selectContainer.topAnchor, constant: 5).active = true
+        self.selectSkillLbl.widthAnchor.constraintEqualToAnchor(self.selectContainer.widthAnchor, constant: -40).active = true
+        self.selectSkillLbl.heightAnchor.constraintEqualToConstant(38).active = true
+        self.selectSkillLbl.textColor = UIColor.blackColor()
         
-        labelbackend.translatesAutoresizingMaskIntoConstraints = false
-        labelbackend.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelbackend.topAnchor.constraintEqualToAnchor(labelfrontEnd.bottomAnchor, constant: 10).active = true
-        labelbackend.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelbackend.heightAnchor.constraintEqualToConstant(31).active = true
+        self.goToSelectSkill.image = UIImage(named: "right-icon")
+        self.goToSelectSkill.tintColor = UIColor(hexString: "#C7C7CC")
+        self.goToSelectSkill.translatesAutoresizingMaskIntoConstraints = false
+        self.goToSelectSkill.rightAnchor.constraintEqualToAnchor(self.selectContainer.rightAnchor, constant: -10).active = true
+        self.goToSelectSkill.centerYAnchor.constraintEqualToAnchor(self.selectContainer.centerYAnchor).active = true
+        self.goToSelectSkill.widthAnchor.constraintEqualToConstant(25).active = true
+        self.goToSelectSkill.heightAnchor.constraintEqualToConstant(25).active = true
         
-        backendswitch.translatesAutoresizingMaskIntoConstraints = false
-        backendswitch.frame.size = CGSizeMake(51, 31)
-        backendswitch.topAnchor.constraintEqualToAnchor(fronendswitch.bottomAnchor, constant: 10).active = true
-        backendswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
+        self.selectedSkillsLbl.translatesAutoresizingMaskIntoConstraints = false
+        self.selectedSkillsLbl.topAnchor.constraintEqualToAnchor(self.selectContainer.bottomAnchor, constant: 10).active = true
+        self.selectedSkillsLbl.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
+        self.selectedSkillsLbl.widthAnchor.constraintEqualToAnchor(self.selectContainer.widthAnchor).active = true
+        self.selectedSkillsLbl.textAlignment = .Center
+        self.selectedSkillsLbl.textColor = UIColor.blackColor()
         
-        separator4.translatesAutoresizingMaskIntoConstraints = false
-        separator4.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        separator4.topAnchor.constraintEqualToAnchor(labelbackend.bottomAnchor, constant: 5).active = true
-        separator4.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        separator4.heightAnchor.constraintEqualToConstant(1).active = true
-        
-        labelAndroid.translatesAutoresizingMaskIntoConstraints = false
-        labelAndroid.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelAndroid.topAnchor.constraintEqualToAnchor(labelbackend.bottomAnchor, constant: 10).active = true
-        labelAndroid.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelAndroid.heightAnchor.constraintEqualToConstant(31).active = true
-        
-        androidswitch.translatesAutoresizingMaskIntoConstraints = false
-        androidswitch.frame.size = CGSizeMake(51, 31)
-        androidswitch.topAnchor.constraintEqualToAnchor(backendswitch.bottomAnchor, constant: 10).active = true
-        androidswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        separator5.translatesAutoresizingMaskIntoConstraints = false
-        separator5.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        separator5.topAnchor.constraintEqualToAnchor(labelAndroid.bottomAnchor, constant: 5).active = true
-        separator5.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        separator5.heightAnchor.constraintEqualToConstant(1).active = true
-        
-        labelIOS.translatesAutoresizingMaskIntoConstraints = false
-        labelIOS.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelIOS.topAnchor.constraintEqualToAnchor(labelAndroid.bottomAnchor, constant: 10).active = true
-        labelIOS.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelIOS.heightAnchor.constraintEqualToConstant(31).active = true
-        
-        iosswitch.translatesAutoresizingMaskIntoConstraints = false
-        iosswitch.frame.size = CGSizeMake(51, 31)
-        iosswitch.topAnchor.constraintEqualToAnchor(androidswitch.bottomAnchor, constant: 10).active = true
-        iosswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        separator6.translatesAutoresizingMaskIntoConstraints = false
-        separator6.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        separator6.topAnchor.constraintEqualToAnchor(labelIOS.bottomAnchor, constant: 5).active = true
-        separator6.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        separator6.heightAnchor.constraintEqualToConstant(1).active = true
-        
-        labelAppDesign.translatesAutoresizingMaskIntoConstraints = false
-        labelAppDesign.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelAppDesign.topAnchor.constraintEqualToAnchor(labelIOS.bottomAnchor, constant: 10).active = true
-        labelAppDesign.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelAppDesign.heightAnchor.constraintEqualToConstant(31).active = true
-        
-        appdesignswitch.translatesAutoresizingMaskIntoConstraints = false
-        appdesignswitch.frame.size = CGSizeMake(51, 31)
-        appdesignswitch.topAnchor.constraintEqualToAnchor(iosswitch.bottomAnchor, constant: 10).active = true
-        appdesignswitch.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        separator7.translatesAutoresizingMaskIntoConstraints = false
-        separator7.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        separator7.topAnchor.constraintEqualToAnchor(labelAppDesign.bottomAnchor, constant: 5).active = true
-        separator7.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        separator7.heightAnchor.constraintEqualToConstant(1).active = true
-        
-        labelwebdesign.translatesAutoresizingMaskIntoConstraints = false
-        labelwebdesign.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        labelwebdesign.topAnchor.constraintEqualToAnchor(labelAppDesign.bottomAnchor, constant: 10).active = true
-        labelwebdesign.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, constant: -20).active = true
-        labelwebdesign.heightAnchor.constraintEqualToConstant(31).active = true
-        
-        backdesignswithc.translatesAutoresizingMaskIntoConstraints = false
-        backdesignswithc.frame.size = CGSizeMake(51, 31)
-        backdesignswithc.topAnchor.constraintEqualToAnchor(appdesignswitch.bottomAnchor, constant: 10).active = true
-        backdesignswithc.rightAnchor.constraintEqualToAnchor(view.rightAnchor, constant: -10).active = true
-        
-        separator8.translatesAutoresizingMaskIntoConstraints = false
-        separator8.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        separator8.topAnchor.constraintEqualToAnchor(labelwebdesign.bottomAnchor, constant: 5).active = true
-        separator8.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
-        separator8.heightAnchor.constraintEqualToConstant(1).active = true
+        self.listOfSkills.translatesAutoresizingMaskIntoConstraints = false
+        self.listOfSkills.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor, constant: 10).active = true
+        self.listOfSkills.topAnchor.constraintEqualToAnchor(self.selectedSkillsLbl.bottomAnchor, constant: 10).active = true
+        self.listOfSkills.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -20).active = true
+        self.listOfSkills.textColor = UIColor(hexString: "#888888")
+        self.listOfSkills.numberOfLines = 0
+        self.listOfSkills.lineBreakMode = .ByWordWrapping
     }
     
     
@@ -323,15 +301,36 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userNamefield.placeholder = config.translate("holder_15_char/less")
         userDescription.placeholder = config.translate("holder_profile_statement")
         labelSkills.text = config.translate("subtitle_skills")
-        labelfrontEnd.text = config.translate("label_front_end")
-        labelbackend.text = config.translate("label_server_side")
-        labelIOS.text = config.translate("label_IOS_application")
-        labelAndroid.text = config.translate("label_android_application")
-        labelAppDesign.text = config.translate("label_app_design")
-        labelwebdesign.text = config.translate("label_web_design")
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
+        let transition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        
+        presentViewController(viewControllerToPresent, animated: false, completion: nil)
+    }
+    
+    func backToConfiguration(sender: UIBarButtonItem) -> () {
+        reg_user.selectedSkills = []
+        reg_user.didUpdate = false
+        
+        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyBoard.instantiateViewControllerWithIdentifier("Configuration") as! ConfigurationViewController
+        
+        let transition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
+        self.dissmissDetail(vc)
+    }
+    
+    func dissmissDetail(viewControllerToPresent: UIViewController){
         let transition = CATransition()
         transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -342,26 +341,18 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         self.dismissViewControllerAnimated(false, completion: nil)
     }
     
-    func backToConfiguration(sender: UIBarButtonItem) -> () {
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyBoard.instantiateViewControllerWithIdentifier("Configuration") as! ConfigurationViewController
-        
-        let transition = CATransition()
-        transition.duration = 0.40
-        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-        transition.type = kCATransitionPush
-        transition.subtype = kCATransitionFromLeft
-        self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
-        self.presentDetail(vc)
-    }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
     func loadUserData() {
-        loadingScreen = UIViewController.displaySpinner(self.view)
+        if !firstLoad {
+            loadingScreen = UIViewController.displaySpinner(self.view)
+            self.firstLoad = true
+        }
+        
+        let config = SYSTEM_CONFIG()
         
         //let URL
         let viewDataURL = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
@@ -406,7 +397,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             //user Data...
             var name: String!
             var image: String!
-            var skills: String!
+            var skills: String = ""
             var message: String!
             
             if error != nil || data == nil{
@@ -415,7 +406,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 do {
                     
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                   
                     
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
                         if json!["result"] != nil {
@@ -427,8 +417,27 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 image = json!["result"]!["icon"] as? String
                             }
                             
-                            
-                            skills  = json!["result"]!["skills"] as! String
+                            if let skill_data = json!["result"]!["skills"] as? String {
+                                let arrayData = skill_data.characters.split(",")
+                                reg_user.selectedSkills = []
+                               
+                                for var i = 0; i < arrayData.count; i++ {
+                                    let id = String(arrayData[i])
+                                    if (Int(id) != nil) {
+                                        reg_user.selectedSkills.append(Int(id)!)
+                                        
+                                        skills += config.getSkillByID(String(arrayData[i]))
+                                    }else{
+                                        skills += skills
+                                    }
+                                    
+                                    if i == arrayData.count - 1 {
+                                        self.listOfSkills.text = skills
+                                    }else{
+                                        skills += ", "
+                                    }
+                                }
+                            }
                             message = json!["result"]!["mess"] as! String
                         }
                         
@@ -454,7 +463,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             }
                             
                             self.userDescription.text = message
-                            self.getSkillNotArray(self.returnSkillState(skills))
                             
                             if self.loadingScreen != nil {
                                 UIViewController.removeSpinner(self.loadingScreen)
@@ -516,36 +524,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             //setting the method to post
             request.HTTPMethod = "POST"
             
-            
-            //declaring button state
-            let frontEndSkill   = fronendswitch
-            let backEndSkill    = backendswitch
-            let iosSkill        = iosswitch
-            let androidSkill    = androidswitch
-            let appDesignSkill  = appdesignswitch
-            let webDesignSkill  = backdesignswithc
-            
-            //get state
-            let frontEndState   = switchButtonCheck(frontEndSkill)
-            let backEndState    = switchButtonCheck(backEndSkill)
-            let iosState        = switchButtonCheck(iosSkill)
-            let androidState    = switchButtonCheck(androidSkill)
-            let appDesignState  = switchButtonCheck(appDesignSkill)
-            let webDesignState  = switchButtonCheck(webDesignSkill)
-            
-            let skills: [Int: String] = [
-                1  : "\(frontEndState)",
-                2  : "\(backEndState)",
-                3  : "\(iosState)",
-                4  : "\(androidState)",
-                5  : "\(appDesignState)",
-                6  : "\(webDesignState)"
-            ]
-            
-            var skills2 = returnSkillValue(skills)
-            if skills2 != "" {
-                skills2 = String(skills2.characters.dropLast())
-            }
+            let skills2 = reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
             
             var targetedData: String
             
@@ -661,33 +640,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         let userSkills = sender.componentsSeparatedByString(",")
         return userSkills
     }
-    
-    func getSkillNotArray(sender: [String]) {
-        for intskill in sender {
-            self.switchButtonOn(intskill)
-        }
-    }
-    func switchButtonOn(skill: String)  {
-        if skill == "Front end" {
-            self.fronendswitch.setOn(true, animated: true)
-        }
-        if skill == "Server side" {
-            self.backendswitch.setOn(true, animated: true)
-        }
-        if skill == "IOS application" {
-            self.iosswitch.setOn(true, animated: true)
-        }
-        if skill == "Android application" {
-            self.androidswitch.setOn(true, animated: true)
-        }
-        if skill == "App design" {
-            self.appdesignswitch.setOn(true, animated: true)
-        }
-        if skill == "Web design" {
-            self.backdesignswithc.setOn(true, animated: true)
-        }
-    }
-    
     
     func setRounded(sender: UIImageView) {
         sender.layer.cornerRadius = 37

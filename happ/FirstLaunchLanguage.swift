@@ -25,6 +25,7 @@ class FirstLaunchLanguage: UIViewController {
         
         let config = getSystemValue()
         config.getKey()
+        config.getSkill()
         
         autoLayout()
         
