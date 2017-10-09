@@ -174,10 +174,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 if let count = result["count"] as? Int {
                     if count == 0 {
                         self.btnViewNotif.removeBadge()
+                        globalvar.badgeBellNumber = 0
                     }else{
                         self.btnViewNotif.removeBadge()
+                        globalvar.badgeBellNumber = count
                         self.btnViewNotif.addBadge(number: count)
                     }
+                    UIApplication.sharedApplication().applicationIconBadgeNumber = globalvar.badgeBellNumber + globalvar.badgeMessNumber
                 }
             }
         })
@@ -603,8 +606,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
     }
-    
-    
     
     func notifTimeline(notification: NSNotification){
         self.page = 1
@@ -1040,7 +1041,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 UserDetails.img1 = self.img1[indexPath.row]
                 UserDetails.img2 = self.img2[indexPath.row]
                 UserDetails.img3 = self.img3[indexPath.row]
-                
+                UserDetails.postID = ""
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                 let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
                 

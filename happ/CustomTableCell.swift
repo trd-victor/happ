@@ -767,6 +767,7 @@ class MessageCell: UICollectionViewCell {
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 16
         photo.layer.masksToBounds = true
+        photo.contentMode = .ScaleAspectFill
         return photo
     }()
     
@@ -776,6 +777,7 @@ class MessageCell: UICollectionViewCell {
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 16
         photo.layer.masksToBounds = true
+        photo.contentMode = .ScaleAspectFill
         return photo
     }()
     
@@ -818,6 +820,7 @@ class MessageCell: UICollectionViewCell {
         chatmatePhoto.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 5).active = true
         chatmatePhoto.widthAnchor.constraintEqualToConstant(32).active = true
         chatmatePhoto.heightAnchor.constraintEqualToConstant(32).active = true
+
         
         userPhoto.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -5).active = true
         userPhoto.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 5).active = true

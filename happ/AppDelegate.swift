@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         Fabric.with([Crashlytics.self])
         
         FIRApp.configure()
-        UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber
+//        UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber
         
         return true
     }
@@ -38,10 +38,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        addLocalNotification(userInfo)
+    }
+    
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+
+        if let body = userInfo["body"] as? String {
+            if body.containsString("Turned on free now") || body.containsString("Posted on timeline") {
+                if UIApplication.sharedApplication().applicationState == .Background || UIApplication.sharedApplication().applicationState == .Inactive {
+                    UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber + 1
+                    print(UIApplication.sharedApplication().applicationIconBadgeNumber)
+                }
+            }else{
+                UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber
+            }
+        }
+        
+        completionHandler(UIBackgroundFetchResult.NoData)
     }
     
     func applicationReceivedRemoteMessage(remoteMessage: FIRMessagingRemoteMessage) {
-
+        print("remote")
     }
     
     func applicationWillResignActive(application: UIApplication) {
@@ -57,18 +74,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     
     func applicationWillEnterForeground(application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-         UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-        
     }
     
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
     }
     
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-    
     
     private func convertDeviceTokenToString(deviceToken:NSData) -> String {
         //  Convert binary Device Token to a String (and remove the <,> and white space charaters).
@@ -82,23 +97,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         deviceTokenStr = deviceTokenStr.uppercaseString
         return deviceTokenStr
     }
-    
-    //    func addLocalNotification(data: NSDictionary){
-    //        var body: String?
-    //        var title: String?
-    //        if ((data["notifications"] as? NSDictionary) != nil) {
-    //            print("not")
-    //        }else if ((data["aps"] as? NSDictionary) != nil) {
-    //            body = data["body"] as? String
-    //            title = data["title"] as? String
-    //        }
-    //
-    //        let notification = UILocalNotification()
-    //        notification.fireDate = NSDate()
-    //        notification.alertBody = body!
-    //        notification.alertTitle = title!
-    //        notification.soundName = UILocalNotificationDefaultSoundName
-    //        notification.userInfo = data as [NSObject : AnyObject]
-    //        UIApplication.sharedApplication().scheduleLocalNotification(notification)
-    //    }
+
+    func addLocalNotification(data: NSDictionary){
+        var body: String = ""
+        var title: String = ""
+        
+        if let notification = data["notification"] as? NSDictionary {
+            body = String(notification["body"]!)
+            title = String(notification["title"]!)
+        }else{
+            body = String(data["body"]!)
+            title = String(data["title"]!)
+        }
+        
+        let notification = UILocalNotification()
+        
+        notification.fireDate = NSDate()
+        notification.alertBody = body
+        notification.alertTitle = title
+        notification.soundName = UILocalNotificationDefaultSoundName
+        notification.userInfo = data as [NSObject : AnyObject]
+        UIApplication.sharedApplication().scheduleLocalNotification(notification)
+        
+    }
+
 }

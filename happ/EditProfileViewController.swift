@@ -71,7 +71,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         //get user Id...
         userId = globalUserId.userID
-        
         if userId != "" {
             self.setRounded(userImage)
             self.loadUserData()
@@ -195,6 +194,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userImage.topAnchor.constraintEqualToAnchor(scrollView.topAnchor, constant: 5).active = true
         userImage.widthAnchor.constraintEqualToConstant(74).active = true
         userImage.heightAnchor.constraintEqualToConstant(74).active = true
+        userImage.contentMode = .ScaleAspectFill
+        userImage.layer.cornerRadius = 37
+        userImage.clipsToBounds = true
         
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true

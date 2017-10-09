@@ -34,8 +34,6 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet var Situation: UILabel!
     @IBOutlet var Configuration: UILabel!
     
-    
-    
     @IBOutlet var btnMailAddressChange: UIButton!
     @IBOutlet var btnChangePass: UIButton!
     @IBOutlet var btnLanguageSettings: UIButton!
@@ -43,7 +41,7 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet var labelLogout: UILabel!
     @IBOutlet var labelBasicInfo: UILabel!
     
-    
+    var versionLabel: UILabel = UILabel()
     var language: String!
     
     override func viewDidLoad() {
@@ -87,6 +85,7 @@ class ConfigurationViewController: UIViewController {
         scrollView.addSubview(labelLogout)
         scrollView.addSubview(btnLogout)
         scrollView.addSubview(separator4)
+        scrollView.addSubview(versionLabel)
         
         autoLayout()
         
@@ -214,6 +213,16 @@ class ConfigurationViewController: UIViewController {
         separator4.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator4.heightAnchor.constraintEqualToConstant(1).active = true
         
+        versionLabel.translatesAutoresizingMaskIntoConstraints = false
+        versionLabel.topAnchor.constraintEqualToAnchor(btnLogout.bottomAnchor).active = true
+        versionLabel.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
+        versionLabel.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
+        versionLabel.heightAnchor.constraintEqualToConstant(38).active = true
+        
+        versionLabel.textColor = UIColor(hexString: "#c7c7cc")
+        versionLabel.font = UIFont.boldSystemFontOfSize(14)
+        
+        versionLabel.textAlignment = .Center
     }
     
     func loadConfigure() {
@@ -231,6 +240,7 @@ class ConfigurationViewController: UIViewController {
         btnChangePass.setTitle(config.translate("label_change-password"), forState: .Normal)
         btnLanguageSettings.setTitle(config.translate("title_language_settings"), forState: .Normal)
         btnLogout.setTitle(config.translate("btn_logout"), forState: .Normal)
+        versionLabel.text = config.translate("version_label") + ": 1.61"
         
     }
     
@@ -249,6 +259,7 @@ class ConfigurationViewController: UIViewController {
         btnChangePass.setTitle(config.translate("label_change-password"), forState: .Normal)
         btnLanguageSettings.setTitle(config.translate("title_language_settings"), forState: .Normal)
         btnLogout.setTitle(config.translate("btn_logout"), forState: .Normal)
+        versionLabel.text = config.translate("version_label") + ": 1.61"
     }
     
     

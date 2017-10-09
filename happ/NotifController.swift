@@ -92,7 +92,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let config = SYSTEM_CONFIG()
         
         let firID = config.getSYS_VAL("FirebaseID") as! String
-        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
+        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").queryLimitedToLast(25)
         
             notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
                 if let result = snapshot.value as? NSDictionary {
@@ -104,9 +104,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         if(snap.exists()) {
                             self.arrayData.insert(result, atIndex: 0)
                             self.backupData.append(result)
-                            dispatch_async(dispatch_get_main_queue()){
-                                 self.tblView.reloadData()
-                            }
+                            self.tblView.reloadData()
                         }
                     })
                 }
@@ -272,6 +270,12 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+        let transition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromRight
+        self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         
         self.presentDetail(vc)
     }
