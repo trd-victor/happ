@@ -169,6 +169,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
                             }else{
                                 config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
                             }
+                            config.setSYS_VAL(profile["skills"]!!, key: "userskills_\(profile["user_id"]!!)")
                             config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
                         }
                     }

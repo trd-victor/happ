@@ -13,6 +13,7 @@ import Crashlytics
 struct globalUserId {
     static var userID: String = ""
     static var FirID: String = ""
+    static var skills: String = ""
 }
 
 

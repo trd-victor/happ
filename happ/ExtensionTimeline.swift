@@ -25,9 +25,13 @@ extension UserTimelineViewController {
             "d"           : "0",
             "lang"        : "en",
             "user_id"     : "\(globalUserId.userID)",
+            "from_id"     : "\(globalUserId.userID)",
             "page"        : "\(page)",
-            "count"       : "5"
+            "count"       : "5",
+            "skills"     : "\(globalUserId.skills)",
+            "origin"     : "timeline"
         ]
+        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")

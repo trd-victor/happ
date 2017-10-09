@@ -23,10 +23,6 @@ class FirstLaunchLanguage: UIViewController {
         super.viewDidLoad()
         self.skip.action = Selector("skip:")
         
-        let config = getSystemValue()
-        config.getKey()
-        config.getSkill()
-        
         autoLayout()
         
         

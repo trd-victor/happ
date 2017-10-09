@@ -107,6 +107,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     var page:Int = 1
     var userProfile = NSCache()
     
+    var skills = String()
+    
     @IBOutlet var searchIcon: UIBarButtonItem!
     
     override func viewDidLoad() {
@@ -134,6 +136,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         //calll system value...
         let config = SYSTEM_CONFIG()
+        globalUserId.skills = String(config.getSYS_VAL("userskills_\(globalUserId.userID)")!)
         
         //set text i am free
         labelFree.text = config.translate("subtitle_now_free")
@@ -375,9 +378,14 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "d"           : "0",
             "lang"        : "en",
             "user_id"     : "\(globalUserId.userID)",
+            "from_id"     : "\(globalUserId.userID)",
             "page"        : "\(page)",
-            "count"       : "5"
+            "count"       : "5",
+            "skills"     : "\(globalUserId.skills)",
+            "origin"     : "timeline"
         ]
+        
+        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -486,9 +494,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "d"           : "0",
             "lang"        : "en",
             "user_id"     : "\(globalUserId.userID)",
+            "from_id"     : "\(globalUserId.userID)",
             "page"        : "\(page)",
-            "count"       : "5"
+            "count"       : "5",
+            "skills"     : "\(globalUserId.skills)",
+            "origin"      : "timeline"
         ]
+        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")

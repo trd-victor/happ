@@ -109,6 +109,10 @@ class LaunchScreenViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         activityIndicator.startAnimating()
         self.isAppAlreadyLaunchedOnce()
+        print("running")
+        let config = getSystemValue()
+        config.getKey()
+        config.getSkill()
         
         let user = ViewController()
         user.getAllUserInfo()
