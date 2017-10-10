@@ -130,6 +130,8 @@ class MessageTableViewController: UITableViewController {
         return self.lastMessages.count
     }
     
+    let imgforProfileCache = NSCache()
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = self.mytableview.dequeueReusableCellWithIdentifier("CellDisplay", forIndexPath: indexPath) as! MessageCellDisp
@@ -159,13 +161,32 @@ class MessageTableViewController: UITableViewController {
         let timestamp = message["timestamp"] as? NSNumber
         let readStatus = message["read"] as? Bool
         
-        dispatch_async(dispatch_get_main_queue()){
-            if imageUrl! == "null" || imageUrl! == ""{
-                cell.userImage.image = UIImage(named: "noPhoto")
-            }else{
-                cell.userImage.imgForCache(imageUrl!)
-            }
+        if (imgforProfileCache.objectForKey(imageUrl!) != nil) {
+            let imgCache = imgforProfileCache.objectForKey(imageUrl!) as! UIImage
+            cell.userImage.image = imgCache
+        }else{
+            cell.userImage.image = UIImage(named : "noPhoto")
+            let url = NSURL(string: imageUrl!)
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                if let data = NSData(contentsOfURL: url!){
+                    dispatch_async(dispatch_get_main_queue()){
+                        cell.userImage.image = UIImage(data: data)
+                    }
+                    let tmpImg = UIImage(data: data)
+                    self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl!)
+                }
+                
+            })
+            task.resume()
         }
+//        
+//        dispatch_async(dispatch_get_main_queue()){
+//            if imageUrl! == "null" || imageUrl! == ""{
+//                cell.userImage.image = UIImage(named: "noPhoto")
+//            }else{
+//                cell.userImage.imgForCache(imageUrl!)
+//            }
+//        }
         
         cell.userTime.text = dateFormatter(timestamp!)
         
