@@ -189,7 +189,9 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     }
     
     func loginButton(sender: AnyObject) {
-        loadingScreen = UIViewController.displaySpinner(self.view)
+        if loadingScreen == nil {
+            loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         let userEmail = userEmailField.text!
         let userPass = userPasswordField.text!
         let config = SYSTEM_CONFIG()
@@ -285,7 +287,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 self.redirectLogin()
                 
                 if self.loadingScreen != nil {
-                     UIViewController.removeSpinner(self.loadingScreen)
+                    UIViewController.removeSpinner(self.loadingScreen)
+                    self.loadingScreen = nil
                 }
                 
             } else {
@@ -373,6 +376,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     func displayMyAlertMessage(userMessage:String){
         if self.loadingScreen != nil {
             UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
         }
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)

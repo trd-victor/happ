@@ -158,6 +158,7 @@ class CreateTimelineSkillSelection: UIViewController {
                 print("error kay ", error)
                 if self.loadingScreen != nil {
                     UIViewController.removeSpinner(self.loadingScreen)
+                    self.loadingScreen = nil
                 }
                 self.loadSkill()
             }else{
@@ -178,6 +179,7 @@ class CreateTimelineSkillSelection: UIViewController {
                                     if count == result.count {
                                         if self.loadingScreen != nil {
                                             UIViewController.removeSpinner(self.loadingScreen)
+                                            self.loadingScreen = nil
                                         }
                                     }
                                 }
@@ -187,6 +189,7 @@ class CreateTimelineSkillSelection: UIViewController {
                 }catch {
                     if self.loadingScreen != nil {
                         UIViewController.removeSpinner(self.loadingScreen)
+                        self.loadingScreen = nil
                     }
                     print("error kay2 ", error)
                 }
@@ -554,6 +557,11 @@ class CreateTimelineSkillSelection: UIViewController {
     }
     
     func displayMyAlertMessage(userMessage:String){
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
+        
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default) {
             UIAlertAction in

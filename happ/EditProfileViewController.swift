@@ -468,6 +468,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             
                             if self.loadingScreen != nil {
                                 UIViewController.removeSpinner(self.loadingScreen)
+                                self.loadingScreen = nil
                             }
                             
                         })
@@ -698,6 +699,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     func displayMyAlertMessage(userMessage:String){
         if loadingScreen != nil {
             UIViewController.removeSpinner(loadingScreen)
+            loadingScreen = nil
         }
         
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)

@@ -92,6 +92,7 @@ class SelectSkillViewController: UIViewController {
                 print("error kay ", error)
                 if self.loadingScreen != nil {
                     UIViewController.removeSpinner(self.loadingScreen)
+                    self.loadingScreen = nil
                 }
                 self.loadSkill()
             }else{
@@ -112,6 +113,7 @@ class SelectSkillViewController: UIViewController {
                                     if count == result.count {
                                         if self.loadingScreen != nil {
                                             UIViewController.removeSpinner(self.loadingScreen)
+                                            self.loadingScreen = nil
                                         }
                                     }
                                 }
@@ -121,6 +123,7 @@ class SelectSkillViewController: UIViewController {
                 }catch {
                     if self.loadingScreen != nil {
                         UIViewController.removeSpinner(self.loadingScreen)
+                        self.loadingScreen = nil
                     }
                     print("error kay2 ", error)
                 }

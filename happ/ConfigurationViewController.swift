@@ -242,7 +242,10 @@ class ConfigurationViewController: UIViewController {
         btnChangePass.setTitle(config.translate("label_change-password"), forState: .Normal)
         btnLanguageSettings.setTitle(config.translate("title_language_settings"), forState: .Normal)
         btnLogout.setTitle(config.translate("btn_logout"), forState: .Normal)
-        versionLabel.text = config.translate("version_label") + ": 1.0.65"
+       
+        if let text = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
+            versionLabel.text = config.translate("version_label") + ": \(text)"
+        }
     }
     
     func refreshLang(notification: NSNotification) {
@@ -260,7 +263,9 @@ class ConfigurationViewController: UIViewController {
         btnChangePass.setTitle(config.translate("label_change-password"), forState: .Normal)
         btnLanguageSettings.setTitle(config.translate("title_language_settings"), forState: .Normal)
         btnLogout.setTitle(config.translate("btn_logout"), forState: .Normal)
-        versionLabel.text = config.translate("version_label") + ": 1.0.65"
+        if let text = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
+            versionLabel.text = config.translate("version_label") + ": \(text)"
+        }
     }
     
     

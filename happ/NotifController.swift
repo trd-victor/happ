@@ -94,8 +94,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         let firID = config.getSYS_VAL("FirebaseID") as! String
         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
-       
-        
+               
         notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
             if let result = snapshot.value as? NSDictionary {
                 if self.loadingScreen == nil {
@@ -113,6 +112,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         self.tblView.reloadData()
                         if self.loadingScreen != nil  {
                             UIViewController.removeSpinner(self.loadingScreen!)
+                            self.loadingScreen = nil
                         }
                     }
                 })

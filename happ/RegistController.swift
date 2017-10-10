@@ -335,10 +335,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func registerUser(sender: AnyObject) {
-        if loadingScreen == nil {
-            loadingScreen = UIViewController.displaySpinner(self.view)
-        }
-        
         //scroll to top
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
         
@@ -360,6 +356,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             displayMyAlertMessage(config.translate("mess_password_not_match"))
         }
         else {
+            if loadingScreen == nil {
+                loadingScreen = UIViewController.displaySpinner(self.view)
+            }
+            
             //created NSURL
             let URL_SAVE_TEAM = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
             
@@ -447,7 +447,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func successMessageAlert(userMessage: String) {
-        UIViewController.removeSpinner(self.loadingScreen)
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.userEmail.text = ""
@@ -647,7 +650,11 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func displayMyAlertMessage(userMessage:String){
-        UIViewController.removeSpinner(self.loadingScreen)
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
+        
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil)
         myAlert.addAction(okAction)
