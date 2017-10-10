@@ -23,6 +23,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var postTimelineMessage: String = ""
     var loadingScreen: UIView?
     
+    var currentTime: Int!
+    var currentKey: String!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -91,35 +94,30 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func getNotification(){
         let config = SYSTEM_CONFIG()
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
-        let firID = config.getSYS_VAL("FirebaseID") as! String
-        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
-       
-        
-        notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
-            if let result = snapshot.value as? NSDictionary {
-                if self.loadingScreen == nil {
-                     self.loadingScreen = UIViewController.displaySpinner(self.view)
-                }
-                
-                let key =  snapshot.key
-                
-                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
-                
-                notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
-                    if(snap.exists()) {
-                        self.arrayData.insert(result, atIndex: 0)
-                        self.backupData.append(result)
-                        self.tblView.reloadData()
-                        if self.loadingScreen != nil  {
-                            UIViewController.removeSpinner(self.loadingScreen!)
-                        }
+        if currentKey == nil {
+            let firID = config.getSYS_VAL("FirebaseID") as! String
+            let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").queryLimitedToLast(10)
+            
+            notifAllDb.observeEventType(.Value, withBlock: {(snapshot) in
+                if let result = snapshot.value as? NSDictionary {
+                    
+                    for (key, value) in result {
+                        let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key as! String)
+                        
+                        notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                            print("hehehe", snap.value)
+                        })
                     }
-                })
-            }
-        })
+                }
+            })
+        }else{
+           
+        }
 
-        
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
