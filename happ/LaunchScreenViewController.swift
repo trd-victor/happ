@@ -157,7 +157,7 @@ class LaunchScreenViewController: UIViewController {
                 })
             }
             
-            self.delay(6.0){
+            self.delay(8.0){
                 let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
                 self.presentViewController(mainViewController, animated:false, completion:nil)
             }

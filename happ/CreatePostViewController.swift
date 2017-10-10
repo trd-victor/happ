@@ -107,6 +107,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
         self.subView1.clipsToBounds = true
         self.subView2.clipsToBounds = true
         self.subView3.clipsToBounds = true
@@ -129,15 +130,12 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         }
         
         self.content.delegate = self
-        self.content.textColor = UIColor.lightGrayColor()
         self.content.returnKeyType = .Default
         self.content.inputAccessoryView = self.kboardView
         
         //set navback transition...
         self.navBack.action = Selector("dismissMe:")
-        
-        self.loadConfigure()
-        
+    
         let btnTap1: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "removeImage1")
         self.btnRemove.addGestureRecognizer(btnTap1)
         let btnTap2: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "removeImage2")
@@ -210,12 +208,13 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     func loadConfigure() {
+        let config = SYSTEM_CONFIG()
+        self.content.addPlaceholder(config.translate("holder_post_content"))
+        
         if !didCameraGallery {
-            let config = SYSTEM_CONFIG()
             //set text
             self.saveItem.title = config.translate("button_post")
             self.saveItem.tintColor = UIColor.whiteColor()
-            self.content.text = config.translate("holder_post_content")
         }
     }
     
@@ -224,6 +223,13 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     @IBAction func saveItem(sender: UIBarButtonItem) {
+        let config = SYSTEM_CONFIG()
+        if self.content.text.characters.count != 0 && self.content.text != config.translate("holder_post_content") {
+            self.withContent = "true"
+        }else{
+            self.withContent = "false"
+        }
+        
         if (self.withContent == "true" || self.withImage == "true" ) {
             timeline_create_post.content = content.text!
             timeline_create_post.imgView1.image = imgView1.image
@@ -233,7 +239,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
             let vc = CreateTimelineSkillSelection()
             self.presentViewController(vc, animated: true, completion: nil)
         }else{
-            let config = SYSTEM_CONFIG()
+            
             self.empty_post = "true"
             self.displayMyAlertMessage(config.translate("empty_post"))
         }
@@ -257,23 +263,19 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     }
     
     func textViewDidBeginEditing(textView: UITextView) {
-        if self.content.textColor == UIColor.lightGrayColor() {
-            self.content.text = ""
-            self.content.textColor = UIColor.blackColor()
-        }
+//        if self.content.textColor == UIColor.lightGrayColor() {
+//            self.content.text = ""
+//            self.content.textColor = UIColor.blackColor()
+//        }
         if self.content.text.characters.count == 0 {
             self.withContent = "false"
         }else{
             self.withContent = "true"
         }
     }
-    
     func textViewDidEndEditing(textView: UITextView) {
-        let config = SYSTEM_CONFIG()
         if self.content.text == "" {
             withContent = "false"
-            self.content.text = config.translate("holder_post_content")
-            self.content.textColor = UIColor.lightGrayColor()
         }
     }
     
@@ -283,15 +285,15 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
-        if(text == "\n") {
-            textView.becomeFirstResponder()
-            textView.text = NSString(format: "%@\n", textView.text) as String
-//            textView.resignFirstResponder()
-            return false
-        }
-        return true
-    }
+//    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+//        if(text == "\n") {
+//            textView.becomeFirstResponder()
+//            textView.text = NSString(format: "%@\n", textView.text) as String
+////            textView.resignFirstResponder()
+//            return false
+//        }
+//        return true
+//    }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)

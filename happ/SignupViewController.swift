@@ -32,9 +32,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var underline_jp: UIView!
     
-    
-    
-    
     //    @IBOutlet var navBack: UIBarButtonItem!
     @IBOutlet var navTitle: UINavigationItem!
     
@@ -207,6 +204,12 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 language = "jp"
             }
             
+            var FCMtoken = ""
+            if let token = FIRInstanceID.instanceID().token() {
+                //register token on firebase
+                FCMtoken = token
+            }
+            
             let param = [
                 "sercret"     : "jo8nefamehisd",
                 "action"      : "api",
@@ -214,7 +217,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 "d"           : "0",
                 "lang"        : "jp",
                 "email"       : "\(userEmail)",
-                "passwd"      : "\(userPass)"
+                "passwd"      : "\(userPass)",
+                 "fcmtoken"    : "\(FCMtoken)"
             ]
             
             let httpRequest = HttpDataRequest(postData: param)
@@ -245,7 +249,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                 }
                             }
                             
-                            
                             var errorMessage : Bool
                             if json!["error"] != nil {
                                 errorMessage = json!["error"] as! Bool
@@ -256,6 +259,9 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                     self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                                 }
                             } else {
+                                let launch = LaunchScreenViewController()
+                                launch.getAllUserInfo()
+                                
                                 self.loginFirebase(userEmail, pass: userPass)
                             }
                         }
@@ -273,11 +279,11 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     
     func loginFirebase(email: String, pass : String ) {
         let config = SYSTEM_CONFIG()
+        
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
                 globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
                 
-                let config = SYSTEM_CONFIG()
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
                 
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
@@ -306,6 +312,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             }else{
                 FIRMessaging.messaging().subscribeToTopic("timeline-push-notification")
                 FIRMessaging.messaging().subscribeToTopic("free-time-push-notification")
+                FIRMessaging.messaging().subscribeToTopic("reservation")
             }
         }
     }

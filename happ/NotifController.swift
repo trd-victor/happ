@@ -22,6 +22,11 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var freeTimeMessage: String = ""
     var postTimelineMessage: String = ""
     var loadingScreen: UIView?
+    let imgforProfileCache = NSCache()
+    
+    var count:UInt = 10
+    var currentKey: String!
+    var currentTime: Int!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,35 +96,98 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func getNotification(){
         let config = SYSTEM_CONFIG()
-        
         let firID = config.getSYS_VAL("FirebaseID") as! String
-        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
-               
-        notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
-            if let result = snapshot.value as? NSDictionary {
-                if self.loadingScreen == nil {
-                     self.loadingScreen = UIViewController.displaySpinner(self.view)
-                }
+//        var first: Bool = false
+        if currentKey == nil {
+            print("sulod")
+            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryLimitedToLast(10)
+            
+            notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                let first = snap.children.allObjects.first as? FIRDataSnapshot
                 
-                let key =  snapshot.key
-                
-                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
-                
-                notifUserDB.observeEventType(.ChildAdded, withBlock: {(snap) in
-                    if(snap.exists()) {
-                        self.arrayData.insert(result, atIndex: 0)
-                        self.backupData.append(result)
-                        self.tblView.reloadData()
-                        if self.loadingScreen != nil  {
-                            UIViewController.removeSpinner(self.loadingScreen!)
-                            self.loadingScreen = nil
-                        }
+                if snap.childrenCount > 0 {
+                    for s in snap.children.allObjects as! [FIRDataSnapshot] {
+                        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
+                        
+                        notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+                            
+                            if let result = snapshot.value as? NSDictionary {
+                                self.arrayData.insert(result, atIndex: 0)
+                                self.backupData.append(result)
+                                self.tblView.reloadData()
+                            }
+                        })
                     }
-                })
-            }
-        })
-
+                    
+                    self.currentKey = first!.key
+                }
+            })
+        }else{
+            print("wahahhaha", self.currentKey)
+            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryOrderedByKey().queryEndingAtValue(self.currentKey).queryLimitedToLast(11)
+            
+            notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                
+                let first = snap.children.allObjects.first as? FIRDataSnapshot
+                let index = self.backupData.count
+                
+                
+                if snap.childrenCount > 0 {
+                    var notifData = snap.children.allObjects as! [FIRDataSnapshot]
+                    notifData.removeLast()
+                    
+                    for s in notifData {
+                        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
+                        
+                        notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+                            
+                            if let result = snapshot.value as? NSDictionary {
+                                print("key", snapshot.key)
+                                
+                                self.arrayData.insert(result, atIndex: index)
+                                self.backupData.append(result)
+                                
+                                self.tblView.reloadData()
+                            }
+                        })
+                    }
+                    
+                    self.currentKey = first!.key
+                }
+            })
+        }
         
+        
+        
+//        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").queryLimitedToLast(self.count)
+//
+//        notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
+//            if let result = snapshot.value as? NSDictionary {
+//                let key =  snapshot.key
+//                
+//                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
+//
+//                notifUserDB.observeSingleEventOfType(.ChildAdded, withBlock: {(snap) in
+//                    if(snap.exists()) {
+//                        self.arrayData.insert(result, atIndex: 0)
+//                        self.backupData.append(result)
+//                        self.tblView.reloadData()
+//                    }
+//                })
+//            }
+//        })
+        
+    }
+    
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let currentOffset = scrollView.contentOffset.y
+        let maxOffset = scrollView.contentSize.height - scrollView.frame.size.height
+        
+        
+        if maxOffset - currentOffset <= 40{
+//            self.count += 10
+            getNotification()
+        }
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
@@ -180,11 +248,26 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             cell.lblDate.text = self.dateFormatter(timestamp!)
             
-            if image != nil && image! != "null" && image! != ""{
-                cell.notifPhoto.imgForCache(image!)
+            if (imgforProfileCache.objectForKey(image!) != nil) {
+                let imgCache = imgforProfileCache.objectForKey(image!) as! UIImage
+                cell.notifPhoto.image = imgCache
             }else{
-                cell.notifPhoto.image = UIImage(named: "noPhoto")
+                cell.notifPhoto.image = UIImage(named : "noPhoto")
+                let url = NSURL(string: image!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.notifPhoto.image = UIImage(data: data)
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforProfileCache.setObject(tmpImg!, forKey: image!)
+                    }
+                    
+                })
+                task.resume()
             }
+
+            
         }
         
         return cell

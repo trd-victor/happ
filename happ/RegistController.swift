@@ -532,7 +532,11 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
 //                //connect to firebase db.
                 let db = FIRDatabase.database().reference().child("users").child((user?.uid)!)
                 
-                let token = FIRInstanceID.instanceID().token()!
+                if let token = FIRInstanceID.instanceID().token() {
+                    //register token on firebase
+                    let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
+                    registTokendb.child("token").setValue(String(token))
+                }
 //                //set users array to insert...
                 let userDetails: [String : AnyObject] = [
                     "email"     : userEmail,
@@ -543,12 +547,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
 //                //insert to users
                 db.setValue(userDetails)
                 
-                //register token on firebase
-                let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
-                registTokendb.child("token").setValue(String(token))
-                
                  self.successMessageAlert(self.mess)
                 
+                let launch = LaunchScreenViewController()
+                launch.getAllUserInfo()
                 
                 do {
                     try FIRAuth.auth()?.signOut()

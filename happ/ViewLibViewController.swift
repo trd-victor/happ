@@ -26,6 +26,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     var messagesData: [NSDictionary] = []
     var chatMatePhoto: String = ""
     var userPhoto: String = ""
+    let imgforProfileCache = NSCache()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -431,14 +433,34 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func setupCell(cell: MessageCell, mess_data: NSDictionary){
+        let imageUrl = mess_data["photoUrl"] as! String
+        
         if FIRAuth.auth()?.currentUser?.uid == (mess_data["userId"] as! String){
+            
             cell.bubbleView.backgroundColor = UIColor(hexString: "#E0E0E0")
             cell.txtLbl.textColor = UIColor.blackColor()
             
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
             
-            cell.userPhoto.profileForCache(self.userPhoto)
+            if (imgforProfileCache.objectForKey(imageUrl) != nil) {
+                let imgCache = imgforProfileCache.objectForKey(imageUrl) as! UIImage
+                cell.userPhoto.image = imgCache
+            }else{
+                cell.userPhoto.image = UIImage(named : "noPhoto")
+                let url = NSURL(string: imageUrl)
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.userPhoto.image = UIImage(data: data)
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
+                    }
+                    
+                })
+                task.resume()
+            }
             
             cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
             cell.dateLblRight.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
@@ -451,7 +473,24 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleView.backgroundColor =  UIColor(hexString: "#E4D4B9")
             cell.txtLbl.textColor = UIColor.blackColor()
             
-            cell.chatmatePhoto.profileForCache(self.chatMatePhoto)
+            if (imgforProfileCache.objectForKey(imageUrl) != nil) {
+                let imgCache = imgforProfileCache.objectForKey(imageUrl) as! UIImage
+                cell.chatmatePhoto.image = imgCache
+            }else{
+                cell.chatmatePhoto.image = UIImage(named : "noPhoto")
+                let url = NSURL(string: imageUrl)
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.chatmatePhoto.image = UIImage(data: data)
+                        }
+                        let tmpImg = UIImage(data: data)
+                        self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
+                    }
+                    
+                })
+                task.resume()
+            }
             
             cell.bubbleViewRightAnchor?.active = false
             cell.bubbleViewLeftAnchor?.active = true

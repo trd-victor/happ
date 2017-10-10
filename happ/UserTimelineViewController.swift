@@ -677,7 +677,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
                     cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
                     cell.btnProfile.contentMode = .Center
-                    let url = NSURL(string: userimageURL)
+                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                     let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                         if let data = NSData(contentsOfURL: url!){
                             dispatch_async(dispatch_get_main_queue()){
@@ -708,7 +708,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 cell.imgView1.image = nil
                 cell.imgView1.backgroundColor = UIColor.lightGrayColor()
                 cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row])
+                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
@@ -731,7 +731,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 cell.imgView2.image = nil
                 cell.imgView2.backgroundColor = UIColor.lightGrayColor()
                 cell.indicator2.startAnimating()
-                let url = NSURL(string: self.img2[indexPath.row])
+                let url = NSURL(string: self.img2[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
@@ -754,7 +754,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 cell.imgView3.image = nil
                 cell.imgView3.backgroundColor = UIColor.lightGrayColor()
                 cell.indicator3.startAnimating()
-                let url = NSURL(string: self.img3[indexPath.row])
+                let url = NSURL(string: self.img3[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
@@ -804,7 +804,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
                     cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
                     cell.btnProfile.contentMode = .Center
-                    let url = NSURL(string: userimageURL)
+                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                     let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                         if let data = NSData(contentsOfURL: url!){
                             dispatch_async(dispatch_get_main_queue()){
@@ -834,7 +834,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 cell.imgView1.image = nil
                 cell.imgView1.backgroundColor = UIColor.lightGrayColor()
                 cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row])
+                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
@@ -857,7 +857,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 cell.imgView2.image = nil
                 cell.imgView2.backgroundColor = UIColor.lightGrayColor()
                 cell.indicator2.startAnimating()
-                let url = NSURL(string: self.img2[indexPath.row])
+                let url = NSURL(string: self.img2[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
@@ -907,7 +907,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
                     cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
                     cell.btnProfile.contentMode = .Center
-                    let url = NSURL(string: userimageURL)
+                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                     let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                         if let data = NSData(contentsOfURL: url!){
                             dispatch_async(dispatch_get_main_queue()){
@@ -939,7 +939,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 cell.imgView1.image = nil
                 cell.imgView1.backgroundColor = UIColor.lightGrayColor()
                 cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row])
+                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
@@ -990,7 +990,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
                     cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
                     cell.btnProfile.contentMode = .Center
-                    let url = NSURL(string: userimageURL)
+                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                     let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                         if let data = NSData(contentsOfURL: url!){
                             dispatch_async(dispatch_get_main_queue()){
