@@ -92,14 +92,8 @@ class RegisterController: UIViewController,UIImagePickerControllerDelegate, UINa
         } else if  message == "" {
            displayMyAlertMessage(config.translate("empty_mess"))
         } else {
-            //created NSURL
-            let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
-            
-            //created NSURL
-            let requestURL = NSURL(string: URL_SAVE_TEAM)
-            
             //creating NSMutableURLRequest
-            let request = NSMutableURLRequest(URL: requestURL!)
+            let request = NSMutableURLRequest(URL: globalvar.API_URL)
             
             //set boundary string..
             let boundary = generateBoundaryString()

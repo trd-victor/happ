@@ -44,6 +44,7 @@ class UserProfileController: UIViewController {
         imgview.image = UIImage(named: "noPhoto")
         imgview.layer.cornerRadius = 50
         imgview.clipsToBounds = true
+        imgview.contentMode = .ScaleAspectFill
         return imgview
     }()
     

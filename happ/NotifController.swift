@@ -278,9 +278,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         formatter.timeZone = NSTimeZone(name: "Asia/Tokyo")
         formatter.dateFormat = "HH:mm"
         let time = formatter.stringFromDate(dateTimestamp)
-        formatter.dateFormat = "MMM dd"
+        formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) at \(time)"
+        return "\(date) \(time)"
     }
     
     func setImageURL(imageURL: String)-> UIImage{

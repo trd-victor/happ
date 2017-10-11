@@ -35,7 +35,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet var btnCLang: UIButton!
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = globalvar.API_URL
     
     var portrait: Bool = false
     var landscape: Bool = false

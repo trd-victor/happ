@@ -214,14 +214,9 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         else {
             FIRAuth.auth()?.signInWithEmail(email as! String,  password: currentPass1) { (user, error) in
                 if error == nil {
-                    //created NSURL
-                    let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
-                    
-                    //created NSURL
-                    let requestURL = NSURL(string: URL_SAVE_TEAM)
                     
                     //creating NSMutableURLRequest
-                    let request = NSMutableURLRequest(URL: requestURL!)
+                    let request = NSMutableURLRequest(URL: globalvar.API_URL)
                     
                     //set boundary string..
                     let boundary = self.generateBoundaryString()

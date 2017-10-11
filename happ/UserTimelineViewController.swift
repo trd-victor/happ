@@ -46,7 +46,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     var dataResult: AnyObject?
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = globalvar.API_URL
     
     var image1 = [UIImageView]()
     
@@ -132,6 +132,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         let config = SYSTEM_CONFIG()
         
+        
         if globalUserId.userID == "" {
             let firID = FIRAuth.auth()?.currentUser?.uid
             let userdb = FIRDatabase.database().reference().child("users").child(firID!)
@@ -140,6 +141,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
                     if let data = snap.value as? NSDictionary{
                         globalUserId.userID = String(data["id"]!)
+                        globalUserId.skills = String(config.getSYS_VAL("user_skills_\(globalUserId.userID)")!)
                         self.getTimelineUser()
                     }
                 })
@@ -671,6 +673,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             let imgView = UIImageView()
             
             cell.btnUsername.setTitle(username, forState: .Normal)
+            cell.btnUsername.titleLabel?.lineBreakMode = .ByTruncatingTail
             cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)

@@ -178,15 +178,8 @@ class CurrentSettingsViewController: UIViewController {
         
         self.changeSysLang()
         
-        //let URL
-        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
-        
-        //created NSURL
-        let requestURL = NSURL(string: viewDataURL)
-        
-        
         //creating NSMutableURLRequest
-        let request = NSMutableURLRequest(URL: requestURL!)
+        let request = NSMutableURLRequest(URL: globalvar.API_URL)
         
         //set boundary string..
         let boundary = generateBoundaryString()
@@ -237,16 +230,10 @@ class CurrentSettingsViewController: UIViewController {
     }
     
     
-    func loadCurrentUserLang() {
-        //let URL
-        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
-        
-        //created NSURL
-        let requestURL = NSURL(string: viewDataURL)
-        
+    func loadCurrentUserLang() {        
         
         //creating NSMutableURLRequest
-        let request = NSMutableURLRequest(URL: requestURL!)
+        let request = NSMutableURLRequest(URL: globalvar.API_URL)
         
         //set boundary string..
         let boundary = generateBoundaryString()

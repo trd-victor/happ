@@ -177,7 +177,7 @@ class TimelineDetail: UIViewController {
         if UserDetails.postID == nil || UserDetails.postID == ""{
             btnUsername.tag = Int(UserDetails.fromID)!
             btnProfile.tag = Int(UserDetails.fromID)!
-            postDate.text = UserDetails.postDate
+            postDate.text = self.dateTransform(UserDetails.postDate)
             body.text = UserDetails.body
             self.postDetail()
         }else{
@@ -220,7 +220,7 @@ class TimelineDetail: UIViewController {
         if self.loadingScreen == nil {
             self.loadingScreen = UIViewController.displaySpinner(self.view)
         }
-        let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+        let baseUrl: NSURL = globalvar.API_URL
         let parameters = [
                     "sercret"     : "jo8nefamehisd",
                     "action"      : "api",
@@ -256,7 +256,7 @@ class TimelineDetail: UIViewController {
                                             
                                             self.btnUsername.tag = Int(UserDetails.fromID)!
                                             self.btnProfile.tag = Int(UserDetails.fromID)!
-                                            self.postDate.text = UserDetails.postDate
+                                            self.postDate.text = self.dateTransform(UserDetails.postDate)
                                             self.body.text = UserDetails.body
                                             
                                             dispatch_async(dispatch_get_main_queue()){
@@ -325,6 +325,19 @@ class TimelineDetail: UIViewController {
             self.dismissViewControllerAnimated(false, completion: nil)
         }))
         self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
     }
     
     

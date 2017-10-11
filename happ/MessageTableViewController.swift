@@ -150,9 +150,11 @@ class MessageTableViewController: UITableViewController {
         cell.username.font = UIFont.boldSystemFontOfSize(17)
         cell.userMessage.font = UIFont.systemFontOfSize(15)
         
-        let radius = min(cell.userImage!.frame.width/2 , cell.userImage!.frame.height/2)
+        let radius = cell.userImage!.frame.width/2
+        cell.userImage.contentMode = .ScaleAspectFill
         cell.userImage.layer.cornerRadius = radius
         cell.userImage.clipsToBounds = true
+        
         
         let message = self.lastMessages[indexPath.row]
         let name = message["name"] as? String
@@ -166,7 +168,7 @@ class MessageTableViewController: UITableViewController {
             cell.userImage.image = imgCache
         }else{
             cell.userImage.image = UIImage(named : "noPhoto")
-            let url = NSURL(string: imageUrl!)
+            let url = NSURL(string: imageUrl!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
             let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                 if let data = NSData(contentsOfURL: url!){
                     dispatch_async(dispatch_get_main_queue()){
@@ -179,14 +181,6 @@ class MessageTableViewController: UITableViewController {
             })
             task.resume()
         }
-//        
-//        dispatch_async(dispatch_get_main_queue()){
-//            if imageUrl! == "null" || imageUrl! == ""{
-//                cell.userImage.image = UIImage(named: "noPhoto")
-//            }else{
-//                cell.userImage.imgForCache(imageUrl!)
-//            }
-//        }
         
         cell.userTime.text = dateFormatter(timestamp!)
         
@@ -245,9 +239,9 @@ class MessageTableViewController: UITableViewController {
         formatter.timeZone = NSTimeZone(name: "Asia/Tokyo")
         formatter.dateFormat = "HH:mm"
         let time = formatter.stringFromDate(dateTimestamp)
-        formatter.dateFormat = "MMM dd"
+        formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) at \(time)"
+        return "\(date) \(time)"
     }
     
     

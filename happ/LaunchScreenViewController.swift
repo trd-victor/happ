@@ -197,9 +197,7 @@ class LaunchScreenViewController: UIViewController {
             return false
         }
     }
-    
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
-    
+        
     func getAllUserInfo() {
         
         let config = SYSTEM_CONFIG()
@@ -212,7 +210,7 @@ class LaunchScreenViewController: UIViewController {
             "lang"        : "en"
         ]
         
-        let request1 = NSMutableURLRequest(URL: self.baseUrl)
+        let request1 = NSMutableURLRequest(URL: globalvar.API_URL)
         let boundary1 = generateBoundaryString()
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
         request1.HTTPMethod = "POST"

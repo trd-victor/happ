@@ -42,8 +42,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
+        
         if let body = userInfo["body"] as? String {
             let title = userInfo["title"] as! String
+            
+            self.addLocalNotification(userInfo)
             if body.containsString("Turned on free now") || body.containsString("Posted on timeline") || title.containsString("Reservation") {
                 if UIApplication.sharedApplication().applicationState == .Background || UIApplication.sharedApplication().applicationState == .Inactive {
                     UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber + 1
@@ -100,7 +103,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     func addLocalNotification(data: NSDictionary){
         var body: String = ""
         var title: String = ""
-        
         if let notification = data["notification"] as? NSDictionary {
             body = String(notification["body"]!)
             title = String(notification["title"]!)

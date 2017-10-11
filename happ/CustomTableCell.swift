@@ -857,12 +857,12 @@ class MessageCell: UICollectionViewCell {
         
         dateLblLeft.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
         dateLblLeft.leftAnchor.constraintEqualToAnchor(self.bubbleView.leftAnchor).active = true
-        dateLblLeft.widthAnchor.constraintEqualToConstant(80).active = true
+        dateLblLeft.widthAnchor.constraintEqualToConstant(90).active = true
         dateLblLeft.heightAnchor.constraintEqualToConstant(15).active = true
         
         dateLblRight.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
         dateLblRight.rightAnchor.constraintEqualToAnchor(self.bubbleView.rightAnchor).active = true
-        dateLblRight.widthAnchor.constraintEqualToConstant(80).active = true
+        dateLblRight.widthAnchor.constraintEqualToConstant(90).active = true
         dateLblRight.heightAnchor.constraintEqualToConstant(15).active = true
         
     }

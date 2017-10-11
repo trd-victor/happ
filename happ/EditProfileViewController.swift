@@ -108,6 +108,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         self.selectSkillLbl.text = config.translate("select_skill")
         self.selectedSkillsLbl.text = config.translate("selected_skill")
+    
         if reg_user.didUpdate {
             if reg_user.selectedSkills.count == 0{
                 self.listOfSkills.text = config.translate("empty_skills")
@@ -356,15 +357,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         let config = SYSTEM_CONFIG()
         
-        //let URL
-        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
-        
-        //created NSURL
-        let requestURL = NSURL(string: viewDataURL)
-        
         
         //creating NSMutableURLRequest
-        let request = NSMutableURLRequest(URL: requestURL!)
+        let request = NSMutableURLRequest(URL: globalvar.API_URL)
         
         //set boundary string..
         let boundary = generateBoundaryString()
@@ -411,6 +406,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                     
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
                         if json!["result"] != nil {
+                            
                             name    = json!["result"]!["name"] as! String
                             
                             if let _ = json!["result"]!["icon"] as? NSNull {
@@ -422,21 +418,27 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             if let skill_data = json!["result"]!["skills"] as? String {
                                 let arrayData = skill_data.characters.split(",")
                                 reg_user.selectedSkills = []
-                               
-                                for var i = 0; i < arrayData.count; i++ {
-                                    let id = String(arrayData[i])
-                                    if (Int(id) != nil) {
-                                        reg_user.selectedSkills.append(Int(id)!)
+                                
+                                if arrayData.count == 0 {
+                                    self.listOfSkills.text = config.translate("empty_skills")
+                                    self.listOfSkills.textAlignment = .Center
+                                }else{
+                                    for var i = 0; i < arrayData.count; i++ {
+                                        let id = String(arrayData[i])
+                                        if (Int(id) != nil) {
+                                            reg_user.selectedSkills.append(Int(id)!)
+                                            
+                                            skills += config.getSkillByID(String(arrayData[i]))
+                                        }else{
+                                            skills += skills
+                                        }
                                         
-                                        skills += config.getSkillByID(String(arrayData[i]))
-                                    }else{
-                                        skills += skills
-                                    }
-                                    
-                                    if i == arrayData.count - 1 {
-                                        self.listOfSkills.text = skills
-                                    }else{
-                                        skills += ", "
+                                        if i == arrayData.count - 1 {
+                                            self.listOfSkills.text = skills
+                                            self.listOfSkills.textAlignment = .Justified
+                                        }else{
+                                            skills += ", "
+                                        }
                                     }
                                 }
                             }
@@ -508,16 +510,12 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         if name == "" || userDesc == ""  {
             displayMyAlertMessage(config.translate("mess_fill_missing_field"))
+        }else if name.characters.count > 15{
+            displayMyAlertMessage(config.translate("mess_15_or_more"))
         }
         else {
-            //created NSURL
-            let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
-            
-            //created NSURL
-            let requestURL = NSURL(string: URL_SAVE_TEAM)
-            
             //creating NSMutableURLRequest
-            let request = NSMutableURLRequest(URL: requestURL!)
+            let request = NSMutableURLRequest(URL: globalvar.API_URL)
             
             //set boundary string..
             let boundary = generateBoundaryString()
@@ -529,6 +527,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             request.HTTPMethod = "POST"
             
             let skills2 = reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
+            globalUserId.skills = skills2
             
             var targetedData: String
             
@@ -552,6 +551,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 "skills"      : "\(skills2)",
                 "targets"     : "\(targetedData)"
             ]
+            
+            
             //adding the parameters to request body
             request.HTTPBody = createBodyWithParameters(param, data: UIImageJPEGRepresentation(userImage.image!, 0.7),  boundary: boundary)
             
@@ -568,6 +569,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                         let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                         
                         dispatch_async(dispatch_get_main_queue()) {
+                            
+                            let vc = LaunchScreenViewController()
+                            vc.getAllUserInfo()
                             
                             if json!["message"] != nil {
                                 message = json!["message"] as! String
@@ -709,14 +713,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     }
     
     func setImageToFirebaseUser(){
-        //let URL
-        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
-        
-        //created NSURL
-        let requestURL = NSURL(string: viewDataURL)
         
         //creating NSMutableURLRequest
-        let request = NSMutableURLRequest(URL: requestURL!)
+        let request = NSMutableURLRequest(URL: globalvar.API_URL)
         
         //set boundary string..
         let boundary = generateBoundaryString()

@@ -260,7 +260,7 @@ class CreateReservation: UIViewController {
     }
      
     //basepath
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = globalvar.API_URL
     
     var dataView = [UIView]()
     var dataLabel = [UILabel]()

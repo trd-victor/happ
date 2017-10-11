@@ -354,20 +354,16 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             displayMyAlertMessage(config.translate("mess_password_min_char"))
         }else if pass != reEnterpassword {
             displayMyAlertMessage(config.translate("mess_password_not_match"))
+        }else if name.characters.count > 15{
+            displayMyAlertMessage(config.translate("mess_15_or_more"))
         }
         else {
             if loadingScreen == nil {
                 loadingScreen = UIViewController.displaySpinner(self.view)
             }
             
-            //created NSURL
-            let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
-            
-            //created NSURL
-            let requestURL = NSURL(string: URL_SAVE_TEAM)
-            
             //creating NSMutableURLRequest
-            let request = NSMutableURLRequest(URL: requestURL!)
+            let request = NSMutableURLRequest(URL: globalvar.API_URL)
             
             //set boundary string..
             let boundary = generateBoundaryString()

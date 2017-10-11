@@ -108,9 +108,16 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         containerViewBottomAncher?.constant = -keyboardFrame!.height
         collectioView?.constant = -112 + -keyboardFrame!.height
         
+       
+        
         if keyboardDuration != nil {
             UIView.animateWithDuration(keyboardDuration!){
                 self.view.layoutIfNeeded()
+                
+                if self.messagesData.count > 0 {
+                    let lastItemIndex = NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
+                    self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
+                }
             }
         }
     }
@@ -448,7 +455,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 cell.userPhoto.image = imgCache
             }else{
                 cell.userPhoto.image = UIImage(named : "noPhoto")
-                let url = NSURL(string: imageUrl)
+                let url = NSURL(string: imageUrl.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
@@ -478,7 +485,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 cell.chatmatePhoto.image = imgCache
             }else{
                 cell.chatmatePhoto.image = UIImage(named : "noPhoto")
-                let url = NSURL(string: imageUrl)
+                let url = NSURL(string: imageUrl.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
                 let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
                     if let data = NSData(contentsOfURL: url!){
                         dispatch_async(dispatch_get_main_queue()){
@@ -538,9 +545,9 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         formatter.timeZone = NSTimeZone(name: "Asia/Tokyo")
         formatter.dateFormat = "HH:mm"
         let time = formatter.stringFromDate(dateTimestamp)
-        formatter.dateFormat = "MMM dd"
+        formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) at \(time)"
+        return "\(date) \(time)"
     }
 }
 extension UIColor {
