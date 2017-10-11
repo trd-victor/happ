@@ -43,6 +43,7 @@ class NoImage: UITableViewCell {
         btn.setTitleColor(UIColor.blackColor(), forState: .Normal)
         btn.setTitleColor(UIColor.blackColor(), forState: .Selected)
         btn.setTitleColor(UIColor.blackColor(), forState: .Focused)
+        btn.titleLabel!.lineBreakMode = .ByTruncatingTail
         btn.titleLabel!.font = UIFont.boldSystemFontOfSize(14)
         btn.contentHorizontalAlignment = .Left
         return btn
@@ -161,6 +162,7 @@ class SingleImage: UITableViewCell {
         btn.setTitleColor(UIColor.blackColor(), forState: .Normal)
         btn.setTitleColor(UIColor.blackColor(), forState: .Selected)
         btn.setTitleColor(UIColor.blackColor(), forState: .Focused)
+        btn.titleLabel!.lineBreakMode = .ByTruncatingTail
         btn.titleLabel!.font = UIFont.boldSystemFontOfSize(14)
         btn.contentHorizontalAlignment = .Left
         return btn
@@ -314,6 +316,7 @@ class DoubleImage: UITableViewCell {
         btn.setTitleColor(UIColor.blackColor(), forState: .Normal)
         btn.setTitleColor(UIColor.blackColor(), forState: .Selected)
         btn.setTitleColor(UIColor.blackColor(), forState: .Focused)
+        btn.titleLabel!.lineBreakMode = .ByTruncatingTail
         btn.titleLabel!.font = UIFont.boldSystemFontOfSize(14)
         btn.contentHorizontalAlignment = .Left
         return btn
@@ -497,6 +500,7 @@ class TripleImage: UITableViewCell {
         btn.setTitleColor(UIColor.blackColor(), forState: .Normal)
         btn.setTitleColor(UIColor.blackColor(), forState: .Selected)
         btn.setTitleColor(UIColor.blackColor(), forState: .Focused)
+        btn.titleLabel!.lineBreakMode = .ByTruncatingTail
         btn.titleLabel!.font = UIFont.boldSystemFontOfSize(14)
         btn.contentHorizontalAlignment = .Left
         return btn

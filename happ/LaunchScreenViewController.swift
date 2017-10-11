@@ -49,18 +49,15 @@ class SYSTEM_CONFIG {
     
     internal func getSkillByID(id: String) -> String {
         var lang = self.getSYS_VAL("AppLanguage") as? String
-        let skills = self.getSYS_VAL("SYSTM_SKILL")
-        
+        let skills = self.getSYS_VAL("SYSTM_SKILL") as? NSDictionary
         if lang! == "ja" {
             lang = "jp"
         }
-        
         if (Int(id) != nil){
             if skills![id] != nil {
-                return skills![id]!![lang!]!! as! String
-            }else{
-                return ""
+                return String(skills![id]![lang!]!!)
             }
+            return ""
         }else{
             return id
         }

@@ -37,7 +37,8 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         tblViewSearch.delegate = self
         tblViewSearch.dataSource = self
         searchBar.delegate = self
-        
+
+        tblViewSearch.contentInset = UIEdgeInsetsMake(0, 0, 280, 0)
         
         tblViewSearch.registerClass(SearchCustomCell.self, forCellReuseIdentifier: "Users")
         tblViewSearch.separatorStyle = .None
