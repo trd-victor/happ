@@ -158,7 +158,9 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return 90
     }
-    
+
+    let imgforProfileCache = NSCache()
+
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Users", forIndexPath: indexPath) as! SearchCustomCell
         
@@ -188,9 +190,26 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }else{
             cell.detailTextLabel?.text = ""
         }
-        
+
         if let imgString = self.userData[indexPath.row]["icon"] as? String {
-            cell.profileImg.profileForCache(imgString)
+            if (imgforProfileCache.objectForKey(imgString) != nil) {
+                let imgCache = imgforProfileCache.objectForKey(imgString) as! UIImage
+                cell.profileImg.image = imgCache
+            }else{
+                cell.profileImg.image = UIImage(named: "noPhoto")
+                let url = NSURL(string: imgString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            cell.profileImg.image = UIImage(data: data)
+                            let tmpImg = UIImage(data: data)
+                            self.imgforProfileCache.setObject(tmpImg!, forKey: imgString)
+                        }
+                    }
+                    
+                })
+                task.resume()
+            }
         }else{
             cell.profileImg.image = UIImage(named: "noPhoto")
         }
