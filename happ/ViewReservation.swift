@@ -135,7 +135,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
     var config = SYSTEM_CONFIG()
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
     var cellIndentifier = [String]()
     var cellDate = [String]()

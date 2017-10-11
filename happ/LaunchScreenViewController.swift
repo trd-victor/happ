@@ -130,7 +130,7 @@ class LaunchScreenViewController: UIViewController {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         
         if let firID = FIRAuth.auth()?.currentUser?.uid {
-            let userdb = FIRDatabase.database().reference().child("users").child(firID)
+            
             globalUserId.FirID = firID
             
             let config = SYSTEM_CONFIG()
@@ -140,24 +140,8 @@ class LaunchScreenViewController: UIViewController {
                 FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
             }
             
-            dispatch_async(dispatch_get_main_queue()){
-                userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
-                    if let data = snap.value as? NSDictionary{
-                        globalUserId.userID = String(data["id"]!)
-                        
-                        let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
-                        self.presentViewController(userTimeLineController, animated:true, completion:nil)
-                    }else{
-                        let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
-                        self.presentViewController(mainViewController, animated:false, completion:nil)
-                    }
-                })
-            }
-            
-            self.delay(8.0){
-                let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
-                self.presentViewController(mainViewController, animated:false, completion:nil)
-            }
+            let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            self.presentViewController(userTimeLineController, animated:true, completion:nil)
         }else {
             let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
             self.presentViewController(mainViewController, animated:false, completion:nil)
@@ -200,6 +184,9 @@ class LaunchScreenViewController: UIViewController {
                 self.activityIndicator.stopAnimating()
                 do {
                     try FIRAuth.auth()?.signOut()
+                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                    FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
+                    FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
                 } catch (let error) {
                     print((error as NSError).code)
                 }
@@ -211,7 +198,7 @@ class LaunchScreenViewController: UIViewController {
         }
     }
     
-    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
     func getAllUserInfo() {
         

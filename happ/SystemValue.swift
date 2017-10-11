@@ -73,7 +73,7 @@ class getSystemValue {
     
     func getSkill(){
         //let URL
-        let viewDataURL = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
+        let viewDataURL = "https://happ.biz/wp-admin/admin-ajax.php"
         
         //created NSURL
         let requestURL = NSURL(string: viewDataURL)

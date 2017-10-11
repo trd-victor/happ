@@ -24,6 +24,7 @@ struct UserDetails {
 class TimelineDetail: UIViewController {
 
     let scrollView: UIScrollView = UIScrollView()
+    var loadingScreen: UIView!
     
     let btnProfile: UIButton = {
         let btn = UIButton()
@@ -180,8 +181,6 @@ class TimelineDetail: UIViewController {
             body.text = UserDetails.body
             self.postDetail()
         }else{
-            print(UserDetails.postID)
-            print("notif")
             self.getDetail()
         }
         
@@ -218,7 +217,10 @@ class TimelineDetail: UIViewController {
     }
     
     func getDetail(){
-        let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
         let parameters = [
                     "sercret"     : "jo8nefamehisd",
                     "action"      : "api",
@@ -229,7 +231,6 @@ class TimelineDetail: UIViewController {
                     "post_id"     : "\(UserDetails.postID)",
                     "count"       : "1"
                 ]
-            print(parameters)
                 let request = NSMutableURLRequest(URL: baseUrl)
                 let boundary = generateBoundaryString()
                 request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -243,7 +244,6 @@ class TimelineDetail: UIViewController {
                     }else {
                         do {
                             let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                            print(json)
                             let config = SYSTEM_CONFIG()
                             dispatch_async(dispatch_get_main_queue()){
                                 if json!["success"] != nil {
@@ -285,6 +285,11 @@ class TimelineDetail: UIViewController {
                                                 UserDetails.postID = ""
                                                 self.postDetail()
                                             }
+                                            
+                                            if self.loadingScreen != nil {
+                                                UIViewController.removeSpinner(self.loadingScreen)
+                                                self.loadingScreen = nil
+                                            }
                                         }else{
                                             self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
                                         }
@@ -305,6 +310,10 @@ class TimelineDetail: UIViewController {
     }
     
     func displayMyAlertMessage(userMessage:String){
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
        let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
         myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             let transition = CATransition()

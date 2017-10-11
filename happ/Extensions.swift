@@ -87,6 +87,17 @@ extension UIViewController {
             spinner.removeFromSuperview()
         }
     }
+    
+//    class func  addBanner(onView: UIView) -> UIView{
+//        let bannerView = UIView.init(frame: CGRect(x: 0.0, y: 2, width: onView.frame.width, height: 48))
+//        bannerView.backgroundColor = UIColor.blackColor()
+//        
+//        dispatch_async(dispatch_get_main_queue()) {
+//            onView.addSubview(bannerView)
+//        }
+//        
+//        return bannerView
+//    }
 }
 
 extension UITextField {

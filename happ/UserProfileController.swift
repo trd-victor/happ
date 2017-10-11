@@ -29,7 +29,7 @@ class UserProfileController: UIViewController {
     var page: Int = 1
     var firstLoad: Bool = false
     
-    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
     
     let ProfileView: UIView = {
@@ -295,8 +295,7 @@ class UserProfileController: UIViewController {
     }
     
     @IBAction func navBar(sender: AnyObject) {
-        
-        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(red: 0, green: 118, blue: 255, alpha: 1)]
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
         
         let transition: CATransition = CATransition()
@@ -310,7 +309,6 @@ class UserProfileController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

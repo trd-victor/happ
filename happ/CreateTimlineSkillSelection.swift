@@ -76,12 +76,12 @@ class CreateTimelineSkillSelection: UIViewController {
         skillName.centerYAnchor.constraintEqualToAnchor(skillBox.centerYAnchor).active = true
         skillName.leftAnchor.constraintEqualToAnchor(skillBox.leftAnchor, constant: 10).active = true
         skillName.widthAnchor.constraintEqualToAnchor(skillBox.widthAnchor, constant: -50).active = true
+        skillName.text = config.translate("all_users")
         
         skillSwitch.translatesAutoresizingMaskIntoConstraints = false
         skillSwitch.frame.size = CGSizeMake(51, 31)
         skillSwitch.centerYAnchor.constraintEqualToAnchor(skillBox.centerYAnchor).active = true
         skillSwitch.rightAnchor.constraintEqualToAnchor(skillBox.rightAnchor, constant: -10).active = true
-        skillName.text = config.translate("all_users")
         skillSwitch.tag = 0
         
         separator.translatesAutoresizingMaskIntoConstraints = false
@@ -332,7 +332,7 @@ class CreateTimelineSkillSelection: UIViewController {
         
         navItem.setLeftBarButtonItems([negativeSpacer, btnBack], animated: false)
         
-        let saveBtn = UIBarButtonItem(title: config.translate("button_save"), style: .Plain, target: self, action: "saveSkill")
+        let saveBtn = UIBarButtonItem(title: config.translate("button_post"), style: .Plain, target: self, action: "saveSkill")
         saveBtn.tintColor = UIColor.whiteColor()
         navItem.setRightBarButtonItem(saveBtn, animated: false)
         
@@ -480,7 +480,7 @@ class CreateTimelineSkillSelection: UIViewController {
                             notif.saveNotificationMessage(postID!, type: "timeline")
                         }
                         
-                        if mess == true {
+                        if mess != nil && mess == true {
                             NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
                             self.displayMyAlertMessage(config.translate("saved_post"))
                         }

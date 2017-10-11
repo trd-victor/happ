@@ -83,9 +83,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let navItem = UINavigationItem(title: titlestr)
         let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
         btnBack.tintColor = UIColor.whiteColor()
-        
+    
         //closer to left anchor nav
         let negativeSpacer = UIBarButtonItem.init(barButtonSystemItem: .FixedSpace, target: nil, action: nil)
+        negativeSpacer.tintColor = UIColor(hexString: "#272727")
         negativeSpacer.width = -15
         
         navItem.setLeftBarButtonItems([negativeSpacer, btnBack], animated: false)
@@ -99,7 +100,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let firID = config.getSYS_VAL("FirebaseID") as! String
 //        var first: Bool = false
         if currentKey == nil {
-            print("sulod")
             let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryLimitedToLast(10)
             
             notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
@@ -118,18 +118,16 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             }
                         })
                     }
-                    
                     self.currentKey = first!.key
                 }
             })
         }else{
-            print("wahahhaha", self.currentKey)
             let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryOrderedByKey().queryEndingAtValue(self.currentKey).queryLimitedToLast(11)
             
             notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
                 
                 let first = snap.children.allObjects.first as? FIRDataSnapshot
-                let index = self.backupData.count
+                let index = self.arrayData.count
                 
                 
                 if snap.childrenCount > 0 {
@@ -142,7 +140,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             
                             if let result = snapshot.value as? NSDictionary {
-                                print("key", snapshot.key)
                                 
                                 self.arrayData.insert(result, atIndex: index)
                                 self.backupData.append(result)
@@ -156,27 +153,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 }
             })
         }
-        
-        
-        
-//        let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").queryLimitedToLast(self.count)
-//
-//        notifAllDb.observeEventType(.ChildAdded, withBlock: {(snapshot) in
-//            if let result = snapshot.value as? NSDictionary {
-//                let key =  snapshot.key
-//                
-//                let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").child(key)
-//
-//                notifUserDB.observeSingleEventOfType(.ChildAdded, withBlock: {(snap) in
-//                    if(snap.exists()) {
-//                        self.arrayData.insert(result, atIndex: 0)
-//                        self.backupData.append(result)
-//                        self.tblView.reloadData()
-//                    }
-//                })
-//            }
-//        })
-        
     }
     
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -266,8 +242,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 })
                 task.resume()
             }
-
-            
         }
         
         return cell
@@ -278,7 +252,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let data = self.backupData[self.backupData.count - 1 - indexPath.row] as? NSDictionary
+       
+        let data = self.arrayData[indexPath.row] as? NSDictionary
+        
         let type = data!["type"] as? String
         let name = data!["name"] as? String
         let post_id = data!["id"] as? Int

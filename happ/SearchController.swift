@@ -19,7 +19,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     let mainView: UIView = UIView()
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
     var user_id = [Int]()
     var userData = []
@@ -124,7 +124,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
-        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(red: 0, green: 118, blue: 255, alpha: 1)]
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(hexString: "#0076FF")]
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
         
     }

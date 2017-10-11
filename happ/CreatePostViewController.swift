@@ -28,7 +28,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     var loadingScreen: UIView!
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     var language: String!
     
     var empty_post = "false"
@@ -146,6 +146,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         loadConfigure()
         
         autoLayout()
+               
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -213,7 +214,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         
         if !didCameraGallery {
             //set text
-            self.saveItem.title = config.translate("button_post")
+            self.saveItem.title = config.translate("button_continue")
             self.saveItem.tintColor = UIColor.whiteColor()
         }
     }

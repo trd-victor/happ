@@ -46,7 +46,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     var dataResult: AnyObject?
     
     //basepath
-    let baseUrl: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     
     var image1 = [UIImageView]()
     
@@ -128,15 +128,28 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.mytableview.separatorStyle = UITableViewCellSeparatorStyle.None
         self.mytableview.contentInset = UIEdgeInsetsMake(10, 0, 30, 0)
         
-        //get user data
-        userId = globalUserId.userID
-        
-        //load language set.
         language = setLanguage.appLanguage
         
-        //calll system value...
         let config = SYSTEM_CONFIG()
-        globalUserId.skills = String(config.getSYS_VAL("user_skills_\(globalUserId.userID)")!)
+        
+        if globalUserId.userID == "" {
+            let firID = FIRAuth.auth()?.currentUser?.uid
+            let userdb = FIRDatabase.database().reference().child("users").child(firID!)
+            
+            dispatch_async(dispatch_get_main_queue()){
+                userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                    if let data = snap.value as? NSDictionary{
+                        globalUserId.userID = String(data["id"]!)
+                        self.getTimelineUser()
+                    }
+                })
+            }
+            
+        }else{
+            userId = globalUserId.userID
+            globalUserId.skills = String(config.getSYS_VAL("user_skills_\(globalUserId.userID)")!)
+            self.getTimelineUser()
+        }
         
         //set text i am free
         labelFree.text = config.translate("subtitle_now_free")
@@ -157,9 +170,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         //set switch on
         self.setSwitchOnOff(self.freetimeStatus)
-        
-        self.getTimelineUser()
-        
         autoLayout()
         
         self.mytableview.delegate = self

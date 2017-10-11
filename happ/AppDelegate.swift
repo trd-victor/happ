@@ -42,15 +42,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        
         if let body = userInfo["body"] as? String {
-            
             let title = userInfo["title"] as! String
-            
             if body.containsString("Turned on free now") || body.containsString("Posted on timeline") || title.containsString("Reservation") {
                 if UIApplication.sharedApplication().applicationState == .Background || UIApplication.sharedApplication().applicationState == .Inactive {
                     UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber + 1
-                    print(UIApplication.sharedApplication().applicationIconBadgeNumber)
                 }
             }else{
                 UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber

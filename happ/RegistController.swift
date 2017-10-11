@@ -361,7 +361,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             }
             
             //created NSURL
-            let URL_SAVE_TEAM = "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php"
+            let URL_SAVE_TEAM = "https://happ.biz/wp-admin/admin-ajax.php"
             
             //created NSURL
             let requestURL = NSURL(string: URL_SAVE_TEAM)
@@ -554,6 +554,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 
                 do {
                     try FIRAuth.auth()?.signOut()
+                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                    FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
+                    FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
                 } catch (let error) {
                     print((error as NSError).code)
                 }
