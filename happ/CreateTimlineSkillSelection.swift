@@ -49,6 +49,8 @@ class CreateTimelineSkillSelection: UIViewController {
     
     override func viewDidLoad(){
         super.viewDidLoad()
+        //remove all selected
+        timeline_post_skills.selectedSkills.removeAll()
         
         let config = SYSTEM_CONFIG()
         

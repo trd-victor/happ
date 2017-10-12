@@ -29,8 +29,7 @@ class UserProfileController: UIViewController {
     var page: Int = 1
     var firstLoad: Bool = false
     
-    let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
-    
+    let baseUrl: NSURL = globalvar.API_URL
     
     let ProfileView: UIView = {
         let view = UIView()

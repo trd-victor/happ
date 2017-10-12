@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class MailChangeViewController: UIViewController, UITextFieldDelegate {
     
@@ -52,7 +53,6 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         
         userId = globalUserId.userID
         self.loaduserEmail()
-        
         
         self.loadConfigure()
         
@@ -179,23 +179,30 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
                         
                         let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                         
-                        if json!["message"] != nil {
-                            message = json!["message"] as! String
-                        }
-                        
-                        if json!["result"] != nil {
-                            message = json!["result"]!["mess"] as! String
-                        }
-                        
                         dispatch_async(dispatch_get_main_queue()) {
                             var errorMessage: Int
                             if json!["error"] != nil {
                                 errorMessage = json!["error"] as! Int
                                 if errorMessage == 1 {
+                                    if json!["message"] != nil {
+                                        message = json!["message"] as! String
+                                    }
                                     self.displayMyAlertMessage(message)
                                 }
+                            }else{
+                                if json!["result"] != nil {
+                                    message = json!["result"]!["mess"] as! String
+                                }
+                                FIRAuth.auth()?.currentUser?.updateEmail(email, completion: {(error) in
+                                    if error != nil {
+                                        print("error", error?.localizedDescription)
+                                    }else{
+                                        self.displayMyAlertMessage(message)
+                                    }
+                                })
+                                let firID = FIRAuth.auth()?.currentUser?.uid
+                                FIRDatabase.database().reference().child("users").child(firID!).child("email").setValue(email)
                             }
-                            self.displayMyAlertMessage(message)
                         }
                         
                     } catch {

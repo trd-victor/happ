@@ -454,6 +454,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                         dispatch_async(dispatch_get_main_queue(), {() -> Void in
                             
                             self.userNamefield.text = name
+                            
                             if data != nil {
                                 //save new photo on firebase database
                                 if self.checkNewImage {
@@ -591,6 +592,12 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             if json!["success"] != nil {
                                 let uid = globalUserId.FirID
                                 FIRDatabase.database().reference().child("users").child("\(uid)").child("name").setValue(name)
+                                
+                                if reg_user.selectedSkills.count > 0 {
+                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("skills").setValue("," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ",")
+                                }else{
+                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("skills").setValue("")
+                                }
                                 
                                 //updating image url on firebase
                                 self.setImageToFirebaseUser()

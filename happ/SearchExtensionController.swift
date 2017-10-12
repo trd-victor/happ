@@ -13,6 +13,9 @@ extension SearchController {
 
     func getSearchUser(value: String) {
         user_id.removeAll()
+        if task2 != nil {
+            task2.cancel()
+        }
 //        let config = SYSTEM_CONFIG()
         
         let parameters = [
@@ -29,11 +32,10 @@ extension SearchController {
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
         request1.HTTPMethod = "POST"
         request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
-        let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1) {
+        task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1) {
             data1, response1, error1 in
             if error1 != nil{
-                print("\(error1)")
-                return;
+                return
             }
             do {
                 let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
@@ -44,10 +46,11 @@ extension SearchController {
                     }
                 }
             } catch {
-                print(error)
+                
             }
         }
         task2.resume()
+        
     }
     
     func generateBoundaryString() -> String {

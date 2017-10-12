@@ -107,11 +107,16 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
                 if snap.childrenCount > 0 {
                     for s in snap.children.allObjects as! [FIRDataSnapshot] {
+                        
+                        let read = s.value!["read"] as? Bool
+                        
                         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
                         
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             
                             if let result = snapshot.value as? NSDictionary {
+                                result.setValue(read, forKey: "read")
+                                result.setValue(s.key, forKey: "key")
                                 self.arrayData.insert(result, atIndex: 0)
                                 self.backupData.append(result)
                                 self.tblView.reloadData()
@@ -129,7 +134,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 let first = snap.children.allObjects.first as? FIRDataSnapshot
                 let index = self.arrayData.count
                 
-                
                 if snap.childrenCount > 0 {
                     var notifData = snap.children.allObjects as! [FIRDataSnapshot]
                     notifData.removeLast()
@@ -137,11 +141,14 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     for s in notifData {
                         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
                         
+                        let read = s.value!["read"] as? Bool
+                        
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             
                             if let result = snapshot.value as? NSDictionary {
-                                
-                                self.arrayData.insert(result, atIndex: index)
+                                result.setValue(read, forKey: "read")
+                                result.setValue(s.key, forKey: "key")
+                                self.arrayData.insert(result, atIndex: 0)
                                 self.backupData.append(result)
                                 
                                 self.tblView.reloadData()
@@ -211,6 +218,13 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             let type = data!["type"] as! String
             let timestamp = data!["timestamp"] as? NSNumber
             let image = data!["photoUrl"] as? String
+            let read = data!["read"] as? Bool
+            
+            if !read! {
+                cell.lblMessage.font = UIFont.boldSystemFontOfSize(17)
+            }else{
+                cell.lblMessage.font = UIFont.systemFontOfSize(17)
+            }
             
             if type == "timeline" || type == "post-timeline"{
                 cell.lblMessage.text = "\(name) \(self.postTimelineMessage)"
@@ -254,12 +268,20 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
        
         let data = self.arrayData[indexPath.row] as? NSDictionary
-        
+      
         let type = data!["type"] as? String
         let name = data!["name"] as? String
         let post_id = data!["id"] as? Int
         let photoUrl = data!["photoUrl"] as? String
         let user_id = data!["userId"] as? String
+        let read = data!["read"] as? Bool
+        let key = data!["key"] as? String
+        
+        if !read! {
+            let cell = tableView.cellForRowAtIndexPath(indexPath) as? NotifCell
+            cell?.lblMessage.font = UIFont.systemFontOfSize(17)
+            FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(globalUserId.FirID).child("notif-list").child(key!).child("read").setValue(true)
+        }
         
         if type! == "timeline" || type! == "post-time" {
             self.postName = name!
@@ -385,41 +407,95 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
             
             if type == "timeline"{
+                let pushdetail = [
+                    "name": String(name),
+                    "photoUrl": String(photoUrl),
+                    "id": id,
+                    "timestamp": timestamp,
+                    "type": type,
+                    "userId": firID!,
+                    "skills": timeline_post_skills.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
+                ]
+                
                 let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
-                pushTimelineDB.setValue(detail)
+                pushTimelineDB.setValue(pushdetail)
             }
             
-            // get all user
+            // get user DB
             let userDB = FIRDatabase.database().reference().child("users")
             
-            dispatch_async(dispatch_get_main_queue()){
-                userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-                    
-                    if let result = snapshot.value as? NSDictionary {
-                        for (key, _) in result {
-                            if key as! String != firID! {
-                                // update notification user
-                                FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
-                                
-                                // get unread count on each user
-                                let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
-                                dispatch_async(dispatch_get_main_queue()){
-                                    readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
-                                        
-                                        if let result = snapCount.value as? NSDictionary {
-                                            if let count = result["count"] as? Int {
-                                                readDB.child("count").setValue(count + 1)
-                                            }else{
-                                                readDB.child("count").setValue(1)
+            if type == "free-time" {
+                dispatch_async(dispatch_get_main_queue()){
+                    userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+                        
+                        if let result = snapshot.value as? NSDictionary {
+                            for (key, _) in result {
+                                if key as! String != firID! {
+                                    // update notification user
+                                    FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
+                                    
+                                    // get unread count on each user
+                                    let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
+                                    dispatch_async(dispatch_get_main_queue()){
+                                        readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
+                                            
+                                            if let result = snapCount.value as? NSDictionary {
+                                                if let count = result["count"] as? Int {
+                                                    readDB.child("count").setValue(count + 1)
+                                                }else{
+                                                    readDB.child("count").setValue(1)
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
+                            }// end of loop
+                        }// end of if
+                    })// end of observation
+                }// dispatch end
+            }
+            
+            if type == "timeline" {
+                if timeline_post_skills.selectedSkills.count == 0 {
+                    return
+                }else{
+                    dispatch_async(dispatch_get_main_queue()){
+                        userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+                            if let result = snapshot.value as? NSDictionary {
+                                for (key, value) in result {
+                                    if let valueData = value as? NSDictionary {
+                                        if let skills = valueData["skills"] as? String {
+                                            if skills != "" {
+                                                for c in timeline_post_skills.selectedSkills {
+                                                    if skills.containsString(String(c)){
+                                                        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
+                                                        let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
+                                                        dispatch_async(dispatch_get_main_queue()){
+                                                            readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
+                                                                
+                                                                if let result = snapCount.value as? NSDictionary {
+                                                                    if let count = result["count"] as? Int {
+                                                                        readDB.child("count").setValue(count + 1)
+                                                                    }else{
+                                                                        readDB.child("count").setValue(1)
+                                                                    }
+                                                                }
+                                                            })
+                                                        }
+                                                        break
+                                                    }
+                                                }
                                             }
                                         }
-                                    })
-                                }
-                            }
-                        }// end of loop
-                    }// end of if
-                })// end of observation
-            }// dispatch end
+                                    }
+                                }// end of loop
+                            }// end of if
+                        })// end of observation
+                        
+                    }// dispatch end
+                }
+            }
+            
         }
     }
     

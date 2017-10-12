@@ -335,6 +335,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func registerUser(sender: AnyObject) {
+        
         //scroll to top
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
         
@@ -533,14 +534,20 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                     registTokendb.child("token").setValue(String(token))
                 }
-//                //set users array to insert...
+                var skills = ""
+                if reg_user.selectedSkills.count > 0 {
+                    skills = "," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ","
+                }
+                
+                //set users array to insert...
                 let userDetails: [String : AnyObject] = [
                     "email"     : userEmail,
                     "id"        : userID,
                     "name"      : name,
-                    "photoUrl"  : "null"
+                    "photoUrl"  : "null",
+                    "skills"    : skills
                 ]
-//                //insert to users
+                //insert to users
                 db.setValue(userDetails)
                 
                  self.successMessageAlert(self.mess)

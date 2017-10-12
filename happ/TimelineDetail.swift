@@ -173,7 +173,6 @@ class TimelineDetail: UIViewController {
         btnProfile.setImage(imgView.image, forState: .Normal)
         btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
         
-        
         if UserDetails.postID == nil || UserDetails.postID == ""{
             btnUsername.tag = Int(UserDetails.fromID)!
             btnProfile.tag = Int(UserDetails.fromID)!
@@ -189,25 +188,34 @@ class TimelineDetail: UIViewController {
     func postDetail(){
         var contentHeight: CGFloat = 0
         
+        
         if UserDetails.img1 != "null" {
             self.imgView1.imgForCache(UserDetails.img1)
             dispatch_async(dispatch_get_main_queue()){
                 self.imgViewHeight(self.imgView1,swtchCase: 1)
             }
+        }else{
+            self.view1.hidden = true
         }
         if UserDetails.img2 != "null" {
             imgView2.imgForCache(UserDetails.img2)
             dispatch_async(dispatch_get_main_queue()){
                 self.imgViewHeight(self.imgView2,swtchCase: 2)
             }
+        }else{
+            self.view2.hidden = true
         }
+        
         if UserDetails.img3 != "null" {
             imgView3.imgForCache(UserDetails.img3)
             dispatch_async(dispatch_get_main_queue()){
                 self.imgViewHeight(self.imgView3,swtchCase: 3)
             }
+        }else{
+            self.view3.hidden = true
         }
         dispatch_async(dispatch_get_main_queue()){
+            contentHeight += self.body.frame.size.height
             contentHeight += self.imgHeight1
             contentHeight += self.imgHeight2
             contentHeight += self.imgHeight3

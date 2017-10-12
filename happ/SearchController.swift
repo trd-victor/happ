@@ -23,6 +23,7 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     
     var user_id = [Int]()
     var userData = []
+    var task2: NSURLSessionDataTask!
     
     let config = SYSTEM_CONFIG()
     

@@ -25,7 +25,7 @@ struct globalvar {
     static var GET_SYSTEM_VALUE : String = "get_system_value_all"
     static var GET_SKILL: String = "get_skill"
     static var APP_LANGUANGE: String = ""
-    static var API_URL: NSURL = NSURL(string: "http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php")!
+    static var API_URL: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     static var userTitle: String = ""
     static var badgeBellNumber: Int = 0
     static var badgeMessNumber: Int = 0
@@ -33,8 +33,8 @@ struct globalvar {
     let config = SYSTEM_CONFIG()
     
     //dev API
-    // http://dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php
+    // http:// dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php
     //PRD API
-    // https://happ.biz/wp-admin/admin-ajax.php
+    // https:// happ.biz/wp-admin/admin-ajax.php
     
 }
