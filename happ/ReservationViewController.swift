@@ -529,6 +529,8 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
         calendarDate.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
         calendarDate.heightAnchor.constraintEqualToAnchor(self.heightAnchor).active = true
         
+        print(Reservation.reserved)
+        
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -727,6 +729,13 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
 class CalendarDateCell: UICollectionViewCell {
     
     let dateLabel:UILabel = {
+        let label = UILabel()
+        label.textAlignment = .Center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let labelIndicator: UILabel = {
         let label = UILabel()
         label.textAlignment = .Center
         label.translatesAutoresizingMaskIntoConstraints = false

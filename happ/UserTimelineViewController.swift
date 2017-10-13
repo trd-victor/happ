@@ -132,26 +132,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         let config = SYSTEM_CONFIG()
         
-        
-        if globalUserId.userID == "" {
-            let firID = FIRAuth.auth()?.currentUser?.uid
-            let userdb = FIRDatabase.database().reference().child("users").child(firID!)
-            
-            dispatch_async(dispatch_get_main_queue()){
-                userdb.observeSingleEventOfType(.Value, withBlock: {(snap) in
-                    if let data = snap.value as? NSDictionary{
-                        globalUserId.userID = String(data["id"]!)
-                        globalUserId.skills = String(config.getSYS_VAL("user_skills_\(globalUserId.userID)")!)
-                        self.getTimelineUser()
-                    }
-                })
-            }
-            
-        }else{
-            userId = globalUserId.userID
-            globalUserId.skills = String(config.getSYS_VAL("user_skills_\(globalUserId.userID)")!)
-            self.getTimelineUser()
-        }
+        userId = globalUserId.userID
+        globalUserId.skills = String(config.getSYS_VAL("user_skills_\(globalUserId.userID)")!)
+        self.getTimelineUser()
         
         //set text i am free
         labelFree.text = config.translate("subtitle_now_free")

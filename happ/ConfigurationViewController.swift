@@ -340,8 +340,14 @@ class ConfigurationViewController: UIViewController {
         
         let myAlert = UIAlertController(title: "", message: config.translate("logout_message"), preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            
             do {
                 try FIRAuth.auth()?.signOut()
+                
+                FIRDatabase.database().reference().child("registration-token").child(globalUserId.FirID).child("token").setValue("")
+                
+                config.removeSYS_VAL("userID")
+                globalUserId.userID = ""
                 UIApplication.sharedApplication().applicationIconBadgeNumber = 0
                 FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
                 FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")

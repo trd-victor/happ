@@ -98,6 +98,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     func getNotification(){
         let config = SYSTEM_CONFIG()
         let firID = config.getSYS_VAL("FirebaseID") as! String
+        
         if currentKey == nil {
             let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryLimitedToLast(10)
             
@@ -117,7 +118,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 result.setValue(read, forKey: "read")
                                 result.setValue(s.key, forKey: "key")
                                 self.arrayData.insert(result, atIndex: 0)
-                                self.backupData.append(result)
                                 self.tblView.reloadData()
                             }
                         })
@@ -148,8 +148,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 result.setValue(read, forKey: "read")
                                 result.setValue(s.key, forKey: "key")
                                 self.arrayData.insert(result, atIndex: index)
-                                self.backupData.append(result)
-                                
                                 self.tblView.reloadData()
                             }
                         })

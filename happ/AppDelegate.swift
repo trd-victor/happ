@@ -11,6 +11,7 @@ import Firebase
 import FirebaseMessaging
 import Fabric
 import Crashlytics
+import SystemConfiguration
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
@@ -42,16 +43,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
     }
     
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject], fetchCompletionHandler completionHandler: (UIBackgroundFetchResult) -> Void) {
-        
         if let body = userInfo["body"] as? String {
             let title = userInfo["title"] as! String
             
-            self.addLocalNotification(userInfo)
             if body.containsString("Turned on free now") || body.containsString("Posted on timeline") || title.containsString("Reservation") {
                 if UIApplication.sharedApplication().applicationState == .Background || UIApplication.sharedApplication().applicationState == .Inactive {
                     UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber + 1
                 }
             }else{
+                self.addLocalNotification(userInfo)
                 UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber
             }
         }

@@ -24,6 +24,12 @@ class SYSTEM_CONFIG {
         return self.SYS_VAL.valueForKey(key)
     }
     
+    internal func removeSYS_VAL(key: String) {
+        if self.SYS_VAL.valueForKey(key) != nil {
+            self.SYS_VAL.removeObjectForKey(key)
+        }
+    }
+    
     /**
      * @param key as String
      * System Language
@@ -130,10 +136,9 @@ class LaunchScreenViewController: UIViewController {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         
         if let firID = FIRAuth.auth()?.currentUser?.uid {
-            
             globalUserId.FirID = firID
-            
             let config = SYSTEM_CONFIG()
+            globalUserId.userID = config.getSYS_VAL("userID") as! String
             config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
             
             if let token = FIRInstanceID.instanceID().token() {
@@ -184,6 +189,10 @@ class LaunchScreenViewController: UIViewController {
                 self.activityIndicator.stopAnimating()
                 do {
                     try FIRAuth.auth()?.signOut()
+                    
+                    let sys = SYSTEM_CONFIG()
+                    sys.removeSYS_VAL("userID")
+                    globalUserId.userID = ""
                     UIApplication.sharedApplication().applicationIconBadgeNumber = 0
                     FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
                     FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")

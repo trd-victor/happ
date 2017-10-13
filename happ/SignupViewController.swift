@@ -245,7 +245,10 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                     value = json!["result"]!["user_id"] as! Int
                                     user_id = value
                                     mess = user_id.stringValue
+                                    
                                     globalUserId.userID = mess
+                                    let config = SYSTEM_CONFIG()
+                                    config.setSYS_VAL(globalUserId.userID, key: "userID")
                                 }
                             }
                             

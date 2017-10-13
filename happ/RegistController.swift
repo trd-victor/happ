@@ -557,6 +557,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 
                 do {
                     try FIRAuth.auth()?.signOut()
+                    let config = SYSTEM_CONFIG()
+                    config.removeSYS_VAL("userID")
+                    globalUserId.userID = ""
                     UIApplication.sharedApplication().applicationIconBadgeNumber = 0
                     FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
                     FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
