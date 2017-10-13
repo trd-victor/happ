@@ -27,6 +27,7 @@
 		3D8916DD1F7A17EC0007EC7E /* CalendarCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8916DC1F7A17EC0007EC7E /* CalendarCustomCell.swift */; };
 		3DBE19A51F7A317100ADACD3 /* CreateReservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DBE19A41F7A317100ADACD3 /* CreateReservation.swift */; };
 		3DBE19A71F7A318B00ADACD3 /* ViewReservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DBE19A61F7A318B00ADACD3 /* ViewReservation.swift */; };
+		3DC7E03F1F907B8100AB136F /* ViewCalendarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC7E03E1F907B8100AB136F /* ViewCalendarTest.swift */; };
 		3DCBCD911F6F88C10010AE6C /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCBCD901F6F88C10010AE6C /* SearchController.swift */; };
 		3DCBCD931F6FBBDD0010AE6C /* SearchCustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCBCD921F6FBBDD0010AE6C /* SearchCustomCell.swift */; };
 		3DCFDECC1F5D539400E50EC0 /* CreatePost+hanlder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DCFDECB1F5D539400E50EC0 /* CreatePost+hanlder.swift */; };
@@ -102,6 +103,7 @@
 		3D8916DC1F7A17EC0007EC7E /* CalendarCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarCustomCell.swift; sourceTree = "<group>"; };
 		3DBE19A41F7A317100ADACD3 /* CreateReservation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateReservation.swift; sourceTree = "<group>"; };
 		3DBE19A61F7A318B00ADACD3 /* ViewReservation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewReservation.swift; sourceTree = "<group>"; };
+		3DC7E03E1F907B8100AB136F /* ViewCalendarTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewCalendarTest.swift; sourceTree = "<group>"; };
 		3DCBCD901F6F88C10010AE6C /* SearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
 		3DCBCD921F6FBBDD0010AE6C /* SearchCustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchCustomCell.swift; sourceTree = "<group>"; };
 		3DCFDECB1F5D539400E50EC0 /* CreatePost+hanlder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CreatePost+hanlder.swift"; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 		3D8916D71F7A175C0007EC7E /* Reservation */ = {
 			isa = PBXGroup;
 			children = (
+				3DC7E03D1F907B7400AB136F /* ViewTest */,
 				3D8916D91F7A17790007EC7E /* Create */,
 				3D8916D81F7A17650007EC7E /* View */,
 				3D8916DA1F7A17C00007EC7E /* ReservationViewController.swift */,
@@ -231,6 +234,14 @@
 				3D4B3B201F80BC8400DE89A0 /* pickerController.swift */,
 			);
 			name = Create;
+			sourceTree = "<group>";
+		};
+		3DC7E03D1F907B7400AB136F /* ViewTest */ = {
+			isa = PBXGroup;
+			children = (
+				3DC7E03E1F907B8100AB136F /* ViewCalendarTest.swift */,
+			);
+			name = ViewTest;
 			sourceTree = "<group>";
 		};
 		3DCBCD8F1F6F88AE0010AE6C /* SearchController */ = {
@@ -572,6 +583,7 @@
 				A38E96F41F55703D00AE3D66 /* LaunchScreenViewController.swift in Sources */,
 				3D8916DB1F7A17C00007EC7E /* ReservationViewController.swift in Sources */,
 				3D0A4C091F7A8F0A00D6D73D /* Extension+AutoLayout.swift in Sources */,
+				3DC7E03F1F907B8100AB136F /* ViewCalendarTest.swift in Sources */,
 				3DBE19A51F7A317100ADACD3 /* CreateReservation.swift in Sources */,
 				3D42C2CB1F6B6F9200EBD674 /* CongestionExtension.swift in Sources */,
 				A34FC10A1F0CC8AE006BFA81 /* ChangePassViewController.swift in Sources */,
