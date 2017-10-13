@@ -512,7 +512,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "skills"     : "\(globalUserId.skills)",
             "origin"      : "timeline"
         ]
-        print(parameters)
+        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")

@@ -98,7 +98,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     func getNotification(){
         let config = SYSTEM_CONFIG()
         let firID = config.getSYS_VAL("FirebaseID") as! String
-//        var first: Bool = false
         if currentKey == nil {
             let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryLimitedToLast(10)
             
@@ -148,7 +147,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             if let result = snapshot.value as? NSDictionary {
                                 result.setValue(read, forKey: "read")
                                 result.setValue(s.key, forKey: "key")
-                                self.arrayData.insert(result, atIndex: 0)
+                                self.arrayData.insert(result, atIndex: index)
                                 self.backupData.append(result)
                                 
                                 self.tblView.reloadData()

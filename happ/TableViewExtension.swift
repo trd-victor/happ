@@ -23,7 +23,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             "page"        : "\(page)",
             "count"       : "5",
         ]
-        print(parameters)
+        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")

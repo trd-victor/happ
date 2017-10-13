@@ -730,15 +730,15 @@ class NotifCell: UITableViewCell {
         lblMessage.translatesAutoresizingMaskIntoConstraints = false
         lblMessage.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 5).active = true
         lblMessage.leftAnchor.constraintEqualToAnchor(self.notifPhoto.rightAnchor, constant: 5).active = true
-        lblMessage.widthAnchor.constraintLessThanOrEqualToAnchor(self.widthAnchor, constant: -50).active = true
+        lblMessage.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -52).active = true
         lblMessage.lineBreakMode = .ByWordWrapping
         lblMessage.numberOfLines = 0
         lblMessage.sizeToFit()
         
         lblDate.translatesAutoresizingMaskIntoConstraints = false
-        lblDate.leftAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -100).active = true
+        lblDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: 20).active = true
         lblDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 50).active = true
-        lblDate.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
+        lblDate.widthAnchor.constraintEqualToConstant(130).active = true
         lblDate.sizeToFit()
     }
     
