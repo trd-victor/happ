@@ -8,14 +8,17 @@
 
 import UIKit
 import Firebase
-
+import ReachabilitySwift
 
 class MenuViewController: UITabBarController {
 
     @IBOutlet var menuTabBar: UITabBar!
+     var reachability: Reachability!
+    var connectionMessage = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.addSubview(connectionMessage)
         //load config
         self.configLoad()
         
@@ -25,10 +28,61 @@ class MenuViewController: UITabBarController {
         self.badgeObserver()
         preferredStatusBarStyle()
         
+        autoLayout()
     }
     
+    func autoLayout() {
+        let config = SYSTEM_CONFIG()
+        
+        self.connectionMessage.translatesAutoresizingMaskIntoConstraints = false
+        self.connectionMessage.bottomAnchor.constraintEqualToAnchor(self.menuTabBar.topAnchor).active = true
+        self.connectionMessage.leftAnchor.constraintEqualToAnchor(self.menuTabBar.leftAnchor).active = true
+        self.connectionMessage.widthAnchor.constraintEqualToAnchor(self.menuTabBar.widthAnchor).active = true
+        self.connectionMessage.heightAnchor.constraintEqualToConstant(30).active = true
+        self.connectionMessage.backgroundColor = UIColor.redColor()
+        self.connectionMessage.hidden = true
+        self.connectionMessage.textAlignment = .Center
+        self.connectionMessage.textColor = UIColor.whiteColor()
+        self.connectionMessage.text = config.translate("mess_no_net_connection")
+    }
+   
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        do {
+            reachability = try Reachability.reachabilityForInternetConnection()
+        } catch {
+            print("Unable to create Reachability")
+            return
+        }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self,
+            selector: "reachabilityChanged:",
+            name: ReachabilityChangedNotification,
+            object: reachability)
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("This is not working.")
+            return
+        }
+        
+    }
+    
+    func reachabilityChanged(note: NSNotification) {
+        
+        let reachability = note.object as! Reachability
+        
+        if reachability.isReachable() {
+            if reachability.isReachableViaWiFi() {
+                self.connectionMessage.hidden = true
+            } else {
+                self.connectionMessage.hidden = true
+            }
+        } else {
+            self.connectionMessage.hidden = false
+        }
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

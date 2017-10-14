@@ -136,17 +136,22 @@ class LaunchScreenViewController: UIViewController {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         
         if let firID = FIRAuth.auth()?.currentUser?.uid {
-            globalUserId.FirID = firID
             let config = SYSTEM_CONFIG()
-            globalUserId.userID = config.getSYS_VAL("userID") as! String
-            config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
-            
-            if let token = FIRInstanceID.instanceID().token() {
-                FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
-            }
-            
-            let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
-            self.presentViewController(userTimeLineController, animated:true, completion:nil)
+            if let userid = config.getSYS_VAL("userID") as? String {
+                globalUserId.FirID = firID
+                globalUserId.userID = userid
+                config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+                
+                if let token = FIRInstanceID.instanceID().token() {
+                    FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
+                }
+                
+                let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+                self.presentViewController(userTimeLineController, animated:true, completion:nil)
+            }else{
+                let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+                self.presentViewController(mainViewController, animated:false, completion:nil)
+            }            
         }else {
             let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
             self.presentViewController(mainViewController, animated:false, completion:nil)
