@@ -97,9 +97,14 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         tableView.showsHorizontalScrollIndicator = false
 
         autoLayout()
+
     }
 
     func prepareCalendarData(){
+        cellData.removeAll()
+        month.removeAll()
+        year.removeAll()
+
         let date = NSDate()
         let calendar = NSCalendar.currentCalendar()
         let components = calendar.components([.Day , .Month , .Year], fromDate: date)
@@ -345,7 +350,7 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
             let tmpArr = ["January","February","March","April","May","June","July","August","September","October","November","December"]
             return "\(tmpArr[month - 1]) \(year)"
         }else{
-            return "\(month)年\(year)月"
+            return "\(year)年\(month)月"
         }
     }
 
@@ -459,8 +464,8 @@ class CalendarTitle: UITableViewCell {
 
 class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
 
-    var year:Int = 2017
-    var month:Int = 10
+    var year:Int = 0
+    var month:Int = 0
 
     let calendarDate: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -504,6 +509,12 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
         calendarDate.scrollEnabled = false
 
         calendarCurrent = "\(calendarYear)-\(calendarMonth)-\(calendarDay)"
+        if month == 0 && year == 0 {
+            month = calendarMonth
+            year = calendarYear
+        }
+
+        configCalendar(month, year: year)
 
         configCalendar(month, year: year)
 
@@ -525,7 +536,20 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
         calendarDate.delegate = self
         calendarDate.dataSource = self
 
-        let layoutwidth = (self.frame.width + 20) / 7
+        var layoutwidth:CGFloat = 0.0
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8 where value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        if identifier.containsString("iPad") || identifier.containsString("iPad") || identifier.containsString("x86_64") {
+            layoutwidth = self.frame.width / 7
+        }else{
+            layoutwidth = (self.frame.width + 20) / 7
+        }
+
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -572,6 +596,7 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
                         cell.labelIndicator.hidden = false
                 }
             }else{
+                cell.labelIndicator.hidden = true
                 cell.dateLabel.font = UIFont.boldSystemFontOfSize(16)
                 cell.dateLabel.textColor = UIColor.blackColor()
             }
