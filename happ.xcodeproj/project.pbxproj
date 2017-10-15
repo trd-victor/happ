@@ -11,15 +11,11 @@
 		3D0A4C091F7A8F0A00D6D73D /* Extension+AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C081F7A8F0A00D6D73D /* Extension+AutoLayout.swift */; };
 		3D0A4C0B1F7A9A0000D6D73D /* Extension+Override.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C0A1F7A9A0000D6D73D /* Extension+Override.swift */; };
 		3D0A4C0D1F7A9A7900D6D73D /* Extension+CR+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C0C1F7A9A7900D6D73D /* Extension+CR+Controller.swift */; };
-		3D0A4C0F1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C0E1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift */; };
-		3D0A4C111F7B129400D6D73D /* Extension+VR+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C101F7B129400D6D73D /* Extension+VR+CollectionView.swift */; };
 		3D26FEE61F8B7E9F00283095 /* CreateTimlineSkillSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D26FEE51F8B7E9F00283095 /* CreateTimlineSkillSelection.swift */; };
 		3D2D6BE51F7BAE5200F05BE6 /* NavigationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */; };
 		3D42C2CB1F6B6F9200EBD674 /* CongestionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D42C2CA1F6B6F9200EBD674 /* CongestionExtension.swift */; };
 		3D4B3B211F80BC8400DE89A0 /* pickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B3B201F80BC8400DE89A0 /* pickerController.swift */; };
 		3D544EF71F68E6370055019A /* TimelineDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D544EF61F68E6370055019A /* TimelineDetail.swift */; };
-		3D55DC541F8B29AB007670AE /* ExtensionViewReservationLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D55DC531F8B29AB007670AE /* ExtensionViewReservationLayout.swift */; };
-		3D55DC561F8B29E5007670AE /* pickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D55DC551F8B29E5007670AE /* pickerViewController.swift */; };
 		3D7AA5B11F63704F00E16CAC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B01F63704F00E16CAC /* Extensions.swift */; };
 		3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */; };
 		3D7AA5B71F653E1C00E16CAC /* ExtensionTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */; };
@@ -86,15 +82,11 @@
 		3D0A4C081F7A8F0A00D6D73D /* Extension+AutoLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+AutoLayout.swift"; sourceTree = "<group>"; };
 		3D0A4C0A1F7A9A0000D6D73D /* Extension+Override.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+Override.swift"; sourceTree = "<group>"; };
 		3D0A4C0C1F7A9A7900D6D73D /* Extension+CR+Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+CR+Controller.swift"; sourceTree = "<group>"; };
-		3D0A4C0E1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+VR+CustomCell.swift"; sourceTree = "<group>"; };
-		3D0A4C101F7B129400D6D73D /* Extension+VR+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+VR+CollectionView.swift"; sourceTree = "<group>"; };
 		3D26FEE51F8B7E9F00283095 /* CreateTimlineSkillSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateTimlineSkillSelection.swift; sourceTree = "<group>"; };
 		3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NavigationMessage.swift; path = ../NavigationMessage.swift; sourceTree = "<group>"; };
 		3D42C2CA1F6B6F9200EBD674 /* CongestionExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CongestionExtension.swift; sourceTree = "<group>"; };
 		3D4B3B201F80BC8400DE89A0 /* pickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerController.swift; sourceTree = "<group>"; };
 		3D544EF61F68E6370055019A /* TimelineDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineDetail.swift; sourceTree = "<group>"; };
-		3D55DC531F8B29AB007670AE /* ExtensionViewReservationLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionViewReservationLayout.swift; sourceTree = "<group>"; };
-		3D55DC551F8B29E5007670AE /* pickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerViewController.swift; sourceTree = "<group>"; };
 		3D7AA5B01F63704F00E16CAC /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
 		3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionTimeline.swift; sourceTree = "<group>"; };
@@ -213,10 +205,6 @@
 			isa = PBXGroup;
 			children = (
 				3DBE19A61F7A318B00ADACD3 /* ViewReservation.swift */,
-				3D0A4C0E1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift */,
-				3D0A4C101F7B129400D6D73D /* Extension+VR+CollectionView.swift */,
-				3D55DC531F8B29AB007670AE /* ExtensionViewReservationLayout.swift */,
-				3D55DC551F8B29E5007670AE /* pickerViewController.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -544,7 +532,6 @@
 				A30752391F37701600CB9CE8 /* MenuViewController.swift in Sources */,
 				A39EC1EE1F6BC04E00D9126D /* NotifController.swift in Sources */,
 				A302AA5C1F27007400D8FBA8 /* CustomCell.swift in Sources */,
-				3D0A4C0F1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift in Sources */,
 				A33893781F31A60D0094F983 /* FirstLaunchLanguage.swift in Sources */,
 				A38C2AB71F8B1A5C001BB58E /* SelectSkillViewController.swift in Sources */,
 				A366EB841F2996EF000C574C /* TransitionDown.swift in Sources */,
@@ -553,7 +540,6 @@
 				A34FC1081F0CA6F1006BFA81 /* AccountViewController.swift in Sources */,
 				3D8916DD1F7A17EC0007EC7E /* CalendarCustomCell.swift in Sources */,
 				A31CEAA51F2750AE00F386FC /* ChangeLanguageViewController.swift in Sources */,
-				3D55DC541F8B29AB007670AE /* ExtensionViewReservationLayout.swift in Sources */,
 				A34A509B1F307BFC00BAD1E2 /* setParam.swift in Sources */,
 				A3E124B01F40BDDA0053B2CC /* searchdetails.swift in Sources */,
 				3D2D6BE51F7BAE5200F05BE6 /* NavigationMessage.swift in Sources */,
@@ -566,7 +552,6 @@
 				3DCBCD911F6F88C10010AE6C /* SearchController.swift in Sources */,
 				3DBE19A71F7A318B00ADACD3 /* ViewReservation.swift in Sources */,
 				3DD40F801F70F58600968896 /* UserProfileExtension.swift in Sources */,
-				3D55DC561F8B29E5007670AE /* pickerViewController.swift in Sources */,
 				A3F378C41F500D8F003FD98D /* ViewLibViewController.swift in Sources */,
 				A31CEA9F1F27498600F386FC /* ConfigurationViewController.swift in Sources */,
 				3DCFDECC1F5D539400E50EC0 /* CreatePost+hanlder.swift in Sources */,
@@ -582,7 +567,6 @@
 				A31CEAA11F274F9900F386FC /* MailChangeViewController.swift in Sources */,
 				A339E7E71F2AE0B500FDD907 /* TrasitionLeft.swift in Sources */,
 				A366EB801F297A95000C574C /* Transitions.swift in Sources */,
-				3D0A4C111F7B129400D6D73D /* Extension+VR+CollectionView.swift in Sources */,
 				3D0A4C0D1F7A9A7900D6D73D /* Extension+CR+Controller.swift in Sources */,
 				3DD40F7E1F70F57B00968896 /* UserProfileController.swift in Sources */,
 				A3F872E11F1D4927004C4BA5 /* RegistController.swift in Sources */,
