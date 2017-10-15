@@ -54,7 +54,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        getReserved()
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("openReservation:")), name: "openReservation", object: nil)
 
@@ -84,8 +83,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         viewDaysoftheWeeks.addSubview(lblSat)
         viewDaysoftheWeeks.addSubview(lblSun)
 
-        prepareCalendarData()
-
         tableView.registerClass(CalendarTableCell.self, forCellReuseIdentifier: "CalendarDate")
         tableView.registerClass(CalendarTitle.self, forCellReuseIdentifier: "CalendarTitle")
 
@@ -96,9 +93,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         tableView.allowsSelection = false
         tableView.showsVerticalScrollIndicator = false
         tableView.showsHorizontalScrollIndicator = false
-
-        let indexPath = NSIndexPath(forRow: 2, inSection: 0)
-        tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: false)
 
         autoLayout()
     }
@@ -132,6 +126,11 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
             month.append("\(calendarMonth)")
             year.append("\(calendarYear)")
             year.append("\(calendarYear)")
+            dispatch_async(dispatch_get_main_queue()){
+                self.tableView.reloadData()
+                let indexPath = NSIndexPath(forRow: 2, inSection: 0)
+                self.tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: false)
+            }
         }
 
     }
@@ -146,7 +145,8 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
 
-        tableView.reloadData()
+        getReserved()
+
 
         let config = SYSTEM_CONFIG()
         lang = config.getSYS_VAL("AppLanguage") as! String
@@ -268,8 +268,10 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         default:
             let cell = tableView.dequeueReusableCellWithIdentifier("CalendarDate", forIndexPath: indexPath) as! CalendarTableCell
 
-            cell.month = month[indexPath.row]
-            cell.year = year[indexPath.row]
+            if month.indices.contains(indexPath.row) && year.indices.contains(indexPath.row) {
+                cell.month = Int(month[indexPath.row])!
+                cell.year = Int(year[indexPath.row])!
+            }
 
             return cell
         }
@@ -380,6 +382,9 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
                             }
                         }
                     }
+                    dispatch_async(dispatch_get_main_queue()){
+                        self.prepareCalendarData()
+                    }
                 } catch {
                     print(error)
                 }
@@ -450,8 +455,8 @@ class CalendarTitle: UITableViewCell {
 
 class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
 
-    var year = String()
-    var month = String()
+    var year:Int = 2017
+    var month:Int = 10
 
     let calendarDate: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -492,11 +497,11 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
 
         calendarDate.registerClass(CalendarDateCell.self, forCellWithReuseIdentifier: "Calendar")
 
+        calendarDate.scrollEnabled = false
+
         calendarCurrent = "\(calendarYear)-\(calendarMonth)-\(calendarDay)"
 
-        if Int(month)! != nil && Int(year)! != nil {
-            configCalendar(Int(month)!, year: Int(year)!)
-        }
+        configCalendar(month, year: year)
 
         calendarDate.reloadData()
     }
@@ -551,19 +556,16 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
                 cell.dateLabel.textColor = UIColor.blackColor()
                 cell.dateLabel.font = UIFont.systemFontOfSize(16)
                 cell.labelIndicator.hidden = true
-                dispatch_async(dispatch_get_main_queue()){
                     if Reservation.reserved.contains("\(date2)") {
                         cell.labelIndicator.hidden = false
                     }
-                }
+
             }else if checkDate(calendarCurrent, string2: date2) == "LessThan" {
                 cell.dateLabel.textColor = UIColor.grayColor()
                 cell.dateLabel.font = UIFont.systemFontOfSize(16)
                 cell.labelIndicator.hidden = true
-                dispatch_async(dispatch_get_main_queue()){
                     if Reservation.reserved.contains("\(date2)") {
                         cell.labelIndicator.hidden = false
-                    }
                 }
             }else{
                 cell.dateLabel.font = UIFont.boldSystemFontOfSize(16)

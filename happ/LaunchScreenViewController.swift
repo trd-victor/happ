@@ -159,7 +159,7 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(6.0) {
+        self.delay(8.0) {
             self.activityIndicator.stopAnimating()
             dispatch_async(dispatch_get_main_queue()){
                 self.dismissViewControllerAnimated(false, completion: nil)
