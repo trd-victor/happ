@@ -58,6 +58,7 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("openReservation:")), name: "openReservation", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadCalendar:")), name: "reloadCalendar", object: nil)
 
         let date = NSDate()
         let calendar = NSCalendar.currentCalendar()
@@ -153,7 +154,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewWillAppear(animated)
 
         getReserved()
-
 
         let config = SYSTEM_CONFIG()
         lang = config.getSYS_VAL("AppLanguage") as! String
@@ -255,6 +255,10 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
             let vc = storyBoard.instantiateViewControllerWithIdentifier("ViewReservation") as! ViewReservation
             self.presentViewController(vc, animated: true, completion: nil)
         }
+    }
+
+    func reloadCalendar(notification: NSNotification){
+        getReserved()
     }
 
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -359,6 +363,8 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
     let baseUrl: NSURL = NSURL(string: "https://happ.biz/wp-admin/admin-ajax.php")!
     var reservedDate = [String]()
     func getReserved(){
+        Reservation.reserved.removeAll()
+
         let parameters = [
             "sercret"          : "jo8nefamehisd",
             "action"           : "api",
@@ -544,6 +550,7 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
             guard let value = element.value as? Int8 where value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
+        
         if identifier.containsString("iPad") || identifier.containsString("iPad") || identifier.containsString("x86_64") {
             layoutwidth = self.frame.width / 7
         }else{
@@ -574,29 +581,25 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
 
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Calendar", forIndexPath: indexPath) as! CalendarDateCell
+        cell.labelIndicator.hidden = true
         if dayString[indexPath.row] != "" {
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-d"
             let date2 = "\(yearString[indexPath.row])-\(monthString[indexPath.row])-\(dayString[indexPath.row])"
-
             if checkDate(calendarCurrent, string2: date2) == "GreaterThan" {
                 calendarDates[indexPath.row] = date2
                 cell.dateLabel.textColor = UIColor.blackColor()
                 cell.dateLabel.font = UIFont.systemFontOfSize(16)
-                cell.labelIndicator.hidden = true
-                    if Reservation.reserved.contains("\(date2)") {
+                if Reservation.reserved.contains("\(date2)") {
                         cell.labelIndicator.hidden = false
-                    }
-
+                }
             }else if checkDate(calendarCurrent, string2: date2) == "LessThan" {
                 cell.dateLabel.textColor = UIColor.grayColor()
                 cell.dateLabel.font = UIFont.systemFontOfSize(16)
-                cell.labelIndicator.hidden = true
                     if Reservation.reserved.contains("\(date2)") {
                         cell.labelIndicator.hidden = false
                 }
             }else{
-                cell.labelIndicator.hidden = true
                 cell.dateLabel.font = UIFont.boldSystemFontOfSize(16)
                 cell.dateLabel.textColor = UIColor.blackColor()
             }

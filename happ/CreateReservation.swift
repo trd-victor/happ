@@ -256,6 +256,7 @@ class CreateReservation: UIViewController {
     var endTimeConstraint: NSLayoutConstraint = NSLayoutConstraint()
     
     @IBAction func navBar(sender: AnyObject) {
+        NSNotificationCenter.defaultCenter().postNotificationName("reloadCalendar", object: nil, userInfo: nil)
         self.dismissViewControllerAnimated(true, completion: nil)
     }
      
