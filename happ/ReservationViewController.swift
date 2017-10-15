@@ -398,6 +398,7 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
                         }
                     }
                     dispatch_async(dispatch_get_main_queue()){
+                        print(Reservation.reserved)
                         self.prepareCalendarData()
                     }
                 } catch {
@@ -585,7 +586,9 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
         if dayString[indexPath.row] != "" {
             let dateFormatter = NSDateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-d"
-            let date2 = "\(yearString[indexPath.row])-\(monthString[indexPath.row])-\(dayString[indexPath.row])"
+            let monthStr = String(format: "%02d", Int(monthString[indexPath.row])!)
+            let dayStr = String(format: "%02d", Int(dayString[indexPath.row])!)
+            let date2 = "\(yearString[indexPath.row])-\(monthStr)-\(dayStr)"
             if checkDate(calendarCurrent, string2: date2) == "GreaterThan" {
                 calendarDates[indexPath.row] = date2
                 cell.dateLabel.textColor = UIColor.blackColor()
