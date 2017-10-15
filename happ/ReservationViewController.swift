@@ -493,7 +493,10 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
         calendarDate.registerClass(CalendarDateCell.self, forCellWithReuseIdentifier: "Calendar")
 
         calendarCurrent = "\(calendarYear)-\(calendarMonth)-\(calendarDay)"
-        configCalendar(Int(month)!, year: Int(year)!)
+
+        if Int(month)! != nil && Int(year)! != nil {
+            configCalendar(Int(month)!, year: Int(year)!)
+        }
 
         calendarDate.reloadData()
     }
