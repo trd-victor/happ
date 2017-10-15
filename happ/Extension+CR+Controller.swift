@@ -230,6 +230,7 @@ extension CreateReservation {
             UIAlertAction in
             self.viewLoading.hidden = true
             self.activityLoading.stopAnimating()
+            NSNotificationCenter.defaultCenter().postNotificationName("reloadCalendar", object: nil, userInfo: nil)
             if !error {
                 let presentingViewController = self.presentingViewController
                 self.dismissViewControllerAnimated(false, completion: {

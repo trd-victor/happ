@@ -58,9 +58,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("openReservation:")), name: "openReservation", object: nil)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("reloadCalendar:")), name: "reloadCalendar", object: nil)
-
-
         let date = NSDate()
         let calendar = NSCalendar.currentCalendar()
         let components = calendar.components([.Day , .Month , .Year], fromDate: date)
@@ -104,11 +101,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: false)
 
         autoLayout()
-    }
-
-    func reloadCalendar(notification: NSNotification){
-        getReserved()
-        prepareCalendarData()
     }
 
     func prepareCalendarData(){
@@ -388,9 +380,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
                             }
                         }
                     }
-                    dispatch_async(dispatch_get_main_queue()){
-                        self.tableView.reloadData()
-                    }
                 } catch {
                     print(error)
                 }
@@ -540,7 +529,6 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
         calendarDate.centerXAnchor.constraintEqualToAnchor(self.centerXAnchor).active = true
         calendarDate.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
         calendarDate.heightAnchor.constraintEqualToAnchor(self.heightAnchor).active = true
-
     }
 
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -559,21 +547,19 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
                 calendarDates[indexPath.row] = date2
                 cell.dateLabel.textColor = UIColor.blackColor()
                 cell.dateLabel.font = UIFont.systemFontOfSize(16)
+                cell.labelIndicator.hidden = true
                 dispatch_async(dispatch_get_main_queue()){
                     if Reservation.reserved.contains("\(date2)") {
                         cell.labelIndicator.hidden = false
-                    }else{
-                        cell.labelIndicator.hidden = true
                     }
                 }
             }else if checkDate(calendarCurrent, string2: date2) == "LessThan" {
                 cell.dateLabel.textColor = UIColor.grayColor()
                 cell.dateLabel.font = UIFont.systemFontOfSize(16)
+                cell.labelIndicator.hidden = true
                 dispatch_async(dispatch_get_main_queue()){
                     if Reservation.reserved.contains("\(date2)") {
                         cell.labelIndicator.hidden = false
-                    }else{
-                        cell.labelIndicator.hidden = true
                     }
                 }
             }else{
