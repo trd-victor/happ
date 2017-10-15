@@ -19,6 +19,8 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var viewDaysoftheWeeks: UIView!
 
+    @IBOutlet var reservation: UIBarButtonItem!
+
     let lblMon: UILabel = UILabel()
     let lblTue: UILabel = UILabel()
     let lblWed: UILabel = UILabel()
@@ -165,6 +167,8 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         lblSat.textAlignment = .Center
         lblSun.text = (lang == "en") ? "Sun" : "土"
         lblSun.textAlignment = .Center
+
+        reservation.title = config.translate("title_reserved")
 
     }
 

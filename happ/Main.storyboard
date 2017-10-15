@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="FDg-6c-3EA">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="FDg-6c-3EA">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
@@ -1523,7 +1523,7 @@
                                 </textAttributes>
                                 <items>
                                     <navigationItem title="Room Reservation" id="7if-kY-typ">
-                                        <barButtonItem key="rightBarButtonItem" image="reservation" id="cDb-Nb-2am">
+                                        <barButtonItem key="rightBarButtonItem" id="cDb-Nb-2am">
                                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <connections>
                                                 <action selector="viewReservation:" destination="QjW-QP-TU2" id="soR-Cm-eMn"/>
@@ -1560,6 +1560,7 @@
                     <connections>
                         <outlet property="mainView" destination="SZc-tK-Iby" id="7lq-KQ-Kov"/>
                         <outlet property="navBar" destination="3k6-jh-3ce" id="cdB-Yv-fcM"/>
+                        <outlet property="reservation" destination="cDb-Nb-2am" id="DyD-eN-v50"/>
                         <outlet property="tableView" destination="H2M-3l-7tL" id="M6r-Rf-r17"/>
                         <outlet property="viewDaysoftheWeeks" destination="JD6-G6-2UI" id="T29-jT-J3U"/>
                         <segue destination="dBQ-OE-aFc" kind="custom" customClass="TrasitionLeft" id="ihb-UZ-0yD"/>
@@ -2180,7 +2181,6 @@
         <image name="notificationIcon" width="25" height="25"/>
         <image name="page1" width="37" height="16"/>
         <image name="picture" width="32" height="27"/>
-        <image name="reservation" width="25" height="25"/>
         <image name="reservationIcon" width="25" height="25"/>
         <image name="right-icon" width="29" height="29"/>
         <image name="rushIcon" width="25" height="25"/>
