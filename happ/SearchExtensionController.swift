@@ -12,7 +12,9 @@ import Firebase
 extension SearchController {
 
     func getSearchUser(value: String) {
+        self.userData = []
         user_id.removeAll()
+        self.tblViewSearch.reloadData()
         if task2 != nil {
             task2.cancel()
         }
