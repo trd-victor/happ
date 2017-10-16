@@ -474,7 +474,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
 
     func generateData(datas: NSArray){
-
+//        print(datas)
         for room in roomData {
             var tmpIndicator = [String]()
             var tmpPID = [String]()
@@ -493,10 +493,11 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
                             let dateArr2 = end.characters.split{$0 == " "}.map(String.init)
                             let timeArr2 = dateArr2[1].characters.split{$0 == ":"}.map(String.init)
                             if tmpDate.contains(dateArr[0]) {
-                                tmpIndicator.append("DataCell")
-                                tmpPID.append(pid)
-                                tmpDate.append(String(dateArr[0]))
-                                tmpTime.append("\(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])")
+                                let index = tmpDate.indexOf(dateArr[0])!
+                                tmpIndicator.insert("DataCell", atIndex: index + 2)
+                                tmpPID.insert(pid, atIndex: index + 2)
+                                tmpDate.insert(String(dateArr[0]),atIndex: index + 2)
+                                tmpTime.insert("\(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])", atIndex: index + 2 )
                             }else{
                                 tmpIndicator.append("SubtitleCell")
                                 tmpIndicator.append("DataCell")

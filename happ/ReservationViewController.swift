@@ -398,7 +398,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
                         }
                     }
                     dispatch_async(dispatch_get_main_queue()){
-                        print(Reservation.reserved)
                         self.prepareCalendarData()
                     }
                 } catch {
@@ -605,6 +604,9 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
             }else{
                 cell.dateLabel.font = UIFont.boldSystemFontOfSize(16)
                 cell.dateLabel.textColor = UIColor.blackColor()
+                if Reservation.reserved.contains("\(date2)") {
+                    cell.labelIndicator.hidden = false
+                }
             }
         }
         cell.dateLabel.text = dayString[indexPath.row]
