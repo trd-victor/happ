@@ -134,7 +134,7 @@
 		A38E96EF1F5525FE00AE3D66 /* SystemValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemValue.swift; sourceTree = "<group>"; };
 		A38E96F31F55703D00AE3D66 /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
 		A39EC1ED1F6BC04E00D9126D /* NotifController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotifController.swift; sourceTree = "<group>"; };
-		A3A343A11F09F8B500DC55FC /* Happ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Happ.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3A343A11F09F8B500DC55FC /* H.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = H.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3A343A41F09F8B600DC55FC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A3A343A61F09F8B600DC55FC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A3A343AB1F09F8B700DC55FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -273,7 +273,7 @@
 		A3A343A21F09F8B500DC55FC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A3A343A11F09F8B500DC55FC /* Happ.app */,
+				A3A343A11F09F8B500DC55FC /* H.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -374,7 +374,7 @@
 			);
 			name = happ;
 			productName = happ;
-			productReference = A3A343A11F09F8B500DC55FC /* Happ.app */;
+			productReference = A3A343A11F09F8B500DC55FC /* H.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -684,7 +684,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				New_Setting = "";
 				PRODUCT_BUNDLE_IDENTIFIER = happ.jp.net.happ;
-				PRODUCT_NAME = Happ;
+				PRODUCT_NAME = H;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -705,7 +705,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				New_Setting = "";
 				PRODUCT_BUNDLE_IDENTIFIER = happ.jp.net.happ;
-				PRODUCT_NAME = Happ;
+				PRODUCT_NAME = H;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
