@@ -65,7 +65,7 @@ class SYSTEM_CONFIG {
             }
             return ""
         }else{
-            return id
+            return ""
         }
     }
 }

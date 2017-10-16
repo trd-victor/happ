@@ -158,6 +158,7 @@ class CreateTimelineSkillSelection: UIViewController {
             
             if error != nil || data == nil{
                 print("error kay ", error)
+                
                 if self.loadingScreen != nil {
                     UIViewController.removeSpinner(self.loadingScreen)
                     self.loadingScreen = nil
@@ -358,9 +359,11 @@ class CreateTimelineSkillSelection: UIViewController {
             self.activityLoading.startAnimating()
             
             var body = timeline_create_post.content
+            
             if body == config.translate("holder_post_content") {
                 body = " "
             }
+            
             var skills = ""
             for i in 0...(timeline_post_skills.selectedSkills.count - 1){
                 skills += "\(timeline_post_skills.selectedSkills[i]),"
@@ -373,13 +376,12 @@ class CreateTimelineSkillSelection: UIViewController {
                 "d"           : "0",
                 "lang"        : "en",
                 "user_id"     : "\(globalUserId.userID)",
-                "body"        : "\(body)",
+                "body"        : "\(body) ",
                 "skills"      : "\(skills)"
             ]
             
             //save post data
             self.savePost(postTimeline)
-            
         }))
         myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
@@ -454,7 +456,6 @@ class CreateTimelineSkillSelection: UIViewController {
     }
     
     func savePost(parameters: [String: String]?) {
-
         var mess: Bool!
         let config = SYSTEM_CONFIG()
         
@@ -462,7 +463,6 @@ class CreateTimelineSkillSelection: UIViewController {
         let boundary1 = generateBoundaryString()
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
         request1.HTTPMethod = "POST"
-        
         
         request1.HTTPBody = createBodyWithParameters2(parameters, boundary: boundary1)
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){

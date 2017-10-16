@@ -36,6 +36,7 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
         };
 
         const options = {
+            content_available: true,
             collapse_key: valueObject.chatroomId,
             priority: "high"
         };
@@ -60,6 +61,7 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
         data: {
             "title": valueObject.name,
             "body": "Posted on timeline",
+            "skills": valueObject.skills,
             "author_id": valueObject.userId
         },
         notification: {
@@ -70,6 +72,7 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
     };
 
     const options = {
+        content_available: true,
         collapse_key: valueObject.name,
         priority: "high"
     }
@@ -99,6 +102,7 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
     };
 
     const options = {
+        content_available: true,
         collapse_key: valueObject.name,
         priority: "high"
     }
@@ -106,3 +110,179 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
     return admin.messaging().sendToTopic('free-time-push-notification', payload, options);
 
 });
+
+exports.reservation = functions.https.onRequest((req, res) => {
+    if (req.body.body === undefined) {
+        res.status(400).send('No message defined!');
+    } else {
+        // Everything is ok
+        console.log(req.body.body + "token " +req.body.fcmtoken);
+
+        const token = req.body.fcmtoken;
+
+        const payload = {
+            data: {
+                "title": "Reservation",
+                "body": req.body.body,
+                "token": req.body.fcmtoken
+            },
+
+            notification: {
+                title: "Reservation",
+                body: req.body.body,
+                sound: "default"
+            }
+        };
+
+        const options = {
+            content_available: true,
+            priority: "high"
+        }
+
+        return admin.messaging().sendToDevice(token, payload, options);
+
+        res.status(200).end();
+    }    
+});
+
+//news
+exports.news = functions.https.onRequest((req, res) => {
+    if (req.body.firUsers === undefined) {
+        res.status(400).send("Failed to send News");
+    } else {
+        const message = req.body.message
+        const firUsers = req.body.firUsers;
+        const adminFID = req.body.adminFIR;
+        var all_users = firUsers.split(",");
+        var admin_name = req.body.adminName;
+
+        console.log("Success")
+        all_users.forEach(function(id) {
+            var memberDB = admin.database().ref('/chat/members').orderByChild(id).equalTo(true).once("value").then(function(snap){
+                var result = snap.val();
+                var userFID = id.toString();
+                var chatRoom = "";
+                if(result.length != 0) {
+                        var count = 0
+                        snap.forEach(function(childSnapshot){
+                            count++
+                            var value = childSnapshot.val()
+                            var snapKey = childSnapshot.key
+                            if(value[id] && value[adminFID]){
+                                chatRoom = snapKey;
+                            }
+
+                            if(count == snap.numChildren()){
+                                if(chatRoom == ""){
+                                    var obj = {}
+                                    obj[adminFID] = true;
+                                    obj[userFID] = true;
+                                    obj["blocked"] = true;
+                                    admin.database().ref('/chat/members').push(obj).then((snapshot)=> {
+                                        var key = snapshot.key
+                                         console.log("here " +key)
+                                        admin.database().ref('/chat/last-message').child(userFID).child(key).set({
+                                            "chatmateId"   : adminFID,
+                                            "chatroomId"   : key,
+                                            "lastMessage"  : message,
+                                            "name"         : admin_name,
+                                            "photoUrl"     : "",
+                                            "read"         : false,
+                                            "timestamp"    : Date.now()
+                                        });
+
+                                        admin.database().ref('/chat/messages').child(key).push({
+                                            "message"      : message,
+                                            "name"         : admin_name,
+                                            "photoUrl"     : "",
+                                            "timestamp"    : Date.now(),
+                                            "userId"       : adminFID
+                                        });
+                                    })                                   
+                                }else{
+                                    admin.database().ref('/chat/last-message').child(userFID).child(chatRoom).set({
+                                        "chatmateId"   : adminFID,
+                                        "chatroomId"   : chatRoom,
+                                        "lastMessage"  : message,
+                                        "name"         : admin_name,
+                                        "photoUrl"     : "",
+                                        "read"         : false,
+                                        "timestamp"    : Date.now()
+                                    });
+
+                                    admin.database().ref('/chat/messages').child(chatRoom).push({
+                                        "message"      : message,
+                                        "name"         : admin_name,
+                                        "photoUrl"     : "",
+                                        "timestamp"    : Date.now(),
+                                        "userId"       : adminFID
+                                    });
+                                }
+                            }
+                        })
+                }else{
+                    var obj = {}
+                    obj[adminFID] = true;
+                    obj[userFID] = true;
+                    obj["blocked"] = true;
+                    admin.database().ref('/chat/members').push(obj).then((snapshot)=> {
+                        var key = snapshot.key
+                        console.log("here2 " +key)
+                        admin.database().ref('/chat/last-message').child(userFID).child(key).set({
+                            "chatmateId"   : adminFID,
+                            "chatroomId"   : key,
+                            "lastMessage"  : message,
+                            "name"         : admin_name,
+                            "photoUrl"     : "",
+                            "read"         : false,
+                            "timestamp"    : Date.now()
+                        });
+
+                        admin.database().ref('/chat/messages').child(key).push({
+                            "message"      : message,
+                            "name"         : admin_name,
+                            "photoUrl"     : "",
+                            "timestamp"    : Date.now(),
+                            "userId"       : adminFID
+                        });
+                    }) 
+                }
+            })
+        })
+        res.status(200).end();
+    }    
+});
+
+
+// Delete user
+exports.deleteUser = functions.https.onRequest((req, res) => {
+    if (req.body.uid === undefined) {
+        res.status(400).send('No user id defined');
+    } else {
+        // prepare deletion
+        var userId = req.body.uid;
+
+        admin.auth().deleteUser(userId)
+            .then(function() {
+                console.log("Successfully deleted user");
+                deleteUserData(userId);
+
+            })
+            .catch(function(error) {
+                console.log("Error deleting user: ", error);
+            });
+
+        res.status(200).end();
+    }
+});
+
+function deleteUserData(userId) {
+    var database = admin.database();
+
+    console.log("Id to be deleted: " +userId);
+    // Delete account details
+    database.ref('users').child(userId).remove();
+    database.ref('registration-token').child(userId).remove();
+    database.ref('notifications').child('app-notification').child('notification-user').child(userId).remove();
+    
+}

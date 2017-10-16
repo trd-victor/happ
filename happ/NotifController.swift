@@ -107,7 +107,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
                 if snap.childrenCount > 0 {
                     for s in snap.children.allObjects as! [FIRDataSnapshot] {
-                        
                         let read = s.value!["read"] as? Bool
                         
                         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
@@ -462,7 +461,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 for (key, value) in result {
                                     if let valueData = value as? NSDictionary {
                                         if let skills = valueData["skills"] as? String {
-                                            if skills != "" {
+                                            let userKey = key as? String
+                                            if skills != "" && userKey! != firID{
                                                 for c in timeline_post_skills.selectedSkills {
                                                     if skills.containsString(String(c)){
                                                         FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
