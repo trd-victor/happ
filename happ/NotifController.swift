@@ -117,6 +117,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 result.setValue(read, forKey: "read")
                                 result.setValue(s.key, forKey: "key")
                                 self.arrayData.insert(result, atIndex: 0)
+                            }
+                            if self.arrayData.count == snap.children.allObjects.count {
                                 self.tblView.reloadData()
                             }
                         })

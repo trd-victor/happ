@@ -51,11 +51,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
                     UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber + 1
                 }
             }else{
-                self.addLocalNotification(userInfo)
+//                self.addLocalNotification(userInfo)
                 UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber
             }
         }
-        
+            
         completionHandler(UIBackgroundFetchResult.NoData)
     }
     

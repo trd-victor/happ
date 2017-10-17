@@ -147,112 +147,156 @@ exports.reservation = functions.https.onRequest((req, res) => {
 
 //news
 exports.news = functions.https.onRequest((req, res) => {
-    if (req.body.firUsers === undefined) {
+    if (req.body.message === undefined) {
         res.status(400).send("Failed to send News");
-    } else {
+    }if (req.body.firUsers === undefined) {
+        messageAllUser(req);
+    }else {
         const message = req.body.message
-        const firUsers = req.body.firUsers;
         const adminFID = req.body.adminFIR;
+        const admin_name = req.body.adminName;
+
+        const firUsers = req.body.firUsers;
         var all_users = firUsers.split(",");
-        var admin_name = req.body.adminName;
 
-        console.log("Success")
-        all_users.forEach(function(id) {
-            var memberDB = admin.database().ref('/chat/members').orderByChild(id).equalTo(true).once("value").then(function(snap){
-                var result = snap.val();
-                var userFID = id.toString();
-                var chatRoom = "";
-                if(result.length != 0) {
-                        var count = 0
-                        snap.forEach(function(childSnapshot){
-                            count++
-                            var value = childSnapshot.val()
-                            var snapKey = childSnapshot.key
-                            if(value[id] && value[adminFID]){
-                                chatRoom = snapKey;
-                            }
-
-                            if(count == snap.numChildren()){
-                                if(chatRoom == ""){
-                                    var obj = {}
-                                    obj[adminFID] = true;
-                                    obj[userFID] = true;
-                                    obj["blocked"] = true;
-                                    admin.database().ref('/chat/members').push(obj).then((snapshot)=> {
-                                        var key = snapshot.key
-                                         console.log("here " +key)
-                                        admin.database().ref('/chat/last-message').child(userFID).child(key).set({
-                                            "chatmateId"   : adminFID,
-                                            "chatroomId"   : key,
-                                            "lastMessage"  : message,
-                                            "name"         : admin_name,
-                                            "photoUrl"     : "",
-                                            "read"         : false,
-                                            "timestamp"    : Date.now()
-                                        });
-
-                                        admin.database().ref('/chat/messages').child(key).push({
-                                            "message"      : message,
-                                            "name"         : admin_name,
-                                            "photoUrl"     : "",
-                                            "timestamp"    : Date.now(),
-                                            "userId"       : adminFID
-                                        });
-                                    })                                   
-                                }else{
-                                    admin.database().ref('/chat/last-message').child(userFID).child(chatRoom).set({
-                                        "chatmateId"   : adminFID,
-                                        "chatroomId"   : chatRoom,
-                                        "lastMessage"  : message,
-                                        "name"         : admin_name,
-                                        "photoUrl"     : "",
-                                        "read"         : false,
-                                        "timestamp"    : Date.now()
-                                    });
-
-                                    admin.database().ref('/chat/messages').child(chatRoom).push({
-                                        "message"      : message,
-                                        "name"         : admin_name,
-                                        "photoUrl"     : "",
-                                        "timestamp"    : Date.now(),
-                                        "userId"       : adminFID
-                                    });
-                                }
-                            }
-                        })
-                }else{
-                    var obj = {}
-                    obj[adminFID] = true;
-                    obj[userFID] = true;
-                    obj["blocked"] = true;
-                    admin.database().ref('/chat/members').push(obj).then((snapshot)=> {
-                        var key = snapshot.key
-                        console.log("here2 " +key)
-                        admin.database().ref('/chat/last-message').child(userFID).child(key).set({
-                            "chatmateId"   : adminFID,
-                            "chatroomId"   : key,
-                            "lastMessage"  : message,
-                            "name"         : admin_name,
-                            "photoUrl"     : "",
-                            "read"         : false,
-                            "timestamp"    : Date.now()
-                        });
-
-                        admin.database().ref('/chat/messages').child(key).push({
-                            "message"      : message,
-                            "name"         : admin_name,
-                            "photoUrl"     : "",
-                            "timestamp"    : Date.now(),
-                            "userId"       : adminFID
-                        });
-                    }) 
-                }
-            })
+        all_users.forEach(function(fid) {
+            sendMessage(fid, message, adminFID, admin_name)
         })
         res.status(200).end();
     }    
 });
 
+function messageAllUser(req){
+    const message = req.body.message
+    const adminFID = req.body.adminFIR;
+    const admin_name = req.body.adminName;
+
+    admin.database().ref().child("users").once('value').then(function(snap){
+        if(snap.numChildren() > 0){
+            snap.forEach(function(childSnapshot){
+                let fid = childSnapshot.key;
+                sendMessage(fid, message, adminFID, admin_name)
+            })
+        }
+    })
+}
+
+function sendMessage(fid, message, adminFID, admin_name){
+    var memberDB = admin.database().ref('/chat/members').orderByChild(id).equalTo(true).once("value").then(function(snap){
+        var result = snap.val();
+        var userFID = id.toString();
+        var chatRoom = "";
+        if(result.length != 0) {
+                var count = 0
+                snap.forEach(function(childSnapshot){
+                    count++
+                    var value = childSnapshot.val()
+                    var snapKey = childSnapshot.key
+
+                    if(value[id] && value[adminFID]){
+                        chatRoom = snapKey;
+                    }
+
+                    if(count == snap.numChildren()){
+                        if(chatRoom == ""){
+                            var obj = {}
+                            obj[adminFID] = true;
+                            obj[userFID] = true;
+                            obj["blocked"] = true;
+                            admin.database().ref('/chat/members').push(obj).then((snapshot)=> {
+                                var key = snapshot.key
+                                admin.database().ref('/chat/last-message').child(userFID).child(key).set({
+                                    "chatmateId"   : adminFID,
+                                    "chatroomId"   : key,
+                                    "lastMessage"  : message,
+                                    "name"         : admin_name,
+                                    "photoUrl"     : "",
+                                    "read"         : false,
+                                    "timestamp"    : Date.now()
+                                });
+
+                                admin.database().ref('/chat/messages').child(key).push({
+                                    "message"      : message,
+                                    "name"         : admin_name,
+                                    "photoUrl"     : "",
+                                    "timestamp"    : Date.now(),
+                                    "userId"       : adminFID
+                                });
+
+                                admin.database().ref('/chat/message-notif').child(userFID).set({
+                                    "chatmateId"   : adminFID,
+                                    "chatroomId"   : chatRoom,
+                                    "message"      : message,
+                                    "name"         : admin_name,
+                                    "photoUrl"     : ""
+                                });
+                            })                                   
+                        }else{
+                            admin.database().ref('/chat/last-message').child(userFID).child(chatRoom).set({
+                                "chatmateId"   : adminFID,
+                                "chatroomId"   : chatRoom,
+                                "lastMessage"  : message,
+                                "name"         : admin_name,
+                                "photoUrl"     : "",
+                                "read"         : false,
+                                "timestamp"    : Date.now()
+                            });
+
+                            admin.database().ref('/chat/messages').child(chatRoom).push({
+                                "message"      : message,
+                                "name"         : admin_name,
+                                "photoUrl"     : "",
+                                "timestamp"    : Date.now(),
+                                "userId"       : adminFID
+                            });
+
+                            admin.database().ref('/chat/message-notif').child(userFID).set({
+                                "chatmateId"   : adminFID,
+                                "chatroomId"   : chatRoom,
+                                "message"      : message,
+                                "name"         : admin_name,
+                                "photoUrl"     : ""
+                            });
+                        }
+                    }
+                })
+        }else{
+            var obj = {}
+            obj[adminFID] = true;
+            obj[userFID] = true;
+            obj["blocked"] = true;
+            admin.database().ref('/chat/members').push(obj).then((snapshot)=> {
+                var key = snapshot.key
+
+                admin.database().ref('/chat/last-message').child(userFID).child(key).set({
+                    "chatmateId"   : adminFID,
+                    "chatroomId"   : key,
+                    "lastMessage"  : message,
+                    "name"         : admin_name,
+                    "photoUrl"     : "",
+                    "read"         : false,
+                    "timestamp"    : Date.now()
+                });
+
+                admin.database().ref('/chat/messages').child(key).push({
+                    "message"      : message,
+                    "name"         : admin_name,
+                    "photoUrl"     : "",
+                    "timestamp"    : Date.now(),
+                    "userId"       : adminFID
+                });
+
+                admin.database().ref('/chat/message-notif').child(userFID).set({
+                    "chatmateId"   : adminFID,
+                    "chatroomId"   : chatRoom,
+                    "message"      : message,
+                    "name"         : admin_name,
+                    "photoUrl"     : ""
+                });
+            }) 
+        }
+    })
+}
 
 // Delete user
 exports.deleteUser = functions.https.onRequest((req, res) => {

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="FDg-6c-3EA">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="FDg-6c-3EA">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
@@ -8,7 +8,7 @@
         <!--First Launch Language-->
         <scene sceneID="nqK-hs-BZq">
             <objects>
-                <viewController storyboardIdentifier="ChooseLanguage" id="mKb-Jj-Ppc" customClass="FirstLaunchLanguage" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChooseLanguage" id="mKb-Jj-Ppc" customClass="FirstLaunchLanguage" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="YzK-jw-Lf8">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -87,7 +87,7 @@
         <!--Search Controller-->
         <scene sceneID="eTe-s0-Pna">
             <objects>
-                <viewController storyboardIdentifier="SearchUserController" id="IiA-8u-i3I" customClass="SearchController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SearchUserController" id="IiA-8u-i3I" customClass="SearchController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HwW-zc-Gtz">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -172,7 +172,7 @@
         <!--Launch Screen View Controller-->
         <scene sceneID="aZm-Ap-z0B">
             <objects>
-                <viewController id="FDg-6c-3EA" customClass="LaunchScreenViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="FDg-6c-3EA" customClass="LaunchScreenViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="XNF-6h-YNi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -199,7 +199,7 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController storyboardIdentifier="MainBoard" id="BYZ-38-t0r" customClass="ViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainBoard" id="BYZ-38-t0r" customClass="ViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="500" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -297,7 +297,7 @@
         <!--Signup View Controller-->
         <scene sceneID="IpD-YZ-FYz">
             <objects>
-                <viewController storyboardIdentifier="LoginBoard" id="7Ym-L0-Qw6" customClass="SignupViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginBoard" id="7Ym-L0-Qw6" customClass="SignupViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Xdc-3h-fv5">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -414,7 +414,7 @@
         <!--Change Pass View Controller-->
         <scene sceneID="2HQ-OL-3mS">
             <objects>
-                <viewController id="BLD-QW-CAN" customClass="ChangePassViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BLD-QW-CAN" customClass="ChangePassViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="nUH-rw-C69">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -500,7 +500,7 @@
         <!--Mail Change View Controller-->
         <scene sceneID="twx-Jn-LVF">
             <objects>
-                <viewController storyboardIdentifier="MailChange" id="2AT-LM-HTz" customClass="MailChangeViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MailChange" id="2AT-LM-HTz" customClass="MailChangeViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="u1J-yC-mr8">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -588,7 +588,7 @@
         <!--Change New Password View Controller-->
         <scene sceneID="eXL-O1-AtS">
             <objects>
-                <viewController storyboardIdentifier="ChangeNewPassword" id="Tcn-G2-Cfq" customClass="ChangeNewPasswordViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChangeNewPassword" id="Tcn-G2-Cfq" customClass="ChangeNewPasswordViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="e3E-rb-AqA">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -725,7 +725,7 @@
         <!--Current Settings View Controller-->
         <scene sceneID="elA-8r-wdG">
             <objects>
-                <viewController storyboardIdentifier="CurrentSettings" id="V7P-KY-26P" customClass="CurrentSettingsViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CurrentSettings" id="V7P-KY-26P" customClass="CurrentSettingsViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="P6Z-5P-m4l">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -765,7 +765,7 @@
                                     <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="4T4-zJ-38w" kind="custom" identifier="ChangeLangView" customClass="TransitionRight" customModule="Happ" customModuleProvider="target" id="zyd-Hc-EId"/>
+                                    <segue destination="4T4-zJ-38w" kind="custom" identifier="ChangeLangView" customClass="TransitionRight" customModule="H" customModuleProvider="target" id="zyd-Hc-EId"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" id="mYq-7y-8yz">
@@ -810,7 +810,7 @@
         <!--Change Language View Controller-->
         <scene sceneID="qRc-pJ-3SR">
             <objects>
-                <viewController id="4T4-zJ-38w" customClass="ChangeLanguageViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="4T4-zJ-38w" customClass="ChangeLanguageViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="HYf-R9-Cyj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -889,7 +889,7 @@
         <!--Edit Profile View Controller-->
         <scene sceneID="cBa-Dd-WdL">
             <objects>
-                <viewController storyboardIdentifier="EditProfile" id="AFE-Ok-3yh" customClass="EditProfileViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EditProfile" id="AFE-Ok-3yh" customClass="EditProfileViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="opR-zf-cbD">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1012,7 +1012,7 @@
         <!--Configuration-->
         <scene sceneID="QlB-R6-3i6">
             <objects>
-                <viewController storyboardIdentifier="Configuration" id="Fqd-1L-vKV" customClass="ConfigurationViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Configuration" id="Fqd-1L-vKV" customClass="ConfigurationViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="VWf-n7-9KB">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1196,7 +1196,7 @@
         <!--Item-->
         <scene sceneID="5eH-ZD-mHb">
             <objects>
-                <viewController storyboardIdentifier="TimelineDetail" id="gSR-qy-5f3" customClass="TimelineDetail" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TimelineDetail" id="gSR-qy-5f3" customClass="TimelineDetail" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ses-Pg-Gon">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1218,7 +1218,7 @@
         <!--Timeline-->
         <scene sceneID="0ve-g9-4rp">
             <objects>
-                <viewController storyboardIdentifier="UserTimeline" id="dx6-VY-Iwv" customClass="UserTimelineViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UserTimeline" id="dx6-VY-Iwv" customClass="UserTimelineViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="WSX-j1-22Y">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1286,7 +1286,7 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RowCell" rowHeight="360" id="yfa-CB-HsB" customClass="CustomCell" customModule="Happ" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RowCell" rowHeight="360" id="yfa-CB-HsB" customClass="CustomCell" customModule="H" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="320" height="360"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="yfa-CB-HsB" id="Ses-7y-XWK">
@@ -1371,15 +1371,15 @@
         <!--Messages-->
         <scene sceneID="Lgw-6h-FPr">
             <objects>
-                <tableViewController storyboardIdentifier="Messages" id="YfB-Db-28d" customClass="MessageTableViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="Messages" id="YfB-Db-28d" customClass="MessageTableViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="77" sectionHeaderHeight="28" sectionFooterHeight="28" id="yr3-f7-HtK">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="Happ" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="77"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="H" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="92" width="320" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lqd-Oi-WpL" id="3Q3-ls-nLn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="76"/>
@@ -1397,7 +1397,7 @@
                                             <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="mGB-Mg-TYT">
-                                            <rect key="frame" x="73" y="9" width="89" height="21"/>
+                                            <rect key="frame" x="73" y="9" width="142" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <animations/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -1451,7 +1451,7 @@
         <!--User Profile Controller-->
         <scene sceneID="nE7-Ar-IYG">
             <objects>
-                <viewController storyboardIdentifier="UserProfile" id="4zf-eY-eub" customClass="UserProfileController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UserProfile" id="4zf-eY-eub" customClass="UserProfileController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="GxR-cQ-Roq">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1506,7 +1506,7 @@
         <!--Room Reservation-->
         <scene sceneID="BHK-Ba-UOG">
             <objects>
-                <viewController storyboardIdentifier="Reservation" id="QjW-QP-TU2" customClass="ReservationViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Reservation" id="QjW-QP-TU2" customClass="ReservationViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="U85-z9-cI1">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1574,7 +1574,7 @@
         <!--Situation-->
         <scene sceneID="4Hm-uC-bX4">
             <objects>
-                <viewController storyboardIdentifier="Congestion" id="4XE-5Z-DDm" customClass="CongestionViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Congestion" id="4XE-5Z-DDm" customClass="CongestionViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="6Ta-9y-hok">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1590,7 +1590,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gl9-By-nGZ" customClass="UserCollection" customModule="Happ" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gl9-By-nGZ" customClass="UserCollection" customModule="H" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -1619,7 +1619,7 @@
         <!--Menu View Controller-->
         <scene sceneID="C55-A6-18z">
             <objects>
-                <tabBarController storyboardIdentifier="Menu" id="FJA-uw-7aU" customClass="MenuViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="Menu" id="FJA-uw-7aU" customClass="MenuViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" translucent="NO" id="PEM-8e-9Li">
@@ -1712,7 +1712,7 @@
                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </view>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="incomingmessage" id="I0f-J6-pN5" customClass="MessagIncoming" customModule="Happ" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="incomingmessage" id="I0f-J6-pN5" customClass="MessagIncoming" customModule="H" customModuleProvider="target">
                                         <rect key="frame" x="8" y="9" width="304" height="49"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -1762,7 +1762,7 @@
         <!--View Lib View Controller-->
         <scene sceneID="hho-Hq-kpu">
             <objects>
-                <viewController storyboardIdentifier="ChatMessage" id="BYC-fe-J7H" customClass="ViewLibViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatMessage" id="BYC-fe-J7H" customClass="ViewLibViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="38P-N9-6HP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1778,7 +1778,7 @@
         <!--Create Post View Controller-->
         <scene sceneID="fYJ-LI-MEP">
             <objects>
-                <viewController storyboardIdentifier="CreatePostController" id="AZm-Nu-zGn" customClass="CreatePostViewController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CreatePostController" id="AZm-Nu-zGn" customClass="CreatePostViewController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KgR-Ip-rag">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1869,7 +1869,7 @@
         <!--RegistController-->
         <scene sceneID="FcB-gb-ro4">
             <objects>
-                <viewController storyboardIdentifier="RegistController" title="RegistController" id="oiE-AQ-YM2" customClass="RegistController" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RegistController" title="RegistController" id="oiE-AQ-YM2" customClass="RegistController" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Mwg-pK-uxj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="750"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2036,7 +2036,7 @@
         <!--Messages-->
         <scene sceneID="MEG-HG-6vq">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="fHb-3J-ySl" customClass="NavigationMessage" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="fHb-3J-ySl" customClass="NavigationMessage" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Messages" image="messageIcon" id="1Nr-fn-BCl"/>
                     <toolbarItems/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
@@ -2063,7 +2063,7 @@
         <!--View Reservation-->
         <scene sceneID="fag-60-KCT">
             <objects>
-                <viewController storyboardIdentifier="ViewReservation" id="dBQ-OE-aFc" customClass="ViewReservation" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ViewReservation" id="dBQ-OE-aFc" customClass="ViewReservation" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="rwK-jF-Duw">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2119,7 +2119,7 @@
         <!--Create Reservation-->
         <scene sceneID="j3x-tL-dZo">
             <objects>
-                <viewController storyboardIdentifier="CreateReservation" id="UeB-Jq-GqC" customClass="CreateReservation" customModule="Happ" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CreateReservation" id="UeB-Jq-GqC" customClass="CreateReservation" customModule="H" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bXg-XC-erT">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2176,10 +2176,10 @@
     <resources>
         <image name="Image" width="29" height="29"/>
         <image name="camera" width="32" height="27"/>
-        <image name="logo" width="375" height="163"/>
+        <image name="logo" width="214" height="108"/>
         <image name="messageIcon" width="25" height="25"/>
         <image name="notificationIcon" width="25" height="25"/>
-        <image name="page1" width="37" height="16"/>
+        <image name="page1" width="111" height="48"/>
         <image name="picture" width="32" height="27"/>
         <image name="reservationIcon" width="25" height="25"/>
         <image name="right-icon" width="29" height="29"/>
