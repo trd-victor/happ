@@ -373,7 +373,7 @@ class CreateTimelineSkillSelection: UIViewController {
                 "d"           : "0",
                 "lang"        : "en",
                 "user_id"     : "\(globalUserId.userID)",
-                "body"        : "\(body)",
+                "body"        : "\(body) ",
                 "skills"      : "\(skills)"
             ]
             

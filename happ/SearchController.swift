@@ -171,6 +171,10 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             cell.textLabel?.text = ""
         }
         
+        if let h_id = self.userData[indexPath.row]["h_id"] as? String {
+            cell.happId.text = h_id
+        }
+        
         if let skills = self.userData[indexPath.row]["skills"] as? String {
             if skills != "null" {
                 let all_skills = skills.characters.split(",")

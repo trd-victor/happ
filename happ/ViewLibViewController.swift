@@ -108,10 +108,9 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         containerViewBottomAncher?.constant = -keyboardFrame!.height
         collectioView?.constant = -112 + -keyboardFrame!.height
         
-       
-        
         if keyboardDuration != nil {
             UIView.animateWithDuration(keyboardDuration!){
+                self.view.layer.removeAllAnimations()
                 self.view.layoutIfNeeded()
                 
                 if self.messagesData.count > 0 {

@@ -98,12 +98,16 @@ class MessageTableViewController: UITableViewController {
         details.observeEventType(.Value, withBlock: { (snap) in
             self.lastMessages.removeAll()
             if let result = snap.value as? NSDictionary {
+                var count = 0
                 for (_, value) in result {
+                    count++
                     self.lastMessages.append(value as! NSDictionary)
                     self.lastMessages.sortInPlace({(message1, message2) -> Bool in
                         return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
                     })
-                    self.mytableview.reloadData()
+                    if count == result.count {
+                        self.mytableview.reloadData()
+                    }
                 }
             }
         })

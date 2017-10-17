@@ -292,13 +292,39 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
                 
-                self.connectToFcm()
-                self.redirectLogin()
+                let param = [
+                    "sercret"     : "jo8nefamehisd",
+                    "action"      : "api",
+                    "ac"          : "\(globalvar.LOGIN_ACTION)",
+                    "d"           : "0",
+                    "lang"        : "jp",
+                    "email"       : email,
+                    "passwd"      : pass,
+                    "firebase"    : globalUserId.FirID
+                ]
+                let httpRequest = HttpDataRequest(postData: param)
+                let request = httpRequest.requestGet()
                 
-                if self.loadingScreen != nil {
-                    UIViewController.removeSpinner(self.loadingScreen)
-                    self.loadingScreen = nil
+                let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+                    data, response, error  in
+                    
+                    if error != nil || data == nil{
+                        
+                    }else{
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.connectToFcm()
+                            self.redirectLogin()
+                            
+                            if self.loadingScreen != nil {
+                                UIViewController.removeSpinner(self.loadingScreen)
+                                self.loadingScreen = nil
+                            }
+                        }
+                    }
                 }
+                
+                task.resume()
+                
                 
             } else {
                 self.displayMyAlertMessage(config.translate("mess_fail_auth"))

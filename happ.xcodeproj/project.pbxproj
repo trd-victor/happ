@@ -13,7 +13,6 @@
 		3D0A4C0D1F7A9A7900D6D73D /* Extension+CR+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C0C1F7A9A7900D6D73D /* Extension+CR+Controller.swift */; };
 		3D26FEE61F8B7E9F00283095 /* CreateTimlineSkillSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D26FEE51F8B7E9F00283095 /* CreateTimlineSkillSelection.swift */; };
 		3D2D6BE51F7BAE5200F05BE6 /* NavigationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */; };
-		3D3562641F95F783002A7FCA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D3562631F95F783002A7FCA /* GoogleService-Info.plist */; };
 		3D42C2CB1F6B6F9200EBD674 /* CongestionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D42C2CA1F6B6F9200EBD674 /* CongestionExtension.swift */; };
 		3D4B3B211F80BC8400DE89A0 /* pickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B3B201F80BC8400DE89A0 /* pickerController.swift */; };
 		3D544EF71F68E6370055019A /* TimelineDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D544EF61F68E6370055019A /* TimelineDetail.swift */; };
@@ -54,6 +53,7 @@
 		A34A509D1F30982C00BAD1E2 /* GlobalVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34A509C1F30982C00BAD1E2 /* GlobalVar.swift */; };
 		A34FC1081F0CA6F1006BFA81 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34FC1071F0CA6F1006BFA81 /* AccountViewController.swift */; };
 		A34FC10A1F0CC8AE006BFA81 /* ChangePassViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A34FC1091F0CC8AE006BFA81 /* ChangePassViewController.swift */; };
+		A35B91F01F96161300DFF9F0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A35B91EF1F96161300DFF9F0 /* GoogleService-Info.plist */; };
 		A35DCBD71F4D175F009B9406 /* FirebaseSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35DCBD61F4D175F009B9406 /* FirebaseSetup.swift */; };
 		A366EB801F297A95000C574C /* Transitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A366EB7F1F297A95000C574C /* Transitions.swift */; };
 		A366EB821F29851C000C574C /* TransitionRight.swift in Sources */ = {isa = PBXBuildFile; fileRef = A366EB811F29851C000C574C /* TransitionRight.swift */; };
@@ -84,7 +84,6 @@
 		3D0A4C0C1F7A9A7900D6D73D /* Extension+CR+Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+CR+Controller.swift"; sourceTree = "<group>"; };
 		3D26FEE51F8B7E9F00283095 /* CreateTimlineSkillSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateTimlineSkillSelection.swift; sourceTree = "<group>"; };
 		3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NavigationMessage.swift; path = ../NavigationMessage.swift; sourceTree = "<group>"; };
-		3D3562631F95F783002A7FCA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Users/TRD/Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3D42C2CA1F6B6F9200EBD674 /* CongestionExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CongestionExtension.swift; sourceTree = "<group>"; };
 		3D4B3B201F80BC8400DE89A0 /* pickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerController.swift; sourceTree = "<group>"; };
 		3D544EF61F68E6370055019A /* TimelineDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineDetail.swift; sourceTree = "<group>"; };
@@ -125,6 +124,7 @@
 		A34A509C1F30982C00BAD1E2 /* GlobalVar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalVar.swift; sourceTree = "<group>"; };
 		A34FC1071F0CA6F1006BFA81 /* AccountViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
 		A34FC1091F0CC8AE006BFA81 /* ChangePassViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePassViewController.swift; sourceTree = "<group>"; };
+		A35B91EF1F96161300DFF9F0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Users/tokikawateppei/Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A35DCBD61F4D175F009B9406 /* FirebaseSetup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseSetup.swift; sourceTree = "<group>"; };
 		A366EB7F1F297A95000C574C /* Transitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Transitions.swift; sourceTree = "<group>"; };
 		A366EB811F29851C000C574C /* TransitionRight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionRight.swift; sourceTree = "<group>"; };
@@ -292,8 +292,8 @@
 				A34FC1091F0CC8AE006BFA81 /* ChangePassViewController.swift */,
 				A31CEA9E1F27498600F386FC /* ConfigurationViewController.swift */,
 				A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */,
+				A35B91EF1F96161300DFF9F0 /* GoogleService-Info.plist */,
 				A3D90D9B1F49678800DB5624 /* Constants.swift */,
-				3D3562631F95F783002A7FCA /* GoogleService-Info.plist */,
 				A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */,
 				A302AA5B1F27007400D8FBA8 /* CustomCell.swift */,
 				A30812F21F282AA1003CD5EF /* EditProfileViewController.swift */,
@@ -425,9 +425,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3105B131F1CC2260067F069 /* Assets.xcassets in Resources */,
+				A35B91F01F96161300DFF9F0 /* GoogleService-Info.plist in Resources */,
 				A3B046471F38E283003789CC /* Main.storyboard in Resources */,
 				A31ABBF01F34147300994064 /* FirstLanguageStoryboard.storyboard in Resources */,
-				3D3562641F95F783002A7FCA /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
