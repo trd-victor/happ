@@ -62,6 +62,20 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         view.endEditing(true)
         
         autoLayout()
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

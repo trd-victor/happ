@@ -143,6 +143,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         let btnTap3: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "removeImage3")
         self.btnRemove3.addGestureRecognizer(btnTap3)
         
+        
         loadConfigure()
         
         autoLayout()
@@ -376,6 +377,8 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
                 self.subView1.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
                 self.subView1.heightAnchor.constraintEqualToConstant(250).active = true
                 
+                self.subView1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "hideKeyboard"))
+                
                 self.imgView1.contentMode = .ScaleAspectFill
                 self.imgView1.clipsToBounds = true
                 self.subView1.addSubview(self.imgView1)
@@ -463,6 +466,10 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
             
             scrollView.contentSize = CGSize(width: scrollView.frame.size.width,height: svHeight)
         }
+    }
+    
+    func hideKeyboard(){
+        self.content.resignFirstResponder();
     }
     
     func removeImage1(){

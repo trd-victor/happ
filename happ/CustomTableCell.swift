@@ -105,11 +105,11 @@ class NoImage: UITableViewCell {
         
         btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
         btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
-        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(120).active = true
         btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
-        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
+        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -30).active = true
         postDate.widthAnchor.constraintEqualToConstant(130).active = true
         postDate.heightAnchor.constraintEqualToConstant(34).active = true
         
@@ -248,11 +248,11 @@ class SingleImage: UITableViewCell {
         
         btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
         btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
-        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(120).active = true
         btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
-        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
+        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -30).active = true
         postDate.widthAnchor.constraintEqualToConstant(130).active = true
         postDate.heightAnchor.constraintEqualToConstant(34).active = true
         
@@ -419,11 +419,11 @@ class DoubleImage: UITableViewCell {
         
         btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
         btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
-        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(120).active = true
         btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
-        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
+        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -30).active = true
         postDate.widthAnchor.constraintEqualToConstant(130).active = true
         postDate.heightAnchor.constraintEqualToConstant(34).active = true
         
@@ -619,11 +619,11 @@ class TripleImage: UITableViewCell {
         
         btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
         btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
-        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(120).active = true
         btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
-        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
+        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -30).active = true
         postDate.widthAnchor.constraintEqualToConstant(130).active = true
         postDate.heightAnchor.constraintEqualToConstant(34).active = true
         
@@ -730,7 +730,7 @@ class NotifCell: UITableViewCell {
         lblMessage.translatesAutoresizingMaskIntoConstraints = false
         lblMessage.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 5).active = true
         lblMessage.leftAnchor.constraintEqualToAnchor(self.notifPhoto.rightAnchor, constant: 5).active = true
-        lblMessage.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -52).active = true
+        lblMessage.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -55).active = true
         lblMessage.lineBreakMode = .ByWordWrapping
         lblMessage.numberOfLines = 0
         lblMessage.sizeToFit()

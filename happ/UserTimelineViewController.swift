@@ -331,7 +331,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     print(error)
                 }
             }
-            
         }
         task2.resume()
         
@@ -348,8 +347,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             notif.saveNotificationMessage(0, type: "free-time")
             updateFreeTimeStatus()
         }
-        
-        
     }
     
     @IBAction func btnViewNotif(sender: UIBarButtonItem) {
@@ -379,8 +376,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "skills"     : "\(globalUserId.skills)",
             "origin"     : "timeline"
         ]
-        
-        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -390,8 +385,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             data, response, error  in
             
             if error != nil || data == nil{
-                self.getTimelineUser()
+                self.getOlderPostTimeline()
             }else {
+                
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                         if let resultArray = json.valueForKey("result") as? NSArray {
@@ -507,6 +503,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if error != nil && data == nil {
                 self.getTimelineUser()
             }else{
+                
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     if let resultArray = json!.valueForKey("result") as? NSArray {
@@ -514,7 +511,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                         self.myResultArr = resultArray
                         
                         for item in resultArray {
-                            
                             if let resultDict = item as? NSDictionary {
                                 if let userPostId = resultDict.valueForKey("ID") {
                                     self.postID.append(userPostId as! Int)

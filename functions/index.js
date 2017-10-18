@@ -147,11 +147,12 @@ exports.reservation = functions.https.onRequest((req, res) => {
 
 //news
 exports.news = functions.https.onRequest((req, res) => {
-    if (req.body.message === undefined) {
+    if (req.body.message === undefined || req.body.indicator === undefined ) {
         res.status(400).send("Failed to send News");
-    }if (req.body.firUsers === undefined) {
+    }else if (req.body.indicator == "all") {
         messageAllUser(req);
-    }else {
+        res.status(200).end();
+    }else if (req.body.indicator == "specific") {
         const message = req.body.message
         const adminFID = req.body.adminFIR;
         const admin_name = req.body.adminName;
@@ -182,9 +183,9 @@ function messageAllUser(req){
 }
 
 function sendMessage(fid, message, adminFID, admin_name){
-    var memberDB = admin.database().ref('/chat/members').orderByChild(id).equalTo(true).once("value").then(function(snap){
+    var memberDB = admin.database().ref('/chat/members').orderByChild(fid).equalTo(true).once("value").then(function(snap){
         var result = snap.val();
-        var userFID = id.toString();
+        var userFID = fid.toString();
         var chatRoom = "";
         if(result.length != 0) {
                 var count = 0
@@ -193,7 +194,7 @@ function sendMessage(fid, message, adminFID, admin_name){
                     var value = childSnapshot.val()
                     var snapKey = childSnapshot.key
 
-                    if(value[id] && value[adminFID]){
+                    if(value[fid] && value[adminFID]){
                         chatRoom = snapKey;
                     }
 

@@ -51,6 +51,21 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         self.tblView.dataSource = self
         
         self.tblView.reloadData()
+        
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -130,7 +145,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             })
         }else{
             let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryOrderedByKey().queryEndingAtValue(self.currentKey).queryLimitedToLast(11)
-            
+            let count = self.arrayData.count
             notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
                 
                 let first = snap.children.allObjects.first as? FIRDataSnapshot
@@ -146,11 +161,12 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let read = s.value!["read"] as? Bool
                         
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-                            
                             if let result = snapshot.value as? NSDictionary {
                                 result.setValue(read, forKey: "read")
                                 result.setValue(s.key, forKey: "key")
                                 self.arrayData.insert(result, atIndex: index)
+                            }
+                            if (count + snap.children.allObjects.count - 1) == self.arrayData.count {
                                 self.tblView.reloadData()
                             }
                         })
@@ -281,6 +297,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             let cell = tableView.cellForRowAtIndexPath(indexPath) as? NotifCell
             cell?.lblMessage.font = UIFont.systemFontOfSize(17)
             FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(globalUserId.FirID).child("notif-list").child(key!).child("read").setValue(true)
+            
+            self.arrayData[indexPath.row].setValue(true, forKey: "read")
         }
         
         if type! == "timeline" || type! == "post-time" {

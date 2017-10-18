@@ -172,6 +172,24 @@ class UserProfileController: UIViewController {
         }
         
         autoLayout()
+        
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+        
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     func openMessage(){

@@ -183,7 +183,13 @@ class TimelineDetail: UIViewController {
             self.getDetail()
         }
         
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
     }
+    
+    
     
     func postDetail(){
         var contentHeight: CGFloat = 0
@@ -461,6 +467,16 @@ class TimelineDetail: UIViewController {
     }
     
     func backTimeline(sender: UIButton!){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
         let transition: CATransition = CATransition()
         transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)

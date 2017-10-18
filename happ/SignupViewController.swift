@@ -292,45 +292,48 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
                 
-                let param = [
-                    "sercret"     : "jo8nefamehisd",
-                    "action"      : "api",
-                    "ac"          : "\(globalvar.LOGIN_ACTION)",
-                    "d"           : "0",
-                    "lang"        : "jp",
-                    "email"       : email,
-                    "passwd"      : pass,
-                    "firebase"    : globalUserId.FirID
-                ]
-                let httpRequest = HttpDataRequest(postData: param)
-                let request = httpRequest.requestGet()
-                
-                let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-                    data, response, error  in
-                    
-                    if error != nil || data == nil{
-                        
-                    }else{
-                        dispatch_async(dispatch_get_main_queue()){
-                            self.connectToFcm()
-                            self.redirectLogin()
-                            
-                            if self.loadingScreen != nil {
-                                UIViewController.removeSpinner(self.loadingScreen)
-                                self.loadingScreen = nil
-                            }
-                        }
-                    }
-                }
-                
-                task.resume()
-                
+                self.saveFirebase(email, pass: pass)
                 
             } else {
                 self.displayMyAlertMessage(config.translate("mess_fail_auth"))
             }
             
         }
+    }
+    
+    func saveFirebase(email: String, pass: String){
+        let param = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "\(globalvar.LOGIN_ACTION)",
+            "d"           : "0",
+            "lang"        : "jp",
+            "email"       : email,
+            "passwd"      : pass,
+            "firebase"    : globalUserId.FirID
+        ]
+        let httpRequest = HttpDataRequest(postData: param)
+        let request = httpRequest.requestGet()
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil || data == nil{
+                self.saveFirebase(email, pass: pass)
+            }else{
+                dispatch_async(dispatch_get_main_queue()){
+                    self.connectToFcm()
+                    self.redirectLogin()
+                    
+                    if self.loadingScreen != nil {
+                        UIViewController.removeSpinner(self.loadingScreen)
+                        self.loadingScreen = nil
+                    }
+                }
+            }
+        }
+        
+        task.resume()
     }
     
     func connectToFcm(){

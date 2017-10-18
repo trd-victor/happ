@@ -68,6 +68,21 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             self.deleteMessage()
             self.getChatRoomID()
         }
+        
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     func addBlockObserver(){
@@ -129,7 +144,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         if keyboardDuration != nil {
             UIView.animateWithDuration(keyboardDuration!){
-                self.view.layoutIfNeeded()
+                self.containerViewBottomAncher?.constant = 0
+                self.collectioView?.constant = -112
             }
         }
     }
@@ -441,7 +457,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func setupCell(cell: MessageCell, mess_data: NSDictionary){
-        let imageUrl = mess_data["photoUrl"] as! String
+        
         
         if FIRAuth.auth()?.currentUser?.uid == (mess_data["userId"] as! String){
             
@@ -450,7 +466,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
-            
+            let imageUrl = self.userPhoto
             if (imgforProfileCache.objectForKey(imageUrl) != nil) {
                 let imgCache = imgforProfileCache.objectForKey(imageUrl) as! UIImage
                 cell.userPhoto.image = imgCache
@@ -465,7 +481,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                         let tmpImg = UIImage(data: data)
                         self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
                     }
-                    
                 })
                 task.resume()
             }
@@ -480,7 +495,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         }else {
             cell.bubbleView.backgroundColor =  UIColor(hexString: "#E4D4B9")
             cell.txtLbl.textColor = UIColor.blackColor()
-            
+            let imageUrl = self.chatMatePhoto
             if (imgforProfileCache.objectForKey(imageUrl) != nil) {
                 let imgCache = imgforProfileCache.objectForKey(imageUrl) as! UIImage
                 cell.chatmatePhoto.image = imgCache
