@@ -166,14 +166,14 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         
         let config = SYSTEM_CONFIG()
         
-        navTitle.title = config.translate("title_change_password")
+        navTitle.title = config.translate("label_change-password")
         save.title = config.translate("button_save")
         currentPass.text = config.translate("label_current_password")
         newPass.text = config.translate("label_new_password")
         reenterpass.text = config.translate("label_re-enter_password")
         
-        currentPassField.placeholder = config.translate("label_current_password")
-        newPassField.placeholder = config.translate("label_new_password")
+        currentPassField.placeholder = config.translate("holder_6_or_more_char")
+        newPassField.placeholder = config.translate("holder_6_or_more_char")
         reenterPassField.placeholder = config.translate("label_re-enter_password")
     }
     
@@ -223,7 +223,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
             self.displayMyAlertMessage(config.translate("mess_password_min_char"))
         }
         else if newPass1 != reEnterPass1 {
-            self.displayMyAlertMessage(config.translate("not_match_password"))
+            self.displayMyAlertMessage(config.translate("mess_password_not_match"))
         }
         else {
             FIRAuth.auth()?.signInWithEmail(email as! String,  password: currentPass1) { (user, error) in
@@ -299,7 +299,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                     }
                     task.resume()
                 } else {
-                    self.displayMyAlertMessage(config.translate("empty_current_password"))
+                    self.displayMyAlertMessage(config.translate("mess_incorrect_password"))
                 }
             }
         }

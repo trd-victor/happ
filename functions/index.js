@@ -85,30 +85,65 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
     .onWrite(event => {
 
     var valueObject = event.data.val();
+    var count = 0;
 
-    console.log('Name ' +valueObject.name);
+    return admin.database().ref().child("users").once('value').then(function(snapshot){
+        if(snapshot.numChildren() > 0){
+            return new Promise ((resolve, reject) => {
+                snapshot.forEach(function(childSnapshot){
+                    let fid = childSnapshot.key;
+                    let value = childSnapshot.val();
+                    if(valueObject.userId != fid){
+                        var body = ""
+                        if(value["language"] === undefined || value["language"] == ""){
+                            value["language"] = "en";
+                        }
 
-    const payload = {
-        data: {
-            "title": valueObject.name,
-            "body": "Turned on free now",
-            "author_id": valueObject.userId
-        },
-        notification: {
-            title: valueObject.name,
-            body: "Turned on free now",
-            sound: "default"
+                        if(value["language"] == "en"){
+                            body = "Turned on free now";
+                        }else if(value["language"] == "jp"){
+                            body = "今すぐ無料でオンにしました";
+                        }
+
+                        var payload = {
+                            data: {
+                                "title": valueObject.name,
+                                "body": body,
+                                "author_id": valueObject.userId
+                            },
+                            notification: {
+                                title: valueObject.name,
+                                body: body,
+                                sound: "default"
+                            }
+                        };
+
+                        var options = {
+                            content_available: true,
+                            collapse_key: valueObject.name,
+                            priority: "high"
+                        }
+
+                        admin.database().ref('registration-token/' + fid + '/token').once('value', function(snap){
+                            var token = snap.val();
+                            count++;
+                            if(token != "" && token != null){
+                                if (count == snapshot.numChildren()){
+                                    resolve("");
+                                    admin.messaging().sendToDevice(token, payload, options)
+                                }else{
+                                    admin.messaging().sendToDevice(token, payload, options);
+                                }
+                            }
+                        },function (errorObject) {
+                            console.log("Error getting data: " + errorObject.code);
+                        })
+                    }
+                })
+
+            })
         }
-    };
-
-    const options = {
-        content_available: true,
-        collapse_key: valueObject.name,
-        priority: "high"
-    }
-
-    return admin.messaging().sendToTopic('free-time-push-notification', payload, options);
-
+    })
 });
 
 exports.reservation = functions.https.onRequest((req, res) => {
@@ -213,14 +248,14 @@ function sendMessage(fid, message, adminFID, admin_name){
                                     "name"         : admin_name,
                                     "photoUrl"     : "",
                                     "read"         : false,
-                                    "timestamp"    : Date.now()
+                                    "timestamp"    : admin.database.ServerValue.TIMESTAMP
                                 });
 
                                 admin.database().ref('/chat/messages').child(key).push({
                                     "message"      : message,
                                     "name"         : admin_name,
                                     "photoUrl"     : "",
-                                    "timestamp"    : Date.now(),
+                                    "timestamp"    : admin.database.ServerValue.TIMESTAMP,
                                     "userId"       : adminFID
                                 });
 
@@ -240,14 +275,14 @@ function sendMessage(fid, message, adminFID, admin_name){
                                 "name"         : admin_name,
                                 "photoUrl"     : "",
                                 "read"         : false,
-                                "timestamp"    : Date.now()
+                                "timestamp"    : admin.database.ServerValue.TIMESTAMP
                             });
 
                             admin.database().ref('/chat/messages').child(chatRoom).push({
                                 "message"      : message,
                                 "name"         : admin_name,
                                 "photoUrl"     : "",
-                                "timestamp"    : Date.now(),
+                                "timestamp"    : admin.database.ServerValue.TIMESTAMP,
                                 "userId"       : adminFID
                             });
 

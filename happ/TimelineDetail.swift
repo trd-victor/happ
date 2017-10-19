@@ -346,10 +346,15 @@ class TimelineDetail: UIViewController {
         var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
         let config = SYSTEM_CONFIG()
         let lang = config.getSYS_VAL("AppLanguage") as! String
-        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
-        if lang != "en" {
-            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
-            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        
+        var date:String = ""
+        if dateArr.count >= 0 {
+            if lang != "en" {
+                dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+                date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+            }else{
+                date = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+            }
         }
         return date
     }

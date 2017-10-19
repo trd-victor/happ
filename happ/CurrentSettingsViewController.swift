@@ -7,8 +7,7 @@
 //
 
 import UIKit
-
-
+import Firebase
 
 class CurrentSettingsViewController: UIViewController {
     
@@ -130,7 +129,7 @@ class CurrentSettingsViewController: UIViewController {
 
     func loadConfigure() {
         let config = SYSTEM_CONFIG()
-        btnCurrentSettings.setTitle(config.translate("label_current settings"), forState: .Normal)
+        btnCurrentSettings.setTitle(config.translate("current_settings"), forState: .Normal)
         navTitle.title = config.translate("title_language_settings")
         savelang.title = config.translate("button_save")
         
@@ -230,6 +229,12 @@ class CurrentSettingsViewController: UIViewController {
             
             if error != nil || data == nil {
                 self.saveLang(sender)
+            }else{
+                dispatch_async(dispatch_get_main_queue()){
+                    if let firID = FIRAuth.auth()?.currentUser?.uid {
+                        FIRDatabase.database().reference().child("users").child(firID).child("language").setValue(self.language)
+                    }
+                }
             }
         }
         task.resume()

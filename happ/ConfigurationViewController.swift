@@ -251,7 +251,6 @@ class ConfigurationViewController: UIViewController {
     func refreshLang(notification: NSNotification) {
         
         let config = SYSTEM_CONFIG()
-        print(config.translate("test_value"))
         //set label text..
         navTitle.title = config.translate("menu_configuration")
         labelLogout.text = config.translate("label_logout")

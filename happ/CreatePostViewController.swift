@@ -287,16 +287,6 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }
     
-//    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
-//        if(text == "\n") {
-//            textView.becomeFirstResponder()
-//            textView.text = NSString(format: "%@\n", textView.text) as String
-////            textView.resignFirstResponder()
-//            return false
-//        }
-//        return true
-//    }
-    
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)
     }

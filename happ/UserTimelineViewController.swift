@@ -503,7 +503,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if error != nil && data == nil {
                 self.getTimelineUser()
             }else{
-                
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     if let resultArray = json!.valueForKey("result") as? NSArray {

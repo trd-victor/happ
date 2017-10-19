@@ -45,9 +45,9 @@ class SYSTEM_CONFIG {
         }else{
             lang = "jp"
         }
-        
-        if textTranslate![key] != nil {
-            return textTranslate![key]!![lang]!! as! String
+    
+        if let translate = textTranslate![key] as? NSDictionary {
+            return translate[lang] as! String
         }else{
             return ""
         }

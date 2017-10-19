@@ -40,8 +40,8 @@ extension CreateReservation {
         self.roomSelect.delegate = self
         self.roomSelect.dataSource = self
         
-        self.navCreate.title = config.translate("button_create")
-        self.roomSubtitle.text = config.translate("subtitle_room")
+        self.navCreate.title = config.translate("button_save")
+        self.roomSubtitle.text = config.translate("label_room")
         self.facilityLabel.text =  config.translate("lbl_facility")
         self.roomLabel.text = config.translate("label_room")
         self.makeReservation.text = config.translate("subtitle_make_reservation")

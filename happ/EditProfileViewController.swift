@@ -316,7 +316,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         navTitle.title = config.translate("title_edit_profile")
         StatusItem.title = config.translate("button_save")
         labelName.text = config.translate("text_name")
-        userNamefield.placeholder = config.translate("holder_15_char/less")
+        userNamefield.placeholder = config.translate("holder_15_more_char")
         userDescription.placeholder = config.translate("holder_profile_statement")
         labelSkills.text = config.translate("subtitle_skills")
     }

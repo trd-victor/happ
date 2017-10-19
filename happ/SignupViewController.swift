@@ -292,6 +292,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
                 registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
                 
+                FIRDatabase.database().reference().child("users").child(globalUserId.FirID).child("language").setValue(self.language)
+                
                 self.saveFirebase(email, pass: pass)
                 
             } else {

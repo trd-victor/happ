@@ -121,16 +121,13 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
     }
     
     func loadConfigure() {
-        
         let config = SYSTEM_CONFIG()
         
-        navTitle.title = config.translate("title_e-mail_add_change")
+        navTitle.title = config.translate("label_e-mail_address_change")
         Save.title = config.translate("button_save")
         txtMail.placeholder = config.translate("holder_ex.@xx.com")
         labelMail.text = config.translate("label_email_address")
     }
-    
-
     
     @IBAction func Save(sender: AnyObject) {
         if userId != "" {
@@ -271,7 +268,6 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
                 self.loaduserEmail()
             }else{
                 do {
-                    
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
                     if json!["result"] != nil {

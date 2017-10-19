@@ -88,11 +88,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         setBorder(userName)
         setBorder(userEmail)
         setBorder(userPassword)
-//        addLabelBorder(labelFrontEnd)
-//        addLabelBorder(labelBackEnd)
-//        addLabelBorder(labelAndroid)
-//        addLabelBorder(labelIOS)
-//        addLabelBorder(labelAppDesign)
         
         //add button clicked function..
         btnUpdate.addTarget(self, action: "registerUser:", forControlEvents: .TouchUpInside)
@@ -317,7 +312,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         labelName.text = config.translate("text_name")
         userName.placeholder = config.translate("holder_15_more_char")
         labelEmail.text = config.translate("label_e-mail_address")
-        userEmail.placeholder = config.translate("holder_ex.@xxx.com")
+        userEmail.placeholder = config.translate("holder_ex.@xx.com")
         labelPass.text = config.translate("label_Password")
         userPassword.placeholder = config.translate("holder_6_or_more_char")
         labelReEnterPass.text = config.translate("holder_re-enter_password")
@@ -545,8 +540,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     "id"        : userID,
                     "name"      : name,
                     "photoUrl"  : "null",
-                    "skills"    : skills
+                    "skills"    : skills,
+                    "language"      : self.language
                 ]
+                
                 //insert to users
                 db.setValue(userDetails)
                 

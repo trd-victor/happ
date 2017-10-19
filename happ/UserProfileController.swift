@@ -241,7 +241,7 @@ class UserProfileController: UIViewController {
     
     func translate(){
         let config = SYSTEM_CONFIG()
-        btnMessage.setTitle(config.translate("title:message"), forState: .Normal)
+        btnMessage.setTitle(config.translate("menu_message"), forState: .Normal)
         btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
     }
     
@@ -372,7 +372,7 @@ class UserProfileController: UIViewController {
             
             self.tblProfile.reloadData()
         }))
-        myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
 }
