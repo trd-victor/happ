@@ -169,7 +169,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
         userEmailField.placeholder = config.translate("holder_ex.@xx.com")
         labelPassword.text = config.translate("label_Password")
-        userPasswordField.placeholder = config.translate("holder_4/more_char")
+        userPasswordField.placeholder = config.translate("holder_6_or_more_char")
         
         //setTitle
         btnLogin.setTitle(config.translate("title_login"), forState: .Normal)

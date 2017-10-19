@@ -218,7 +218,7 @@ class CurrentSettingsViewController: UIViewController {
             "d"           : "0",
             "lang"        : "\(language)",
             "user_id"     : "\(userId)",
-            "change_lang" : "\(self.currentSettingslang.text!)",
+            "change_lang" : "\(language)",
             "targets"     : "\(targets)"
         ]
         

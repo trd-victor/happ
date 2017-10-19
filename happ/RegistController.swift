@@ -315,11 +315,11 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         navController.title = config.translate("button_new_member_registration")
         labeltopTitle.text = config.translate("subtitle_basic_information")
         labelName.text = config.translate("text_name")
-        userName.placeholder = config.translate("holder_15_char/less")
+        userName.placeholder = config.translate("holder_15_more_char")
         labelEmail.text = config.translate("label_e-mail_address")
         userEmail.placeholder = config.translate("holder_ex.@xxx.com")
         labelPass.text = config.translate("label_Password")
-        userPassword.placeholder = config.translate("holder_4/more_char")
+        userPassword.placeholder = config.translate("holder_6_or_more_char")
         labelReEnterPass.text = config.translate("holder_re-enter_password")
         userReEnterPassword.placeholder = config.translate("holder_re-enter_password")
         
@@ -394,7 +394,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 "passwd"      : "\(pass)",
                 "name"        : "\(name)",
                 "skills"      : "\(keyskill)",
-                "change_lang" : "jp",
+                "change_lang" : "\(language)",
                 "targets"     : "\(targetedData)"
             ]
         

@@ -21,6 +21,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var postPhotoUrl: String = ""
     var freeTimeMessage: String = ""
     var postTimelineMessage: String = ""
+    var reservationMessage: String = ""
     var loadingScreen: UIView?
     let imgforProfileCache = NSCache()
     
@@ -94,6 +95,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         self.postTimelineMessage = config.translate("notif_timeline_mess")
         self.freeTimeMessage = config.translate("notif_freetime_mess")
+        self.reservationMessage = config.translate("notif_reservation_mess")
         
         let navItem = UINavigationItem(title: titlestr)
         let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
@@ -244,34 +246,51 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             if type == "timeline" || type == "post-timeline"{
                 cell.lblMessage.text = "\(name) \(self.postTimelineMessage)"
+                if (imgforProfileCache.objectForKey(image!) != nil) {
+                    let imgCache = imgforProfileCache.objectForKey(image!) as! UIImage
+                    cell.notifPhoto.image = imgCache
+                }else{
+                    cell.notifPhoto.image = UIImage(named : "noPhoto")
+                    let url = NSURL(string: image!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                        if let data = NSData(contentsOfURL: url!){
+                            dispatch_async(dispatch_get_main_queue()){
+                                cell.notifPhoto.image = UIImage(data: data)
+                            }
+                            let tmpImg = UIImage(data: data)
+                            self.imgforProfileCache.setObject(tmpImg!, forKey: image!)
+                        }
+                        
+                    })
+                    task.resume()
+                }
             }else if type == "free-time" {
                 cell.lblMessage.text = "\(name) \(self.freeTimeMessage)"
-            }else if type == "message" {
-                cell.lblMessage.text = "You have a message from \(name)."
+                if (imgforProfileCache.objectForKey(image!) != nil) {
+                    let imgCache = imgforProfileCache.objectForKey(image!) as! UIImage
+                    cell.notifPhoto.image = imgCache
+                }else{
+                    cell.notifPhoto.image = UIImage(named : "noPhoto")
+                    let url = NSURL(string: image!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                        if let data = NSData(contentsOfURL: url!){
+                            dispatch_async(dispatch_get_main_queue()){
+                                cell.notifPhoto.image = UIImage(data: data)
+                            }
+                            let tmpImg = UIImage(data: data)
+                            self.imgforProfileCache.setObject(tmpImg!, forKey: image!)
+                        }
+                        
+                    })
+                    task.resume()
+                }
             }else if type == "reservation" {
-                cell.lblMessage.text = "Reservation"
+                cell.notifPhoto.image = UIImage(named: "oval")
+                cell.lblMessage.text = self.reservationMessage
             }
             
             cell.lblDate.text = self.dateFormatter(timestamp!)
             
-            if (imgforProfileCache.objectForKey(image!) != nil) {
-                let imgCache = imgforProfileCache.objectForKey(image!) as! UIImage
-                cell.notifPhoto.image = imgCache
-            }else{
-                cell.notifPhoto.image = UIImage(named : "noPhoto")
-                let url = NSURL(string: image!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.notifPhoto.image = UIImage(data: data)
-                        }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforProfileCache.setObject(tmpImg!, forKey: image!)
-                    }
-                    
-                })
-                task.resume()
-            }
         }
         
         return cell
@@ -308,7 +327,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }else if type! == "free-time" {
             self.getUserDetail(user_id!)
         }
-        
     }
     
     func dateFormatter(timestamp: NSNumber) -> String{
