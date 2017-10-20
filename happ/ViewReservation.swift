@@ -56,7 +56,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         tableReserved.addSubview(activityLoading)
         tableReserved.bringSubviewToFront(activityLoading)
         autoLayout()

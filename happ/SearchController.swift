@@ -191,11 +191,12 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             cell.happId.text = h_id
         }
         
+        cell.detailTextLabel?.text = ""
         if let skills = self.userData[indexPath.row]["skills"] as? String {
+            var skill = ""
+            var count = 0
             if skills != "null" {
                 let all_skills = skills.characters.split(",")
-                var skill = ""
-                var count = 0
                 for (value) in all_skills {
                     count++
                     skill = skill + config.getSkillByID(String(value))

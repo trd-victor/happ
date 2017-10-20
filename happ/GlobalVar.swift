@@ -30,7 +30,9 @@ struct globalvar {
     static var badgeBellNumber: Int = 0
     static var badgeMessNumber: Int = 0
     static var SYSTEM_VALUE = [String : [String: String]]()
+    static let imgforProfileCache = NSCache()
     let config = SYSTEM_CONFIG()
+    
     
     //dev API
     // http:// dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php

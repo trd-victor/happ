@@ -41,7 +41,9 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
             priority: "high"
         };
 
-        admin.messaging().sendToDevice(token, payload, options);
+        if(token != null && token != ""){
+            admin.messaging().sendToDevice(token, payload, options);
+        }
     },
 
     function (errorObject) {
@@ -151,19 +153,20 @@ exports.reservation = functions.https.onRequest((req, res) => {
         res.status(400).send('No message defined!');
     } else {
         // Everything is ok
-        console.log(req.body.body + "token " +req.body.fcmtoken);
-
         const token = req.body.fcmtoken;
+        const uid = req.body.uid;
+
+         console.log("Send reservation to " +uid);
 
         const payload = {
             data: {
-                "title": "Reservation",
+                "title": req.body.title,
                 "body": req.body.body,
                 "token": req.body.fcmtoken
             },
 
             notification: {
-                title: "Reservation",
+                title: req.body.title,
                 body: req.body.body,
                 sound: "default"
             }
@@ -174,21 +177,36 @@ exports.reservation = functions.https.onRequest((req, res) => {
             priority: "high"
         }
 
-        return admin.messaging().sendToDevice(token, payload, options);
+        //Check if token exist
+        var database = admin.database();
+
+        database.ref('registration-token').child(uid).child('token').once("value", snapshot => {
+            const userToken = snapshot.val();
+            if (userToken != null && userToken == token) {
+                 // Save reservation details to db
+                 writeReservationDetails(uid);
+
+                 return admin.messaging().sendToDevice(token, payload, options);
+            } else {
+                console.log("Registration token does not exist");
+            }
+        });
 
         res.status(200).end();
-    }    
+    }
 });
+
 
 //news
 exports.news = functions.https.onRequest((req, res) => {
-    if (req.body.message === undefined || req.body.indicator === undefined ) {
+    if (req.body.messageEN === undefined || req.body.messageJP === undefined || req.body.indicator === undefined ) {
         res.status(400).send("Failed to send News");
     }else if (req.body.indicator == "all") {
         messageAllUser(req);
         res.status(200).end();
     }else if (req.body.indicator == "specific") {
-        const message = req.body.message
+        const messageJP = req.body.messageJP;
+        const messageEN = req.body.messageEN;
         const adminFID = req.body.adminFIR;
         const admin_name = req.body.adminName;
 
@@ -196,14 +214,26 @@ exports.news = functions.https.onRequest((req, res) => {
         var all_users = firUsers.split(",");
 
         all_users.forEach(function(fid) {
-            sendMessage(fid, message, adminFID, admin_name)
+            admin.database().ref().child("users").child(fid).once("value").then(function(snap){
+                let value = snap.val();
+                if (value["language"] != null){
+                    if (value["language"] == "en"){
+                        sendMessage(fid, messageEN, adminFID, admin_name);
+                    }else{
+                        sendMessage(fid, messageJP, adminFID, admin_name);
+                    }
+                }else {
+                    sendMessage(fid, messageEN, adminFID, admin_name);
+                }  
+            })
         })
         res.status(200).end();
     }    
 });
 
 function messageAllUser(req){
-    const message = req.body.message
+    const messageJP = req.body.messageJP;
+    const messageEN = req.body.messageEN;
     const adminFID = req.body.adminFIR;
     const admin_name = req.body.adminName;
 
@@ -211,7 +241,17 @@ function messageAllUser(req){
         if(snap.numChildren() > 0){
             snap.forEach(function(childSnapshot){
                 let fid = childSnapshot.key;
-                sendMessage(fid, message, adminFID, admin_name)
+                let value = childSnapshot.val();
+
+                if (value["language"] != null){
+                    if (value["language"] == "en"){
+                        sendMessage(fid, messageEN, adminFID, admin_name);
+                    }else{
+                        sendMessage(fid, messageJP, adminFID, admin_name);
+                    }
+                }else {
+                    sendMessage(fid, messageEN, adminFID, admin_name);
+                }                
             })
         }
     })
@@ -355,6 +395,46 @@ exports.deleteUser = functions.https.onRequest((req, res) => {
         res.status(200).end();
     }
 });
+
+
+// Save reservation details to db
+function writeReservationDetails(userId) {
+    console.log('Reservation saved');
+    var database = admin.database();
+
+    var timestamp = admin.database.ServerValue.TIMESTAMP;
+
+    var globalData = {
+        id: 0,
+        name: "null",
+        photoUrl: "null",
+        timestamp: timestamp,
+        type: "reservation",
+        userId: "null"
+    };
+
+    var globalRef = database.ref('notifications').child('app-notification').child('notification-all');
+    var userRef = database.ref('notifications').child('app-notification').child('notification-user');
+
+    // Get a key for a new reservation
+    var resKey = globalRef.push().key;
+
+    // Prepare insertion
+    globalRef.child(resKey).set(globalData);
+    userRef.child(userId).child('notif-list').child(resKey).child('read').set(false);
+
+    var countRef = userRef.child(userId).child('unread').child('count');
+
+    // Get unread value
+    countRef.once('value').then(function(snapshot) {
+        if (snapshot.val() === undefined || snapshot.val() == null) {
+            countRef.set(1);
+        } else {
+            var count = snapshot.val();
+            countRef.set(count + 1);
+        }
+    });
+}
 
 function deleteUserData(userId) {
     var database = admin.database();

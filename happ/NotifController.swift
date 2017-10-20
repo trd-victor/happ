@@ -156,7 +156,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 if snap.childrenCount > 0 {
                     var notifData = snap.children.allObjects as! [FIRDataSnapshot]
                     notifData.removeLast()
-                    
                     for s in notifData {
                         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
                         
@@ -168,6 +167,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 result.setValue(s.key, forKey: "key")
                                 self.arrayData.insert(result, atIndex: index)
                             }
+                            
                             if (count + snap.children.allObjects.count - 1) == self.arrayData.count {
                                 self.tblView.reloadData()
                             }
@@ -246,8 +246,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             if type == "timeline" || type == "post-timeline"{
                 cell.lblMessage.text = "\(name) \(self.postTimelineMessage)"
-                if (imgforProfileCache.objectForKey(image!) != nil) {
-                    let imgCache = imgforProfileCache.objectForKey(image!) as! UIImage
+                if (globalvar.imgforProfileCache.objectForKey(image!) != nil) {
+                    let imgCache = globalvar.imgforProfileCache.objectForKey(image!) as! UIImage
                     cell.notifPhoto.image = imgCache
                 }else{
                     cell.notifPhoto.image = UIImage(named : "noPhoto")
@@ -258,7 +258,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 cell.notifPhoto.image = UIImage(data: data)
                             }
                             let tmpImg = UIImage(data: data)
-                            self.imgforProfileCache.setObject(tmpImg!, forKey: image!)
+                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: image!)
                         }
                         
                     })
@@ -266,8 +266,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 }
             }else if type == "free-time" {
                 cell.lblMessage.text = "\(name) \(self.freeTimeMessage)"
-                if (imgforProfileCache.objectForKey(image!) != nil) {
-                    let imgCache = imgforProfileCache.objectForKey(image!) as! UIImage
+                if (globalvar.imgforProfileCache.objectForKey(image!) != nil) {
+                    let imgCache = globalvar.imgforProfileCache.objectForKey(image!) as! UIImage
                     cell.notifPhoto.image = imgCache
                 }else{
                     cell.notifPhoto.image = UIImage(named : "noPhoto")
@@ -278,7 +278,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 cell.notifPhoto.image = UIImage(data: data)
                             }
                             let tmpImg = UIImage(data: data)
-                            self.imgforProfileCache.setObject(tmpImg!, forKey: image!)
+                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: image!)
                         }
                         
                     })
@@ -326,6 +326,19 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             self.getPostDetail(post_id!)
         }else if type! == "free-time" {
             self.getUserDetail(user_id!)
+        }else if type! == "reservation"{
+            dispatch_async(dispatch_get_main_queue()){
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let vc = storyBoard.instantiateViewControllerWithIdentifier("ViewReservation") as! ViewReservation
+                let transition = CATransition()
+                
+                transition.duration = 0.40
+                transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                transition.type = kCATransitionPush
+                transition.subtype = kCATransitionFromRight
+                self.view.window!.layer.addAnimation(transition, forKey: nil)
+                self.presentViewController(vc, animated: false, completion: nil)
+            }
         }
     }
     

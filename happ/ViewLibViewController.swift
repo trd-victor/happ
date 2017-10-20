@@ -26,8 +26,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     var messagesData: [NSDictionary] = []
     var chatMatePhoto: String = ""
     var userPhoto: String = ""
-    let imgforProfileCache = NSCache()
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +57,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         loadConfig()
         getUsersImage()
         setupKeyboard()
-        
         if(chatVar.Indicator == "MessageTable"){
             self.deleteMessage()
             self.loadMessages()
@@ -467,8 +464,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
             let imageUrl = self.userPhoto
-            if (imgforProfileCache.objectForKey(imageUrl) != nil) {
-                let imgCache = imgforProfileCache.objectForKey(imageUrl) as! UIImage
+            if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {
+                let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl) as! UIImage
                 cell.userPhoto.image = imgCache
             }else{
                 cell.userPhoto.image = UIImage(named : "noPhoto")
@@ -479,7 +476,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                             cell.userPhoto.image = UIImage(data: data)
                         }
                         let tmpImg = UIImage(data: data)
-                        self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
+                        globalvar.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
                     }
                 })
                 task.resume()
@@ -496,8 +493,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleView.backgroundColor =  UIColor(hexString: "#E4D4B9")
             cell.txtLbl.textColor = UIColor.blackColor()
             let imageUrl = self.chatMatePhoto
-            if (imgforProfileCache.objectForKey(imageUrl) != nil) {
-                let imgCache = imgforProfileCache.objectForKey(imageUrl) as! UIImage
+            if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {
+                let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl) as! UIImage
                 cell.chatmatePhoto.image = imgCache
             }else{
                 cell.chatmatePhoto.image = UIImage(named : "noPhoto")
@@ -508,7 +505,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                             cell.chatmatePhoto.image = UIImage(data: data)
                         }
                         let tmpImg = UIImage(data: data)
-                        self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
+                        globalvar.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
                     }
                     
                 })

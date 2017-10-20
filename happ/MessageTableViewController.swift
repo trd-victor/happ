@@ -82,6 +82,14 @@ class MessageTableViewController: UITableViewController {
         self.title = config.translate("title:message")
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated);
+        
+        let config = SYSTEM_CONFIG()
+        
+        self.title = config.translate("title:message")
+    }
+    
     func refreshLang(notifcation: NSNotification){
         let config = SYSTEM_CONFIG()
         self.title = config.translate("title:message")
@@ -97,6 +105,7 @@ class MessageTableViewController: UITableViewController {
         //start of retrieving messages on every user
         details.observeEventType(.Value, withBlock: { (snap) in
             self.lastMessages.removeAll()
+            
             if let result = snap.value as? NSDictionary {
                 var count = 0
                 for (_, value) in result {
@@ -112,6 +121,7 @@ class MessageTableViewController: UITableViewController {
             }
         })
     }
+    
     
     
     
@@ -167,8 +177,8 @@ class MessageTableViewController: UITableViewController {
         let timestamp = message["timestamp"] as? NSNumber
         let readStatus = message["read"] as? Bool
         
-        if (imgforProfileCache.objectForKey(imageUrl!) != nil) {
-            let imgCache = imgforProfileCache.objectForKey(imageUrl!) as! UIImage
+        if (globalvar.imgforProfileCache.objectForKey(imageUrl!) != nil) {
+            let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl!) as! UIImage
             cell.userImage.image = imgCache
         }else{
             cell.userImage.image = UIImage(named : "noPhoto")
@@ -179,7 +189,7 @@ class MessageTableViewController: UITableViewController {
                         cell.userImage.image = UIImage(data: data)
                     }
                     let tmpImg = UIImage(data: data)
-                    self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl!)
+                    globalvar.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl!)
                 }
                 
             })

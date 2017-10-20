@@ -16,6 +16,10 @@ extension UserProfileController {
     //
     
     func blockUser() {
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
         let param = [
             "sercret"     : "jo8nefamehisd",
             "action"      : "api",
@@ -38,11 +42,21 @@ extension UserProfileController {
             }else{
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                        FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).child("blocked").setValue(true)
+                        self.getChatRoomID(){ (result: String) in
+                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true)
+                            if self.loadingScreen != nil {
+                                UIViewController.removeSpinner(self.loadingScreen)
+                                self.loadingScreen = nil
+                            }
+                        }
                     }else{
                         self.getBlockIds()
                     }
                 } catch {
+                    if self.loadingScreen != nil {
+                        UIViewController.removeSpinner(self.loadingScreen)
+                        self.loadingScreen = nil
+                    }
                     print(error)
                 }
             }
@@ -55,6 +69,9 @@ extension UserProfileController {
     //
     
     func unblockUser() {
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
         let param = [
             "sercret"     : "jo8nefamehisd",
@@ -78,11 +95,23 @@ extension UserProfileController {
             }else{
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                         FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).child("blocked").setValue(false)
+                        
+                        self.getChatRoomID(){ (result: String) in
+                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false)
+                            if self.loadingScreen != nil {
+                                UIViewController.removeSpinner(self.loadingScreen)
+                                self.loadingScreen = nil
+                            }
+                        }
+                    
                     }else{
                         self.getBlockIds()
                     }
                 } catch {
+                    if self.loadingScreen != nil {
+                        UIViewController.removeSpinner(self.loadingScreen)
+                        self.loadingScreen = nil
+                    }
                     print(error)
                 }
             }
@@ -90,8 +119,7 @@ extension UserProfileController {
         task.resume()
     }
    
-    func getChatRoomID(){
-        firstLoad = true
+    func getChatRoomID(completion: (result: String)-> Void){
         chatVar.RoomID = ""
         
         let chatmateID = chatVar.chatmateId
@@ -115,7 +143,7 @@ extension UserProfileController {
                     
                     if(count == snapshot.value?.count!){
                         if chatVar.RoomID != "" {
-                            self.firstLoad = false
+                            completion(result: chatVar.RoomID)
                         }else{
                             let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
                             dispatch_async(dispatch_get_main_queue()){
@@ -128,7 +156,7 @@ extension UserProfileController {
                                 
                                 roomDB.setValue(roomDetail)
                                 chatVar.RoomID = roomDB.key
-                                self.firstLoad = false
+                                completion(result: chatVar.RoomID)
                             }
                         }
                     }
@@ -145,7 +173,7 @@ extension UserProfileController {
                     ]
                     roomDB.setValue(roomDetail)
                     chatVar.RoomID = roomDB.key
-                    self.firstLoad = false
+                    completion(result: chatVar.RoomID)
                 }
             }
         })
@@ -286,10 +314,6 @@ extension UserProfileController {
                                                         chatVar.chatmateId = key as! String
                                                         chatVar.Indicator = "Search"
                                                         chatVar.name = self.userName.text!
-                                                        
-                                                        if !self.firstLoad {
-                                                            self.getChatRoomID()
-                                                        }
                                                     }
                                                 }
                                             }

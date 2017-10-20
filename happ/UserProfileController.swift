@@ -28,7 +28,7 @@ class UserProfileController: UIViewController {
     var postID = [Int]()
     var page: Int = 1
     var firstLoad: Bool = false
-    
+    var loadingScreen: UIView!
     let baseUrl: NSURL = globalvar.API_URL
     
     let ProfileView: UIView = {
