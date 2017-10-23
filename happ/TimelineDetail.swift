@@ -518,3 +518,48 @@ class TimelineDetail: UIViewController {
     }
     
 }
+
+
+class TimelineImage: UIImageView {
+    
+    var imageUrlString: String?
+    
+    func loadImageUsingString(urlString: String, completion: (result: Bool) -> Void){
+                self.imageUrlString = urlString
+        
+        let urlStr = urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+        let urlData = NSURL(string: urlStr)
+        
+        self.image = nil
+        self.backgroundColor = UIColor.lightGrayColor()
+        
+        if let imgFromCache = imgCache.objectForKey(urlString) as? UIImage{
+            self.image = imgFromCache
+            completion(result: true)
+            return
+        }
+        
+        NSURLSession.sharedSession().dataTaskWithURL(urlData!, completionHandler: {(data, responses, error) in
+            
+            if error != nil {
+                print(error?.localizedDescription)
+                completion(result: false)
+            }
+            
+            if data != nil {
+                let imageToCache = UIImage(data: data!)
+                dispatch_async(dispatch_get_main_queue(), {
+                    () -> Void in
+                    imgCache.setObject(imageToCache!, forKey: urlString)
+                    dispatch_async(dispatch_get_main_queue()){
+                        if self.imageUrlString! == urlString {
+                            self.image = imageToCache
+                            completion(result: true)
+                        }
+                    }
+                })
+            }
+        }).resume()
+    }
+
+}

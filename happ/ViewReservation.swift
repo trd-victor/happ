@@ -56,7 +56,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableReserved.addSubview(activityLoading)
         tableReserved.bringSubviewToFront(activityLoading)
         autoLayout()
@@ -173,7 +173,15 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
                     return cell
                 default:
                     let cell = tableReserved.dequeueReusableCellWithIdentifier("TableCell", forIndexPath: indexPath) as! ViewReservationCell
-                    cell.textLabel?.text = cellTime[indexPath.section][roomData[indexPath.section]]![indexPath.row - 3]
+                    let date = cellDate[indexPath.section][roomData[indexPath.section]]![indexPath.row - 3]
+                    let dateArr = date.characters.split{$0 == "-"}.map(String.init)
+                    let time = cellTime[indexPath.section][roomData[indexPath.section]]![indexPath.row - 3]
+
+                    if lang != "en" {
+                        cell.textLabel?.text = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日   \(time)"
+                    }else{
+                        cell.textLabel?.text = "\(date)   \(time)"
+                    }
                     return cell
                 }
             }
@@ -254,7 +262,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
             self.cellPID[section][self.roomData[section]]!.removeAtIndex(index)
             self.cellIndentifier[section][self.roomData[section]]!.removeAtIndex(index)
             self.cellTime[section][self.roomData[section]]!.removeAtIndex(index)
-            let count = self.cellDate[section][self.roomData[section]]!.filter({ $0.lowercaseString.containsString(date) }).count
+//            let count = self.cellDate[section][self.roomData[section]]!.filter({ $0.lowercaseString.containsString(date) }).count
 
             let indexPath = NSIndexPath(forRow: indexRow, inSection: section)
             self.tableReserved.beginUpdates()
@@ -263,22 +271,6 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
             self.tableReserved.endUpdates()
 
             self.tableReserved.reloadData()
-
-            if count == 1 {
-                let indexPath2 = NSIndexPath(forRow: ( indexRow - 1 ), inSection: section)
-                let arrIndex = self.cellDate[section][self.roomData[section]]!.indexOf(date)
-                self.cellDate[section][self.roomData[section]]!.removeAtIndex(arrIndex!)
-                self.cellPID[section][self.roomData[section]]!.removeAtIndex(arrIndex!)
-                self.cellIndentifier[section][self.roomData[section]]!.removeAtIndex(arrIndex!)
-                self.cellTime[section][self.roomData[section]]!.removeAtIndex(arrIndex!)
-
-                self.tableReserved.beginUpdates()
-
-                self.tableReserved.deleteRowsAtIndexPaths([indexPath2], withRowAnimation: UITableViewRowAnimation.Fade)
-                self.tableReserved.endUpdates()
-
-                self.tableReserved.reloadData()
-            }
 
             if self.cellIndentifier[section][self.roomData[section]]!.count == 0 {
 
@@ -507,18 +499,14 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
                             let timeArr2 = dateArr2[1].characters.split{$0 == ":"}.map(String.init)
                             if tmpDate.contains(dateArr[0]) {
                                 let index = tmpDate.indexOf(dateArr[0])!
-                                tmpIndicator.insert("DataCell", atIndex: index + 2)
-                                tmpPID.insert(pid, atIndex: index + 2)
-                                tmpDate.insert(String(dateArr[0]),atIndex: index + 2)
-                                tmpTime.insert("\(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])", atIndex: index + 2 )
+                                tmpIndicator.insert("DataCell", atIndex: index + 1)
+                                tmpPID.insert(pid, atIndex: index + 1)
+                                tmpDate.insert(String(dateArr[0]),atIndex: index + 1)
+                                tmpTime.insert("\(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])", atIndex: index + 1 )
                             }else{
-                                tmpIndicator.append("SubtitleCell")
                                 tmpIndicator.append("DataCell")
                                 tmpPID.append(pid)
-                                tmpPID.append(pid)
                                 tmpDate.append(String(dateArr[0]))
-                                tmpDate.append(String(dateArr[0]))
-                                tmpTime.append("\(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])")
                                 tmpTime.append("\(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])")
                             }
                         }
@@ -619,8 +607,8 @@ class ViewReservationCell: UITableViewCell {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        textLabel?.frame = CGRectMake(10, 0 , self.frame.width - 10, self.frame.height)
-        textLabel?.textAlignment = .Left
+        textLabel?.frame = CGRectMake(10, 0 , self.frame.width - 20, self.frame.height)
+        textLabel?.textAlignment = .Right
     }
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

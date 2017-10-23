@@ -212,8 +212,8 @@ class SingleImage: UITableViewCell {
         return view
     }()
     
-    let imgView1: UIImageView = {
-        let imgView = UIImageView()
+    let imgView1: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
@@ -372,16 +372,16 @@ class DoubleImage: UITableViewCell {
         return view
     }()
     
-    let imgView1: UIImageView = {
-        let imgView = UIImageView()
+    let imgView1: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
         return imgView
     }()
     
-    let imgView2: UIImageView = {
-        let imgView = UIImageView()
+    let imgView2: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
@@ -556,16 +556,16 @@ class TripleImage: UITableViewCell {
         return view
     }()
     
-    let imgView1: UIImageView = {
-        let imgView = UIImageView()
+    let imgView1: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
         return imgView
     }()
     
-    let imgView2: UIImageView = {
-        let imgView = UIImageView()
+    let imgView2: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
@@ -578,8 +578,8 @@ class TripleImage: UITableViewCell {
         return view
     }()
     
-    let imgView3: UIImageView = {
-        let imgView = UIImageView()
+    let imgView3: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill

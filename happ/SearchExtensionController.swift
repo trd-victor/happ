@@ -44,7 +44,6 @@ extension SearchController {
                 if let info = json2!["result"] as? NSArray {
                     dispatch_async(dispatch_get_main_queue()){
                         self.userData = info
-                        print(self.userData)
                         self.tblViewSearch.reloadData()
                     }
                 }

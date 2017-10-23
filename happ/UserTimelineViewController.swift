@@ -692,75 +692,25 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
-                cell.imgView1.image = imgCache
-            }else{
-                cell.imgView1.image = nil
-                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
-                            cell.indicator.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img1.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
+
+            cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
+                cell.indicator.stopAnimating()
             }
-            if (imgforPostCache.objectForKey(self.img2[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img2[indexPath.row]) as! UIImage
-                cell.imgView2.image = imgCache
-            }else{
-                cell.imgView2.image = nil
-                cell.imgView2.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator2.startAnimating()
-                let url = NSURL(string: self.img2[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView2.image = UIImage(data: data)
-                            cell.indicator2.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img2.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
+          
+            cell.indicator2.startAnimating()
+            cell.imgView2.loadImageUsingString(self.img2[indexPath.row]){
+                (result: Bool) in
+                cell.indicator2.stopAnimating()
             }
-            if (imgforPostCache.objectForKey(self.img3[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img3[indexPath.row]) as! UIImage
-                cell.imgView3.image = imgCache
-            }else{
-                cell.imgView3.image = nil
-                cell.imgView3.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator3.startAnimating()
-                let url = NSURL(string: self.img3[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView3.image = UIImage(data: data)
-                            cell.indicator3.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img3.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img3[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
+
+            cell.indicator3.startAnimating()
+            cell.imgView3.loadImageUsingString(self.img3[indexPath.row]){
+                (result: Bool) in
+                cell.indicator3.stopAnimating()
             }
+            
             cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
@@ -818,52 +768,21 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
-                cell.imgView1.image = imgCache
-            }else{
-                cell.imgView1.image = nil
-                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
-                            cell.indicator.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img1.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
+        
+            cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
+                
+                cell.indicator.stopAnimating()
             }
-            if (imgforPostCache.objectForKey(self.img2[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img2[indexPath.row]) as! UIImage
-                cell.imgView2.image = imgCache
-            }else{
-                cell.imgView2.image = nil
-                cell.imgView2.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator2.startAnimating()
-                let url = NSURL(string: self.img2[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView2.image = UIImage(data: data)
-                            cell.indicator2.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img2.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
+            
+            cell.indicator2.startAnimating()
+            cell.imgView2.loadImageUsingString(self.img2[indexPath.row]){
+                (result: Bool) in
+                
+                cell.indicator2.stopAnimating()
             }
+            
             cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
@@ -921,30 +840,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            //            cell.imgView1.imgForCache(self.img1[indexPath.row])
-            
-            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
-                cell.imgView1.image = imgCache
-            }else{
-                cell.imgView1.image = nil
-                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
-                            cell.indicator.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img1.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
+//            //            cell.imgView1.imgForCache(self.img1[indexPath.row])
+            cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
+                cell.indicator.stopAnimating()
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
@@ -953,7 +853,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 cell.btnDelete.hidden = false
             } else {
                 cell.btnDelete.hidden = true
-                
             }
             
             return cell

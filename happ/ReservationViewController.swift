@@ -602,6 +602,7 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
                         cell.labelIndicator.hidden = false
                 }
             }else{
+                calendarDates[indexPath.row] = date2
                 cell.dateLabel.font = UIFont.boldSystemFontOfSize(16)
                 cell.dateLabel.textColor = UIColor.blackColor()
                 if Reservation.reserved.contains("\(date2)") {

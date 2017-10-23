@@ -519,6 +519,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     
     
     func insertUserFB(userEmail: String, userPassword: String, name: String, image: String, userID : Int ) {
+        let config = SYSTEM_CONFIG()
         FIRAuth.auth()?.createUserWithEmail(userEmail, password: userPassword, completion: { (user: FIRUser?, error) in
             if error == nil {
 //                //connect to firebase db.
@@ -554,7 +555,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 
                 do {
                     try FIRAuth.auth()?.signOut()
-                    let config = SYSTEM_CONFIG()
+                    
                     config.removeSYS_VAL("userID")
                     globalUserId.userID = ""
                     UIApplication.sharedApplication().applicationIconBadgeNumber = 0
@@ -565,7 +566,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 }
             }else{
                 print(error)
-                self.displayMyAlertMessage("Error: Not Successfully Registered to firebase")
+                self.displayMyAlertMessage(config.translate("email_regist"))
             }
         })
     }
