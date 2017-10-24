@@ -81,9 +81,11 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func gotoTermsCondition(){
-        let vc = TermsandConditionController()
-        
-        self.presentViewController(vc, animated: false, completion: nil)
+        dispatch_async(dispatch_get_main_queue()){
+            let vc = TermsandConditionController()
+            
+            self.presentViewController(vc, animated: true, completion: nil)
+        }
     }
     
     func gotoLang() {

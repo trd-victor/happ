@@ -77,7 +77,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(myActivityIndicator)
         view.endEditing(true)
         
-        
         //load settings
         self.loadConfigure()
         autoLayout()

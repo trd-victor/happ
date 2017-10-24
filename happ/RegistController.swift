@@ -444,12 +444,17 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             self.loadingScreen = nil
         }
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
-        let okAction = UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.userEmail.text = ""
             self.userPassword.text = ""
             self.userName.text = ""
             self.userReEnterPassword.text = ""
-            self.dismissViewControllerAnimated(true, completion: nil)
+           
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+            
+            self.presentViewController(mainViewController, animated:true, completion:nil)
         })
         myAlert.addAction(okAction)
         self.presentViewController(myAlert, animated: true, completion: nil)

@@ -602,16 +602,18 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.scrollOffset = scrollView.contentOffset.y
         if scrollView == self.mytableview {
             if scrollView.contentOffset.y < -80 && self.scrollLoad == false {
-                refreshControl.beginRefreshing()
-                self.page = 1
-                self.scrollLoad = true
-                self.reloadTimeline()
+                reloadTableData()
             }
         }
     }
     
-    
-    
+    func reloadTableData(){
+        refreshControl.beginRefreshing()
+        self.page = 1
+        self.scrollLoad = true
+        self.reloadTimeline()
+    }
+
     func notifTimeline(notification: NSNotification){
         self.page = 1
         
@@ -712,14 +714,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
-            
-            if self.fromID[indexPath.row] == globalUserId.userID {
-                cell.btnDelete.hidden = false
-            } else {
-                cell.btnDelete.hidden = true
-                
-            }
-            
+
             return cell
         }else if self.img2[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("DoubleImage", forIndexPath: indexPath) as! DoubleImage
@@ -784,14 +779,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
-            
-            if self.fromID[indexPath.row] == globalUserId.userID {
-                cell.btnDelete.hidden = false
-            } else {
-                cell.btnDelete.hidden = true
-                
-            }
-            
+
             return cell
         }else if self.img1[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("SingleImage", forIndexPath: indexPath) as! SingleImage
@@ -848,13 +836,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
-            
-            if self.fromID[indexPath.row] == globalUserId.userID {
-                cell.btnDelete.hidden = false
-            } else {
-                cell.btnDelete.hidden = true
-            }
-            
+
             return cell
         }else{
             let cell = tableView.dequeueReusableCellWithIdentifier("NoImage", forIndexPath: indexPath) as! NoImage
@@ -903,14 +885,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            
-            if self.fromID[indexPath.row] == globalUserId.userID {
-                cell.btnDelete.hidden = false
-            } else {
-                cell.btnDelete.hidden = true
-                
-            }
-            
+
             return cell
             
         }
@@ -1009,14 +984,163 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     
     func clickMoreImage(sender: UIButton) {
-        let senderTag = sender.tag
-        let title = sender.titleLabel!.text!
-        self.deletePost(title, index: senderTag)
+        if fromID[sender.tag] != globalUserId.userID {
+            alertMore(sender.tag)
+        }else{
+            let senderTag = sender.tag
+            let title = sender.titleLabel!.text!
+            self.deletePost(title, index: senderTag)
+        }
     }
-    
+
+    func alertMore(index: Int){
+        let config = SYSTEM_CONFIG()
+
+        let myAlert = UIAlertController(title: config.translate("more_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: config.translate("block_user"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.block_user(index)
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("report_post"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.report_post(index)
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+
+    func block_user(index: Int){
+        let config = SYSTEM_CONFIG()
+
+        let myAlert = UIAlertController(title: config.translate("block_user_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.blockUser(index)
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: { (action: UIAlertAction!) in
+            self.alertMore(index)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+
+    func report_post(index: Int){
+        let config = SYSTEM_CONFIG()
+
+        let myAlert = UIAlertController(title: config.translate("report_post_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.reportPost(index)
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: { (action: UIAlertAction!) in
+            self.alertMore(index)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+
+    func blockUser(index: Int) {
+        
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        
+        var param_lang = lang
+        
+        if lang != "en" {
+            param_lang = "jp"
+        }
+        
+        let param = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "add_block",
+            "d"           : "0",
+            "lang"        : "\(param_lang)",
+            "user_id"     : "\(globalUserId.userID)",
+            "block_user_id" : "\(fromID[index])"
+        ]
+
+        let httpRequest = HttpDataRequest(postData: param)
+        let request = httpRequest.requestGet()
+
+
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+
+            if error != nil || data == nil {
+                self.blockUser(index)
+            }else{
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
+                        if json["result"] != nil {
+                            if json["result"]!["mess"] != nil {
+                                dispatch_async(dispatch_get_main_queue()){
+                                    self.displayMyAlertMessage(String(json["result"]!["mess"]!!))
+                                    self.reloadTableData()
+                                }
+                            }
+                        }
+                    }else{
+                        self.blockUser(index)
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+        }
+        task.resume()
+    }
+
+    func reportPost(index: Int) {
+        
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        
+        var param_lang = lang
+        
+        if lang != "en" {
+            param_lang = "jp"
+        }
+        
+        let param = [
+            "sercret"           : "jo8nefamehisd",
+            "action"            : "api",
+            "ac"                : "add_report",
+            "d"                 : "0",
+            "lang"              : "\(param_lang)",
+            "user_id"           : "\(globalUserId.userID)",
+            "from_id"           : "\(fromID[index])",
+            "report_post_id"    : "\(postID[index])"
+        ]
+
+        let httpRequest = HttpDataRequest(postData: param)
+        let request = httpRequest.requestGet()
+
+
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+
+            if error != nil || data == nil {
+                self.reportPost(index)
+            }else{
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
+                        if json["result"] != nil {
+                            if json["result"]!["mess"] != nil {
+                                dispatch_async(dispatch_get_main_queue()){
+                                    self.displayMyAlertMessage(String(json["result"]!["mess"]!!))
+                                }
+                            }
+                        }
+                    }else{
+                        self.reportPost(index)
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+        }
+        task.resume()
+    }
+
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
     }
+
     
     func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
         let body = NSMutableData();
