@@ -54,32 +54,76 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
 
 exports.timelinePushNotif = functions.database.ref('/notifications/push-notification/timeline')
     .onWrite(event => {
-
     var valueObject = event.data.val();
 
+    var message = "" 
+
     console.log('Name ' +valueObject.name);
+    var firIDs = []
+    if(valueObject.firIDs != ""){
+        var count = 0
+        firIDs = valueObject.firIDs.split(",")
+        return new Promise((resolve, reject) => {
+            firIDs.forEach(function(id){
+                admin.database().ref().child("users").child(id).once('value').then(function(snapshot){
+                    let result = snapshot.val()
 
-    const payload = {
-        data: {
-            "title": valueObject.name,
-            "body": "Posted on timeline",
-            "skills": valueObject.skills,
-            "author_id": valueObject.userId
-        },
-        notification: {
-            title: valueObject.name,
-            body: "Posted on timeline",
-            sound: "default"
-        }
-    };
+                    if(result["language"] != null){
+                        if(result["language"] == "en"){
+                            message = valueObject.messageEN
+                        }else if (result["language"] == "jp"){
+                             message = valueObject.messageJP    
+                        }else{
+                             message = valueObject.messageEN
+                        }
+                    } else{
+                         message = valueObject.messageEN
+                    }
 
-    const options = {
-        content_available: true,
-        collapse_key: valueObject.name,
-        priority: "high"
+                    const payload = {
+                        data: {
+                            "title": valueObject.name,
+                            "body": message,
+                            "skills": valueObject.skills,
+                            "author_id": valueObject.userId
+                        },
+                        notification: {
+                            title: valueObject.name,
+                            body: message,
+                            sound: "default"
+                        }
+                    };
+
+                    const options = {
+                        content_available: true,
+                        collapse_key: valueObject.name,
+                        priority: "high"
+                    }
+
+                    admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
+                        var token = snap.val();
+                        count++;
+                        if(token != "" && token != null){
+                            if (count == snapshot.numChildren()){
+                                admin.messaging().sendToDevice(token, payload, options);
+                                resolve("");
+                            }else{
+                                admin.messaging().sendToDevice(token, payload, options);
+                            }
+                        }
+                    },function (errorObject) {
+                        console.log("Error getting data: " + errorObject.code);
+                    })
+                })
+            })
+        });
+
     }
+    
 
-    return admin.messaging().sendToTopic('timeline-push-notification', payload, options);
+   
+
+    // return admin.messaging().sendToTopic('timeline-push-notification', payload, options);
 
 });
 
@@ -102,9 +146,9 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                         }
 
                         if(value["language"] == "en"){
-                            body = "Turned on free now";
+                            body = valueObject.messageEN;
                         }else if(value["language"] == "jp"){
-                            body = "今すぐ無料でオンにしました";
+                            body = valueObject.messageJP;
                         }
 
                         var payload = {

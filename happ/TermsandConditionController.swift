@@ -77,7 +77,8 @@ class TermsandConditionController: UIViewController {
     let lblArticle13: UILabel = UILabel()
     let lblArticle13Desc1: UILabel = UILabel()
     let lblArticle13Desc2: UILabel = UILabel()
-
+    
+    var allheight = 0.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -165,13 +166,27 @@ class TermsandConditionController: UIViewController {
         self.scrollView.leftAnchor.constraintEqualToAnchor(self.view.leftAnchor).active = true
         self.scrollView.widthAnchor.constraintEqualToAnchor(self.view.widthAnchor).active = true
         self.scrollView.heightAnchor.constraintEqualToAnchor(self.view.heightAnchor, constant: -66).active = true
-        self.scrollView.contentSize = CGSizeMake(self.view.frame.width, 3200)
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8 where value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        
+        if identifier.containsString("iPad") || identifier.containsString("ipad") || identifier.containsString("x86_64") {
+            self.scrollView.contentSize = CGSizeMake(self.view.frame.width, 3400)
+        }else{
+            self.scrollView.contentSize = CGSizeMake(self.view.frame.width, 3400)
+        }
         
         self.lblTerm.translatesAutoresizingMaskIntoConstraints = false
         self.lblTerm.topAnchor.constraintEqualToAnchor(self.scrollView.topAnchor, constant: 10).active = true
         self.lblTerm.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor, constant: 10).active = true
         self.lblTerm.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
         self.lblTerm.font = UIFont.boldSystemFontOfSize(18)
+        self.lblTerm.lineBreakMode = .ByWordWrapping
+        self.lblTerm.numberOfLines = 0
         
         self.lblDescription.translatesAutoresizingMaskIntoConstraints = false
         self.lblDescription.topAnchor.constraintEqualToAnchor(self.lblTerm.bottomAnchor, constant: 10).active = true
@@ -572,6 +587,8 @@ class TermsandConditionController: UIViewController {
         self.lblArticle11.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor, constant: 10).active = true
         self.lblArticle11.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -20).active = true
         self.lblArticle11.font = UIFont.boldSystemFontOfSize(18)
+        self.lblArticle11.lineBreakMode = .ByWordWrapping
+        self.lblArticle11.numberOfLines = 0
         
         self.lblArticle11Desc.translatesAutoresizingMaskIntoConstraints = false
         self.lblArticle11Desc.topAnchor.constraintEqualToAnchor(self.lblArticle11.bottomAnchor, constant: 10).active = true
@@ -604,11 +621,13 @@ class TermsandConditionController: UIViewController {
         self.lblArticle13.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor, constant: 10).active = true
         self.lblArticle13.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -20).active = true
         self.lblArticle13.font = UIFont.boldSystemFontOfSize(18)
+        self.lblArticle13.lineBreakMode = .ByWordWrapping
+        self.lblArticle13.numberOfLines = 0
         
         self.lblArticle13Desc1.translatesAutoresizingMaskIntoConstraints = false
         self.lblArticle13Desc1.topAnchor.constraintEqualToAnchor(self.lblArticle13.bottomAnchor, constant: 10).active = true
         self.lblArticle13Desc1.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor, constant: 20).active = true
-        self.lblArticle13Desc1.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -20).active = true
+        self.lblArticle13Desc1.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -30).active = true
         self.lblArticle13Desc1.font = UIFont.systemFontOfSize(15)
         self.lblArticle13Desc1.lineBreakMode = .ByWordWrapping
         self.lblArticle13Desc1.numberOfLines = 0
@@ -617,13 +636,16 @@ class TermsandConditionController: UIViewController {
         self.lblArticle13Desc2.translatesAutoresizingMaskIntoConstraints = false
         self.lblArticle13Desc2.topAnchor.constraintEqualToAnchor(self.lblArticle13Desc1.bottomAnchor, constant: 5).active = true
         self.lblArticle13Desc2.leftAnchor.constraintEqualToAnchor(self.scrollView.leftAnchor, constant: 20).active = true
-        self.lblArticle13Desc2.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -20).active = true
+        self.lblArticle13Desc2.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor, constant: -30).active = true
         self.lblArticle13Desc2.font = UIFont.systemFontOfSize(15)
         self.lblArticle13Desc2.lineBreakMode = .ByWordWrapping
         self.lblArticle13Desc2.numberOfLines = 0
         self.lblArticle13Desc2.textAlignment = .Justified
     }
     
+    func addHeight(height: Double){
+        self.allheight += height
+    }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -655,7 +677,7 @@ class TermsandConditionController: UIViewController {
             lang = language as! String
         }
         
-        if lang == "en" || lang == ""{
+        if lang == "en" || lang == "" {
             self.lblTerm.text = "Terms of service"
             self.lblDescription.text = "This Terms of Service (\"Terms of Service\") is a service (hereinafter referred to as \"The Service\") provided by 9 GATES Co., Ltd. (hereinafter referred to as \"The Company\") on this smartphone application It defines the terms of use of. For members of Co-work & Share. H (hereinafter referred to as \"users\"), use this service in accordance with these terms."
             self.lblArticle1.text = "Article 1 (Applicable)"
@@ -794,6 +816,13 @@ class TermsandConditionController: UIViewController {
             self.lblArticle13Desc2.text = "\u{25CF} 本サービスに関して紛争が生じた場合には，当社の本店所在地を管轄する裁判所を専属的合意管轄とします。"
 
         }
+        
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+//        self.box?.constant = CGFloat(self.height)
+//        self.view.layoutIfNeeded()
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

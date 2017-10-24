@@ -53,6 +53,24 @@ class SYSTEM_CONFIG {
         }
     }
     
+    internal func getTranslate(key: String, lang: String) -> String {
+        if let textTranslate = self.getSYS_VAL("SYSTM_VAL") as? NSDictionary {
+            
+            if let key_text = textTranslate[key] as? NSDictionary{
+                if let text = key_text[lang] as? String {
+                    return text
+                }else{
+                    return ""
+                }
+            }else{
+                return ""
+            }
+        }else{
+            return ""
+        }
+    }
+
+    
     internal func getSkillByID(id: String) -> String {
         var lang = self.getSYS_VAL("AppLanguage") as? String
         let skills = self.getSYS_VAL("SYSTM_SKILL") as? NSDictionary

@@ -144,7 +144,7 @@ class ViewController: UIViewController, UIScrollViewDelegate {
     
     func loadConfigure(){
         let config = SYSTEM_CONFIG()
-    
+        
         // Set Translations
         btn_register.setTitle(config.translate("button_regist"), forState: .Normal)
         btn_login.setTitle(config.translate("subtitle_Login"),forState: .Normal)

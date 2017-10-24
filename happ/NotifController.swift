@@ -429,6 +429,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
 
         let config = SYSTEM_CONFIG()
        
+        var firIDs: [String] = []
         let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
         let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
         let firID = FIRAuth.auth()?.currentUser?.uid
@@ -451,24 +452,21 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             notifAllDB.setValue(detail)
             
             if type == "free-time" {
-                let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
-                pushFreeTimeDB.setValue(detail)
-            }
-            
-            if type == "timeline"{
-                let pushdetail = [
+                let freeTimeDetail = [
                     "name": String(name),
                     "photoUrl": String(photoUrl),
                     "id": id,
                     "timestamp": timestamp,
                     "type": type,
                     "userId": firID!,
-                    "skills": timeline_post_skills.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
+                    "messageEN": config.getTranslate("push_notif_free", lang: "en"),
+                    "messageJP": config.getTranslate("push_notif_free", lang: "jp")
                 ]
                 
-                let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
-                pushTimelineDB.setValue(pushdetail)
+                let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
+                pushFreeTimeDB.setValue(freeTimeDetail)
             }
+            
             
             // get user DB
             let userDB = FIRDatabase.database().reference().child("users")
@@ -502,22 +500,26 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         }// end of if
                     })// end of observation
                 }// dispatch end
-            }
+            }//end of if free time type
+          
             
             if type == "timeline" {
                 if timeline_post_skills.selectedSkills.count == 0 {
                     return
                 }else{
                     dispatch_async(dispatch_get_main_queue()){
+                        var count = 0
                         userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             if let result = snapshot.value as? NSDictionary {
                                 for (key, value) in result {
+                                    count++
                                     if let valueData = value as? NSDictionary {
                                         if let skills = valueData["skills"] as? String {
-                                             let userKey = key as? String
+                                            let userKey = key as? String
                                             if skills != "" && userKey! != firID{
                                                 for c in timeline_post_skills.selectedSkills {
                                                     if skills.containsString(String(c)){
+                                                        firIDs.append(userKey!)
                                                         FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
                                                         let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
                                                         dispatch_async(dispatch_get_main_queue()){
@@ -538,14 +540,29 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                             }
                                         }
                                     }
+                                    if count == result.count {
+                                        let pushdetail = [
+                                            "name": String(name),
+                                            "photoUrl": String(photoUrl),
+                                            "id": id,
+                                            "timestamp": timestamp,
+                                            "type": type,
+                                            "userId": firID!,
+                                            "skills": timeline_post_skills.selectedSkills.flatMap({String($0)}).joinWithSeparator(","),
+                                            "messageEN": config.getTranslate("push_notif_timeline", lang: "en"),
+                                            "messageJP": config.getTranslate("push_notif_timeline", lang: "jp"),
+                                            "firIDs": firIDs.joinWithSeparator(",")
+                                        ]
+                                        
+                                        let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
+                                        pushTimelineDB.setValue(pushdetail)
+                                    }
                                 }// end of loop
                             }// end of if
                         })// end of observation
-                        
                     }// dispatch end
-                }
-            }
-            
+                }// end of if count selectedskill
+            }// end of if type timeline
         }
     }
     
