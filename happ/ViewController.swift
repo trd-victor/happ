@@ -50,6 +50,8 @@ class ViewController: UIViewController, UIScrollViewDelegate {
                 self.btnCLang.hidden = true
             }
         }
+        
+        self.btn_register.addTarget(self, action: Selector("gotoTermsCondition"), forControlEvents: .TouchUpInside)
         self.btnCLang.addTarget(self, action: Selector("gotoLang"), forControlEvents: .TouchUpInside)
     }
     
@@ -76,6 +78,12 @@ class ViewController: UIViewController, UIScrollViewDelegate {
         super.viewWillAppear(animated)
         
         self.loadConfigure()
+    }
+    
+    func gotoTermsCondition(){
+        let vc = TermsandConditionController()
+        
+        self.presentViewController(vc, animated: false, completion: nil)
     }
     
     func gotoLang() {

@@ -234,9 +234,6 @@
                                                         <state key="normal" title="Button">
                                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         </state>
-                                                        <connections>
-                                                            <segue destination="oiE-AQ-YM2" kind="modal" id="o8A-kG-tHn"/>
-                                                        </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="qPU-gW-X3f">
                                                         <rect key="frame" x="51" y="120" width="247" height="51"/>
@@ -1379,7 +1376,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="H" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="92" width="320" height="77"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lqd-Oi-WpL" id="3Q3-ls-nLn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="76"/>
@@ -2176,7 +2173,7 @@
     <resources>
         <image name="Image" width="29" height="29"/>
         <image name="camera" width="32" height="27"/>
-        <image name="logo" width="375" height="163"/>
+        <image name="logo" width="214" height="108"/>
         <image name="messageIcon" width="25" height="25"/>
         <image name="notificationIcon" width="25" height="25"/>
         <image name="page1" width="111" height="48"/>
