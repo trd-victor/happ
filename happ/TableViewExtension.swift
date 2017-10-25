@@ -80,7 +80,10 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
                                         }
                                     }
                                     if let body = postContent.valueForKey("body") {
-                                        self.userBody.append(body as! String)
+                                        if let textStr = body as? String {
+                                            let text = try textStr.convertHtmlSymbols()
+                                              self.userBody.append(text!)
+                                        }
                                     }
                                     if let id = postContent.valueForKey("from_user_id") {
                                         self.fromID.append(id as! String)

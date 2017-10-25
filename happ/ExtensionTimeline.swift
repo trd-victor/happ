@@ -88,7 +88,10 @@ extension UserTimelineViewController {
                                             }
                                         }
                                         if let body = postContent.valueForKey("body") {
-                                            tmpuserBody.append( body as! String )
+                                            if let textStr = body as? String {
+                                                let text = try textStr.convertHtmlSymbols()
+                                                tmpuserBody.append(text!)
+                                            }
                                         }
                                         if let body = postContent.valueForKey("from_user_id") {
                                             tmpfromID.append( body as! String )

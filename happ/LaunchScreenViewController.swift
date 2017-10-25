@@ -162,6 +162,7 @@ class LaunchScreenViewController: UIViewController {
                 
                 if let token = FIRInstanceID.instanceID().token() {
                     FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
+                    FIRDatabase.database().reference().child("users").child(firID).child("language").setValue(self.language)
                 }
                 
                 let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController

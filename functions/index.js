@@ -74,10 +74,10 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
                         }else if (result["language"] == "jp"){
                              message = valueObject.messageJP    
                         }else{
-                             message = valueObject.messageEN
+                             message = valueObject.messageJP
                         }
                     } else{
-                         message = valueObject.messageEN
+                         message = valueObject.messageJP
                     }
 
                     const payload = {
@@ -88,8 +88,8 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
                             "author_id": valueObject.userId
                         },
                         notification: {
-                            title: valueObject.name,
-                            body: message,
+                            // title: valueObject.name,
+                            body: valueObject.name + " " + message,
                             sound: "default"
                         }
                     };
@@ -142,7 +142,7 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                     if(valueObject.userId != fid){
                         var body = ""
                         if(value["language"] === undefined || value["language"] == ""){
-                            value["language"] = "en";
+                            value["language"] = "jp";
                         }
 
                         if(value["language"] == "en"){
@@ -158,8 +158,8 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                                 "author_id": valueObject.userId
                             },
                             notification: {
-                                title: valueObject.name,
-                                body: body,
+                                // title: valueObject.name,
+                                body: valueObject.name + " " + body,
                                 sound: "default"
                             }
                         };

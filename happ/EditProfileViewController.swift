@@ -456,10 +456,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                     }
                                 }
                             }
-                            message = json!["result"]!["mess"] as! String
                         }
-                        
-                        
                         
                         let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
                         
@@ -481,7 +478,13 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 self.userImage.image = UIImage(named: "noPhoto")
                             }
                             
-                            self.userDescription.text = message
+                            do {
+                                if let message = json!["result"]!["mess"] as? String {
+                                    self.userDescription.text = try message.convertHtmlSymbols()
+                                }
+                            }catch{
+                                self.userDescription.text = json!["result"]!["mess"] as? String
+                            }
                             
                             if self.loadingScreen != nil {
                                 UIViewController.removeSpinner(self.loadingScreen)

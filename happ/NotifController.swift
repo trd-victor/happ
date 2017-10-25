@@ -459,8 +459,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     "timestamp": timestamp,
                     "type": type,
                     "userId": firID!,
-                    "messageEN": config.getTranslate("push_notif_free", lang: "en"),
-                    "messageJP": config.getTranslate("push_notif_free", lang: "jp")
+                    "messageEN": config.getTranslate("notif_freetime_mess", lang: "en"),
+                    "messageJP": config.getTranslate("notif_freetime_mess", lang: "jp")
                 ]
                 
                 let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
@@ -549,8 +549,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                             "type": type,
                                             "userId": firID!,
                                             "skills": timeline_post_skills.selectedSkills.flatMap({String($0)}).joinWithSeparator(","),
-                                            "messageEN": config.getTranslate("push_notif_timeline", lang: "en"),
-                                            "messageJP": config.getTranslate("push_notif_timeline", lang: "jp"),
+                                            "messageEN": config.getTranslate("notif_timeline_mess", lang: "en"),
+                                            "messageJP": config.getTranslate("notif_timeline_mess", lang: "jp"),
                                             "firIDs": firIDs.joinWithSeparator(",")
                                         ]
                                         

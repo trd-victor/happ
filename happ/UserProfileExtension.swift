@@ -264,7 +264,22 @@ extension UserProfileController {
                         if json["result"] != nil {
                             dispatch_async(dispatch_get_main_queue()){
                                 let user_id = json["result"]!["user_id"]!
-                                self.userName.text = json["result"]!["name"] as? String
+                                do {
+                                    if let txtStr = json["result"]!["name"] as? String {
+                                       self.userName.text = try txtStr.convertHtmlSymbols()
+                                    }
+                                }catch{
+                                    self.userName.text = json["result"]!["name"] as? String
+                                }
+                                
+                                do {
+                                    if let txtStr = json["result"]!["mess"] as? String {
+                                        self.msg.text = try txtStr.convertHtmlSymbols()
+                                    }
+                                }catch{
+                                    self.msg.text = json["result"]!["mess"] as? String
+                                }
+                                
                                 self.h_id.text = json["result"]!["h_id"] as? String
                                
                                 if let skill = json["result"]!["skills"] as? String {
@@ -290,8 +305,7 @@ extension UserProfileController {
                                         self.skills.text = ""
                                     }
                                 }
-                                    
-                                self.msg.text = json["result"]!["mess"] as? String
+                                
                                 if let imgUrl = json["result"]!["icon"] as? String {
                                     self.ProfileImage.profileForCache(imgUrl)
                                 }
@@ -413,7 +427,10 @@ extension UserProfileController {
                                             }
                                         }
                                         if let body = postContent.valueForKey("body") {
-                                            tmpuserBody.append( body as! String )
+                                            if let textStr = body as? String {
+                                                let text = try textStr.convertHtmlSymbols()
+                                                tmpuserBody.append(text!)
+                                            }
                                         }
                                         if let body = postContent.valueForKey("from_user_id") {
                                             tmpfromID.append( body as! String )

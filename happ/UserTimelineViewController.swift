@@ -436,7 +436,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                             }
                                         }
                                         if let body = postContent.valueForKey("body") {
-                                            self.userBody.append(body as! String)
+                                            if let textStr = body as? String {
+                                                let text = try textStr.convertHtmlSymbols()
+                                                self.userBody.append(text!)
+                                            }		
                                         }
                                         if let body = postContent.valueForKey("from_user_id") {
                                             self.fromID.append(body as! String)
@@ -491,7 +494,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "skills"     : "\(globalUserId.skills)",
             "origin"      : "timeline"
         ]
-        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -508,7 +510,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     if let resultArray = json!.valueForKey("result") as? NSArray {
                         
                         self.myResultArr = resultArray
-                        
                         for item in resultArray {
                             if let resultDict = item as? NSDictionary {
                                 if let userPostId = resultDict.valueForKey("ID") {
@@ -551,7 +552,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                         }
                                     }
                                     if let body = postContent.valueForKey("body") {
-                                        self.userBody.append(body as! String)
+                                        if let textStr = body as? String {
+                                            let text = try textStr.convertHtmlSymbols()
+                                             self.userBody.append(text!)
+                                        }
                                     }
                                     if let id = postContent.valueForKey("from_user_id") {
                                         self.fromID.append(id as! String)
@@ -574,6 +578,21 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
         task.resume()
+    }
+    
+    func convertSpecialCharacters(string: String) -> String {
+        var newString = string
+        let char_dictionary = [
+            "&amp;": "&",
+            "&lt;": "<",
+            "&gt;": ">",
+            "&quot;": "\"",
+            "&apos;": "'"
+        ];
+        for (escaped_char, unescaped_char) in char_dictionary {
+            newString = newString.stringByReplacingOccurrencesOfString(escaped_char, withString: unescaped_char, options: NSStringCompareOptions.RegularExpressionSearch, range: nil)
+        }
+        return newString
     }
     
     func refreshTable() {
@@ -637,7 +656,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     let imgforProfileCache = NSCache()
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        
         
         let config = SYSTEM_CONFIG()
         let username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String
@@ -959,8 +977,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             let textsize = calcTextHeight(self.userBody[indexPath.row], frame: tableView.frame.size, fontsize: 16)
             height += textsize.height
         }
-        if self.img1[indexPath.row] != "null" {
-            height += 320
+        if self.img1.count != 0 {
+            if let image = self.img1[indexPath.row] as? String {
+                if image != "null" {
+                     height += 320
+                }
+            }
         }
         
         return height
@@ -1181,8 +1203,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func deleteAlertMessage(userMessage:String){
+        let config = SYSTEM_CONFIG()
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.ActionSheet)
-        myAlert.addAction(UIAlertAction(title: "Delete", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+        myAlert.addAction(UIAlertAction(title: config.translate("button_delete"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             let id = self.userpostID
             let indexRow = self.indexInt
             
@@ -1203,7 +1226,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             self.mytableview.reloadData()
             
         }))
-        myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     

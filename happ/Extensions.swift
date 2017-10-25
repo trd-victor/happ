@@ -182,3 +182,11 @@ extension UITextView: UITextViewDelegate {
     }
     
 }
+
+extension String {
+    func convertHtmlSymbols() throws -> String? {
+        guard let data = dataUsingEncoding(NSUTF8StringEncoding) else { return nil }
+        
+        return try NSAttributedString(data: data, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute: NSUTF8StringEncoding], documentAttributes: nil).string
+    }
+}
