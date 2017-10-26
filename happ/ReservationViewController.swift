@@ -386,19 +386,22 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
                 self.getReserved()
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-
-                    if let resultArray = json!.valueForKey("result") as? NSArray {
-                        if let fields = resultArray.valueForKey("fields") as? NSArray {
-                            for data in fields {
-                                let date = data.valueForKey("start") as! String
-                                let dateArr = date.characters.split{$0 == " "}.map(String.init)
-                                Reservation.reserved.append(dateArr[0])
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        
+                        dispatch_async(dispatch_get_main_queue()){
+                            if let resultArray = json.valueForKey("result") as? NSArray {
+                                if let fields = resultArray.valueForKey("fields") as? NSArray {
+                                    for data in fields {
+                                        let date = data.valueForKey("start") as! String
+                                        let dateArr = date.characters.split{$0 == " "}.map(String.init)
+                                        Reservation.reserved.append(dateArr[0])
+                                    }
+                                }
                             }
+                            
+                            self.prepareCalendarData()
                         }
-                    }
-                    dispatch_async(dispatch_get_main_queue()){
-                        self.prepareCalendarData()
+
                     }
                 } catch {
                     print(error)
@@ -551,12 +554,13 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
         
-        if identifier.containsString("iPad") || identifier.containsString("iPad") || identifier.containsString("x86_64") {
+        if identifier.containsString("iPad") || identifier.containsString("ipad") || identifier.containsString("x86_64") {
+            layoutwidth = self.frame.width / 7
+        }else if identifier.containsString("iPhone5,2") || identifier.containsString("iPhone5,1"){
             layoutwidth = self.frame.width / 7
         }else{
             layoutwidth = (self.frame.width + 20) / 7
         }
-
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)

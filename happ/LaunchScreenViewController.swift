@@ -161,8 +161,10 @@ class LaunchScreenViewController: UIViewController {
                 config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
                 
                 if let token = FIRInstanceID.instanceID().token() {
-                    FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
-                    FIRDatabase.database().reference().child("users").child(firID).child("language").setValue(self.language)
+                    dispatch_async(dispatch_get_main_queue()){
+                        FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
+                        FIRDatabase.database().reference().child("users").child(firID).child("language").setValue(self.language)
+                    }
                 }
                 
                 let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
@@ -254,19 +256,19 @@ class LaunchScreenViewController: UIViewController {
                 self.getAllUserInfo()
             }else{
                 do {
-                    let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if let info = json2!["result"] as? NSArray {
-                        
-                        for profile in info {
-                            config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
-                            config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
-                            if let url = profile["icon"] as? String {
-                                config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
-                            }else{
-                                config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                    if let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if let info = json2["result"] as? NSArray {
+                            for profile in info {
+                                config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
+                                config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
+                                if let url = profile["icon"] as? String {
+                                    config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
+                                }else{
+                                    config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                                }
+                                config.setSYS_VAL(profile["skills"]!!, key: "user_skills_\(profile["user_id"]!!)")
+                                config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
                             }
-                            config.setSYS_VAL(profile["skills"]!!, key: "user_skills_\(profile["user_id"]!!)")
-                            config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
                         }
                     }
                 } catch {

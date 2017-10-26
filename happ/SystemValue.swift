@@ -42,26 +42,27 @@ class getSystemValue {
                 return;
             }
             do {
-                let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                if let _ = json?.valueForKey("result") as? NSArray {
-                    for result in json?.valueForKey("result") as! NSArray {
-                        if result["fields"] != nil && result["fields"]!!["key"] != nil {
-                            if let msg = result["fields"]! {
-                                let key = msg["key"] as! String
-                                let en = msg["value_en"] as! String
-                                let ja = msg["value_jp"] as! String
-                                
-                                self.sysVals[key] = [
-                                    "en" : en,
-                                    "jp" : ja
-                                ]
+                if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                    if let _ = json.valueForKey("result") as? NSArray {
+                        for result in json.valueForKey("result") as! NSArray {
+                            if result["fields"] != nil && result["fields"]!!["key"] != nil {
+                                if let msg = result["fields"]! {
+                                    let key = msg["key"] as! String
+                                    let en = msg["value_en"] as! String
+                                    let ja = msg["value_jp"] as! String
+                                    
+                                    self.sysVals[key] = [
+                                        "en" : en,
+                                        "jp" : ja
+                                    ]
+                                }
                             }
                         }
                     }
-                }
-                dispatch_async(dispatch_get_main_queue()){
-                    let config = SYSTEM_CONFIG()
-                    config.setSYS_VAL(self.sysVals, key: "SYSTM_VAL")
+                    dispatch_async(dispatch_get_main_queue()){
+                        let config = SYSTEM_CONFIG()
+                        config.setSYS_VAL(self.sysVals, key: "SYSTM_VAL")
+                    }
                 }
             } catch {
                 print(error)
@@ -105,36 +106,33 @@ class getSystemValue {
                 print("error kay ", error)
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if let result = json!["result"] as? NSArray {
-                        for (value) in result {
-                            let dataVal = value as? NSDictionary
-                            let id = dataVal!["ID"] as? Int
-                            
-                            if let fields = dataVal!["fields"] as? NSDictionary {
-                                let en = fields["skill_name_en"] as? String
-                                let jp = fields["skill_name_jp"] as? String
-                                let key = fields["key"] as? String
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        
+                        
+                        if let result = json["result"] as? NSArray {
+                            for (value) in result {
+                                let dataVal = value as? NSDictionary
+                                let id = dataVal!["ID"] as? Int
                                 
-                                self.skillsVal[String(id!)] = [
-                                    "en": en!,
-                                    "jp": jp!,
-                                    "key": key!,
-                                ]
-                                
+                                if let fields = dataVal!["fields"] as? NSDictionary {
+                                    let en = fields["skill_name_en"] as? String
+                                    let jp = fields["skill_name_jp"] as? String
+                                    let key = fields["key"] as? String
+                                    
+                                    self.skillsVal[String(id!)] = [
+                                        "en": en!,
+                                        "jp": jp!,
+                                        "key": key!,
+                                    ]
+                                }
                             }
-                            
                         }
                         
-                        
+                        dispatch_async(dispatch_get_main_queue()){
+                            let config = SYSTEM_CONFIG()
+                            config.setSYS_VAL(self.skillsVal, key: "SYSTM_SKILL")
+                        }
                     }
-                    
-                    dispatch_async(dispatch_get_main_queue()){
-                        let config = SYSTEM_CONFIG()
-                        config.setSYS_VAL(self.skillsVal, key: "SYSTM_SKILL")
-                    }
-                    
                 }catch {
                     print("error kay2 ", error)
                 }
