@@ -14,9 +14,10 @@ let imgCache = NSCache()
 extension UIImageView {
 
     func profileForCache(urlString: String) {
+        
         let url = urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         
-        if let imgCache = profileImgCache.objectForKey(url) as? UIImage {
+        if let imgCache = globalvar.imgforProfileCache.objectForKey(url) as? UIImage {
             self.image = imgCache
             return
         }
@@ -30,7 +31,7 @@ extension UIImageView {
                 return
             } else {
                 if let downloadImage = UIImage(data: data!) {
-                    profileImgCache.setObject(downloadImage, forKey: url)
+                    globalvar.imgforProfileCache.setObject(downloadImage, forKey: url)
                     self.image = downloadImage
                     return
                 }
@@ -79,7 +80,7 @@ extension UIViewController {
         }
         
         return spinnerView
-          }
+    }
   
 
     class func removeSpinner(spinner :UIView) {

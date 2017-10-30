@@ -88,6 +88,7 @@ class MessageTableViewController: UITableViewController {
         let config = SYSTEM_CONFIG()
         
         self.title = config.translate("title:message")
+        self.mytableview.reloadData()
     }
     
     func refreshLang(notifcation: NSNotification){
@@ -109,21 +110,29 @@ class MessageTableViewController: UITableViewController {
             if let result = snap.value as? NSDictionary {
                 var count = 0
                 for (_, value) in result {
-                    count++
-                    self.lastMessages.append(value as! NSDictionary)
-                    self.lastMessages.sortInPlace({(message1, message2) -> Bool in
-                        return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
-                    })
-                    if count == result.count {
-                        self.mytableview.reloadData()
+                    if let data = value as? NSDictionary {
+                        count++
+                        if let userID = data.valueForKey("chatmateId") as? String {
+                            if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
+                                data.setValue(photo, forKey: "photoUrl")
+                            }
+                            if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
+                                data.setValue(photo, forKey: "name")
+                            }
+                        }
+                        
+                        self.lastMessages.append(data)
+                        self.lastMessages.sortInPlace({(message1, message2) -> Bool in
+                            return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
+                        })
+                        if count == result.count {
+                            self.mytableview.reloadData()
+                        }
                     }
                 }
             }
         })
     }
-    
-    
-    
     
     func refreshTable(notification: NSNotification) {
         
@@ -255,7 +264,20 @@ class MessageTableViewController: UITableViewController {
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) \(time)"
+        return self.dateTransform("\(date) \(time)")
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
     }
     
     

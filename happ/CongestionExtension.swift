@@ -52,6 +52,8 @@ extension CongestionViewController {
                                         if let fields = resultData.valueForKey("fields") {
                                             if let percent = fields.valueForKey("persentage") {
                                                 retData = Int(percent as! String)!
+                                            }else{
+                                                retData = 0
                                             }
                                         }
                                         
@@ -118,13 +120,8 @@ extension CongestionViewController {
                             }
                         }
                         
-                        self.widthPercentage = self.calculatePercentage(percent)
                         self.percentage.text = "\(percent)%"
-                        self.prcentViewBlack.topAnchor.constraintEqualToAnchor(self.percentView.topAnchor).active = true
-                        self.prcentViewBlack.leftAnchor.constraintEqualToAnchor(self.percentView.leftAnchor).active = true
-                        self.prcentViewBlack.widthAnchor.constraintEqualToConstant(self.widthPercentage).active = true
-                        self.prcentViewBlack.heightAnchor.constraintEqualToConstant(146).active = true
-                        self.prcentViewBlack.backgroundColor = UIColor(hexString: "#272727")
+                        self.viewBlackConstraint.constant = self.calculatePercentage(percent)
                         self.collectionView.reloadData()
                         
                         self.viewLoading.hidden = true

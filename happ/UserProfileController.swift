@@ -172,6 +172,7 @@ class UserProfileController: UIViewController {
         }
         
         autoLayout()
+        self.tblProfile.allowsSelection = false;
         
         let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
         swipeRight.direction = .Right

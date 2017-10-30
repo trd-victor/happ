@@ -404,29 +404,40 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     self.registerUser(sender)
                 }else{
                     do {
-                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                        
-                        dispatch_async(dispatch_get_main_queue()) {
-                            if json!["message"] != nil {
-                                self.mess = json!["message"] as! String
-                            }
-                            if json!["result"] != nil {
-                                if json!["result"]!["mess"] != nil {
-                                    self.mess = json!["result"]!["mess"] as! String
-                                }
-                            }
+                        if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                             
-                            var errorMessage : Bool
-                            if json!["error"] != nil {
-                                errorMessage = json!["error"] as! Bool
-                                if errorMessage == true {
-                                    self.displayMyAlertMessage(self.mess)
+                            dispatch_async(dispatch_get_main_queue()) {
+                                var errorMessage : Bool
+                                if json["error"] != nil {
+                                    if json["message"] != nil {
+                                        self.mess = json["message"] as! String
+                                    }
+                                    
+                                    errorMessage = json["error"] as! Bool
+                                    if errorMessage == true {
+                                        self.displayMyAlertMessage(self.mess)
+                                    }
+                                } else {
+                                    if let result = json["result"] as? NSDictionary {
+                                        var userID: Int = 0
+                                        if let message = result["mess"] as? String{
+                                            self.mess =  message
+                                        }
+                                        
+                                        if let id = result["user_id"] as? Int {
+                                            userID = id
+                                        }
+                                        
+                                        dispatch_async(dispatch_get_main_queue()){
+                                            self.registerFirebase(userID, userEmail: email, password: pass, name: name)
+                                        }
+                                    }
                                 }
-                            } else {
-                               
-                                self.loadUserData(name, userEmail: email, password: pass)
                             }
+                        }else{
+                            self.registerUser(sender)
                         }
+                        
                     } catch {
                         print(error)
                     }
@@ -436,6 +447,60 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             }
             task.resume()
         }
+    }
+    
+    func registerFirebase(userID: Int, userEmail: String, password: String, name: String){
+        
+        let config = SYSTEM_CONFIG()
+        FIRAuth.auth()?.createUserWithEmail(userEmail, password: password, completion: { (user: FIRUser?, error) in
+            if error == nil {
+                //              connect to firebase db.
+                let db = FIRDatabase.database().reference().child("users").child((user?.uid)!)
+                
+                if let token = FIRInstanceID.instanceID().token() {
+                    //register token on firebase
+                    let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
+                    registTokendb.child("token").setValue(String(token))
+                }
+                var skills = ""
+                if reg_user.selectedSkills.count > 0 {
+                    skills = "," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ","
+                }
+                
+                //set users array to insert...
+                let userDetails: [String : AnyObject] = [
+                    "email"     : userEmail,
+                    "id"        : userID,
+                    "name"      : name,
+                    "photoUrl"  : "null",
+                    "skills"    : skills,
+                    "language"  : self.language
+                ]
+                
+                //insert to users
+                db.setValue(userDetails)
+                
+                self.successMessageAlert(self.mess)
+                
+                let launch = LaunchScreenViewController()
+                launch.getAllUserInfo()
+                
+                do {
+                    try FIRAuth.auth()?.signOut()
+                    
+                    config.removeSYS_VAL("userID")
+                    globalUserId.userID = ""
+                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                    FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
+                    FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
+                } catch (let error) {
+                    print((error as NSError).code)
+                }
+            }else{
+                print(error)
+                self.displayMyAlertMessage(config.translate("email_regist"))
+            }
+        })
     }
     
     func successMessageAlert(userMessage: String) {
@@ -460,126 +525,9 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         self.presentViewController(myAlert, animated: true, completion: nil)
      }
     
-    func loadUserData(sender : String, userEmail: String, password: String) {
-        
-        let request1 = NSMutableURLRequest(URL: globalvar.API_URL)
-        let boundary1 = generateBoundaryString()
-        request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
-        request1.HTTPMethod = "POST"
-        
-        let parameters = [
-            "sercret"     : "jo8nefamehisd",
-            "action"      : "api",
-            "ac"          : "user_search",
-            "d"           : "0",
-            "lang"        : "en",
-            "name"     : "\(sender)"
-        ]
-        
-        request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
-        let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
-            data1, response1, error1 in
-            
-            if error1 != nil || data1 == nil{
-                self.loadUserData(sender, userEmail: userEmail, password:  password)
-            }else{
-                do {
-                    let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    let result = json2!["result"] as! NSArray
-                    for data in result {
-                        
-                        let email = data["email"] as! String
-                        if email == userEmail {
-                            let userId = data["user_id"] as! Int
-                            let uid: Int = userId
-                            self.FirebaseImage = data["icon"] as? String ?? ""
-                            self.Firebaseemail = data["email"] as! String
-                            self.Firebasename = data["name"] as! String
-                            
-                            self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid)
-                        }
-                        else {
-                            
-                            dispatch_async(dispatch_get_main_queue()) {
-                                let userId = data["user_id"] as! Int
-                                let uid: Int = userId
-                                self.FirebaseImage = data["icon"] as? String ?? ""
-                                self.Firebaseemail = data["email"] as! String
-                                self.Firebasename = data["name"] as! String
-                                
-                                self.insertUserFB(self.Firebaseemail, userPassword: password, name: self.Firebasename, image: self.FirebaseImage, userID: uid )
-                            }
-                        }
-                    }
-                    
-                } catch {
-                    print(error)
-                }
-            }
-        }
-        
-        task2.resume()
-    }
-    
-    
-    func insertUserFB(userEmail: String, userPassword: String, name: String, image: String, userID : Int ) {
-        let config = SYSTEM_CONFIG()
-        FIRAuth.auth()?.createUserWithEmail(userEmail, password: userPassword, completion: { (user: FIRUser?, error) in
-            if error == nil {
-//                //connect to firebase db.
-                let db = FIRDatabase.database().reference().child("users").child((user?.uid)!)
-                
-                if let token = FIRInstanceID.instanceID().token() {
-                    //register token on firebase
-                    let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
-                    registTokendb.child("token").setValue(String(token))
-                }
-                var skills = ""
-                if reg_user.selectedSkills.count > 0 {
-                    skills = "," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ","
-                }
-                
-                //set users array to insert...
-                let userDetails: [String : AnyObject] = [
-                    "email"     : userEmail,
-                    "id"        : userID,
-                    "name"      : name,
-                    "photoUrl"  : "null",
-                    "skills"    : skills,
-                    "language"      : self.language
-                ]
-                
-                //insert to users
-                db.setValue(userDetails)
-                
-                 self.successMessageAlert(self.mess)
-                
-                let launch = LaunchScreenViewController()
-                launch.getAllUserInfo()
-                
-                do {
-                    try FIRAuth.auth()?.signOut()
-                    
-                    config.removeSYS_VAL("userID")
-                    globalUserId.userID = ""
-                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                    FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
-                    FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
-                } catch (let error) {
-                    print((error as NSError).code)
-                }
-            }else{
-                print(error)
-                self.displayMyAlertMessage(config.translate("email_regist"))
-            }
-        })
-    }
-    
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
     }
-    
     
     func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
         let body = NSMutableData();

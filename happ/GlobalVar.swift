@@ -30,6 +30,7 @@ struct globalvar {
     static var badgeBellNumber: Int = 0
     static var badgeMessNumber: Int = 0
     static var SYSTEM_VALUE = [String : [String: String]]()
+    static var USER_IMG = NSDictionary()
     static let imgforProfileCache = NSCache()
     let config = SYSTEM_CONFIG()
     

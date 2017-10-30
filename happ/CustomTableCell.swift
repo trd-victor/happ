@@ -736,10 +736,11 @@ class NotifCell: UITableViewCell {
         lblMessage.sizeToFit()
         
         lblDate.translatesAutoresizingMaskIntoConstraints = false
-        lblDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: 20).active = true
+        lblDate.leftAnchor.constraintEqualToAnchor(self.notifPhoto.rightAnchor).active = true
         lblDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 50).active = true
-        lblDate.widthAnchor.constraintEqualToConstant(130).active = true
+        lblDate.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -65).active = true
         lblDate.sizeToFit()
+        lblDate.textAlignment = .Right
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -857,13 +858,15 @@ class MessageCell: UICollectionViewCell {
         
         dateLblLeft.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
         dateLblLeft.leftAnchor.constraintEqualToAnchor(self.bubbleView.leftAnchor).active = true
-        dateLblLeft.widthAnchor.constraintEqualToConstant(90).active = true
+        dateLblLeft.widthAnchor.constraintEqualToConstant(130).active = true
         dateLblLeft.heightAnchor.constraintEqualToConstant(15).active = true
+        dateLblLeft.textAlignment = .Left
         
         dateLblRight.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
         dateLblRight.rightAnchor.constraintEqualToAnchor(self.bubbleView.rightAnchor).active = true
-        dateLblRight.widthAnchor.constraintEqualToConstant(90).active = true
+        dateLblRight.widthAnchor.constraintEqualToConstant(130).active = true
         dateLblRight.heightAnchor.constraintEqualToConstant(15).active = true
+        dateLblRight.textAlignment = .Right
         
     }
     

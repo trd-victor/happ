@@ -158,19 +158,19 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         let config = SYSTEM_CONFIG()
         lang = config.getSYS_VAL("AppLanguage") as! String
 
-        lblMon.text = (lang == "en") ? "Mon" : "日"
+        lblMon.text = (lang == "en") ? "Mon" : "月"
         lblMon.textAlignment = .Center
-        lblTue.text = (lang == "en") ? "Tue" : "月"
+        lblTue.text = (lang == "en") ? "Tue" : "火"
         lblTue.textAlignment = .Center
-        lblWed.text = (lang == "en") ? "Wed" : "火"
+        lblWed.text = (lang == "en") ? "Wed" : "水"
         lblWed.textAlignment = .Center
-        lblThu.text = (lang == "en") ? "Thu" : "水"
+        lblThu.text = (lang == "en") ? "Thu" : "木"
         lblThu.textAlignment = .Center
-        lblFri.text = (lang == "en") ? "Fri" : "木"
+        lblFri.text = (lang == "en") ? "Fri" : "金"
         lblFri.textAlignment = .Center
-        lblSat.text = (lang == "en") ? "Sat" : "金"
+        lblSat.text = (lang == "en") ? "Sat" : "土"
         lblSat.textAlignment = .Center
-        lblSun.text = (lang == "en") ? "Sun" : "土"
+        lblSun.text = (lang == "en") ? "Sun" : "日"
         lblSun.textAlignment = .Center
 
         reservation.title = config.translate("title_reserved")
@@ -200,8 +200,14 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         viewDaysoftheWeeks.widthAnchor.constraintEqualToAnchor(mainView.widthAnchor).active = true
         viewDaysoftheWeeks.heightAnchor.constraintEqualToConstant(44).active = true
 
+        lblSun.translatesAutoresizingMaskIntoConstraints = false
+        lblSun.leftAnchor.constraintEqualToAnchor(viewDaysoftheWeeks.leftAnchor).active = true
+        lblSun.centerYAnchor.constraintEqualToAnchor(viewDaysoftheWeeks.centerYAnchor).active = true
+        lblSun.widthAnchor.constraintEqualToConstant(layoutwidth).active = true
+        lblSun.heightAnchor.constraintEqualToConstant(44).active = true
+        
         lblMon.translatesAutoresizingMaskIntoConstraints = false
-        lblMon.leftAnchor.constraintEqualToAnchor(viewDaysoftheWeeks.leftAnchor).active = true
+        lblMon.leftAnchor.constraintEqualToAnchor(lblSun.rightAnchor).active = true
         lblMon.centerYAnchor.constraintEqualToAnchor(viewDaysoftheWeeks.centerYAnchor).active = true
         lblMon.widthAnchor.constraintEqualToConstant(layoutwidth).active = true
         lblMon.heightAnchor.constraintEqualToConstant(44).active = true
@@ -235,12 +241,6 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         lblSat.centerYAnchor.constraintEqualToAnchor(viewDaysoftheWeeks.centerYAnchor).active = true
         lblSat.widthAnchor.constraintEqualToConstant(layoutwidth).active = true
         lblSat.heightAnchor.constraintEqualToConstant(44).active = true
-
-        lblSun.translatesAutoresizingMaskIntoConstraints = false
-        lblSun.leftAnchor.constraintEqualToAnchor(lblSat.rightAnchor).active = true
-        lblSun.centerYAnchor.constraintEqualToAnchor(viewDaysoftheWeeks.centerYAnchor).active = true
-        lblSun.widthAnchor.constraintEqualToConstant(layoutwidth).active = true
-        lblSun.heightAnchor.constraintEqualToConstant(44).active = true
 
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraintEqualToAnchor(viewDaysoftheWeeks.bottomAnchor).active = true
@@ -642,19 +642,19 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
 
         switch(weekDay) {
         case 2:
-            if(lang == "en"){ return "Mon" }else{ return "日" }
+            if(lang == "en"){ return "Mon" }else{ return "月" }
         case 3:
-            if(lang == "en"){ return "Tue" }else{ return "月" }
+            if(lang == "en"){ return "Tue" }else{ return "火" }
         case 4:
-            if(lang == "en"){ return "Wed" }else{ return "火" }
+            if(lang == "en"){ return "Wed" }else{ return "水" }
         case 5:
-            if(lang == "en"){ return "Thu" }else{ return "水" }
+            if(lang == "en"){ return "Thu" }else{ return "木" }
         case 6:
-            if(lang == "en"){ return "Fri" }else{ return "木" }
+            if(lang == "en"){ return "Fri" }else{ return "金" }
         case 7:
-            if(lang == "en"){ return "Sat" }else{ return "金" }
+            if(lang == "en"){ return "Sat" }else{ return "土" }
         default:
-            if(lang == "en"){ return "Sun" }else{ return "土" }
+            if(lang == "en"){ return "Sun" }else{ return "日" }
         }
 
     }
@@ -734,22 +734,8 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
         let date = dateFormatter.dateFromString("\(year)-\(month)-01")
         let calendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
         let weekday = calendar.component(NSCalendarUnit.Weekday, fromDate: date!)
-        switch(weekday) {
-        case 2:
-            return 1
-        case 3:
-            return 2
-        case 4:
-            return 3
-        case 5:
-            return 4
-        case 6:
-            return 5
-        case 7:
-            return 6
-        default:
-            return 7
-        }
+        
+        return weekday
     }
 
     func getLastDay(month: Int, forYear year: Int) -> Int? {

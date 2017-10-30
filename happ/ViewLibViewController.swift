@@ -53,6 +53,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.containerView.addSubview(self.txtField)
         self.containerView.addSubview(self.blockTextView)
         self.blockTextView.hidden = true
+        self.txtField.tintColor = UIColor.blackColor()
         autoLayout()
         loadConfig()
         getUsersImage()
@@ -146,7 +147,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             }
         }
     }
-    
     
     func getUsersImage() {
         let userid  = FIRAuth.auth()?.currentUser?.uid
@@ -351,18 +351,29 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let roomID = chatVar.RoomID
         let messagesDb = FIRDatabase.database().reference().child("chat").child("messages").child(String(roomID))
         
-        messagesDb.observeEventType(.ChildAdded, withBlock: {(snapshot)  in
+        messagesDb.observeEventType(.Value, withBlock: {(snapshot)  in
+            self.messagesData.removeAll()
+            var count = 0
             if let result = snapshot.value as? NSDictionary {
-                self.messagesData.append(result)
-                
-                dispatch_async(dispatch_get_main_queue()){
-                    self.myCollectionView!.reloadData()
-                    dispatch_async(dispatch_get_main_queue()){
-                        if(self.messagesData.count > 1){
-                            if Int(self.messagesData.count) != nil && self.messagesData.count != 0 {
-                                let lastItemIndex =  NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
-                                if let _ = self.myCollectionView?.dataSource?.collectionView(self.myCollectionView!, cellForItemAtIndexPath: lastItemIndex){
-                                    self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
+                for (_, value) in result {
+                    if let data = value as? NSDictionary {
+                        count++
+                        self.messagesData.append(data)
+                    }
+                    
+                    if count == result.count {
+                        self.messagesData.sortInPlace({(message1, message2) -> Bool in
+                            return message1["timestamp"]?.intValue < message2["timestamp"]?.intValue
+                        })
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.myCollectionView!.reloadData()
+                            
+                            if(self.messagesData.count > 1){
+                                if Int(self.messagesData.count) != nil && self.messagesData.count != 0 {
+                                    let lastItemIndex =  NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
+                                    if let _ = self.myCollectionView?.dataSource?.collectionView(self.myCollectionView!, cellForItemAtIndexPath: lastItemIndex){
+                                        self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
+                                    }
                                 }
                             }
                         }
@@ -370,6 +381,14 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 }
             }
         })
+        
+        
+//        dispatch_async(dispatch_get_main_queue()){
+//            self.myCollectionView!.reloadData()
+//            dispatch_async(dispatch_get_main_queue()){
+//
+//            }
+//        }
     }
     
     func deleteMessage(){
@@ -465,7 +484,13 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
-            let imageUrl = self.userPhoto
+            var imageUrl: String = ""
+            if let userid = mess_data["userId"] as? String{
+                if let photo = globalvar.USER_IMG.valueForKey(userid)?.valueForKey("photoUrl") as? String {
+                    imageUrl = photo
+                }
+            }
+            
             if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {
                 let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl) as! UIImage
                 cell.userPhoto.image = imgCache
@@ -494,7 +519,14 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         }else {
             cell.bubbleView.backgroundColor =  UIColor(hexString: "#E4D4B9")
             cell.txtLbl.textColor = UIColor.blackColor()
-            let imageUrl = self.chatMatePhoto
+            
+            var imageUrl: String = ""
+            if let userid = mess_data["userId"] as? String{
+                if let photo = globalvar.USER_IMG.valueForKey(userid)?.valueForKey("photoUrl") as? String {
+                    imageUrl = photo
+                }
+            }
+            
             if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {
                 let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl) as! UIImage
                 cell.chatmatePhoto.image = imgCache
@@ -562,7 +594,20 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) \(time)"
+        return self.dateTransform("\(date) \(time)")
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
     }
 }
 extension UIColor {

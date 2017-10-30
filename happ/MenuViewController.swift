@@ -124,10 +124,14 @@ class MenuViewController: UITabBarController {
     
     func newUserObserver(){
         let userDB = FIRDatabase.database().reference().child("users")
-        
         userDB.observeEventType(.Value, withBlock: {(snapshot) in
             let vc = LaunchScreenViewController()
             vc.getAllUserInfo()
+            
+            if let result = snapshot.value as? NSDictionary {
+                globalvar.USER_IMG = result
+                print("new Data")
+            }
         })
     }
     

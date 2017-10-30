@@ -132,6 +132,15 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             
                             if let result = snapshot.value as? NSDictionary {
+                                
+                                if let userID = result.valueForKey("userId") as? String {
+                                    if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
+                                        result.setValue(photo, forKey: "photoUrl")
+                                    }
+                                    if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
+                                        result.setValue(photo, forKey: "name")
+                                    }
+                                }
                                 result.setValue(read, forKey: "read")
                                 result.setValue(s.key, forKey: "key")
                                 self.arrayData.insert(result, atIndex: 0)
@@ -163,6 +172,15 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             if let result = snapshot.value as? NSDictionary {
+                                if let userID = result.valueForKey("userId") as? String {
+                                    if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
+                                        result.setValue(photo, forKey: "photoUrl")
+                                    }
+                                    if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
+                                        result.setValue(photo, forKey: "name")
+                                    }
+                                }
+                                
                                 result.setValue(read, forKey: "read")
                                 result.setValue(s.key, forKey: "key")
                                 self.arrayData.insert(result, atIndex: index)
@@ -351,7 +369,20 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) \(time)"
+        return self.dateTransform("\(date) \(time)")
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
     }
     
     func setImageURL(imageURL: String)-> UIImage{

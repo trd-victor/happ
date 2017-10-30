@@ -569,15 +569,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                             self.myResultArr = resultArray
                             for item in resultArray {
                                 if let resultDict = item as? NSDictionary {
-                                    if let userPostId = resultDict.valueForKey("ID") {
-                                        self.postID.append(userPostId as! Int)
-                                    }
-                                    
-                                    if let userPostModied = resultDict.valueForKey("post_modified") {
-                                        self.postDate.append(userPostModied as! String)
-                                    }
-                                    
                                     if let postContent = resultDict.valueForKey("fields")  {
+                                        if let userPostId = resultDict.valueForKey("ID") {
+                                            self.postID.append(userPostId as! Int)
+                                        }
+                                        
+                                        if let userPostModied = resultDict.valueForKey("post_modified") {
+                                            self.postDate.append(userPostModied as! String)
+                                        }
+                                        
                                         if postContent["images"] != nil {
                                             if let images = postContent.valueForKey("images") as? NSArray {
                                                 for index in 1...images.count {
@@ -716,8 +716,17 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let config = SYSTEM_CONFIG()
-        let username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String
-        let userimageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as! String
+        var username = ""
+        var userimageURL = ""
+        
+        if let name = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as? String {
+            username = name
+        }
+        
+        if let imageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as? String {
+            userimageURL = imageURL
+        }
+        
         let cellTap = UITapGestureRecognizer(target: self, action: "tapCell:")
         let bodyTap = UITapGestureRecognizer(target: self, action: "tapBody:")
         let imgTap = UITapGestureRecognizer(target: self, action: "tapImage:")
@@ -891,7 +900,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                             let tmpImg = UIImage(data: data)
                             self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
                         }
-                        
                     })
                     task.resume()
                 }

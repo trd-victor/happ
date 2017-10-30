@@ -177,7 +177,13 @@ class TimelineDetail: UIViewController {
             btnUsername.tag = Int(UserDetails.fromID)!
             btnProfile.tag = Int(UserDetails.fromID)!
             postDate.text = self.dateTransform(UserDetails.postDate)
-            body.text = UserDetails.body
+            
+            do {
+                self.body.text = try UserDetails.body.convertHtmlSymbols()
+            }catch{
+                self.body.text = UserDetails.body
+            }
+            
             self.postDetail()
         }else{
             self.getDetail()
@@ -257,61 +263,67 @@ class TimelineDetail: UIViewController {
                         self.getDetail()
                     }else {
                         do {
-                            let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                            let config = SYSTEM_CONFIG()
-                            dispatch_async(dispatch_get_main_queue()){
-                                if json!["success"] != nil {
-                                    if let resultArray = json!.valueForKey("result") as? NSArray {
-                                        if resultArray.count != 0 {
-                                            
-                                            UserDetails.postDate = resultArray[0]["post_modified"] as! String
-                                            UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
-                                            UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
-                                            
-                                            self.btnUsername.tag = Int(UserDetails.fromID)!
-                                            self.btnProfile.tag = Int(UserDetails.fromID)!
-                                            self.postDate.text = self.dateTransform(UserDetails.postDate)
-                                            self.body.text = UserDetails.body
-                                            
-                                            dispatch_async(dispatch_get_main_queue()){
-                                                if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
-                                                    let images = resultArray[0]["fields"]!!["images"] as! NSArray
-                                                    
-                                                    if images.count == 3 {
-                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
-                                                        UserDetails.img3 = images[2]["image"]!!["url"] as! String
-                                                    }else if images.count == 2 {
-                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
-                                                        UserDetails.img3 = "null"
-                                                    }else if images.count == 1 {
-                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                            if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                                let config = SYSTEM_CONFIG()
+                                dispatch_async(dispatch_get_main_queue()){
+                                    if json["success"] != nil {
+                                        if let resultArray = json.valueForKey("result") as? NSArray {
+                                            if resultArray.count != 0 {
+                                                
+                                                UserDetails.postDate = resultArray[0]["post_modified"] as! String
+                                                UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
+                                                UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
+                                                
+                                                self.btnUsername.tag = Int(UserDetails.fromID)!
+                                                self.btnProfile.tag = Int(UserDetails.fromID)!
+                                                self.postDate.text = self.dateTransform(UserDetails.postDate)
+                                                
+                                                do {
+                                                    self.body.text = try UserDetails.body.convertHtmlSymbols()
+                                                }catch{
+                                                    self.body.text = UserDetails.body
+                                                }
+                                                
+                                                dispatch_async(dispatch_get_main_queue()){
+                                                    if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
+                                                        let images = resultArray[0]["fields"]!!["images"] as! NSArray
+                                                        
+                                                        if images.count == 3 {
+                                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                            UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                                            UserDetails.img3 = images[2]["image"]!!["url"] as! String
+                                                        }else if images.count == 2 {
+                                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                            UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                                            UserDetails.img3 = "null"
+                                                        }else if images.count == 1 {
+                                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                            UserDetails.img2 = "null"
+                                                            UserDetails.img3 = "null"
+                                                        }
+                                                    }else{
+                                                        UserDetails.img1 = "null"
                                                         UserDetails.img2 = "null"
                                                         UserDetails.img3 = "null"
                                                     }
-                                                }else{
-                                                    UserDetails.img1 = "null"
-                                                    UserDetails.img2 = "null"
-                                                    UserDetails.img3 = "null"
+                                                    
+                                                    UserDetails.postID = ""
+                                                    self.postDetail()
                                                 }
                                                 
-                                                UserDetails.postID = ""
-                                                self.postDetail()
+                                                if self.loadingScreen != nil {
+                                                    UIViewController.removeSpinner(self.loadingScreen)
+                                                    self.loadingScreen = nil
+                                                }
+                                            }else{
+                                                self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
                                             }
                                             
-                                            if self.loadingScreen != nil {
-                                                UIViewController.removeSpinner(self.loadingScreen)
-                                                self.loadingScreen = nil
-                                            }
                                         }else{
                                             self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
                                         }
                                         
-                                    }else{
-                                        self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
                                     }
-
                                 }
                             }
                         } catch {
