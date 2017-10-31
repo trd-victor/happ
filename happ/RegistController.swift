@@ -450,11 +450,10 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
     }
     
     func registerFirebase(userID: Int, userEmail: String, password: String, name: String){
-        
         let config = SYSTEM_CONFIG()
         FIRAuth.auth()?.createUserWithEmail(userEmail, password: password, completion: { (user: FIRUser?, error) in
             if error == nil {
-                //              connect to firebase db.
+                //connect to firebase db.
                 let db = FIRDatabase.database().reference().child("users").child((user?.uid)!)
                 
                 if let token = FIRInstanceID.instanceID().token() {
@@ -476,23 +475,19 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     "skills"    : skills,
                     "language"  : self.language
                 ]
-                
                 //insert to users
                 db.setValue(userDetails)
                 
-                self.successMessageAlert(self.mess)
-                
                 let launch = LaunchScreenViewController()
                 launch.getAllUserInfo()
+                
+                self.updateWPFirebase(userEmail, password: password, firebase: (user?.uid)!)
                 
                 do {
                     try FIRAuth.auth()?.signOut()
                     
                     config.removeSYS_VAL("userID")
                     globalUserId.userID = ""
-                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                    FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
-                    FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
                 } catch (let error) {
                     print((error as NSError).code)
                 }
@@ -502,6 +497,50 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             }
         })
     }
+    
+    func updateWPFirebase(email: String, password: String, firebase: String){
+            if language == "ja" {
+                language = "jp"
+            }
+            let param = [
+                "sercret"     : "jo8nefamehisd",
+                "action"      : "api",
+                "ac"          : "\(globalvar.LOGIN_ACTION)",
+                "d"           : "0",
+                "lang"        : "jp",
+                "email"       : email,
+                "passwd"      : password,
+                "firebase"    : firebase
+            ]
+        
+            let httpRequest = HttpDataRequest(postData: param)
+            let request = httpRequest.requestGet()
+            
+            let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+                data, response, error  in
+                
+                if error != nil || data == nil{
+                    print("\(error)")
+                    self.updateWPFirebase(email, password: password, firebase: firebase)
+                }else{
+                    do {
+                        if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                            
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.successMessageAlert(self.mess)
+                            }
+                        }
+                    } catch {
+                        print(error)
+                        self.updateWPFirebase(email, password: password, firebase: firebase)
+                    }
+                }
+            }
+            
+            task.resume()
+    }
+    
+    
     
     func successMessageAlert(userMessage: String) {
         if self.loadingScreen != nil {
