@@ -490,3 +490,53 @@ function deleteUserData(userId) {
     database.ref('notifications').child('app-notification').child('notification-user').child(userId).remove();
     
 }
+
+
+exports.updateUser = functions.https.onRequest((req, res) => {
+    if (req.body.uid === undefined) {
+        res.status(400).send('No user id defined');
+    } else {
+        var userId = req.body.uid;
+        var newPassword = req.body.password;
+        var newEmail = req.body.email;
+
+        if(newPassword == "" && newEmail != ""){
+            //prepare user update
+            admin.auth().updateUser(userId, {
+                email: newEmail,
+                emailVerified: true
+            }).then(function(userRecord) {
+                admin.database().ref("users").child(userId).child("email").set(newEmail);
+                console.log("Successfully updated user email", userRecord.toJSON());
+            })
+            .catch(function(error) {
+                console.log("Error updating user: ", error);
+            });
+        }else if(newEmail == "" && newPassword != ""){
+            //prepare user update
+            admin.auth().updateUser(userId, {
+                password: newPassword
+            }).then(function(userRecord) {
+                console.log("Successfully updated user password ", userRecord.toJSON());
+            })
+            .catch(function(error) {
+                console.log("Error updating user: ", error);
+            });
+        }else{
+            //prepare user update
+            admin.auth().updateUser(userId, {
+                password: newPassword,
+                email: newEmail,
+                emailVerified: true
+            }).then(function(userRecord) {
+                admin.database().ref("users").child(userId).child("email").set(newEmail);
+                console.log("Successfully updated user user and password", userRecord.toJSON());
+            })
+            .catch(function(error) {
+                console.log("Error updating user: ", error);
+            });
+        }
+
+        res.status(200).end();
+    }
+});
