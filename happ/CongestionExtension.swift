@@ -75,6 +75,8 @@ extension CongestionViewController {
     }
     
     func getFreeStatus(percent: Int){
+        let config = SYSTEM_CONFIG()
+        self.userIds.removeAll()
         //set parameter for
         let param = [
             "sercret"     : "jo8nefamehisd",
@@ -109,13 +111,14 @@ extension CongestionViewController {
                                     
                                     if let fields = resultData.valueForKey("fields") {
                                         if let id = fields.valueForKey("user_id") {
-                                            let existsUser = self.userIds.contains(Int(id as! String)!)
-                                            if !existsUser {
-                                                self.userIds.append(Int(id as! String)!)
+                                            if let _ = config.getSYS_VAL("username_\(id)"){
+                                                let existsUser = self.userIds.contains(Int(id as! String)!)
+                                                if !existsUser {
+                                                    self.userIds.append(Int(id as! String)!)
+                                                }
                                             }
                                         }
                                     }
-                                    
                                 }
                             }
                         }

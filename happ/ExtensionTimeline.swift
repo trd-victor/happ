@@ -89,8 +89,7 @@ extension UserTimelineViewController {
                                         }
                                         if let body = postContent.valueForKey("body") {
                                             if let textStr = body as? String {
-                                                let text = try textStr.convertHtmlSymbols()
-                                                tmpuserBody.append(text!)
+                                                tmpuserBody.append(textStr.stringByDecodingHTMLEntities)
                                             }
                                         }
                                         if let body = postContent.valueForKey("from_user_id") {
@@ -152,6 +151,45 @@ extension UserTimelineViewController {
             
             if error != nil || data == nil{
                 self.updateFreeTimeStatus()
+            }else{
+                self.freetimeStatus.setOn(true, animated: true)
+                
+                if self.loadingScreen != nil {
+                    UIViewController.removeSpinner(self.loadingScreen)
+                    self.loadingScreen = nil
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    func freeTimeStatusOff(){
+        let parameters = [
+            "sercret"          : "jo8nefamehisd",
+            "action"           : "api",
+            "ac"               : "freetime_off",
+            "d"                : "0",
+            "lang"             : "en",
+            "user_id"          : "\(globalUserId.userID)"
+        ]
+        
+        let request = NSMutableURLRequest(URL: self.baseUrl)
+        let boundary = generateBoundaryString()
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil || data == nil{
+                self.freeTimeStatusOff()
+            }else{
+                self.freetimeStatus.setOn(false, animated: true)
+                
+                if self.loadingScreen != nil {
+                    UIViewController.removeSpinner(self.loadingScreen)
+                    self.loadingScreen = nil
+                }
             }
         }
         task.resume()

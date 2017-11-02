@@ -9,7 +9,7 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
     const forUserId = event.params.userId;
     //  Grab the current value of what was written to the Realtime Database.
     var valueObject = event.data.val();
-
+    console.log(valueObject.toJSON());
     if(!valueObject) {
         return console.log('name ', valueObject.name, 'message', valueObject.message);
     }
@@ -29,9 +29,9 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
                 "photo_url": valueObject.photoUrl
             },
             notification: {
-                title:valueObject.name,
-                body: valueObject.message,
-                sound: "default"
+                "title": valueObject.name,
+                "body": valueObject.message,
+                "sound": "default"
             }
         };
 
@@ -267,7 +267,7 @@ exports.news = functions.https.onRequest((req, res) => {
                         sendMessage(fid, messageJP, adminFID, admin_name);
                     }
                 }else {
-                    sendMessage(fid, messageEN, adminFID, admin_name);
+                    sendMessage(fid, messageJP, adminFID, admin_name);
                 }  
             })
         })
@@ -306,7 +306,7 @@ function sendMessage(fid, message, adminFID, admin_name){
         var result = snap.val();
         var userFID = fid.toString();
         var chatRoom = "";
-        if(result.length != 0) {
+        if(result != null && result.length != 0) {
                 var count = 0
                 snap.forEach(function(childSnapshot){
                     count++

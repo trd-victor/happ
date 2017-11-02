@@ -37,7 +37,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     var userData: NSDictionary!
     var countData: NSArray = []
-    
+    var loadingScreen: UIView!
     
     //get user Id...
     var userId: String = ""
@@ -339,14 +339,17 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     @IBAction func freetimeStatus(sender: UISwitch) {
         let statust = switchButtonCheck(freetimeStatus)
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(statust, forKey: "Freetime")
-        defaults.synchronize()
+        
+        if loadingScreen == nil {
+            loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
         if statust == "On" {
             let notif = NotifController()
             notif.saveNotificationMessage(0, type: "free-time")
             updateFreeTimeStatus()
+        }else{
+            freeTimeStatusOff()
         }
     }
     
@@ -492,8 +495,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                                 }
                                                 if let body = postContent.valueForKey("body") {
                                                     if let textStr = body as? String {
-                                                        let text = try textStr.convertHtmlSymbols()
-                                                        self.userBody.append(text!)
+                                                         self.userBody.append(textStr.stringByDecodingHTMLEntities)
                                                     }
                                                 }
                                                 if let body = postContent.valueForKey("from_user_id") {
@@ -610,8 +612,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                         }
                                         if let body = postContent.valueForKey("body") {
                                             if let textStr = body as? String {
-                                                let text = try textStr.convertHtmlSymbols()
-                                                self.userBody.append(text!)
+                                                self.userBody.append(textStr.stringByDecodingHTMLEntities)
                                             }
                                         }
                                         if let id = postContent.valueForKey("from_user_id") {
@@ -663,15 +664,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.getTimelineUser()
     }
     
-    func setSwitchOnOff(sender : UISwitch) {
-        
-        let userFreetime = NSUserDefaults.standardUserDefaults().objectForKey("Freetime") as? String
-        if userFreetime == "On" {
-            sender.on = true
-        } else {
-            sender.on = false
-        }
-    }
+//    func setSwitchOnOff(sender : UISwitch) {
+//        
+//        let userFreetime = NSUserDefaults.standardUserDefaults().objectForKey("Freetime") as? String
+//        if userFreetime == "On" {
+//            sender.on = true
+//        } else {
+//            sender.on = false
+//        }
+//    }
     
     var scrollOffset: CGFloat = 0
     

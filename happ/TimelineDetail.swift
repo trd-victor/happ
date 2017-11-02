@@ -178,12 +178,7 @@ class TimelineDetail: UIViewController {
             btnProfile.tag = Int(UserDetails.fromID)!
             postDate.text = self.dateTransform(UserDetails.postDate)
             
-            do {
-                self.body.text = try UserDetails.body.convertHtmlSymbols()
-            }catch{
-                self.body.text = UserDetails.body
-            }
-            
+            self.body.text = UserDetails.body.stringByDecodingHTMLEntities
             self.postDetail()
         }else{
             self.getDetail()
@@ -278,11 +273,7 @@ class TimelineDetail: UIViewController {
                                                 self.btnProfile.tag = Int(UserDetails.fromID)!
                                                 self.postDate.text = self.dateTransform(UserDetails.postDate)
                                                 
-                                                do {
-                                                    self.body.text = try UserDetails.body.convertHtmlSymbols()
-                                                }catch{
-                                                    self.body.text = UserDetails.body
-                                                }
+                                                self.body.text = UserDetails.body.stringByDecodingHTMLEntities
                                                 
                                                 dispatch_async(dispatch_get_main_queue()){
                                                     if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {

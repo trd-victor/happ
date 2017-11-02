@@ -478,12 +478,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 self.userImage.image = UIImage(named: "noPhoto")
                             }
                             
-                            do {
-                                if let message = json!["result"]!["mess"] as? String {
-                                    self.userDescription.text = try message.convertHtmlSymbols()
-                                }
-                            }catch{
-                                self.userDescription.text = json!["result"]!["mess"] as? String
+                           if let message = json!["result"]!["mess"] as? String {
+                                self.userDescription.text = message.stringByDecodingHTMLEntities
                             }
                             
                             if self.loadingScreen != nil {

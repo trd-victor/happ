@@ -123,6 +123,8 @@ class MenuViewController: UITabBarController {
     
     
     func newUserObserver(){
+        let config = SYSTEM_CONFIG()
+        
         let userDB = FIRDatabase.database().reference().child("users")
         userDB.observeEventType(.Value, withBlock: {(snapshot) in
             let vc = LaunchScreenViewController()
@@ -130,7 +132,27 @@ class MenuViewController: UITabBarController {
             
             if let result = snapshot.value as? NSDictionary {
                 globalvar.USER_IMG = result
-                print("new Data")
+                
+                dispatch_async(dispatch_get_main_queue()){
+                    if let _ = globalvar.USER_IMG.valueForKey(globalUserId.FirID) {
+                        
+                    }else{
+                        let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
+                        myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                            
+                            do {
+                                try FIRAuth.auth()?.signOut()
+                                
+                                config.removeSYS_VAL("userID")
+                                globalUserId.userID = ""
+                            } catch (let error) {
+                                print((error as NSError).code)
+                            }
+                            self.dismissViewControllerAnimated(true, completion: nil)
+                        }))
+                        self.presentViewController(myAlert, animated: true, completion: nil)
+                    }
+                }
             }
         })
     }

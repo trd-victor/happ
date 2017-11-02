@@ -234,7 +234,6 @@ class LaunchScreenViewController: UIViewController {
     }
         
     func getAllUserInfo() {
-        
         let config = SYSTEM_CONFIG()
         
         let parameters = [

@@ -266,7 +266,7 @@ extension UserProfileController {
                                 let user_id = json["result"]!["user_id"]!
                                 do {
                                     if let txtStr = json["result"]!["name"] as? String {
-                                       self.userName.text = try txtStr.convertHtmlSymbols()
+                                        self.userName.text = txtStr.stringByDecodingHTMLEntities
                                     }
                                 }catch{
                                     self.userName.text = json["result"]!["name"] as? String
@@ -274,7 +274,7 @@ extension UserProfileController {
                                 
                                 do {
                                     if let txtStr = json["result"]!["mess"] as? String {
-                                        self.msg.text = try txtStr.convertHtmlSymbols()
+                                        self.msg.text = txtStr.stringByDecodingHTMLEntities
                                     }
                                 }catch{
                                     self.msg.text = json["result"]!["mess"] as? String
@@ -428,8 +428,8 @@ extension UserProfileController {
                                         }
                                         if let body = postContent.valueForKey("body") {
                                             if let textStr = body as? String {
-                                                let text = try textStr.convertHtmlSymbols()
-                                                tmpuserBody.append(text!)
+                                                let text = textStr.stringByDecodingHTMLEntities
+                                                tmpuserBody.append(text)
                                             }
                                         }
                                         if let body = postContent.valueForKey("from_user_id") {
