@@ -183,6 +183,7 @@ class CreateReservation: UIViewController {
         let picker = UIDatePicker()
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.datePickerMode = .Time
+        picker.minuteInterval = 30
         picker.locale = NSLocale(localeIdentifier: "da_DK")
         return picker
     }()
@@ -198,6 +199,7 @@ class CreateReservation: UIViewController {
         let picker = UIDatePicker()
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.datePickerMode = .Time
+        picker.minuteInterval = 30
         picker.locale = NSLocale(localeIdentifier: "da_DK")
         return picker
     }()

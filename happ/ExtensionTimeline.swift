@@ -5,6 +5,7 @@
 //  Created by TimeRiverDesign on 2017/09/10.
 //  Copyright © 2017 H-FUKUOKA. All rights reserved.
 //
+import Firebase
 
 extension UserTimelineViewController {
 
@@ -116,6 +117,8 @@ extension UserTimelineViewController {
                                 if self.scrollLoad {
                                     self.scrollLoad = false
                                 }
+                                
+                                FIRDatabase.database().reference().child("user-badge").child("timeline").child(globalUserId.FirID).setValue(0)
                             }
                         }
                     }else{

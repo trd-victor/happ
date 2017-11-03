@@ -82,8 +82,8 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
 
                     const payload = {
                         data: {
-                            "title": valueObject.name,
-                            "body": message,
+                            "title": "H",
+                            "body": valueObject.name + " " + message,
                             "skills": valueObject.skills,
                             "author_id": valueObject.userId
                         },
@@ -103,14 +103,18 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
                     admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
                         var token = snap.val();
                         count++;
-                        if(token != "" && token != null){
+                       
                             if (count == snapshot.numChildren()){
-                                admin.messaging().sendToDevice(token, payload, options);
-                                resolve("");
+                                if(token != "" && token != null){
+                                    admin.messaging().sendToDevice(token, payload, options);
+                                }
+                                return resolve(200);
                             }else{
-                                admin.messaging().sendToDevice(token, payload, options);
+                                if(token != "" && token != null){
+                                    admin.messaging().sendToDevice(token, payload, options);
+                                }
                             }
-                        }
+                        
                     },function (errorObject) {
                         console.log("Error getting data: " + errorObject.code);
                     })
@@ -119,9 +123,6 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
         });
 
     }
-    
-
-   
 
     // return admin.messaging().sendToTopic('timeline-push-notification', payload, options);
 
@@ -153,8 +154,8 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
 
                         var payload = {
                             data: {
-                                "title": valueObject.name,
-                                "body": body,
+                                "title": "H",
+                                "body": valueObject.name + " " + body,
                                 "author_id": valueObject.userId
                             },
                             notification: {
@@ -170,18 +171,33 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                             priority: "high"
                         }
 
+                        admin.database().ref('user-badge').child("freetime").child(fid).once('value', function(snap){
+                            var count = snap.val();
+
+                            if (count != null && count != 0 ){
+                                var total = count + 1;
+                                admin.database().ref('user-badge').child("freetime").child(fid).set(total);
+                            }else{
+                                admin.database().ref('user-badge').child("freetime").child(fid).set(1);
+                            }
+                        })
+
                         admin.database().ref('registration-token/' + fid + '/token').once('value', function(snap){
                             var token = snap.val();
                             count++;
-                            if(token != "" && token != null){
-                                if (count == snapshot.numChildren()){
-                                    resolve("");
-                                    admin.messaging().sendToDevice(token, payload, options)
-                                }else{
+                           
+                            if (count == (snapshot.numChildren() - 1)){
+                                if(token != "" && token != null){
+                                    admin.messaging().sendToDevice(token, payload, options);
+                                }
+                                return resolve(200);
+                            }else{
+                                if(token != "" && token != null){
                                     admin.messaging().sendToDevice(token, payload, options);
                                 }
                             }
                         },function (errorObject) {
+                            count++;
                             console.log("Error getting data: " + errorObject.code);
                         })
                     }
@@ -220,6 +236,17 @@ exports.reservation = functions.https.onRequest((req, res) => {
             content_available: true,
             priority: "high"
         }
+
+        admin.database().ref('user-badge').child("reservation").child(uid).once('value', function(snap){
+            var count = snap.val();
+
+            if (count != null && count != 0 ){
+                var total = count + 1;
+                admin.database().ref('user-badge').child("reservation").child(uid).set(total);
+            }else{
+                admin.database().ref('user-badge').child("reservation").child(uid).set(1);
+            }
+        })
 
         //Check if token exist
         var database = admin.database();

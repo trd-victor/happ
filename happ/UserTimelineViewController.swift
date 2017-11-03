@@ -154,7 +154,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         view.addSubview(scrollview)
         
         //set switch on
-//        self.setSwitchOnOff(self.freetimeStatus)
         autoLayout()
         
         self.mytableview.delegate = self
@@ -162,6 +161,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.bellObserver()
         
+        self.getFreeTimeStatus()
+        
+         let timer = NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("updateFunction"), userInfo: nil, repeats: true)
+    }
+    
+    func updateFunction(){
+        print("execture")
         self.getFreeTimeStatus()
     }
     
@@ -355,6 +361,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     
     func getFreeTimeStatus(){
+        print("5 min")
         let parameters = [
             "sercret"          : "jo8nefamehisd",
             "action"           : "api",
@@ -629,6 +636,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                 self.mytableview.contentOffset = CGPoint(x: 0,y: 0)
                             }
                             self.mytableview.reloadData()
+                            
+                            FIRDatabase.database().reference().child("user-badge").child("timeline").child(globalUserId.FirID).setValue(0)
                         }
                     }
                 } catch {

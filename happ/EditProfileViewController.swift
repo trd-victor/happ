@@ -33,6 +33,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     let goToSelectSkill: UIImageView = UIImageView()
     let selectedSkillsLbl: UILabel = UILabel()
     let listOfSkills: UILabel = UILabel()
+    let happLbl: UILabel = UILabel()
     
     var language: String!
     var userId: String = ""
@@ -46,6 +47,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.scrollView.addSubview(self.happLbl)
         self.scrollView.addSubview(self.selectContainer)
         self.selectContainer.addSubview(self.selectSkillLbl)
         self.selectContainer.addSubview(self.goToSelectSkill)
@@ -214,9 +216,17 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userImage.layer.cornerRadius = 37
         userImage.clipsToBounds = true
         
+        happLbl.translatesAutoresizingMaskIntoConstraints = false
+        happLbl.centerXAnchor.constraintEqualToAnchor(userNamefield.centerXAnchor).active = true
+        happLbl.topAnchor.constraintEqualToAnchor(userImage.bottomAnchor).active = true
+        happLbl.widthAnchor.constraintEqualToAnchor(userNamefield.widthAnchor).active = true
+        happLbl.heightAnchor.constraintEqualToConstant(38).active = true
+        happLbl.textAlignment = .Center
+        happLbl.textColor = UIColor.grayColor()
+        
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        separator.topAnchor.constraintEqualToAnchor(userImage.bottomAnchor, constant: 5).active = true
+        separator.topAnchor.constraintEqualToAnchor(happLbl.bottomAnchor, constant: 5).active = true
         separator.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator.heightAnchor.constraintEqualToConstant(1).active = true
         
@@ -243,7 +253,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         userDescription.translatesAutoresizingMaskIntoConstraints = false
         userDescription.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        userDescription.topAnchor.constraintEqualToAnchor(userNamefield.bottomAnchor, constant: 5).active = true
+        userDescription.topAnchor.constraintEqualToAnchor(separator2.bottomAnchor, constant: 5).active = true
         userDescription.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userDescription.heightAnchor.constraintEqualToConstant(100).active = true
         userDescription.setRightPaddingPoints(10)
@@ -407,6 +417,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
 
             //user Data...
             var name: String!
+            var hID: String!
             var image: String!
             var skills: String = ""
             var message: String!
@@ -421,13 +432,15 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
                         if json!["result"] != nil {
                             
-                            name    = json!["result"]!["name"] as! String
+                            name  = json!["result"]!["name"] as! String
                             
                             if let _ = json!["result"]!["icon"] as? NSNull {
                                 image = ""
                             } else {
                                 image = json!["result"]!["icon"] as? String
                             }
+                            
+                            hID = json!["result"]!["h_id"] as? String
                             
                             if let skill_data = json!["result"]!["skills"] as? String {
                                 let arrayData = skill_data.characters.split(",")
@@ -465,6 +478,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                         dispatch_async(dispatch_get_main_queue(), {() -> Void in
                             
                             self.userNamefield.text = name
+                            self.happLbl.text = hID
                             
                             if data != nil {
                                 //save new photo on firebase database

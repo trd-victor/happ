@@ -9,6 +9,14 @@
 import UIKit
 import Firebase
 import ReachabilitySwift
+import Foundation
+
+struct menu_bar {
+    static var timeline: UITabBarItem!
+    static var reservation: UITabBarItem!
+    static var situation: UITabBarItem!
+    static var timelineCount: Int!
+}
 
 class MenuViewController: UITabBarController {
 
@@ -32,7 +40,13 @@ class MenuViewController: UITabBarController {
         
         autoLayout()
         
+        menu_bar.timeline = self.menuTabBar.items![0]
+        menu_bar.reservation = self.menuTabBar.items![2]
+        menu_bar.situation = self.menuTabBar.items![3]
         
+        
+        // udpate every 5 mins
+       
     }
     
     func autoLayout() {
@@ -71,7 +85,6 @@ class MenuViewController: UITabBarController {
             print("This is not working.")
             return
         }
-        
     }
     
     func reachabilityChanged(note: NSNotification) {
@@ -94,6 +107,8 @@ class MenuViewController: UITabBarController {
     }
     
     func badgeObserver(){
+        
+        // message badge
         let firID = FIRAuth.auth()?.currentUser?.uid
         
         let lastMessageDB = FIRDatabase.database().reference().child("chat").child("last-message").child(firID!)
@@ -119,8 +134,38 @@ class MenuViewController: UITabBarController {
                 }
             }
         })
+        
+        // update badge
+        FIRDatabase.database().reference().child("user-badge").child("reservation").child(globalUserId.FirID).observeEventType(.Value, withBlock: {(snap) in
+            if let count = snap.value as? Int{
+                if count != 0 {
+                    menu_bar.reservation.badgeValue = String(count)
+                }else{
+                    menu_bar.reservation.badgeValue = .None
+                }
+            }
+        })
+        
+        FIRDatabase.database().reference().child("user-badge").child("freetime").child(globalUserId.FirID).observeEventType(.Value, withBlock: {(snap) in
+            if let count = snap.value as? Int{
+                if count != 0 {
+                    menu_bar.situation.badgeValue = String(count)
+                }else{
+                    menu_bar.situation.badgeValue = .None
+                }
+            }
+        })
+        
+        FIRDatabase.database().reference().child("user-badge").child("timeline").child(globalUserId.FirID).observeEventType(.Value, withBlock: {(snap) in
+            if let count = snap.value as? Int{
+                if count != 0 {
+                    menu_bar.timeline.badgeValue = String(count)
+                }else{
+                    menu_bar.timeline.badgeValue = .None
+                }
+            }
+        })
     }
-    
     
     func newUserObserver(){
         let config = SYSTEM_CONFIG()
@@ -173,6 +218,26 @@ class MenuViewController: UITabBarController {
         self.menuTabBar.items![2].title = config.translate("menu_reservation")
         self.menuTabBar.items![3].title = config.translate("menu_situation")
         self.menuTabBar.items![4].title = config.translate("menu_configuration")
+    }
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(NSUUID().UUIDString)"
+    }
+    
+    func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
+        let body = NSMutableData();
+        
+        if parameters != nil {
+            for (key, value) in parameters! {
+                body.appendString("--\(boundary)\r\n")
+                body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.appendString("\(value)\r\n")
+            }
+        }
+        
+        body.appendString("--\(boundary)--\r\n")
+        
+        return body
     }
     
 }

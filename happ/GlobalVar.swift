@@ -39,5 +39,6 @@ struct globalvar {
     // http:// dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php
     //PRD API
     // https:// happ.biz/wp-admin/admin-ajax.php
-    
+    // dev happ 
+    // http:// dev.happ.timeriverdesign.com/wp-admin/admin-ajax.php
 }

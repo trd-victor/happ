@@ -89,7 +89,6 @@ extension CongestionViewController {
             "status_key"  : "freetime"
         ]
         
-        
         let httpRequest = HttpDataRequest(postData: param)
         let request = httpRequest.requestGet()
         
@@ -129,6 +128,8 @@ extension CongestionViewController {
                         
                         self.viewLoading.hidden = true
                         self.activityLoading.stopAnimating()
+                        
+                        FIRDatabase.database().reference().child("user-badge").child("freetime").child(globalUserId.FirID).setValue(0)
                     }
                     
                 } catch {

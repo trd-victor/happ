@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 struct Reservation {
     static var reserved = [String]()
@@ -148,6 +149,8 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
     override func viewDidAppear(animated: Bool) {
         let config = SYSTEM_CONFIG()
         self.navBar.topItem?.title = config.translate("title_room_reservation")
+        
+        FIRDatabase.database().reference().child("user-badge").child("reservation").child(globalUserId.FirID).setValue(0)
     }
 
     override func viewWillAppear(animated: Bool) {

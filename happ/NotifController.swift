@@ -551,6 +551,17 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                                 for c in timeline_post_skills.selectedSkills {
                                                     if skills.containsString(String(c)){
                                                         firIDs.append(userKey!)
+                                                        
+                                                        let badgeDB = FIRDatabase.database().reference().child("user-badge").child("timeline").child(userKey!)
+                                                        
+                                                        badgeDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                                                            if let count = snap.value as? Int {
+                                                                badgeDB.setValue(count + 1)
+                                                            }else{
+                                                                badgeDB.setValue(1)
+                                                            }
+                                                        })
+                                                        
                                                         FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
                                                         let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
                                                         dispatch_async(dispatch_get_main_queue()){
