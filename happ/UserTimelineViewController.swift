@@ -11,6 +11,7 @@ import Firebase
 
 struct statusButton {
     static var status : String = ""
+    static var freetimeStatus: UISwitch!
 }
 
 class UserTimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
@@ -119,6 +120,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.mytableview.addSubview(self.refreshControl)
         
+        statusButton.freetimeStatus = freetimeStatus
+        
         self.mytableview.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
         self.mytableview.registerClass(SingleImage.self, forCellReuseIdentifier: "SingleImage")
         self.mytableview.registerClass(DoubleImage.self, forCellReuseIdentifier: "DoubleImage")
@@ -167,7 +170,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func updateFunction(){
-        print("execture")
         self.getFreeTimeStatus()
     }
     
@@ -361,7 +363,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     
     func getFreeTimeStatus(){
-        print("5 min")
         let parameters = [
             "sercret"          : "jo8nefamehisd",
             "action"           : "api",
@@ -389,14 +390,29 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                         dispatch_async(dispatch_get_main_queue()){
                             if let _ = json["success"] as? Bool {
                                 if let result = json["result"] as? NSArray {
-                                    for(value) in result {
-                                        if let field = value["fields"] as? NSDictionary {
-                                            if let userid = field["user_id"] as? String {
-                                                if userid == globalUserId.userID {
+                                    var check = false
+                                    var count = 0
+                                    if result.count > 0 {
+                                        for(value) in result {
+                                            count++
+                                            if let field = value["fields"] as? NSDictionary {
+                                                if let userid = field["user_id"] as? String {
+                                                    if userid == globalUserId.userID {
+                                                        check = true
+                                                    }
+                                                }
+                                            }
+                                            
+                                            if count == result.count{
+                                                if check {
                                                     self.freetimeStatus.setOn(true, animated: true)
+                                                }else{
+                                                    self.freetimeStatus.setOn(false, animated: true)
                                                 }
                                             }
                                         }
+                                    }else{
+                                        self.freetimeStatus.setOn(false, animated: true)
                                     }
                                 }
                             }
@@ -758,8 +774,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                if (imgforPostCache.objectForKey(userimageURL) != nil) {
-                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
+                if (globalvar.imgforProfileCache.objectForKey(userimageURL) != nil) {
+                    let imgCache = globalvar.imgforProfileCache.objectForKey(userimageURL) as! UIImage
                     cell.btnProfile.setImage(imgCache, forState: .Normal)
                 }else{
                     cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
@@ -773,7 +789,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                 cell.btnProfile.contentMode = .ScaleAspectFill
                             }
                             let tmpImg = UIImage(data: data)
-                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
+                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: userimageURL)
                         }
                         
                     })
@@ -828,8 +844,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                if (imgforPostCache.objectForKey(userimageURL) != nil) {
-                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
+                if (globalvar.imgforProfileCache.objectForKey(userimageURL) != nil) {
+                    let imgCache = globalvar.imgforProfileCache.objectForKey(userimageURL) as! UIImage
                     cell.btnProfile.setImage(imgCache, forState: .Normal)
                 }else{
                     cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
@@ -843,7 +859,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                 cell.btnProfile.contentMode = .ScaleAspectFill
                             }
                             let tmpImg = UIImage(data: data)
-                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
+                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: userimageURL)
                         }
                         
                     })
@@ -893,8 +909,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                if (imgforPostCache.objectForKey(userimageURL) != nil) {
-                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
+                if (globalvar.imgforProfileCache.objectForKey(userimageURL) != nil) {
+                    let imgCache = globalvar.imgforProfileCache.objectForKey(userimageURL) as! UIImage
                     cell.btnProfile.setImage(imgCache, forState: .Normal)
                 }else{
                     cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
@@ -908,7 +924,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                 cell.btnProfile.contentMode = .ScaleAspectFill
                             }
                             let tmpImg = UIImage(data: data)
-                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
+                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: userimageURL)
                         }
                     })
                     task.resume()
@@ -949,8 +965,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                if (imgforPostCache.objectForKey(userimageURL) != nil) {
-                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
+                if (globalvar.imgforProfileCache.objectForKey(userimageURL) != nil) {
+                    let imgCache = globalvar.imgforProfileCache.objectForKey(userimageURL) as! UIImage
                     cell.btnProfile.setImage(imgCache, forState: .Normal)
                 }else{
                     cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
@@ -964,7 +980,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                 cell.btnProfile.contentMode = .ScaleAspectFill
                             }
                             let tmpImg = UIImage(data: data)
-                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
+                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: userimageURL)
                         }
                         
                     })
@@ -1133,6 +1149,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
 
     func blockUser(index: Int) {
         
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
         let config = SYSTEM_CONFIG()
         let lang = config.getSYS_VAL("AppLanguage") as! String
         
@@ -1164,15 +1184,21 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }else{
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                        if json["result"] != nil {
-                            if json["result"]!["mess"] != nil {
+                        if let data = json["result"] as? NSDictionary {
+                            if let mess = data["mess"] as? String {
                                 dispatch_async(dispatch_get_main_queue()){
-                                    self.getChatRoomID(self.fromID[index]){
-                                        (result: String) in
-                                        FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true)
-                                        
-                                        self.displayMyAlertMessage(String(json["result"]!["mess"]!!))
-                                        self.reloadTableData()
+                                    self.getChatmateID(self.fromID[index]){ (key: String) in
+                                        self.getChatRoomID(key){
+                                            (result: String) in
+                                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true)
+                                            
+                                            if self.loadingScreen != nil {
+                                                UIViewController.removeSpinner(self.loadingScreen)
+                                                self.loadingScreen = nil
+                                            }
+                                            self.displayMyAlertMessage(String(mess))
+                                            self.reloadTableData()
+                                        }
                                     }
                                 }
                             }
@@ -1188,73 +1214,87 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         task.resume()
     }
     
-    func getChatRoomID(userID: String, completion: (result: String) -> Void){
+    func getChatmateID(id: String, completion: (key: String) -> Void){
+        let user_id = Int(id)
+        let userdb = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(user_id)
         
-        let userid = FIRAuth.auth()?.currentUser?.uid
-        let userDB = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(Int(userID))
-        
-        userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+        userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            let userData = snapshot.value as? NSDictionary
             
-            if let data = snapshot.value as? NSDictionary{
-                for (key, _) in data {
-                    let chatmateID = key as! String
-                    let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
-                    
-                            membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-                                var count = 0
-                    
-                                if let result =  snapshot.value as? [String: AnyObject] {
-                                    for (key, value) in result {
-                                        count++
-                                        let dataVal = value as? NSDictionary
-                    
-                                        let firstUser = dataVal![String(chatmateID)] as? Int
-                                        let secondUser = dataVal![String(userid!)] as? Int
-                    
-                                        if firstUser != nil && secondUser != nil {
-                                            chatVar.RoomID = key
-                                        }
-                    
-                                        if(count == snapshot.value?.count!){
-                                            if chatVar.RoomID != "" {
-                                                completion(result: chatVar.RoomID)
-                                            }else{
-                                                let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
-                                                dispatch_async(dispatch_get_main_queue()){
-                                                    var roomDetail: NSDictionary
-                                                    roomDetail = [
-                                                        String(chatmateID) : true,
-                                                        String(userid!) : true,
-                                                        "blocked" : false
-                                                    ]
-                    
-                                                    roomDB.setValue(roomDetail)
-                                                    chatVar.RoomID = roomDB.key
-                                                    completion(result: chatVar.RoomID)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }else{
-                                    let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
-                                    dispatch_async(dispatch_get_main_queue()){
-                                        var roomDetail: NSDictionary
-                                        
-                                        roomDetail = [
-                                            String(chatmateID) : true,
-                                            String(userid!) : true,
-                                            "blocked" : false
-                                        ]
-                                        roomDB.setValue(roomDetail)
-                                        chatVar.RoomID = roomDB.key
-                                        completion(result: chatVar.RoomID)
-                                    }
-                                }
-                            })
-
+            if(userData != nil) {
+                for (key, value) in userData! {
+                    if let dataVal = value as? NSDictionary {
+                        if let dataID =  dataVal["id"] as? Int {
+                            
+                            if dataID == user_id {
+                                completion(key: key as! String)
+                            }
+                        }
+                    }
                 }
             }
         })
+    }
+    
+    func getChatRoomID(userID: String, completion: (result: String) -> Void){
+        
+        let userid = FIRAuth.auth()?.currentUser?.uid
+        
+        let chatmateID = userID
+        let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
+        
+        membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            var count = 0
+            
+            if let result =  snapshot.value as? [String: AnyObject] {
+                for (key, value) in result {
+                    count++
+                    let dataVal = value as? NSDictionary
+                    
+                    let firstUser = dataVal![String(chatmateID)] as? Int
+                    let secondUser = dataVal![String(userid!)] as? Int
+                    
+                    if firstUser != nil && secondUser != nil {
+                        chatVar.RoomID = key
+                    }
+                    
+                    if(count == snapshot.value?.count!){
+                        if chatVar.RoomID != "" {
+                            completion(result: chatVar.RoomID)
+                        }else{
+                            let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                            dispatch_async(dispatch_get_main_queue()){
+                                var roomDetail: NSDictionary
+                                roomDetail = [
+                                    String(chatmateID) : true,
+                                    String(userid!) : true,
+                                    "blocked" : true
+                                ]
+                                
+                                roomDB.setValue(roomDetail)
+                                chatVar.RoomID = roomDB.key
+                                completion(result: chatVar.RoomID)
+                            }
+                        }
+                    }
+                }
+            }else{
+                let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                dispatch_async(dispatch_get_main_queue()){
+                    var roomDetail: NSDictionary
+                    
+                    roomDetail = [
+                        String(chatmateID) : true,
+                        String(userid!) : true,
+                        "blocked" : true
+                    ]
+                    roomDB.setValue(roomDetail)
+                    chatVar.RoomID = roomDB.key
+                    completion(result: chatVar.RoomID)
+                }
+            }
+        })
+        
         
     }
     

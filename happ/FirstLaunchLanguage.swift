@@ -80,6 +80,7 @@ class FirstLaunchLanguage: UIViewController {
     func saveLanguage(sender: String) {
         let userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setValue(sender, forKey: "AppLanguage")
+        userDefaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
         userDefaults.synchronize()
     }
     

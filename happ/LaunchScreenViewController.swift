@@ -47,7 +47,11 @@ class SYSTEM_CONFIG {
         }
     
         if let translate = textTranslate![key] as? NSDictionary {
-            return translate[lang] as! String
+            if let text = translate[lang] as? String {
+                return text
+            }else{
+                return ""
+            }
         }else{
             return ""
         }
@@ -117,8 +121,6 @@ class LaunchScreenViewController: UIViewController {
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
         logo.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        logo.widthAnchor.constraintEqualToConstant(240).active = true
-        logo.heightAnchor.constraintEqualToConstant(130).active = true
         
         logo.image = UIImage(named: "logo")
         activityIndicator.topAnchor.constraintEqualToAnchor(logo.bottomAnchor, constant: 5).active = true
@@ -196,6 +198,7 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func isAppAlreadyLaunchedOnce()->Bool{
+        let system = SYSTEM_CONFIG()
         
         let config = getSystemValue()
         config.getKey()
@@ -205,8 +208,13 @@ class LaunchScreenViewController: UIViewController {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         if let _ = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
-            //self.dismissViewControllerAnimated(true, completion: nil)
-            self.delayLaunchScreen()
+            if let _ = system.getSYS_VAL("AppLanguage") as? String{
+                self.delayLaunchScreen()
+            }else {
+                dispatch_async(dispatch_get_main_queue()){
+                    self.firstload()
+                }
+            }
             return true
         }else{
             defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
@@ -220,8 +228,6 @@ class LaunchScreenViewController: UIViewController {
                     sys.removeSYS_VAL("userID")
                     globalUserId.userID = ""
                     UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                    FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
-                    FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
                 } catch (let error) {
                     print((error as NSError).code)
                 }

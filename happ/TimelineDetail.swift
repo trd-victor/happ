@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 struct UserDetails {
     static var user_id: String!
@@ -31,6 +32,14 @@ class TimelineDetail: UIViewController {
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
+        btn.clipsToBounds = true
+        return btn
+    }()
+    
+    let btnMessage: UIButton = {
+        let btn = UIButton()
+        btn.contentMode = .ScaleAspectFill
+        btn.translatesAutoresizingMaskIntoConstraints = false
         btn.clipsToBounds = true
         return btn
     }()
@@ -146,6 +155,7 @@ class TimelineDetail: UIViewController {
         view.addSubview(btnUsername)
         view.addSubview(postDate)
         view.addSubview(scrollView)
+        view.addSubview(btnMessage)
         scrollView.addSubview(body)
         scrollView.addSubview(view1)
         scrollView.addSubview(view2)
@@ -164,13 +174,47 @@ class TimelineDetail: UIViewController {
         
         let imgView = UIImageView()
         
+        
         if UserDetails.userimageURL == "null" {
             imgView.image = UIImage(named: "noPhoto")
+            self.btnProfile.setImage(imgView.image, forState: .Normal)
         }else {
-            imgView.profileForCache(UserDetails.userimageURL)
+            if (globalvar.imgforProfileCache.objectForKey(UserDetails.userimageURL) != nil) {
+                let imgCache = globalvar.imgforProfileCache.objectForKey(UserDetails.userimageURL) as! UIImage
+                btnProfile.setImage(imgCache, forState: .Normal)
+            }else{
+                self.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
+                self.btnProfile.backgroundColor = UIColor.lightGrayColor()
+                self.btnProfile.contentMode = .Center
+                let url = NSURL(string: UserDetails.userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                    if let data = NSData(contentsOfURL: url!){
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.btnProfile.setImage(UIImage(data: data), forState: .Normal)
+                            self.btnProfile.contentMode = .ScaleAspectFill
+                        }
+                        let tmpImg = UIImage(data: data)
+                        globalvar.imgforProfileCache.setObject(tmpImg!, forKey: UserDetails.userimageURL)
+                    }
+                })
+                task.resume()
+            }
         }
         
-        btnProfile.setImage(imgView.image, forState: .Normal)
+        if UserDetails.userimageURL == "null" {
+            imgView.image = UIImage(named: "noPhoto")
+             btnProfile.setImage(imgView.image, forState: .Normal)
+        }else {
+            imgView.profileForCache(UserDetails.userimageURL)
+             btnProfile.setImage(imgView.image, forState: .Normal)
+        }
+        
+        if UserDetails.fromID == globalUserId.userID {
+            self.btnMessage.hidden = true
+        }else{
+            self.btnMessage.hidden = false
+        }
+        
         btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
         
         if UserDetails.postID == nil || UserDetails.postID == ""{
@@ -226,7 +270,7 @@ class TimelineDetail: UIViewController {
             contentHeight += self.imgHeight1
             contentHeight += self.imgHeight2
             contentHeight += self.imgHeight3
-            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 210)
+            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 350)
             self.autoLayout()
         }
     }
@@ -426,6 +470,7 @@ class TimelineDetail: UIViewController {
     }
     
     func autoLayout(){
+        let config = SYSTEM_CONFIG()
         
         view1.topAnchor.constraintEqualToAnchor(body.bottomAnchor,constant: 25).active = true
         view1.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
@@ -457,6 +502,62 @@ class TimelineDetail: UIViewController {
         imgView3.widthAnchor.constraintEqualToAnchor(view3.widthAnchor).active = true
         imgView3.heightAnchor.constraintEqualToAnchor(view3.heightAnchor).active = true
         
+        btnMessage.topAnchor.constraintEqualToAnchor(view3.bottomAnchor, constant: 20).active = true
+        btnMessage.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnMessage.heightAnchor.constraintEqualToConstant(44).active = true
+        btnMessage.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, multiplier: 1/2, constant: -30).active = true
+        btnMessage.setImage(UIImage(named: "msg"), forState: .Normal)
+        btnMessage.backgroundColor = UIColor(hexString: "#272727")
+        btnMessage.setTitle(config.translate("menu_message"), forState: .Normal)
+        btnMessage.addTarget(self, action: Selector("goToMessage"), forControlEvents: .TouchUpInside)
+    }
+    
+    func goToMessage(){
+        let user_id = Int(UserDetails.fromID)
+        let userdb = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(user_id)
+        
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
+        userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            let userData = snapshot.value as? NSDictionary
+            
+            if(userData != nil) {
+                for (key, value) in userData! {
+                    if let dataVal = value as? NSDictionary {
+                        if let dataID =  dataVal["id"] as? Int {
+                           
+                            if dataID == user_id {
+                                chatVar.chatmateId = key as! String
+                                chatVar.Indicator = "Search"
+                                
+                                if let name = globalvar.USER_IMG.valueForKey(chatVar.chatmateId)?.valueForKey("name") as? String{
+                                    chatVar.name = name
+                                }
+                                
+                                if self.loadingScreen != nil {
+                                    UIViewController.removeSpinner(self.loadingScreen)
+                                    self.loadingScreen = nil
+                                }
+                                
+                                dispatch_async(dispatch_get_main_queue()){
+                                    let vc = ViewLibViewController()
+                                    
+                                    let transition = CATransition()
+                                    transition.duration = 0.40
+                                    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                                    transition.type = kCATransitionPush
+                                    transition.subtype = kCATransitionFromRight
+                                    self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+                                    self.presentViewController(vc, animated: false, completion: nil)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
     
     func viewProfile(sender: UIButton!){

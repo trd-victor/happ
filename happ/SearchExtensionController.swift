@@ -27,7 +27,8 @@ extension SearchController {
             "d"           : "0",
             "lang"        : "en",
             "name"        : "\(value)",
-            "h_id"        : "\(value)"
+            "h_id"        : "\(value)",
+            "user_id_for_block" : globalUserId.userID
         ]
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()

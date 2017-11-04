@@ -126,6 +126,12 @@ extension CongestionViewController {
                         self.viewBlackConstraint.constant = self.calculatePercentage(percent)
                         self.collectionView.reloadData()
                         
+                        if  self.userIds.contains(Int(globalUserId.userID)!) {
+                            statusButton.freetimeStatus?.setOn(true, animated: true)
+                        }else{
+                            statusButton.freetimeStatus?.setOn(false, animated: true)
+                        }
+                        
                         self.viewLoading.hidden = true
                         self.activityLoading.stopAnimating()
                         

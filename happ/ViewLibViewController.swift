@@ -23,7 +23,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     var containerViewBottomAncher: NSLayoutConstraint?
     var collectioView: NSLayoutConstraint?
     
-    var messagesData: [NSDictionary] = []
+    var messagesData: [FIRDataSnapshot] = []
     var chatMatePhoto: String = ""
     var userPhoto: String = ""
     
@@ -56,7 +56,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.txtField.tintColor = UIColor.blackColor()
         autoLayout()
         loadConfig()
-        getUsersImage()
         setupKeyboard()
         if(chatVar.Indicator == "MessageTable"){
             self.deleteMessage()
@@ -146,27 +145,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 self.collectioView?.constant = -112
             }
         }
-    }
-    
-    func getUsersImage() {
-        let userid  = FIRAuth.auth()?.currentUser?.uid
-        let userDataDB = FIRDatabase.database().reference().child("users").child(userid!)
-        userDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-            
-            if let result = snapshot.value as? NSDictionary {
-                self.userPhoto = result["photoUrl"] as! String
-                self.myCollectionView?.reloadData()
-            }
-        })
-        
-        let chatmateDataDB = FIRDatabase.database().reference().child("users").child(chatVar.chatmateId)
-        
-        chatmateDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-            if let result = snapshot.value as? NSDictionary {
-                self.chatMatePhoto = result["photoUrl"] as! String
-                self.myCollectionView?.reloadData()
-            }
-        })
     }
     
     func autoLayout(){
@@ -349,46 +327,28 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func loadMessages(){
         let roomID = chatVar.RoomID
-        let messagesDb = FIRDatabase.database().reference().child("chat").child("messages").child(String(roomID))
+        let messagesDb = FIRDatabase.database().reference().child("chat").child("messages").child(String(roomID)).queryOrderedByChild("timestamp")
         
         messagesDb.observeEventType(.Value, withBlock: {(snapshot)  in
             self.messagesData.removeAll()
-            var count = 0
-            if let result = snapshot.value as? NSDictionary {
-                for (_, value) in result {
-                    if let data = value as? NSDictionary {
-                        count++
-                        self.messagesData.append(data)
-                    }
-                    
-                    if count == result.count {
-                        self.messagesData.sortInPlace({(message1, message2) -> Bool in
-                            return message1["timestamp"]?.intValue < message2["timestamp"]?.intValue
-                        })
-                        dispatch_async(dispatch_get_main_queue()){
-                            self.myCollectionView!.reloadData()
-                            
-                            if(self.messagesData.count > 1){
-                                if Int(self.messagesData.count) != nil && self.messagesData.count != 0 {
-                                    let lastItemIndex =  NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
-                                    if let _ = self.myCollectionView?.dataSource?.collectionView(self.myCollectionView!, cellForItemAtIndexPath: lastItemIndex){
-                                        self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
-                                    }
-                                }
-                            }
+            
+            if let result = snapshot.children.allObjects as? [FIRDataSnapshot] {
+                self.messagesData = result
+            }
+            
+            dispatch_async(dispatch_get_main_queue()){
+                self.myCollectionView!.reloadData()
+                
+                if(self.messagesData.count > 1){
+                    if Int(self.messagesData.count) != nil && self.messagesData.count != 0 {
+                        let lastItemIndex =  NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
+                        if let _ = self.myCollectionView?.dataSource?.collectionView(self.myCollectionView!, cellForItemAtIndexPath: lastItemIndex){
+                            self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
                         }
                     }
                 }
             }
         })
-        
-        
-//        dispatch_async(dispatch_get_main_queue()){
-//            self.myCollectionView!.reloadData()
-//            dispatch_async(dispatch_get_main_queue()){
-//
-//            }
-//        }
     }
     
     func deleteMessage(){
@@ -463,14 +423,18 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Messagecell", forIndexPath: indexPath) as! MessageCell
         let data = self.messagesData[indexPath.row]
         
-        self.setupCell(cell, mess_data: data)
-        
-        if let message = data["message"] as? String {
-            cell.txtLbl.text = message
+        if let messData = data.value as? NSDictionary {
+            self.setupCell(cell, mess_data: messData)
+            
+            if let message = messData["message"] as? String {
+                cell.txtLbl.text = message
+            }
         }
         
         cell.bubbleWidthAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).width + 18
         cell.bubbleHeightAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).height + 10
+
+        
         return cell
     }
     
@@ -565,11 +529,12 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         var height: CGFloat = 80
+        let data = self.messagesData[indexPath.row] 
         
-        let data = self.messagesData[indexPath.row]
-        
-        if let message = data["message"] {
-            height = estimateFrameForText(message as! String).height + 30
+        if let value = data.value as? NSDictionary {
+            if let message = value["message"] {
+                height = estimateFrameForText(message as! String).height + 30
+            }
         }
         
         return CGSize(width: view.frame.width, height: height)

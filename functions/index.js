@@ -9,7 +9,6 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
     const forUserId = event.params.userId;
     //  Grab the current value of what was written to the Realtime Database.
     var valueObject = event.data.val();
-    console.log(valueObject.toJSON());
     if(!valueObject) {
         return console.log('name ', valueObject.name, 'message', valueObject.message);
     }
@@ -18,7 +17,8 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
 
     return ref.once("value", function(snapshot) {
         const token = snapshot.val();
-        console.log('Token', token + " Notif detail " +valueObject.message);
+        console.log('Token', token);
+        console.log(" Message detail " , valueObject.message);
 
         const payload = {
             data: {
@@ -42,7 +42,13 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
         };
 
         if(token != null && token != ""){
-            admin.messaging().sendToDevice(token, payload, options);
+            admin.messaging().sendToDevice(token, payload, options).then(function (response) {
+                console.log("Successfully sent message: ", response);
+            }).catch(function (error) {
+                console.log("Error sending message:", error);
+            }); 
+        }else{
+            console.log("No Token user: ", forUserId)
         }
     },
 
@@ -216,7 +222,7 @@ exports.reservation = functions.https.onRequest((req, res) => {
         const token = req.body.fcmtoken;
         const uid = req.body.uid;
 
-         console.log("Send reservation to " +uid);
+        console.log("Send reservation to " +uid);
 
         const payload = {
             data: {
@@ -237,16 +243,18 @@ exports.reservation = functions.https.onRequest((req, res) => {
             priority: "high"
         }
 
-        admin.database().ref('user-badge').child("reservation").child(uid).once('value', function(snap){
-            var count = snap.val();
+        if (req.body.firstSend == true || req.body.firstSend == "true"){
+            admin.database().ref('user-badge').child("reservation").child(uid).once('value', function(snap){
+                var count = snap.val();
 
-            if (count != null && count != 0 ){
-                var total = count + 1;
-                admin.database().ref('user-badge').child("reservation").child(uid).set(total);
-            }else{
-                admin.database().ref('user-badge').child("reservation").child(uid).set(1);
-            }
-        })
+                if (count != null && count != 0 ){
+                    var total = count + 1;
+                    admin.database().ref('user-badge').child("reservation").child(uid).set(total);
+                }else{
+                    admin.database().ref('user-badge').child("reservation").child(uid).set(1);
+                }
+            })
+        }
 
         //Check if token exist
         var database = admin.database();
@@ -527,7 +535,9 @@ exports.updateUser = functions.https.onRequest((req, res) => {
         var newPassword = req.body.password;
         var newEmail = req.body.email;
 
-        if(newPassword == "" && newEmail != ""){
+        console.log("Email: " ,  newEmail , " Password: ", newPassword);
+
+        if((newPassword == "" || newPassword == null) && newEmail != ""){
             //prepare user update
             admin.auth().updateUser(userId, {
                 email: newEmail,
@@ -539,7 +549,7 @@ exports.updateUser = functions.https.onRequest((req, res) => {
             .catch(function(error) {
                 console.log("Error updating user: ", error);
             });
-        }else if(newEmail == "" && newPassword != ""){
+        }else if((newEmail == "" || newEmail == null) && newPassword != ""){
             //prepare user update
             admin.auth().updateUser(userId, {
                 password: newPassword
@@ -550,18 +560,20 @@ exports.updateUser = functions.https.onRequest((req, res) => {
                 console.log("Error updating user: ", error);
             });
         }else{
-            //prepare user update
-            admin.auth().updateUser(userId, {
-                password: newPassword,
-                email: newEmail,
-                emailVerified: true
-            }).then(function(userRecord) {
-                admin.database().ref("users").child(userId).child("email").set(newEmail);
-                console.log("Successfully updated user user and password", userRecord.toJSON());
-            })
-            .catch(function(error) {
-                console.log("Error updating user: ", error);
-            });
+            if(newEmail != null && newEmail != "" && newPassword != null && newPassword != ""){
+                //prepare user update
+                admin.auth().updateUser(userId, {
+                    password: newPassword,
+                    email: newEmail,
+                    emailVerified: true
+                }).then(function(userRecord) {
+                    admin.database().ref("users").child(userId).child("email").set(newEmail);
+                    console.log("Successfully updated user user and password", userRecord.toJSON());
+                })
+                .catch(function(error) {
+                    console.log("Error updating user: ", error);
+                });
+            }
         }
 
         res.status(200).end();
