@@ -509,23 +509,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         if let result = snapshot.value as? NSDictionary {
                             for (key, _) in result {
                                 if key as! String != firID! {
-                                    // update notification user
-                                    FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
                                     
-                                    // get unread count on each user
-                                    let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
-                                    dispatch_async(dispatch_get_main_queue()){
-                                        readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
-                                            
-                                            if let result = snapCount.value as? NSDictionary {
-                                                if let count = result["count"] as? Int {
-                                                    readDB.child("count").setValue(count + 1)
-                                                }else{
-                                                    readDB.child("count").setValue(1)
-                                                }
-                                            }
-                                        })
-                                    }
+                                    self.addUserNotif(key as! String, notif_all_key: notif_all_key)
+                                    self.countUnreadNotif(key as! String)
                                 }
                             }// end of loop
                         }// end of if
@@ -547,37 +533,24 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                     if let valueData = value as? NSDictionary {
                                         if let skills = valueData["skills"] as? String {
                                             let userKey = key as? String
-                                            if skills != "" && userKey! != firID{
-                                                for c in timeline_post_skills.selectedSkills {
-                                                    if skills.containsString(String(c)){
-                                                        firIDs.append(userKey!)
-                                                        
-                                                        let badgeDB = FIRDatabase.database().reference().child("user-badge").child("timeline").child(userKey!)
-                                                        
-                                                        badgeDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
-                                                            if let count = snap.value as? Int {
-                                                                badgeDB.setValue(count + 1)
-                                                            }else{
-                                                                badgeDB.setValue(1)
-                                                            }
-                                                        })
-                                                        
-                                                        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
-                                                        let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
-                                                        dispatch_async(dispatch_get_main_queue()){
-                                                            readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
-                                                                
-                                                                if let result = snapCount.value as? NSDictionary {
-                                                                    if let count = result["count"] as? Int {
-                                                                        readDB.child("count").setValue(count + 1)
-                                                                    }else{
-                                                                        readDB.child("count").setValue(1)
-                                                                    }
-                                                                }
-                                                            })
+                                            
+                                            if userKey! != firID {
+                                                if skills != "" {
+                                                    for c in timeline_post_skills.selectedSkills {
+                                                        if skills.containsString(String(c)){
+                                                            firIDs.append(userKey!)
+                                                            
+                                                            self.addBadgeUser(userKey!)
+                                                            self.addUserNotif(key as! String, notif_all_key: notif_all_key)
+                                                            self.countUnreadNotif(key as! String)
+                                                            
+                                                            break
                                                         }
-                                                        break
                                                     }
+                                                }else{
+                                                    self.addBadgeUser(userKey!)
+                                                    self.addUserNotif(key as! String, notif_all_key: notif_all_key)
+                                                    self.countUnreadNotif(key as! String)
                                                 }
                                             }
                                         }
@@ -608,4 +581,36 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         }
     }
     
+    
+    func addUserNotif(key: String, notif_all_key: String) {
+        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key).child("notif-list").child(notif_all_key).child("read").setValue(false)
+        
+    }
+    
+    func addBadgeUser(userKey: String){
+        let badgeDB = FIRDatabase.database().reference().child("user-badge").child("timeline").child(userKey)
+        
+        badgeDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+            if let count = snap.value as? Int {
+                badgeDB.setValue(count + 1)
+            }else{
+                badgeDB.setValue(1)
+            }
+        })
+    }
+    
+    func countUnreadNotif(key: String){
+        let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key).child("unread")
+        dispatch_async(dispatch_get_main_queue()){
+            readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
+                if let result = snapCount.value as? NSDictionary {
+                    if let count = result["count"] as? Int {
+                        readDB.child("count").setValue(count + 1)
+                    }else{
+                        readDB.child("count").setValue(1)
+                    }
+                }
+            })
+        }
+    }
 }

@@ -561,8 +561,14 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func updateTimeline(){
+        
         if let willReload = menu_bar.timelineReloadCount {
             if willReload {
+                if self.fromID.count > 0 {
+                    let indexPath = NSIndexPath(forItem: 0, inSection: 0)
+                    self.mytableview.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+                }
+                
                 self.reloadTimelineByMenuClick()
                 menu_bar.timelineReloadCount = false
             }

@@ -135,7 +135,8 @@ extension UserTimelineViewController {
     
     
     func reloadTimelineByMenuClick() {
-        
+        self.page = 1
+        page = 1
         self.noData = false
         var tmppostDate = [String]()
         var tmpimg1 = [String]()
@@ -158,7 +159,7 @@ extension UserTimelineViewController {
             "skills"     : "\(globalUserId.skills)",
             "origin"     : "timeline"
         ]
-        
+        print(parameters)
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -234,8 +235,6 @@ extension UserTimelineViewController {
                                 self.postID = tmppostID
                                 self.postDate = tmppostDate
                                 
-                                self.refreshControl.endRefreshing()
-                                
                                 self.mytableview.reloadData()
                                 if self.loadingData {
                                     self.loadingData = false
@@ -309,12 +308,12 @@ extension UserTimelineViewController {
                                                 if check {
                                                     let notif = NotifController()
                                                     notif.saveNotificationMessage(0, type: "free-time")
-                                                    if self.loadingScreen != nil {
-                                                        UIViewController.removeSpinner(self.loadingScreen)
-                                                        self.loadingScreen = nil
-                                                    }
                                                 }else{
                                                     self.freetimeStatus.setOn(false, animated: true)
+                                                }
+                                                if self.loadingScreen != nil {
+                                                    UIViewController.removeSpinner(self.loadingScreen)
+                                                    self.loadingScreen = nil
                                                 }
                                             }
                                         }
