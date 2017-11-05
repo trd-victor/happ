@@ -217,7 +217,8 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                 "lang"        : "jp",
                 "email"       : "\(userEmail)",
                 "passwd"      : "\(userPass)",
-                 "fcmtoken"    : "\(FCMtoken)"
+                "fcmtoken"    : "\(FCMtoken)",
+                "change_lang" : "\(language)"
             ]
             
             let httpRequest = HttpDataRequest(postData: param)
@@ -267,8 +268,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                 self.loginFirebase(userEmail, pass: userPass)
                             }
                         }
-
-
                     } catch {
                         print(error)
                     }

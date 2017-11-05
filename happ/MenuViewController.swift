@@ -10,15 +10,17 @@ import UIKit
 import Firebase
 import ReachabilitySwift
 import Foundation
+import AudioToolbox
 
 struct menu_bar {
     static var timeline: UITabBarItem!
     static var reservation: UITabBarItem!
     static var situation: UITabBarItem!
-    static var timelineCount: Int!
+    static var timelineReloadCount: Bool!
+    static var reloadScreen: UIView!
 }
 
-class MenuViewController: UITabBarController {
+class MenuViewController: UITabBarController, UITabBarControllerDelegate {
 
     @IBOutlet var menuTabBar: UITabBar!
      var reachability: Reachability!
@@ -26,6 +28,8 @@ class MenuViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.delegate = self
         self.view.addSubview(connectionMessage)
         //load config
         self.configLoad()
@@ -40,13 +44,27 @@ class MenuViewController: UITabBarController {
         
         autoLayout()
         
+        
+        self.menuTabBar.items![0].tag = 1
         menu_bar.timeline = self.menuTabBar.items![0]
         menu_bar.reservation = self.menuTabBar.items![2]
         menu_bar.situation = self.menuTabBar.items![3]
         
-        
-        // udpate every 5 mins
+        menu_bar.timelineReloadCount = false
        
+    }
+    
+    func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
+        
+        if tabBarController.tabBar.selectedItem?.tag == 1 {
+            if menu_bar.reloadScreen == nil {
+                menu_bar.reloadScreen = UIViewController.displaySpinner(self.view)
+            }
+            
+            menu_bar.timelineReloadCount = true
+            let vc = viewController as? UserTimelineViewController
+            vc?.updateTimeline()
+        }
     }
     
     func autoLayout() {
@@ -129,6 +147,7 @@ class MenuViewController: UITabBarController {
                     }else{
                         self.menuTabBar.items![1].badgeValue = String(count)
                         globalvar.badgeMessNumber = count
+                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                     }
                     UIApplication.sharedApplication().applicationIconBadgeNumber = globalvar.badgeBellNumber + globalvar.badgeMessNumber
                 }
@@ -140,6 +159,7 @@ class MenuViewController: UITabBarController {
             if let count = snap.value as? Int{
                 if count != 0 {
                     menu_bar.reservation.badgeValue = String(count)
+                    AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                 }else{
                     menu_bar.reservation.badgeValue = .None
                 }
@@ -150,6 +170,7 @@ class MenuViewController: UITabBarController {
             if let count = snap.value as? Int{
                 if count != 0 {
                     menu_bar.situation.badgeValue = String(count)
+                    AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                 }else{
                     menu_bar.situation.badgeValue = .None
                 }
@@ -160,6 +181,7 @@ class MenuViewController: UITabBarController {
             if let count = snap.value as? Int{
                 if count != 0 {
                     menu_bar.timeline.badgeValue = String(count)
+                    AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                 }else{
                     menu_bar.timeline.badgeValue = .None
                 }

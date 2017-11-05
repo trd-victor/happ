@@ -166,15 +166,16 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.getFreeTimeStatus()
         
-         let timer = NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("updateFunction"), userInfo: nil, repeats: true)
+//         let timer = NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("updateFunction"), userInfo: nil, repeats: true)
     }
     
     func updateFunction(){
         self.getFreeTimeStatus()
     }
     
+    
+    
     func bellObserver(){
-        
         let firID = FIRAuth.auth()?.currentUser?.uid
         let unreadDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread")
         unreadDB.observeEventType(.Value, withBlock: {(snap) in
@@ -353,8 +354,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         if statust == "On" {
-            let notif = NotifController()
-            notif.saveNotificationMessage(0, type: "free-time")
             updateFreeTimeStatus()
         }else{
             freeTimeStatusOff()
@@ -558,6 +557,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             
             self.refreshControl.beginRefreshing()
             self.firstLoad = true
+        }
+    }
+    
+    func updateTimeline(){
+        if let willReload = menu_bar.timelineReloadCount {
+            if willReload {
+                self.reloadTimelineByMenuClick()
+                menu_bar.timelineReloadCount = false
+            }
         }
     }
     

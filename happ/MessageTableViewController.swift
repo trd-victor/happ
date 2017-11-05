@@ -111,7 +111,6 @@ class MessageTableViewController: UITableViewController {
                 for s in snap.children.allObjects as! [FIRDataSnapshot] {
                     if let data = s.value as? NSDictionary {
                         count++
-                        
                         if let userID = data.valueForKey("chatmateId") as? String {
                             if let _ = globalvar.USER_IMG.valueForKey(userID) {
                                 if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
@@ -119,6 +118,7 @@ class MessageTableViewController: UITableViewController {
                                 }
                                 if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
                                     data.setValue(photo, forKey: "name")
+                                    
                                 }
                                 self.lastMessages.append(data)
                             }
@@ -127,7 +127,7 @@ class MessageTableViewController: UITableViewController {
                         if count == Int(snap.childrenCount) {
                             dispatch_async(dispatch_get_main_queue()){
                                 self.lastMessages.sortInPlace({(message1, message2) -> Bool in
-                                    return message1["timestamp"]?.intValue < message2["timestamp"]?.intValue
+                                    return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
                                 })
                                 self.mytableview.reloadData()
                             }
