@@ -43,7 +43,7 @@ extension CreateReservation {
         components.minute = 0
         
         self.startTime.setDate(calendar.dateFromComponents(components)!, animated: true)
-        components.hour = 9
+        components.hour = 23
         components.minute = 0
         self.endTime.setDate(calendar.dateFromComponents(components)!, animated: true)
         
@@ -61,12 +61,12 @@ extension CreateReservation {
         self.startLabel.text = config.translate("label_start")
         
         
-        self.startName.text = "\(String(format: "%02d",8)):\(String(format: "%02d", 0))"
+        self.startName.text = "\(String(format: "%02d", 8)):\(String(format: "%02d", 0))"
         
         components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: edate)
         
         self.endLabel.text = config.translate("label_end")
-        self.endName.text = "\(String(format: "%02d",9)):\(String(format: "%02d", 0))"
+        self.endName.text = "\(String(format: "%02d", 23)):\(String(format: "%02d", 0))"
         self.reservedLabel.text = config.translate("title_reserved")
         
         self.getOffice()

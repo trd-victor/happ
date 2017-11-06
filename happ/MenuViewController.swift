@@ -85,6 +85,7 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        
         do {
             reachability = try Reachability.reachabilityForInternetConnection()
         } catch {

@@ -27,8 +27,8 @@ class NoImage: UITableViewCell {
         detailTextLabel?.sizeToFit()
     }
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
@@ -146,8 +146,8 @@ class SingleImage: UITableViewCell {
         detailTextLabel?.sizeToFit()
     }
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
@@ -300,8 +300,8 @@ class DoubleImage: UITableViewCell {
         detailTextLabel?.sizeToFit()
     }
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
@@ -484,8 +484,8 @@ class TripleImage: UITableViewCell {
         detailTextLabel?.sizeToFit()
     }
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20

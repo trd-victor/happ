@@ -62,7 +62,8 @@ class SearchCustomCell: UITableViewCell {
         
         happId.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 16).active = true
         happId.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -5).active = true
-        happId.widthAnchor.constraintEqualToConstant(50).active = true
+        happId.widthAnchor.constraintEqualToConstant(100).active = true
+        happId.textAlignment = .Right
         
         separator.bottomAnchor.constraintEqualToAnchor(self.bottomAnchor).active = true
         separator.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 65).active = true

@@ -166,19 +166,6 @@ class TermsandConditionController: UIViewController {
         self.scrollView.leftAnchor.constraintEqualToAnchor(self.view.leftAnchor).active = true
         self.scrollView.widthAnchor.constraintEqualToAnchor(self.view.widthAnchor).active = true
         self.scrollView.heightAnchor.constraintEqualToAnchor(self.view.heightAnchor, constant: -66).active = true
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8 where value != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(value)))
-        }
-        
-        if identifier.containsString("iPad") || identifier.containsString("ipad") || identifier.containsString("x86_64") {
-            self.scrollView.contentSize = CGSizeMake(self.view.frame.width, 3400)
-        }else{
-            self.scrollView.contentSize = CGSizeMake(self.view.frame.width, 3400)
-        }
         
         self.lblTerm.translatesAutoresizingMaskIntoConstraints = false
         self.lblTerm.topAnchor.constraintEqualToAnchor(self.scrollView.topAnchor, constant: 10).active = true
@@ -643,10 +630,6 @@ class TermsandConditionController: UIViewController {
         self.lblArticle13Desc2.textAlignment = .Justified
     }
     
-    func addHeight(height: Double){
-        self.allheight += height
-    }
-    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         let config = SYSTEM_CONFIG()
@@ -816,13 +799,24 @@ class TermsandConditionController: UIViewController {
             self.lblArticle13Desc2.text = "\u{25CF} 本サービスに関して紛争が生じた場合には，当社の本店所在地を管轄する裁判所を専属的合意管轄とします。"
 
         }
-        
+    }
+    
+    func estimateFrameForText(text: String) -> CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
+        return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(16)], context: nil)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        self.box?.constant = CGFloat(self.height)
-//        self.view.layoutIfNeeded()
+        self.view.layoutIfNeeded()
+        
+        let last_origin_y: CGFloat = lblArticle13Desc2.frame.origin.y
+        let last_height: CGFloat = lblArticle13Desc2.frame.size.height
+        
+        let contentSize = last_origin_y + last_height
+        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, contentSize + 100)
+        
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

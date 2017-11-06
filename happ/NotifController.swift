@@ -57,6 +57,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         swipeRight.direction = .Right
         
         self.view.addGestureRecognizer(swipeRight)
+        
     }
     
     func swipeBackTimeline(sender: UISwipeGestureRecognizer){
@@ -191,7 +192,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             }
                         })
                     }
-                    
                     self.currentKey = first!.key
                 }
             })
@@ -548,6 +548,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                                         }
                                                     }
                                                 }else{
+                                                    firIDs.append(userKey!)
                                                     self.addBadgeUser(userKey!)
                                                     self.addUserNotif(key as! String, notif_all_key: notif_all_key)
                                                     self.countUnreadNotif(key as! String)

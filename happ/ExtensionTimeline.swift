@@ -159,7 +159,7 @@ extension UserTimelineViewController {
             "skills"     : "\(globalUserId.skills)",
             "origin"     : "timeline"
         ]
-        print(parameters)
+        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -169,7 +169,7 @@ extension UserTimelineViewController {
             data, response, error  in
             
             if error != nil || data == nil {
-                self.reloadTimeline()
+                self.reloadTimelineByMenuClick()
             }else{
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
@@ -253,10 +253,14 @@ extension UserTimelineViewController {
                             }
                         }
                     }else{
-                        self.reloadTimeline()
+                        self.reloadTimelineByMenuClick()
                     }
                 } catch {
                     print(error)
+                    if menu_bar.reloadScreen != nil {
+                        UIViewController.removeSpinner(menu_bar.reloadScreen)
+                        menu_bar.reloadScreen = nil
+                    }
                 }
             }
         }

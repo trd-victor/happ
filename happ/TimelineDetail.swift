@@ -270,7 +270,7 @@ class TimelineDetail: UIViewController {
             contentHeight += self.imgHeight1
             contentHeight += self.imgHeight2
             contentHeight += self.imgHeight3
-            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 350)
+            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 400)
             self.autoLayout()
         }
     }
@@ -652,18 +652,58 @@ class TimelineImage: UIImageView {
             
             if data != nil {
                 let imageToCache = UIImage(data: data!)
-                dispatch_async(dispatch_get_main_queue(), {
-                    () -> Void in
-                    imgCache.setObject(imageToCache!, forKey: urlString)
-                    dispatch_async(dispatch_get_main_queue()){
-                        if self.imageUrlString! == urlString {
-                            self.image = imageToCache
-                            completion(result: true)
+                if imageToCache != nil {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        () -> Void in
+                        imgCache.setObject(imageToCache!, forKey: urlString)
+                        dispatch_async(dispatch_get_main_queue()){
+                            if self.imageUrlString! == urlString {
+                                self.image = imageToCache
+                                completion(result: true)
+                            }
                         }
-                    }
-                })
+                    })
+                }
+                
             }
         }).resume()
     }
 
 }
+
+
+class TimelineProfileImage: UIButton {
+    
+    var imageUrlString: String?
+    
+    func loadImageUsingString(urlString: String, completion: (result: Bool) -> Void){
+        
+        if (globalvar.imgforProfileCache.objectForKey(urlString) != nil) {
+            let imgCache = globalvar.imgforProfileCache.objectForKey(urlString) as! UIImage
+            self.setImage(imgCache, forState: .Normal)
+            completion(result: true)
+        }else{
+            self.setImage(UIImage(named : "noPhoto"), forState: .Normal)
+            self.backgroundColor = UIColor.lightGrayColor()
+            self.contentMode = .Center
+            let url = NSURL(string: urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                if let data = NSData(contentsOfURL: url!){
+                    dispatch_async(dispatch_get_main_queue()){
+                        self.setImage(UIImage(data: data), forState: .Normal)
+                        self.contentMode = .ScaleAspectFill
+                        self.backgroundColor = UIColor.clearColor()
+                    }
+                    let tmpImg = UIImage(data: data)
+                    globalvar.imgforProfileCache.setObject(tmpImg!, forKey: urlString)
+                    completion(result: true)
+                }
+            })
+            task.resume()
+        }
+    
+    
+    }
+    
+}
+
