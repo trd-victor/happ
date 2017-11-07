@@ -149,8 +149,8 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
     override func viewDidAppear(animated: Bool) {
         let config = SYSTEM_CONFIG()
         self.navBar.topItem?.title = config.translate("title_room_reservation")
-        
-        FIRDatabase.database().reference().child("user-badge").child("reservation").child(globalUserId.FirID).setValue(0)
+        let uid = FIRAuth.auth()?.currentUser?.uid
+        FIRDatabase.database().reference().child("user-badge").child("reservation").child(uid!).setValue(0)
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -606,8 +606,10 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
                 cell.dateLabel.textColor = UIColor.grayColor()
                 cell.dateLabel.font = UIFont.systemFontOfSize(16)
                     if Reservation.reserved.contains("\(date2)") {
+                        cell.dateLabel.textColor = UIColor.blackColor()
                         cell.labelIndicator.hidden = false
-                }
+                        calendarDates[indexPath.row] = date2
+                    }
             }else{
                 calendarDates[indexPath.row] = date2
                 cell.dateLabel.font = UIFont.boldSystemFontOfSize(16)

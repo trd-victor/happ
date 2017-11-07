@@ -118,8 +118,8 @@ extension UserTimelineViewController {
                                 if self.scrollLoad {
                                     self.scrollLoad = false
                                 }
-                                
-                                FIRDatabase.database().reference().child("user-badge").child("timeline").child(globalUserId.FirID).setValue(0)
+                                let uid = FIRAuth.auth()?.currentUser?.uid
+                                FIRDatabase.database().reference().child("user-badge").child("timeline").child(uid!).setValue(0)
                             }
                         }
                     }else{
@@ -243,8 +243,8 @@ extension UserTimelineViewController {
                                     self.scrollLoad = false
                                 }
                                 
-                                
-                                FIRDatabase.database().reference().child("user-badge").child("timeline").child(globalUserId.FirID).setValue(0)
+                                let uid = FIRAuth.auth()?.currentUser?.uid
+                                FIRDatabase.database().reference().child("user-badge").child("timeline").child(uid!).setValue(0)
                                 
                                 if menu_bar.reloadScreen != nil {
                                     UIViewController.removeSpinner(menu_bar.reloadScreen)
@@ -268,6 +268,9 @@ extension UserTimelineViewController {
     }
 
     func updateFreeTimeStatus(){
+        let config = SYSTEM_CONFIG()
+        notifDetail.user_ids = []
+        
         let parameters = [
             "sercret"          : "jo8nefamehisd",
             "action"           : "api",
@@ -302,6 +305,14 @@ extension UserTimelineViewController {
                                             count++
                                             if let field = value["fields"] as? NSDictionary {
                                                 if let userid = field["user_id"] as? String {
+                                                    
+                                                    if let _ = config.getSYS_VAL("username_\(userid)"){
+                                                        let existsUser = notifDetail.user_ids.contains(Int(userid)!)
+                                                        if !existsUser {
+                                                            notifDetail.user_ids.append(Int(userid)!)
+                                                        }
+                                                    }
+                                                    
                                                     if userid == globalUserId.userID {
                                                         check = true
                                                     }
@@ -309,6 +320,7 @@ extension UserTimelineViewController {
                                             }
                                             
                                             if count == result.count{
+                                                print(notifDetail.user_ids)
                                                 if check {
                                                     let notif = NotifController()
                                                     notif.saveNotificationMessage(0, type: "free-time")
@@ -327,6 +339,7 @@ extension UserTimelineViewController {
                         }
                     }
                 }catch{
+                    self.updateFreeTimeStatus()
                     print(error)
                 }
             }

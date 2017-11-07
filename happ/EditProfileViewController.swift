@@ -483,8 +483,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             if data != nil {
                                 //save new photo on firebase database
                                 if self.checkNewImage {
-                                    let uid = globalUserId.FirID
-                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
+                                    let uid = FIRAuth.auth()?.currentUser?.uid
+                                    FIRDatabase.database().reference().child("users").child(uid!).child("photoUrl").setValue(image)
                                     self.checkNewImage = false
                                 }
                                 self.userImage.image = UIImage(data: data!)
@@ -617,8 +617,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 }
                             }
                             if json!["success"] != nil {
-                                let uid = globalUserId.FirID
-                                FIRDatabase.database().reference().child("users").child("\(uid)").child("name").setValue(name)
+                                let uid = FIRAuth.auth()?.currentUser?.uid
+                                FIRDatabase.database().reference().child("users").child(uid!).child("name").setValue(name)
                                 
                                 if reg_user.selectedSkills.count > 0 {
                                     FIRDatabase.database().reference().child("users").child("\(uid)").child("skills").setValue("," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ",")
@@ -791,8 +791,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                         }
                         
                         if self.checkNewImage {
-                            let uid = globalUserId.FirID
-                            FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
+                            let uid = FIRAuth.auth()?.currentUser?.uid
+                            FIRDatabase.database().reference().child("users").child(uid!).child("photoUrl").setValue(image)
                             self.checkNewImage = false
                         }
                     }

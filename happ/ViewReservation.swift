@@ -62,7 +62,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
         autoLayout()
 
         getOffice()
-
+        
         tableReserved.delegate = self
         tableReserved.dataSource = self
         tableReserved.separatorStyle = .None
@@ -75,10 +75,18 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
 
         let config = SYSTEM_CONFIG()
         self.navCreate.title = config.translate("button_create")
-
+        
         if !ReservationPrepareCreate.calendar {
             navCreate.title = ""
             navCreate.enabled = false
+        }else{
+            if self.canCreateDelete(ReservationPrepareCreate.date) {
+                navCreate.title = config.translate("button_create")
+                navCreate.enabled = true
+            }else{
+                navCreate.title = ""
+                navCreate.enabled = false
+            }
         }
         
         let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
@@ -114,6 +122,23 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
         activityLoading.heightAnchor.constraintEqualToAnchor(tableReserved.heightAnchor).active = true
     }
 
+    func canCreateDelete(date: String) -> Bool{
+        let selectedDate = date + " 00:00"
+        
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let selectdate = formatter.dateFromString(selectedDate)
+        
+        let today = NSDate()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let todayString = formatter.stringFromDate(today)
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let todayDate = formatter.dateFromString(todayString + " 00:00")
+        
+        return todayDate?.timeIntervalSince1970 <= selectdate?.timeIntervalSince1970
+    }
+    
+    
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return roomData.count
     }
@@ -199,10 +224,18 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
             let index = indexPath.row - 3
             let section = indexPath.section
             let date = cellDate[section][roomData[section]]![index]
+
             deleteAlertMessage(config.translate("mess_delete_res"),index: index,section: section, date: date, indexRow: indexRow)
+            
         }
     }
-
+    
+    func alertMessage(userMessage:String){
+        let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+  
     func deleteAlertMessage(userMessage:String, index: Int,section: Int, date: String, indexRow: Int){
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.ActionSheet)
         let config = SYSTEM_CONFIG()
@@ -293,12 +326,22 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
         if indexPath.row >= 0 && indexPath.row <= 2 {
             return false
         }else{
+            
+            let index = indexPath.row - 3
+            let section = indexPath.section
+            let date = cellDate[section][roomData[section]]![index]
+            
             let swtch = cellIndentifier[indexPath.section][roomData[indexPath.section]]![indexPath.row - 3]
+                        
             switch (swtch) {
             case "SubtitleCell":
                 return false
             default:
-                return true
+                if canCreateDelete(date) {
+                    return true
+                }else{
+                    return false
+                }
             }
         }
     }
@@ -337,20 +380,22 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
                 self.getOffice()
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-
-                    if let resultArray = json!.valueForKey("result") as? NSArray {
-                        for res in resultArray {
-                            let id = res.valueForKey("ID")!
-                            if let fields = res.valueForKey("fields") as? NSDictionary {
-                                let officeEn = fields["office_name_en"] as! String
-                                let officeJp = fields["office_name_jp"] as! String
-                                self.office.append(["id":"\(id)","en":"\(officeEn)","jp":"\(officeJp)"])
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if let resultArray = json.valueForKey("result") as? NSArray {
+                            for res in resultArray {
+                                let id = res.valueForKey("ID")!
+                                if let fields = res.valueForKey("fields") as? NSDictionary {
+                                    let officeEn = fields["office_name_en"] as! String
+                                    let officeJp = fields["office_name_jp"] as! String
+                                    self.office.append(["id":"\(id)","en":"\(officeEn)","jp":"\(officeJp)"])
+                                }
                             }
                         }
-                    }
-                    dispatch_async(dispatch_get_main_queue()){
-                        self.get_meeting_room()
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.get_meeting_room()
+                        }
+                    }else{
+                        self.getOffice()
                     }
                 } catch {
                     print(error)
@@ -381,24 +426,28 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
                 self.getOffice()
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-
-                    if let resultArray = json!.valueForKey("result") as? NSArray {
-                        for res in resultArray {
-                            let id = res.valueForKey("ID")!
-                            if let fields = res.valueForKey("fields") as? NSDictionary {
-                                if let office = fields["office"] as? NSDictionary {
-                                    let roomEn = fields["room_name_en"] as! String
-                                    let roomJp = fields["room_name_jp"] as! String
-                                    let officeId = office["ID"]
-                                    self.room.append(["room_id":"\(id)","office_id":"\(officeId!)","en":"\(roomEn)","jp":"\(roomJp)"])
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        
+                        if let resultArray = json.valueForKey("result") as? NSArray {
+                            for res in resultArray {
+                                let id = res.valueForKey("ID")!
+                                if let fields = res.valueForKey("fields") as? NSDictionary {
+                                    if let office = fields["office"] as? NSDictionary {
+                                        let roomEn = fields["room_name_en"] as! String
+                                        let roomJp = fields["room_name_jp"] as! String
+                                        let officeId = office["ID"]
+                                        self.room.append(["room_id":"\(id)","office_id":"\(officeId!)","en":"\(roomEn)","jp":"\(roomJp)"])
+                                    }
                                 }
                             }
                         }
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.getReserved()
+                        }
+                    }else{
+                        self.getOffice()
                     }
-                    dispatch_async(dispatch_get_main_queue()){
-                        self.getReserved()
-                    }
+
                 } catch {
                     print(error)
                 }
@@ -445,32 +494,35 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
                 self.getReserved()
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-
-                    if let resultArray = json!.valueForKey("result") as? NSArray {
-                        if let fields = resultArray.valueForKey("fields") as? NSArray {
-                            for data in fields {
-                                if let meeting_room = data.valueForKey("meeting_room_pid") as? NSDictionary {
-                                    let rid = String(meeting_room["ID"]!)
-                                    for room in self.room {
-                                        if rid == room["room_id"]! {
-                                            let oid = String(room["office_id"]!)
-                                            if self.officeData.contains(oid) && self.roomData.contains(rid) {
-
-                                            }else{
-                                                self.officeData.append(oid)
-                                                self.roomData.append(rid)
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if let resultArray = json.valueForKey("result") as? NSArray {
+                            if let fields = resultArray.valueForKey("fields") as? NSArray {
+                                for data in fields {
+                                    if let meeting_room = data.valueForKey("meeting_room_pid") as? NSDictionary {
+                                        let rid = String(meeting_room["ID"]!)
+                                        for room in self.room {
+                                            if rid == room["room_id"]! {
+                                                let oid = String(room["office_id"]!)
+                                                if self.officeData.contains(oid) && self.roomData.contains(rid) {
+                                                    
+                                                }else{
+                                                    self.officeData.append(oid)
+                                                    self.roomData.append(rid)
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.generateData(resultArray)
+                            }
                         }
-                        dispatch_async(dispatch_get_main_queue()){
-                            self.generateData(resultArray)
-                        }
+                    }else{
+                        self.getReserved()
                     }
                 } catch {
+                    self.getReserved()
                     print(error)
                 }
             }

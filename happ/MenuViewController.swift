@@ -155,39 +155,43 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
             }
         })
         
-        // update badge
-        FIRDatabase.database().reference().child("user-badge").child("reservation").child(globalUserId.FirID).observeEventType(.Value, withBlock: {(snap) in
-            if let count = snap.value as? Int{
-                if count != 0 {
-                    menu_bar.reservation.badgeValue = String(count)
-                    AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
-                }else{
-                    menu_bar.reservation.badgeValue = .None
-                }
-            }
-        })
         
-        FIRDatabase.database().reference().child("user-badge").child("freetime").child(globalUserId.FirID).observeEventType(.Value, withBlock: {(snap) in
-            if let count = snap.value as? Int{
-                if count != 0 {
-                    menu_bar.situation.badgeValue = String(count)
-                    AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
-                }else{
-                    menu_bar.situation.badgeValue = .None
+        let uid = FIRAuth.auth()?.currentUser?.uid
+        if uid != ""{
+            // update badge
+            FIRDatabase.database().reference().child("user-badge").child("reservation").child(uid!).observeEventType(.Value, withBlock: {(snap) in
+                if let count = snap.value as? Int{
+                    if count != 0 {
+                        menu_bar.reservation.badgeValue = String(count)
+                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+                    }else{
+                        menu_bar.reservation.badgeValue = .None
+                    }
                 }
-            }
-        })
-        
-        FIRDatabase.database().reference().child("user-badge").child("timeline").child(globalUserId.FirID).observeEventType(.Value, withBlock: {(snap) in
-            if let count = snap.value as? Int{
-                if count != 0 {
-                    menu_bar.timeline.badgeValue = String(count)
-                    AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
-                }else{
-                    menu_bar.timeline.badgeValue = .None
+            })
+            
+            FIRDatabase.database().reference().child("user-badge").child("freetime").child(uid!).observeEventType(.Value, withBlock: {(snap) in
+                if let count = snap.value as? Int{
+                    if count != 0 {
+                        menu_bar.situation.badgeValue = String(count)
+                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+                    }else{
+                        menu_bar.situation.badgeValue = .None
+                    }
                 }
-            }
-        })
+            })
+            
+            FIRDatabase.database().reference().child("user-badge").child("timeline").child(uid!).observeEventType(.Value, withBlock: {(snap) in
+                if let count = snap.value as? Int{
+                    if count != 0 {
+                        menu_bar.timeline.badgeValue = String(count)
+                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+                    }else{
+                        menu_bar.timeline.badgeValue = .None
+                    }
+                }
+            })
+        }
     }
     
     func newUserObserver(){
@@ -202,7 +206,8 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
                 globalvar.USER_IMG = result
                 
                 dispatch_async(dispatch_get_main_queue()){
-                    if let _ = globalvar.USER_IMG.valueForKey(globalUserId.FirID) {
+                    let firID = FIRAuth.auth()?.currentUser?.uid
+                    if let _ = globalvar.USER_IMG.valueForKey(firID!) {
                         
                     }else{
                         let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)

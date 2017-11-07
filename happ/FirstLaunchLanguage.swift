@@ -66,6 +66,21 @@ class FirstLaunchLanguage: UIViewController {
     }
     
     override func viewWillAppear(animated: Bool) {
+        let config = SYSTEM_CONFIG()
+        
+        if let lng = config.getSYS_VAL("AppLanguage") as? String{
+            navBar.topItem?.title = config.getTranslate("title_choose_lang", lang: lng)
+        }else {
+            if let lang = NSLocale.currentLocale().objectForKey(NSLocaleLanguageCode) as? String{
+                if lang == "en" {
+                    navBar.topItem?.title = config.getTranslate("title_choose_lang", lang: "en")
+                }else if lang == "jp" || lang == "ja"{
+                    navBar.topItem?.title = config.getTranslate("title_choose_lang", lang: "jp")
+                }else{
+                    navBar.topItem?.title = config.getTranslate("title_choose_lang", lang: "en")
+                }
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {

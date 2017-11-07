@@ -665,7 +665,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                             }
                             self.mytableview.reloadData()
                             
-                            FIRDatabase.database().reference().child("user-badge").child("timeline").child(globalUserId.FirID).setValue(0)
+                            let uid = FIRAuth.auth()?.currentUser?.uid
+                            FIRDatabase.database().reference().child("user-badge").child("timeline").child(uid!).setValue(0)
                         }
                     }
                 } catch {

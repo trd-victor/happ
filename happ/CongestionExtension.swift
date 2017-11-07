@@ -135,7 +135,9 @@ extension CongestionViewController {
                         self.viewLoading.hidden = true
                         self.activityLoading.stopAnimating()
                         
-                        FIRDatabase.database().reference().child("user-badge").child("freetime").child(globalUserId.FirID).setValue(0)
+                        let firID = FIRAuth.auth()?.currentUser?.uid
+                        
+                        FIRDatabase.database().reference().child("user-badge").child("freetime").child(firID!).setValue(0)
                         menu_bar.situation.badgeValue = .None
                     }
                     

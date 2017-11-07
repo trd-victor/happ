@@ -127,33 +127,51 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
                 })
             })
         });
-
     }
-
-    // return admin.messaging().sendToTopic('timeline-push-notification', payload, options);
-
 });
 
 exports.freeTimePushNotif = functions.database.ref('/notifications/push-notification/free-time')
     .onWrite(event => {
 
     var valueObject = event.data.val();
-    var count = 0;
 
-    return admin.database().ref().child("users").once('value').then(function(snapshot){
-        if(snapshot.numChildren() > 0){
-            return new Promise ((resolve, reject) => {
+    if(valueObject.firIDs != null && valueObject.firIDs != "") { 
+        var firIDs = valueObject.firIDs.split(",");
+        
+        admin.database().ref().child("users").once('value').then(function(snapshot){
+            console.log("Hello World")
+            if(snapshot.numChildren() > 0){
                 snapshot.forEach(function(childSnapshot){
                     let fid = childSnapshot.key;
-                    let value = childSnapshot.val();
-                    if(valueObject.userId != fid){
-                        var body = ""
+                    if (valueObject.userId != fid){
+                        admin.database().ref('user-badge').child("freetime").child(fid).once('value', function(snap){
+                            var count = snap.val();
+
+                            if (count != null && count != 0 ){
+                                var total = count + 1;
+                                admin.database().ref('user-badge').child("freetime").child(fid).set(total);
+                            }else{
+                                admin.database().ref('user-badge').child("freetime").child(fid).set(1);
+                            }
+                        })
+                    }            
+                })
+            }
+        })
+
+        if (firIDs.length > 0){
+            var count = 0;
+            return new Promise((res, rej)=>{
+                firIDs.forEach(function(id){
+                    return admin.database().ref().child("users").child(id).once('value').then(function(snapshot){
+                        var value = snapshot.val();
+                        var body = "";
                         if(value["language"] === undefined || value["language"] == ""){
                             value["language"] = "jp";
                         }
 
                         if(value["language"] == "en"){
-                            body = valueObject.messageEN;
+                                body = valueObject.messageEN;
                         }else if(value["language"] == "jp"){
                             body = valueObject.messageJP;
                         }
@@ -177,41 +195,29 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                             priority: "high"
                         }
 
-                        admin.database().ref('user-badge').child("freetime").child(fid).once('value', function(snap){
-                            var count = snap.val();
-
-                            if (count != null && count != 0 ){
-                                var total = count + 1;
-                                admin.database().ref('user-badge').child("freetime").child(fid).set(total);
-                            }else{
-                                admin.database().ref('user-badge').child("freetime").child(fid).set(1);
-                            }
-                        })
-
-                        admin.database().ref('registration-token/' + fid + '/token').once('value', function(snap){
-                            var token = snap.val();
-                            count++;
-                           
-                            if (count == (snapshot.numChildren() - 1)){
-                                if(token != "" && token != null){
-                                    admin.messaging().sendToDevice(token, payload, options);
+                        admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
+                                var token = snap.val();
+                                count++;
+                               
+                                if (count == firIDs.length){
+                                    if(token != "" && token != null){
+                                        admin.messaging().sendToDevice(token, payload, options);
+                                    }
+                                    return res(200);
+                                }else{
+                                    if(token != "" && token != null){
+                                        admin.messaging().sendToDevice(token, payload, options);
+                                    }
                                 }
-                                return resolve(200);
-                            }else{
-                                if(token != "" && token != null){
-                                    admin.messaging().sendToDevice(token, payload, options);
-                                }
-                            }
                         },function (errorObject) {
                             count++;
                             console.log("Error getting data: " + errorObject.code);
                         })
-                    }
+                    })
                 })
-
             })
-        }
-    })
+        } 
+    }
 });
 
 exports.reservation = functions.https.onRequest((req, res) => {

@@ -98,9 +98,7 @@ class MessageTableViewController: UITableViewController {
     
     func getUserMessage() {
         
-        let config = SYSTEM_CONFIG()
-        
-        let fireDB = config.getSYS_VAL("FirebaseID") as! String
+        let fireDB = (FIRAuth.auth()?.currentUser?.uid)!
         let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB).queryOrderedByChild("timestamp")
         
         //start of retrieving messages on every user

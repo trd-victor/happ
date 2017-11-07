@@ -341,9 +341,10 @@ class ConfigurationViewController: UIViewController {
         myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             
             do {
-                try FIRAuth.auth()?.signOut()
+                let firID = FIRAuth.auth()?.currentUser?.uid
+                FIRDatabase.database().reference().child("registration-token").child(firID!).child("token").setValue("")
                 
-                FIRDatabase.database().reference().child("registration-token").child(globalUserId.FirID).child("token").setValue("")
+                try FIRAuth.auth()?.signOut()
                 
                 config.removeSYS_VAL("userID")
                 globalUserId.userID = ""

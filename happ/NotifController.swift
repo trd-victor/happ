@@ -10,6 +10,10 @@ import UIKit
 import Firebase
 import FirebaseInstanceID
 
+struct notifDetail {
+    static var user_ids = [Int]()
+}
+
 class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
@@ -115,10 +119,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func getNotification(){
         let config = SYSTEM_CONFIG()
-        let firID = config.getSYS_VAL("FirebaseID") as! String
+        let firID = FIRAuth.auth()?.currentUser?.uid
         
         if currentKey == nil {
-            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryLimitedToLast(10)
+            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("notif-list").queryLimitedToLast(10)
             
             notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
                 let first = snap.children.allObjects.first as? FIRDataSnapshot
@@ -156,7 +160,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 }
             })
         }else{
-            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryOrderedByKey().queryEndingAtValue(self.currentKey).queryLimitedToLast(11)
+            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("notif-list").queryOrderedByKey().queryEndingAtValue(self.currentKey).queryLimitedToLast(11)
             let count = self.arrayData.count
             notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
                 
@@ -333,7 +337,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if !read! {
             let cell = tableView.cellForRowAtIndexPath(indexPath) as? NotifCell
             cell?.lblMessage.font = UIFont.systemFontOfSize(17)
-            FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(globalUserId.FirID).child("notif-list").child(key!).child("read").setValue(true)
+            let uid = FIRAuth.auth()?.currentUser?.uid
+            FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(uid!).child("notif-list").child(key!).child("read").setValue(true)
             
             self.arrayData[indexPath.row].setValue(true, forKey: "read")
         }
@@ -482,36 +487,47 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             notifAllDB.setValue(detail)
             
-            if type == "free-time" {
-                let freeTimeDetail = [
-                    "name": String(name),
-                    "photoUrl": String(photoUrl),
-                    "id": id,
-                    "timestamp": timestamp,
-                    "type": type,
-                    "userId": firID!,
-                    "messageEN": config.getTranslate("notif_freetime_mess", lang: "en"),
-                    "messageJP": config.getTranslate("notif_freetime_mess", lang: "jp")
-                ]
-                
-                let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
-                pushFreeTimeDB.setValue(freeTimeDetail)
-            }
-            
-            
             // get user DB
             let userDB = FIRDatabase.database().reference().child("users")
             
             if type == "free-time" {
+                
+                var count = 0
                 dispatch_async(dispatch_get_main_queue()){
                     userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                         
                         if let result = snapshot.value as? NSDictionary {
-                            for (key, _) in result {
+                            for (key, value) in result {
+                                count++
                                 if key as! String != firID! {
-                                    
                                     self.addUserNotif(key as! String, notif_all_key: notif_all_key)
                                     self.countUnreadNotif(key as! String)
+                                }
+                                
+                                if let data = value as? NSDictionary {
+                                    if let id = data["id"] as? Int {
+                                        if notifDetail.user_ids.contains(id) {
+                                            if id != Int(globalUserId.userID) {
+                                                firIDs.append(key as! String)
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                if count == result.count{
+                                    let freeTimeDetail = [
+                                        "firIDs": firIDs.joinWithSeparator(","),
+                                        "name": String(name),
+                                        "photoUrl": String(photoUrl),
+                                        "id": id,
+                                        "timestamp": timestamp,
+                                        "type": type,
+                                        "userId": firID!,
+                                        "messageEN": config.getTranslate("notif_freetime_mess", lang: "en"),
+                                        "messageJP": config.getTranslate("notif_freetime_mess", lang: "jp")
+                                    ]
+                                    
+                                    self.addFreeTimeNotif(freeTimeDetail)
                                 }
                             }// end of loop
                         }// end of if
@@ -598,6 +614,11 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 badgeDB.setValue(1)
             }
         })
+    }
+    
+    func addFreeTimeNotif(freeTimeDetail: NSDictionary){
+        let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
+        pushFreeTimeDB.setValue(freeTimeDetail)
     }
     
     func countUnreadNotif(key: String){

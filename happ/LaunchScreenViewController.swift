@@ -208,7 +208,8 @@ class LaunchScreenViewController: UIViewController {
         let defaults = NSUserDefaults.standardUserDefaults()
         
         if let _ = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
-            if let _ = system.getSYS_VAL("AppLanguage") as? String{
+            if let lng = system.getSYS_VAL("AppLanguage") as? String{
+                print("hello ", lng)
                 self.delayLaunchScreen()
             }else {
                 dispatch_async(dispatch_get_main_queue()){
