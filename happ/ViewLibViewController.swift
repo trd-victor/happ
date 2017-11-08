@@ -234,6 +234,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func backToMenu(sender: UIBarButtonItem) -> () {
         NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
+        FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+        
         self.presentBackDetail(MessageTableViewController())
     }
     
@@ -248,6 +250,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func handleSend(){
+        
         let mess = self.txtField.text!
         self.txtField.text = ""
         var checkMessage: String = ""
@@ -266,6 +269,14 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             let roomID = chatVar.RoomID
             let chatmateID = chatVar.chatmateId
             let userID = FIRAuth.auth()?.currentUser?.uid
+            
+            if let photo = globalvar.USER_IMG.valueForKey(chatmateID)?.valueForKey("photoUrl") as? String {
+                self.chatMatePhoto = photo
+            }
+            
+            if let photo = globalvar.USER_IMG.valueForKey(userID!)?.valueForKey("photoUrl") as? String {
+                self.userPhoto = photo
+            }
             
             // save to message table on firebase using the roomID as child
             let messageDB = FIRDatabase.database().reference().child("chat").child("messages").child(roomID).childByAutoId()
@@ -335,7 +346,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             dispatch_async(dispatch_get_main_queue()){
                 if let result = snapshot.children.allObjects as? [FIRDataSnapshot] {
                     self.messagesData = result
-                    
                     dispatch_async(dispatch_get_main_queue()){
                         self.myCollectionView!.reloadData()
                         

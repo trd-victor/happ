@@ -617,6 +617,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 }
                             }
                             if json!["success"] != nil {
+                                
                                 let uid = FIRAuth.auth()?.currentUser?.uid
                                 FIRDatabase.database().reference().child("users").child(uid!).child("name").setValue(name)
                                 
@@ -627,9 +628,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 }
                                 
                                 //updating image url on firebase
-                                self.setImageToFirebaseUser()
+                                self.setImageToFirebaseUser(message)
                             }
-                            self.displayMyAlertMessage(message)
+                            
                         }
                         
                     } catch {
@@ -746,7 +747,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
-    func setImageToFirebaseUser(){
+    func setImageToFirebaseUser(message: String){
         
         //creating NSMutableURLRequest
         let request = NSMutableURLRequest(URL: globalvar.API_URL)
@@ -777,7 +778,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             data, response, error  in
             
             if error != nil || data == nil{
-               self.setImageToFirebaseUser()
+               self.setImageToFirebaseUser(message)
             }else{
                 do {
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
@@ -795,6 +796,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             FIRDatabase.database().reference().child("users").child(uid!).child("photoUrl").setValue(image)
                             self.checkNewImage = false
                         }
+                        self.updateData(image, mess: message)
+                        self.updateNotif(image)
                     }
                 } catch {
                     print(error)
@@ -805,4 +808,85 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         task.resume()
     }
     
+    func updateData(image: String, mess: String){
+        let name = userNamefield.text!
+        self.getChatRoomID({
+            (data: [FIRDataSnapshot]) in
+            self.getMessageData(data, image: image, name: name, message: mess)
+        })
+    }
+    
+    
+    func getChatRoomID(completion: (data: [FIRDataSnapshot])-> Void){
+        
+        let userid = FIRAuth.auth()?.currentUser?.uid
+        let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
+        membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            if let result =  snapshot.children.allObjects as? [FIRDataSnapshot] {
+                completion(data: result)
+            }
+        })
+    }
+    
+    func getMessageData(data: [FIRDataSnapshot], image: String, name: String, message: String){
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        
+        if data.count > 0 {
+            for s in data {
+                let key = s.key
+                let messageDB = FIRDatabase.database().reference().child("chat").child("messages").child(key)
+                
+                messageDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                    if let result =  snap.children.allObjects as? [FIRDataSnapshot] {
+                        if result.count > 0 {
+                            for data in result {
+                                if let value = data.value as? NSDictionary {
+                                    if let user_id = value["userId"] as? String {
+                                        
+                                        if user_id == firID! {
+                                            let mess_key = data.key
+                                            
+                                            messageDB.child(mess_key).child("name").setValue(name)
+                                            messageDB.child(mess_key).child("photoUrl").setValue(image)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        }
+        
+        dispatch_async(dispatch_get_main_queue()){
+            self.displayMyAlertMessage(message)
+        }
+    }
+    
+    func updateNotif(image: String){
+        let name = userNamefield.text!
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        let notifDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
+            .queryOrderedByChild("userId").queryEqualToValue(firID!)
+        
+        let notifAllDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
+        
+        notifDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+            if let result =  snap.children.allObjects as? [FIRDataSnapshot] {
+                if result.count > 0 {
+                    for data in result {
+                        if let value = data.value as? NSDictionary {
+                            if let user_id = value["userId"] as? String {
+                                if user_id == firID! {
+                                    let mess_key = data.key
+                                    notifAllDB.child(mess_key).child("name").setValue(name)
+                                    notifAllDB.child(mess_key).child("photoUrl").setValue(image)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
 }

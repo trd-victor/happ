@@ -126,6 +126,7 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
     }
     
     func badgeObserver(){
+//        var once = false
         
         // message badge
         let firID = FIRAuth.auth()?.currentUser?.uid
@@ -148,7 +149,6 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
                     }else{
                         self.menuTabBar.items![1].badgeValue = String(count)
                         globalvar.badgeMessNumber = count
-                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                     }
                     UIApplication.sharedApplication().applicationIconBadgeNumber = globalvar.badgeBellNumber + globalvar.badgeMessNumber
                 }
@@ -156,42 +156,42 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
         })
         
         
-        let uid = FIRAuth.auth()?.currentUser?.uid
-        if uid != ""{
+        if firID != ""{
             // update badge
-            FIRDatabase.database().reference().child("user-badge").child("reservation").child(uid!).observeEventType(.Value, withBlock: {(snap) in
+            FIRDatabase.database().reference().child("user-badge").child("reservation").child(firID!).observeEventType(.Value, withBlock: {(snap) in
                 if let count = snap.value as? Int{
                     if count != 0 {
                         menu_bar.reservation.badgeValue = String(count)
-                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                     }else{
                         menu_bar.reservation.badgeValue = .None
                     }
                 }
             })
             
-            FIRDatabase.database().reference().child("user-badge").child("freetime").child(uid!).observeEventType(.Value, withBlock: {(snap) in
+            FIRDatabase.database().reference().child("user-badge").child("freetime").child(firID!).observeEventType(.Value, withBlock: {(snap) in
                 if let count = snap.value as? Int{
                     if count != 0 {
                         menu_bar.situation.badgeValue = String(count)
-                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                     }else{
                         menu_bar.situation.badgeValue = .None
                     }
                 }
             })
             
-            FIRDatabase.database().reference().child("user-badge").child("timeline").child(uid!).observeEventType(.Value, withBlock: {(snap) in
+            FIRDatabase.database().reference().child("user-badge").child("timeline").child(firID!).observeEventType(.Value, withBlock: {(snap) in
                 if let count = snap.value as? Int{
                     if count != 0 {
                         menu_bar.timeline.badgeValue = String(count)
-                        AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
                     }else{
                         menu_bar.timeline.badgeValue = .None
                     }
                 }
             })
         }
+    }
+    
+    func activateVibrate(){
+            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
     }
     
     func newUserObserver(){
@@ -207,13 +207,33 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
                 
                 dispatch_async(dispatch_get_main_queue()){
                     let firID = FIRAuth.auth()?.currentUser?.uid
-                    if let _ = globalvar.USER_IMG.valueForKey(firID!) {
-                        
+                    if let data = globalvar.USER_IMG.valueForKey(firID!) {
+                        if let d = data as? NSDictionary {
+                            if let _  = d["id"] as? Int {
+                            }else{
+                                let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
+                                myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+                                    
+                                    do {
+                                        self.removeFIRObserver(firID!)
+                                        try FIRAuth.auth()?.signOut()
+                                        
+                                        config.removeSYS_VAL("userID")
+                                        globalUserId.userID = ""
+                                    } catch (let error) {
+                                        print((error as NSError).code)
+                                    }
+                                    self.dismissViewControllerAnimated(true, completion: nil)
+                                }))
+                                self.presentViewController(myAlert, animated: true, completion: nil)
+                            }
+                        }
                     }else{
                         let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
                         myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
                             
                             do {
+                                self.removeFIRObserver(firID!)
                                 try FIRAuth.auth()?.signOut()
                                 
                                 config.removeSYS_VAL("userID")
@@ -228,6 +248,23 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
                 }
             }
         })
+    }
+    
+    func removeFIRObserver(firID: String){
+        FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue("")
+        FIRDatabase.database().reference().child("users").removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("freetime").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("timeline").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("reservation").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("chat").child("last-message").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("chat").child("last-message").child(firID).queryOrderedByChild("timestamp").removeAllObservers()
+        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("unread").removeAllObservers()
+        if chatVar.RoomID != "" {
+            FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+            FIRDatabase.database().reference().child("chat").child("messages").child(chatVar.RoomID).queryOrderedByChild("timestamp").removeAllObservers()
+        }
+        
+        FIRDatabase.database().reference().child("users").child(firID).removeValue()
     }
     
     func configLoad(){

@@ -106,6 +106,18 @@ exports.timelinePushNotif = functions.database.ref('/notifications/push-notifica
                         priority: "high"
                     }
 
+                    admin.database().ref('user-badge').child("timeline").child(id).once('value', function(snap){
+                        var count = snap.val();
+
+                        if (count != null && count != 0 ){
+                            var total = count + 1;
+                            admin.database().ref('user-badge').child("timeline").child(id).set(total);
+                        }else{
+                            admin.database().ref('user-badge').child("timeline").child(id).set(1);
+                        }
+                    })
+
+
                     admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
                         var token = snap.val();
                         count++;
@@ -139,7 +151,6 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
         var firIDs = valueObject.firIDs.split(",");
         
         admin.database().ref().child("users").once('value').then(function(snapshot){
-            console.log("Hello World")
             if(snapshot.numChildren() > 0){
                 snapshot.forEach(function(childSnapshot){
                     let fid = childSnapshot.key;
@@ -216,7 +227,17 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                     })
                 })
             })
-        } 
+        }else{
+            return new Promise(function(res,rej){
+                console.log("FIR IDS 0 length")
+                return res(400);
+            })
+        }
+    }else{
+        return new Promise(function(res,rej){
+            console.log("No FIR IDS")
+            return res(400);
+        })
     }
 });
 
@@ -529,7 +550,19 @@ function deleteUserData(userId) {
     database.ref('users').child(userId).remove();
     database.ref('registration-token').child(userId).remove();
     database.ref('notifications').child('app-notification').child('notification-user').child(userId).remove();
-    
+
+    // Delete user messages
+    database.ref('chat').child('members').orderByChild(userId).equalTo(true).on("value", function(snapshot) {
+        if (snapshot.exists()) {
+            snapshot.forEach(function(data) {
+                var chatroomId = data.key;
+
+                console.log("Convo to be deleted: " +chatroomId);
+                //database.ref('chat').child('members').child(chatroomId).setVa
+            });
+        }
+    });
+
 }
 
 

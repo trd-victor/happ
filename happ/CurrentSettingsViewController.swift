@@ -108,6 +108,7 @@ class CurrentSettingsViewController: UIViewController {
         currentSettingslang.topAnchor.constraintEqualToAnchor(btnCurrentSettings.topAnchor).active = true
         currentSettingslang.widthAnchor.constraintEqualToConstant(100).active = true
         currentSettingslang.heightAnchor.constraintEqualToConstant(38).active = true
+        currentSettingslang.textColor = UIColor(hexString: "#8F8E94")
         
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true

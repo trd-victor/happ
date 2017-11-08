@@ -166,7 +166,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.getFreeTimeStatus()
         
-         let timer = NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("updateFunction"), userInfo: nil, repeats: true)
+         let _ = NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("updateFunction"), userInfo: nil, repeats: true)
     }
     
     func updateFunction(){
@@ -564,9 +564,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             if willReload {
                 if self.fromID.count > 0 {
                     let indexPath = NSIndexPath(forItem: 0, inSection: 0)
-                    self.mytableview.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+                    
+                    if let _ = self.mytableview.dataSource?.tableView(mytableview, cellForRowAtIndexPath: indexPath){
+                        self.mytableview.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+                    }
                 }
-                
+
                 self.reloadTimelineByMenuClick()
                 menu_bar.timelineReloadCount = false
             }
@@ -622,7 +625,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                                         let imgView = UIImageView()
                                                         if index == 1 {
                                                             self.img1.append(img["url"] as! String)
-                                                            imgView.imgForCache(img["url"] as! String)
+//                                                            imgView.(img["url"] as! String)
                                                             self.image1.append(imgView)
                                                         }
                                                         if index == 2 {
@@ -734,7 +737,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.page = 1
         
         if (self.postID.count != 0){
-            mytableview.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: false)
+            if let _ = self.mytableview.dataSource?.tableView(mytableview, cellForRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 0)){
+                self.mytableview.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: true)
+            }
         }
         
         refreshControl.beginRefreshing()

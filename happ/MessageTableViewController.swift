@@ -116,16 +116,20 @@ class MessageTableViewController: UITableViewController {
                                 }
                                 if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
                                     data.setValue(photo, forKey: "name")
-                                    
                                 }
+                                
                                 self.lastMessages.append(data)
+                            }else{
+                                if let chatRoomID = data.valueForKey("chatroomId") as? String {
+                                    FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB).child(chatRoomID).removeValue()
+                                }
                             }
                         }
                         
                         if count == Int(snap.childrenCount) {
                             dispatch_async(dispatch_get_main_queue()){
                                 self.lastMessages.sortInPlace({(message1, message2) -> Bool in
-                                    return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
+                                    return message1["timestamp"] as? Double > message2["timestamp"] as? Double
                                 })
                                 self.mytableview.reloadData()
                             }
@@ -137,7 +141,6 @@ class MessageTableViewController: UITableViewController {
     }
     
     func refreshTable(notification: NSNotification) {
-        
         self.getUserMessage()
     }
     

@@ -499,16 +499,18 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         if let result = snapshot.value as? NSDictionary {
                             for (key, value) in result {
                                 count++
-                                if key as! String != firID! {
-                                    self.addUserNotif(key as! String, notif_all_key: notif_all_key)
-                                    self.countUnreadNotif(key as! String)
-                                }
-                                
-                                if let data = value as? NSDictionary {
-                                    if let id = data["id"] as? Int {
-                                        if notifDetail.user_ids.contains(id) {
-                                            if id != Int(globalUserId.userID) {
-                                                firIDs.append(key as! String)
+                                if let k = key as? String {
+                                    if k != firID! {
+                                        self.addUserNotif(k, notif_all_key: notif_all_key)
+                                        self.countUnreadNotif(k)
+                                    }
+                                    
+                                    if let data = value as? NSDictionary {
+                                        if let id = data["id"] as? Int {
+                                            if notifDetail.user_ids.contains(id) {
+                                                if id != Int(globalUserId.userID) {
+                                                    firIDs.append(k)
+                                                }
                                             }
                                         }
                                     }
@@ -526,7 +528,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                         "messageEN": config.getTranslate("notif_freetime_mess", lang: "en"),
                                         "messageJP": config.getTranslate("notif_freetime_mess", lang: "jp")
                                     ]
-                                    
                                     self.addFreeTimeNotif(freeTimeDetail)
                                 }
                             }// end of loop
@@ -548,26 +549,23 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                     count++
                                     if let valueData = value as? NSDictionary {
                                         if let skills = valueData["skills"] as? String {
-                                            let userKey = key as? String
-                                            
-                                            if userKey! != firID {
-                                                if skills != "" {
-                                                    for c in timeline_post_skills.selectedSkills {
-                                                        if skills.containsString(String(c)){
-                                                            firIDs.append(userKey!)
-                                                            
-                                                            self.addBadgeUser(userKey!)
-                                                            self.addUserNotif(key as! String, notif_all_key: notif_all_key)
-                                                            self.countUnreadNotif(key as! String)
-                                                            
-                                                            break
+                                            if let userKey = key as? String {
+                                                if userKey != firID {
+                                                    if skills != "" {
+                                                        for c in timeline_post_skills.selectedSkills {
+                                                            if skills.containsString(String(c)){
+                                                                firIDs.append(userKey)
+                                                                self.addUserNotif(userKey, notif_all_key: notif_all_key)
+                                                                self.countUnreadNotif(userKey)
+                                                                
+                                                                break
+                                                            }
                                                         }
+                                                    }else{
+                                                        firIDs.append(userKey)
+                                                        self.addUserNotif(userKey, notif_all_key: notif_all_key)
+                                                        self.countUnreadNotif(userKey)
                                                     }
-                                                }else{
-                                                    firIDs.append(userKey!)
-                                                    self.addBadgeUser(userKey!)
-                                                    self.addUserNotif(key as! String, notif_all_key: notif_all_key)
-                                                    self.countUnreadNotif(key as! String)
                                                 }
                                             }
                                         }
@@ -601,10 +599,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func addUserNotif(key: String, notif_all_key: String) {
         FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key).child("notif-list").child(notif_all_key).child("read").setValue(false)
-        
     }
     
-    func addBadgeUser(userKey: String){
+    func addTimelineBadgeUser(userKey: String){
         let badgeDB = FIRDatabase.database().reference().child("user-badge").child("timeline").child(userKey)
         
         badgeDB.observeSingleEventOfType(.Value, withBlock: {(snap) in

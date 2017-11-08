@@ -270,7 +270,7 @@ class TimelineDetail: UIViewController {
             contentHeight += self.imgHeight1
             contentHeight += self.imgHeight2
             contentHeight += self.imgHeight3
-            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 400)
+//            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 400)
             self.autoLayout()
         }
     }
@@ -510,6 +510,14 @@ class TimelineDetail: UIViewController {
         btnMessage.backgroundColor = UIColor(hexString: "#272727")
         btnMessage.setTitle(config.translate("menu_message"), forState: .Normal)
         btnMessage.addTarget(self, action: Selector("goToMessage"), forControlEvents: .TouchUpInside)
+        
+        self.view.layoutIfNeeded()
+        
+        let last_origin_y: CGFloat = btnMessage.frame.origin.y
+        let last_height: CGFloat = btnMessage.frame.size.height
+        
+        let contentSize = last_origin_y + last_height
+        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, contentSize + 100)
     }
     
     func goToMessage(){

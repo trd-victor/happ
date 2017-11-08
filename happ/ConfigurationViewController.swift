@@ -343,14 +343,24 @@ class ConfigurationViewController: UIViewController {
             do {
                 let firID = FIRAuth.auth()?.currentUser?.uid
                 FIRDatabase.database().reference().child("registration-token").child(firID!).child("token").setValue("")
-                
+                FIRDatabase.database().reference().child("users").removeAllObservers()
+                FIRDatabase.database().reference().child("user-badge").child("freetime").child(firID!).removeAllObservers()
+                FIRDatabase.database().reference().child("user-badge").child("timeline").child(firID!).removeAllObservers()
+                FIRDatabase.database().reference().child("user-badge").child("reservation").child(firID!).removeAllObservers()
+                FIRDatabase.database().reference().child("chat").child("last-message").child(firID!).removeAllObservers()
+                FIRDatabase.database().reference().child("chat").child("last-message").child(firID!).queryOrderedByChild("timestamp").removeAllObservers()
+                FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread").removeAllObservers()
+                if chatVar.RoomID != "" {
+                    FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+                    FIRDatabase.database().reference().child("chat").child("messages").child(chatVar.RoomID).queryOrderedByChild("timestamp").removeAllObservers()
+                }
+            
                 try FIRAuth.auth()?.signOut()
                 
                 config.removeSYS_VAL("userID")
                 globalUserId.userID = ""
                 UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
-                FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
+                
             } catch (let error) {
                 print((error as NSError).code)
             }

@@ -606,7 +606,6 @@ class CalendarTableCell: UITableViewCell, UICollectionViewDelegate, UICollection
                 cell.dateLabel.textColor = UIColor.grayColor()
                 cell.dateLabel.font = UIFont.systemFontOfSize(16)
                     if Reservation.reserved.contains("\(date2)") {
-                        cell.dateLabel.textColor = UIColor.blackColor()
                         cell.labelIndicator.hidden = false
                         calendarDates[indexPath.row] = date2
                     }

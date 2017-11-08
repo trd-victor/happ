@@ -165,7 +165,6 @@ class LaunchScreenViewController: UIViewController {
                 if let token = FIRInstanceID.instanceID().token() {
                     dispatch_async(dispatch_get_main_queue()){
                         FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
-                        FIRDatabase.database().reference().child("users").child(firID).child("language").setValue(self.language)
                     }
                 }
                 
