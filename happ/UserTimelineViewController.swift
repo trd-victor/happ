@@ -166,7 +166,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         
         self.getFreeTimeStatus()
         
-         let _ = NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("updateFunction"), userInfo: nil, repeats: true)
+        let timer = NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("updateFunction"), userInfo: nil, repeats: true)
     }
     
     func updateFunction(){
@@ -267,6 +267,20 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             roundButton.widthAnchor.constraintEqualToConstant(80),
             roundButton.heightAnchor.constraintEqualToConstant(80)
             ])
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if menu_bar.reloadScreen != nil {
+            UIViewController.removeSpinner(menu_bar.reloadScreen)
+            menu_bar.reloadScreen = nil
+        }
+        
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
     }
     
     func refreshTimelineTable() {
@@ -370,7 +384,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "office_id"        : "32",
             "status_key"       : "freetime"
         ]
-
+        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -380,7 +394,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             data, response, error  in
             
             if error != nil || data == nil{
-               self.getFreeTimeStatus()
+                self.getFreeTimeStatus()
             }else{
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
@@ -416,7 +430,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                         }
                     }
                 }catch{
-                     print(error)
+                    print(error)
                 }
             }
         }
@@ -515,7 +529,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                                 }
                                                 if let body = postContent.valueForKey("body") {
                                                     if let textStr = body as? String {
-                                                         self.userBody.append(textStr.stringByDecodingHTMLEntities)
+                                                        self.userBody.append(textStr.stringByDecodingHTMLEntities)
                                                     }
                                                 }
                                                 if let body = postContent.valueForKey("from_user_id") {
@@ -565,11 +579,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 if self.fromID.count > 0 {
                     let indexPath = NSIndexPath(forItem: 0, inSection: 0)
                     
-                    if let _ = self.mytableview.dataSource?.tableView(mytableview, cellForRowAtIndexPath: indexPath){
-                        self.mytableview.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+                    if(self.mytableview.numberOfSections < 0){
+                         self.mytableview.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
                     }
                 }
-
+                
                 self.reloadTimelineByMenuClick()
                 menu_bar.timelineReloadCount = false
             }
@@ -625,7 +639,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                                         let imgView = UIImageView()
                                                         if index == 1 {
                                                             self.img1.append(img["url"] as! String)
-//                                                            imgView.(img["url"] as! String)
+//                                                            imgView.imgForCache(img["url"] as! String)
                                                             self.image1.append(imgView)
                                                         }
                                                         if index == 2 {
@@ -705,16 +719,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.getTimelineUser()
     }
     
-//    func setSwitchOnOff(sender : UISwitch) {
-//        
-//        let userFreetime = NSUserDefaults.standardUserDefaults().objectForKey("Freetime") as? String
-//        if userFreetime == "On" {
-//            sender.on = true
-//        } else {
-//            sender.on = false
-//        }
-//    }
-    
     var scrollOffset: CGFloat = 0
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -732,14 +736,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.scrollLoad = true
         self.reloadTimeline()
     }
-
+    
     func notifTimeline(notification: NSNotification){
         self.page = 1
         
         if (self.postID.count != 0){
-            if let _ = self.mytableview.dataSource?.tableView(mytableview, cellForRowAtIndexPath: NSIndexPath(forRow: 0, inSection: 0)){
-                self.mytableview.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: true)
-            }
+            mytableview.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: false)
         }
         
         refreshControl.beginRefreshing()
@@ -777,10 +779,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         if self.img3[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("TripleImage", forIndexPath: indexPath) as! TripleImage
             
-            cell.imgView1.image = nil
-            cell.imgView2.image = nil
-            cell.imgView3.image = nil
-            cell.detailTextLabel?.text = ""
             cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
@@ -791,7 +789,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
-
+            
             if userimageURL == "null" || userimageURL == ""{
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
@@ -810,19 +808,19 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-
+            
             cell.indicator.startAnimating()
             cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
                 (result: Bool) in
                 cell.indicator.stopAnimating()
             }
-          
+            
             cell.indicator2.startAnimating()
             cell.imgView2.loadImageUsingString(self.img2[indexPath.row]){
                 (result: Bool) in
                 cell.indicator2.stopAnimating()
             }
-
+            
             cell.indicator3.startAnimating()
             cell.imgView3.loadImageUsingString(self.img3[indexPath.row]){
                 (result: Bool) in
@@ -830,13 +828,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
-
+            
             return cell
         }else if self.img2[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("DoubleImage", forIndexPath: indexPath) as! DoubleImage
-            cell.imgView1.image = nil
-            cell.imgView2.image = nil
-            cell.detailTextLabel?.text = ""
+            
             cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
@@ -846,7 +842,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
-
+            
             if userimageURL == "null" || userimageURL == ""{
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
@@ -864,7 +860,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-        
+            
             cell.indicator.startAnimating()
             cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
                 (result: Bool) in
@@ -880,12 +876,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
-
+            
             return cell
         }else if self.img1[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("SingleImage", forIndexPath: indexPath) as! SingleImage
-            cell.imgView1.image = nil
-            cell.detailTextLabel?.text = ""
+            
             cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
@@ -896,7 +891,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
-            if userimageURL == "null" || userimageURL == ""{
+            if userimageURL == "null" {
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
@@ -904,7 +899,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     
                 })
             }
-            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -913,7 +907,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-//            //            cell.imgView1.imgForCache(self.img1[indexPath.row])
+            //            //            cell.imgView1.imgForCache(self.img1[indexPath.row])
             cell.indicator.startAnimating()
             cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
                 (result: Bool) in
@@ -921,11 +915,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
-
+            
             return cell
         }else{
             let cell = tableView.dequeueReusableCellWithIdentifier("NoImage", forIndexPath: indexPath) as! NoImage
-            cell.detailTextLabel?.text = ""
+            
             cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
@@ -936,7 +930,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
-            if userimageURL == "null" || userimageURL == "" {
+            if userimageURL == "null" {
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
@@ -944,6 +938,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                     
                 })
             }
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -952,7 +947,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-
+            
             return cell
             
         }
@@ -1029,7 +1024,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         if self.img1.count != 0 {
             if let image = self.img1[indexPath.row] as? String {
                 if image != "null" {
-                     height += 320
+                    height += 320
                 }
             }
         }
@@ -1063,10 +1058,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             self.deletePost(title, index: senderTag)
         }
     }
-
+    
     func alertMore(index: Int){
         let config = SYSTEM_CONFIG()
-
+        
         let myAlert = UIAlertController(title: config.translate("more_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: config.translate("block_user"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.block_user(index)
@@ -1077,10 +1072,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
-
+    
     func block_user(index: Int){
         let config = SYSTEM_CONFIG()
-
+        
         let myAlert = UIAlertController(title: config.translate("block_user_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.blockUser(index)
@@ -1090,10 +1085,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
-
+    
     func report_post(index: Int){
         let config = SYSTEM_CONFIG()
-
+        
         let myAlert = UIAlertController(title: config.translate("report_post_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.reportPost(index)
@@ -1103,7 +1098,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
-
+    
     func blockUser(index: Int) {
         
         if self.loadingScreen == nil {
@@ -1128,14 +1123,14 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "user_id"     : "\(globalUserId.userID)",
             "block_user_id" : "\(fromID[index])"
         ]
-
+        
         let httpRequest = HttpDataRequest(postData: param)
         let request = httpRequest.requestGet()
-
-
+        
+        
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
-
+            
             if error != nil || data == nil {
                 self.blockUser(index)
             }else{
@@ -1276,14 +1271,14 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "from_id"           : "\(fromID[index])",
             "report_post_id"    : "\(postID[index])"
         ]
-
+        
         let httpRequest = HttpDataRequest(postData: param)
         let request = httpRequest.requestGet()
-
-
+        
+        
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
-
+            
             if error != nil || data == nil {
                 self.reportPost(index)
             }else{
@@ -1306,11 +1301,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }
         task.resume()
     }
-
+    
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
     }
-
+    
     
     func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
         let body = NSMutableData();

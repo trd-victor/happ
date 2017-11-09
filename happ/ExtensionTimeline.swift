@@ -137,13 +137,8 @@ extension UserTimelineViewController {
     func reloadTimelineByMenuClick() {
         self.noData = false
         
-        self.img1.removeAll()
-        self.img2.removeAll()
-        self.img3.removeAll()
-        self.userBody.removeAll()
-        self.fromID.removeAll()
-        self.postID.removeAll()
-        self.postDate.removeAll()
+        self.page = 1
+        page =  1
         
         var tmppostDate = [String]()
         var tmpimg1 = [String]()
@@ -253,9 +248,9 @@ extension UserTimelineViewController {
                                 let uid = FIRAuth.auth()?.currentUser?.uid
                                 FIRDatabase.database().reference().child("user-badge").child("timeline").child(uid!).setValue(0)
                                 
-                                if self.loadingScreen != nil {
-                                    UIViewController.removeSpinner(self.loadingScreen)
-                                    self.loadingScreen = nil
+                                if menu_bar.reloadScreen != nil {
+                                    UIViewController.removeSpinner(menu_bar.reloadScreen)
+                                    menu_bar.reloadScreen = nil
                                 }
                             }
                         }

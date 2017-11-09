@@ -60,6 +60,10 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
 
 exports.timelinePushNotif = functions.database.ref('/notifications/push-notification/timeline')
     .onWrite(event => {
+
+    // return new Promise((res,rej) => {
+    //     return resolve(200);
+    // })
     var valueObject = event.data.val();
 
     var message = "" 

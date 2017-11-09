@@ -622,9 +622,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 FIRDatabase.database().reference().child("users").child(uid!).child("name").setValue(name)
                                 
                                 if reg_user.selectedSkills.count > 0 {
-                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("skills").setValue("," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ",")
+                                    FIRDatabase.database().reference().child("users").child(uid!).child("skills").setValue("," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ",")
                                 }else{
-                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("skills").setValue("")
+                                    FIRDatabase.database().reference().child("users").child(uid!).child("skills").setValue("")
                                 }
                                 
                                 //updating image url on firebase

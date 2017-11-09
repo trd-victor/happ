@@ -557,7 +557,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                                                 firIDs.append(userKey)
                                                                 self.addUserNotif(userKey, notif_all_key: notif_all_key)
                                                                 self.countUnreadNotif(userKey)
-                                                                
                                                                 break
                                                             }
                                                         }

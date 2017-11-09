@@ -50,6 +50,7 @@ class CreateTimelineSkillSelection: UIViewController {
     
     var height = 48
     var loadingScreen: UIView!
+    var countSkill = 0
     
     override func viewDidLoad(){
         super.viewDidLoad()
@@ -292,6 +293,7 @@ class CreateTimelineSkillSelection: UIViewController {
                 skillSwitch.setOn(false, animated: true)
                 timeline_post_skills.selectedSkills.append(sender.tag)
                 sender.setOn(true, animated: true)
+                
             }
         }else{
             if sender.tag == 0 {
