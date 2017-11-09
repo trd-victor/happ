@@ -114,15 +114,10 @@ class MessageTableViewController: UITableViewController {
                                 if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
                                     data.setValue(photo, forKey: "photoUrl")
                                 }
-                                if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
-                                    data.setValue(photo, forKey: "name")
+                                if let name = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
+                                    data.setValue(name, forKey: "name")
                                 }
-                                
                                 self.lastMessages.append(data)
-                            }else{
-                                if let chatRoomID = data.valueForKey("chatroomId") as? String {
-                                    FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB).child(chatRoomID).removeValue()
-                                }
                             }
                         }
                         

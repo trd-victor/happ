@@ -554,12 +554,24 @@ function deleteUserData(userId) {
     // Delete user messages
     database.ref('chat').child('members').orderByChild(userId).equalTo(true).on("value", function(snapshot) {
         if (snapshot.exists()) {
-            snapshot.forEach(function(data) {
-                var chatroomId = data.key;
+            if (snapshot.numChildren() > 0) {
+                snapshot.forEach(function(data) {
+                    var chatroomId = data.key;
+                    var roomData = data.val();
+                    console.log("Convo to be deleted: " +chatroomId);
 
-                console.log("Convo to be deleted: " +chatroomId);
-                //database.ref('chat').child('members').child(chatroomId).setVa
-            });
+                    for(dataID in roomData){
+                        if(dataID != "blocked"){
+                            database.ref('chat').child('last-message').child(dataID).child(chatroomId).remove();
+                        }
+                    }
+
+                    database.ref('chat').child('last-message').child(userId).remove();
+                    database.ref('chat').child('messages').child(chatroomId).remove();
+                    database.ref('chat').child('message-notif').child(userId).remove();
+                    database.ref('chat').child('members').child(chatroomId).remove();
+                });
+            }
         }
     });
 

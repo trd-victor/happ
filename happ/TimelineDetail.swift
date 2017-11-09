@@ -27,8 +27,8 @@ class TimelineDetail: UIViewController {
     let scrollView: UIScrollView = UIScrollView()
     var loadingScreen: UIView!
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
@@ -174,45 +174,21 @@ class TimelineDetail: UIViewController {
         
         let imgView = UIImageView()
         
-        
         if UserDetails.userimageURL == "null" {
             imgView.image = UIImage(named: "noPhoto")
             self.btnProfile.setImage(imgView.image, forState: .Normal)
         }else {
-            if (globalvar.imgforProfileCache.objectForKey(UserDetails.userimageURL) != nil) {
-                let imgCache = globalvar.imgforProfileCache.objectForKey(UserDetails.userimageURL) as! UIImage
-                btnProfile.setImage(imgCache, forState: .Normal)
-            }else{
-                self.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-                self.btnProfile.backgroundColor = UIColor.lightGrayColor()
-                self.btnProfile.contentMode = .Center
-                let url = NSURL(string: UserDetails.userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            self.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-                            self.btnProfile.contentMode = .ScaleAspectFill
-                        }
-                        let tmpImg = UIImage(data: data)
-                        globalvar.imgforProfileCache.setObject(tmpImg!, forKey: UserDetails.userimageURL)
-                    }
-                })
-                task.resume()
-            }
+            self.btnProfile.loadImageUsingString(UserDetails.userimageURL, completion: {(result: Bool) in
+                
+            })
         }
         
-        if UserDetails.userimageURL == "null" {
+        if UserDetails.userimageURL == "null" || UserDetails.userimageURL == ""{
             imgView.image = UIImage(named: "noPhoto")
              btnProfile.setImage(imgView.image, forState: .Normal)
         }else {
             imgView.profileForCache(UserDetails.userimageURL)
              btnProfile.setImage(imgView.image, forState: .Normal)
-        }
-        
-        if UserDetails.fromID == globalUserId.userID {
-            self.btnMessage.hidden = true
-        }else{
-            self.btnMessage.hidden = false
         }
         
         btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
@@ -222,9 +198,16 @@ class TimelineDetail: UIViewController {
             btnProfile.tag = Int(UserDetails.fromID)!
             postDate.text = self.dateTransform(UserDetails.postDate)
             
+            if UserDetails.fromID == globalUserId.userID {
+                self.btnMessage.hidden = true
+            }else{
+                self.btnMessage.hidden = false
+            }
+            
             self.body.text = UserDetails.body.stringByDecodingHTMLEntities
             self.postDetail()
         }else{
+            self.btnMessage.hidden = false
             self.getDetail()
         }
         
@@ -234,12 +217,8 @@ class TimelineDetail: UIViewController {
         self.view.addGestureRecognizer(swipeRight)
     }
     
-    
-    
     func postDetail(){
         var contentHeight: CGFloat = 0
-        
-        
         if UserDetails.img1 != "null" {
             self.imgView1.imgForCache(UserDetails.img1)
             dispatch_async(dispatch_get_main_queue()){
@@ -270,7 +249,6 @@ class TimelineDetail: UIViewController {
             contentHeight += self.imgHeight1
             contentHeight += self.imgHeight2
             contentHeight += self.imgHeight3
-//            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 400)
             self.autoLayout()
         }
     }
@@ -647,6 +625,7 @@ class TimelineImage: UIImageView {
         
         if let imgFromCache = imgCache.objectForKey(urlString) as? UIImage{
             self.image = imgFromCache
+            self.backgroundColor = UIColor.clearColor()
             completion(result: true)
             return
         }
@@ -666,13 +645,13 @@ class TimelineImage: UIImageView {
                         imgCache.setObject(imageToCache!, forKey: urlString)
                         dispatch_async(dispatch_get_main_queue()){
                             if self.imageUrlString! == urlString {
+                                self.backgroundColor = UIColor.clearColor()
                                 self.image = imageToCache
                                 completion(result: true)
                             }
                         }
                     })
                 }
-                
             }
         }).resume()
     }

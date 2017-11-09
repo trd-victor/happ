@@ -38,6 +38,10 @@ class CreateTimelineSkillSelection: UIViewController {
         return view
     }()
     
+    let skillName: UILabel = UILabel()
+    let skillSwitch: UISwitch = UISwitch()
+    let separator: UIView = UIView()
+    
     let scrollView: UIScrollView = UIScrollView()
     let navBar: UINavigationBar = UINavigationBar()
     let categoryBox: UIView = UIView()
@@ -62,10 +66,6 @@ class CreateTimelineSkillSelection: UIViewController {
         self.scrollView.scrollEnabled = true
         
         let skillBox: UIView = UIView(frame: CGRect(x: 0.0, y: 0, width: self.view.layer.frame.size.width, height: 48))
-        
-        let skillName: UILabel = UILabel()
-        let skillSwitch: UISwitch = UISwitch()
-        let separator: UIView = UIView()
         
         skillBox.addSubview(skillSwitch)
         skillBox.addSubview(skillName)
@@ -269,8 +269,6 @@ class CreateTimelineSkillSelection: UIViewController {
     }
     
     func switchBtnToggle(sender: UISwitch) {
-        
-        
         if sender.on {
             if sender.tag == 0 {
                 timeline_post_skills.selectedSkills.removeAll()
@@ -291,12 +289,12 @@ class CreateTimelineSkillSelection: UIViewController {
                     }
                 }
             }else{
+                skillSwitch.setOn(false, animated: true)
                 timeline_post_skills.selectedSkills.append(sender.tag)
                 sender.setOn(true, animated: true)
             }
         }else{
             if sender.tag == 0 {
-                
                 for subviews in view.subviews {
                     if let scrollview = subviews as? UIScrollView {
                         for subsubviews in scrollview.subviews {
@@ -312,6 +310,7 @@ class CreateTimelineSkillSelection: UIViewController {
                 }
                 timeline_post_skills.selectedSkills.removeAll()
             }else{
+                skillSwitch.setOn(false, animated: true)
                 for var i = 0; i < timeline_post_skills.selectedSkills.count; i++ {
                     if timeline_post_skills.selectedSkills[i] == sender.tag {
                         timeline_post_skills.selectedSkills.removeAtIndex(i)

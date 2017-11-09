@@ -73,6 +73,11 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        if chatVar.RoomID != "" {
+            FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+            chatVar.RoomID = ""
+        }
+        
         let transition: CATransition = CATransition()
         transition.duration = 0.40
         transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
@@ -83,23 +88,31 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func addBlockObserver(){
-        let memberDB = FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID)
-        
-        memberDB.observeEventType(.Value, withBlock: {(snapshot) in
-            if let result = snapshot.value as? NSDictionary {
-                if let block = result["blocked"] as? Bool {
-                    if block {
-                        self.blockTextView.hidden = false
-                        self.txtField.hidden = true
-                        self.sendBtn.hidden = true
-                    }else{
-                        self.blockTextView.hidden = true
-                        self.txtField.hidden = false
-                        self.sendBtn.hidden = false
+        if chatVar.RoomID != "" {
+            let memberDB = FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID)
+            
+            memberDB.observeEventType(.Value, withBlock: {(snapshot) in
+                
+                if let result = snapshot.value as? NSDictionary {
+                    if let block = result["blocked"] as? Bool {
+                        if block {
+                            self.blockTextView.hidden = false
+                            self.txtField.hidden = true
+                            self.sendBtn.hidden = true
+                        }else{
+                            self.blockTextView.hidden = true
+                            self.txtField.hidden = false
+                            self.sendBtn.hidden = false
+                        }
                     }
                 }
-            }
-        })
+                
+                
+                if !snapshot.exists() {
+                    self.blockTextView.hidden = true
+                }
+            })
+        }
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -233,9 +246,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
+        
         NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
         FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
-        
+        chatVar.RoomID = ""
         self.presentBackDetail(MessageTableViewController())
     }
     
@@ -257,6 +271,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         // check if no text on textfield
         checkMessage = mess.componentsSeparatedByString(" ").joinWithSeparator("")
+        
+        if chatVar.RoomID == "" {
+            return
+        }
         
         if(checkMessage.characters.count <= 0){
             return
@@ -451,8 +469,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func setupCell(cell: MessageCell, mess_data: NSDictionary){
-        
-        
         if FIRAuth.auth()?.currentUser?.uid == (mess_data["userId"] as! String){
             
             cell.bubbleView.backgroundColor = UIColor(hexString: "#E0E0E0")

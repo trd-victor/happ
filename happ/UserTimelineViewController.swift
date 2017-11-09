@@ -777,6 +777,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         if self.img3[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("TripleImage", forIndexPath: indexPath) as! TripleImage
             
+            cell.imgView1.image = nil
+            cell.imgView2.image = nil
+            cell.imgView3.image = nil
+            cell.detailTextLabel?.text = ""
             cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
@@ -788,36 +792,14 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
 
-            cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
-                
-            })
-//            if userimageURL == "null" {
-//                imgView.image = UIImage(named: "noPhoto")
-//                cell.btnProfile.setImage(imgView.image, forState: .Normal)
-//            }else {
-//                if (globalvar.imgforProfileCache.objectForKey(userimageURL) != nil) {
-//                    let imgCache = globalvar.imgforProfileCache.objectForKey(userimageURL) as! UIImage
-//                    cell.btnProfile.setImage(imgCache, forState: .Normal)
-//                }else{
-//                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-//                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
-//                    cell.btnProfile.contentMode = .Center
-//                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-//                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-//                        if let data = NSData(contentsOfURL: url!){
-//                            dispatch_async(dispatch_get_main_queue()){
-//                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-//                                cell.btnProfile.contentMode = .ScaleAspectFill
-//                                cell.btnProfile.backgroundColor = UIColor.clearColor()
-//                            }
-//                            let tmpImg = UIImage(data: data)
-//                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: userimageURL)
-//                        }
-//                        
-//                    })
-//                    task.resume()
-//                }
-//            }
+            if userimageURL == "null" || userimageURL == ""{
+                imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            }else {
+                cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
+                    
+                })
+            }
             
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
@@ -852,7 +834,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else if self.img2[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("DoubleImage", forIndexPath: indexPath) as! DoubleImage
-            
+            cell.imgView1.image = nil
+            cell.imgView2.image = nil
+            cell.detailTextLabel?.text = ""
             cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
@@ -863,35 +847,14 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
 
-            cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
-                
-            })
-//            if userimageURL == "null" {
-//                imgView.image = UIImage(named: "noPhoto")
-//                cell.btnProfile.setImage(imgView.image, forState: .Normal)
-//            }else {
-//                if (globalvar.imgforProfileCache.objectForKey(userimageURL) != nil) {
-//                    let imgCache = globalvar.imgforProfileCache.objectForKey(userimageURL) as! UIImage
-//                    cell.btnProfile.setImage(imgCache, forState: .Normal)
-//                }else{
-//                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-//                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
-//                    cell.btnProfile.contentMode = .Center
-//                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-//                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-//                        if let data = NSData(contentsOfURL: url!){
-//                            dispatch_async(dispatch_get_main_queue()){
-//                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-//                                cell.btnProfile.contentMode = .ScaleAspectFill
-//                            }
-//                            let tmpImg = UIImage(data: data)
-//                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: userimageURL)
-//                        }
-//                        
-//                    })
-//                    task.resume()
-//                }
-//            }
+            if userimageURL == "null" || userimageURL == ""{
+                imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            }else {
+                cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
+                    
+                })
+            }
             
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
@@ -921,7 +884,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else if self.img1[indexPath.row] != "null" {
             let cell = tableView.dequeueReusableCellWithIdentifier("SingleImage", forIndexPath: indexPath) as! SingleImage
-            
+            cell.imgView1.image = nil
+            cell.detailTextLabel?.text = ""
             cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
@@ -932,36 +896,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
-            if userimageURL == "null" {
+            if userimageURL == "null" || userimageURL == ""{
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
                 cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
                     
                 })
-                
-                
-//                if (globalvar.imgforProfileCache.objectForKey(userimageURL) != nil) {
-//                    let imgCache = globalvar.imgforProfileCache.objectForKey(userimageURL) as! UIImage
-//                    cell.btnProfile.setImage(imgCache, forState: .Normal)
-//                }else{
-//                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-//                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
-//                    cell.btnProfile.contentMode = .Center
-//                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-//                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-//                        if let data = NSData(contentsOfURL: url!){
-//                            dispatch_async(dispatch_get_main_queue()){
-//                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-//                                cell.btnProfile.contentMode = .ScaleAspectFill
-//                            }
-//                            let tmpImg = UIImage(data: data)
-//                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: userimageURL)
-//                        }
-//                    })
-//                    task.resume()
-//                }
             }
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -982,7 +925,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             return cell
         }else{
             let cell = tableView.dequeueReusableCellWithIdentifier("NoImage", forIndexPath: indexPath) as! NoImage
-            
+            cell.detailTextLabel?.text = ""
             cell.contentView.addGestureRecognizer(cellTap)
             
             let imgView = UIImageView()
@@ -993,34 +936,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
-            if userimageURL == "null" {
+            if userimageURL == "null" || userimageURL == "" {
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
                 cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
                     
                 })
-                //                if (globalvar.imgforProfileCache.objectForKey(userimageURL) != nil) {
-//                    let imgCache = globalvar.imgforProfileCache.objectForKey(userimageURL) as! UIImage
-//                    cell.btnProfile.setImage(imgCache, forState: .Normal)
-//                }else{
-//                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-//                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
-//                    cell.btnProfile.contentMode = .Center
-//                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-//                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-//                        if let data = NSData(contentsOfURL: url!){
-//                            dispatch_async(dispatch_get_main_queue()){
-//                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-//                                cell.btnProfile.contentMode = .ScaleAspectFill
-//                            }
-//                            let tmpImg = UIImage(data: data)
-//                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: userimageURL)
-//                        }
-//                        
-//                    })
-//                    task.resume()
-//                }
             }
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
