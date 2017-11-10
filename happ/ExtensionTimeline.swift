@@ -135,6 +135,10 @@ extension UserTimelineViewController {
     
     
     func reloadTimelineByMenuClick() {
+        if self.toReloadTimeline != nil {
+            self.toReloadTimeline.cancel()
+        }
+        
         self.noData = false
         
         self.page = 1
@@ -167,10 +171,12 @@ extension UserTimelineViewController {
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
         request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+        self.toReloadTimeline = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil || data == nil {
+            if error != nil{
+                print(error?.localizedDescription)
+            }else if(data == nil) {
                 self.reloadTimelineByMenuClick()
             }else{
                 do {
@@ -248,9 +254,9 @@ extension UserTimelineViewController {
                                 let uid = FIRAuth.auth()?.currentUser?.uid
                                 FIRDatabase.database().reference().child("user-badge").child("timeline").child(uid!).setValue(0)
                                 
-                                if menu_bar.reloadScreen != nil {
-                                    UIViewController.removeSpinner(menu_bar.reloadScreen)
-                                    menu_bar.reloadScreen = nil
+                                if self.loadingScreen != nil {
+                                    UIViewController.removeSpinner(self.loadingScreen)
+                                    self.loadingScreen = nil
                                 }
                             }
                         }
@@ -258,15 +264,11 @@ extension UserTimelineViewController {
                         self.reloadTimelineByMenuClick()
                     }
                 } catch {
-                    print(error)
-                    if menu_bar.reloadScreen != nil {
-                        UIViewController.removeSpinner(menu_bar.reloadScreen)
-                        menu_bar.reloadScreen = nil
-                    }
+                    self.reloadTimelineByMenuClick()
                 }
             }
         }
-        task.resume()
+        self.toReloadTimeline.resume()
     }
 
     func updateFreeTimeStatus(){

@@ -579,6 +579,31 @@ function deleteUserData(userId) {
         }
     });
 
+    database.ref('notifications').child('app-notification').child('notification-all').orderByChild("userId").equalTo(userId).on('value').then(function(snap){
+        if (snap.exists()) {
+            if (snap.numChildren() > 0) {
+                snap.forEach(function(data) {
+                    var notif_key = data.key;
+                    deleteNotif(notif_key);
+                })
+            }
+        }
+    });
+}
+
+function deleteNotif(notif_key){
+
+    database.ref('notifications').child('app-notification').child('notification-user').on('value').then(function(snap){
+
+        if (snap.exists()){
+            if (snap.numChildren() > 0) {
+                snap.forEach(function(data) {
+                    var user_key = data.key;
+                    database.ref('notifications').child('app-notification').child('notification-user').child(user_key).child('notif-list').child(notif_key).remove();
+                });
+            }
+        }
+    })
 }
 
 

@@ -40,9 +40,7 @@ extension CongestionViewController {
             }else{
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
-                        
-                        
-                        dispatch_async(dispatch_get_main_queue()) {
+                       dispatch_async(dispatch_get_main_queue()) {
                             if json["result"] != nil {
                                 let result = json["result"] as! NSArray
                                 
@@ -66,6 +64,7 @@ extension CongestionViewController {
                     
                 } catch {
                     print(error)
+                    self.getCongestion()
                 }
             }
             

@@ -38,7 +38,7 @@ extension UserProfileController {
             data, response, error  in
             
             if error != nil || data == nil {
-                self.getBlockIds()
+                self.blockUser()
             }else{
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
@@ -50,13 +50,10 @@ extension UserProfileController {
                             }
                         }
                     }else{
-                        self.getBlockIds()
+                        self.blockUser()
                     }
                 } catch {
-                    if self.loadingScreen != nil {
-                        UIViewController.removeSpinner(self.loadingScreen)
-                        self.loadingScreen = nil
-                    }
+                    self.blockUser()
                     print(error)
                 }
             }
@@ -91,11 +88,10 @@ extension UserProfileController {
             data, response, error  in
             
             if error != nil || data == nil {
-                self.getBlockIds()
+                self.unblockUser()
             }else{
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                        
                         self.getChatRoomID(){ (result: String) in
                             FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false)
                             if self.loadingScreen != nil {
@@ -103,15 +99,11 @@ extension UserProfileController {
                                 self.loadingScreen = nil
                             }
                         }
-                    
                     }else{
-                        self.getBlockIds()
+                        self.unblockUser()
                     }
                 } catch {
-                    if self.loadingScreen != nil {
-                        UIViewController.removeSpinner(self.loadingScreen)
-                        self.loadingScreen = nil
-                    }
+                    self.unblockUser()
                     print(error)
                 }
             }

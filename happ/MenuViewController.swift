@@ -57,10 +57,6 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
         
         if tabBarController.tabBar.selectedItem?.tag == 1 {
-            if menu_bar.reloadScreen == nil {
-                menu_bar.reloadScreen = UIViewController.displaySpinner(self.view)
-            }
-            
             menu_bar.timelineReloadCount = true
             let vc = viewController as? UserTimelineViewController
             vc?.updateTimeline()

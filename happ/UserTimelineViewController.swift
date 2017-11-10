@@ -89,7 +89,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     var scrollLoad:Bool = false
     var firstLoad: Bool = false
-    
+    var toReloadTimeline: NSURLSessionDataTask!
     let refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         return control
@@ -336,19 +336,21 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 self.deleteTimeline(sender)
             }else {
                 do {
-                    let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json3!["message"] != nil {
-                    }
-                    if json3!["result"] != nil {
-                        if json3!["result"]!["mess"] != nil {
+                    if let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if json3["message"] != nil {
+                        
+                        }
+                        
+                        if let result = json3["result"] as? NSDictionary {
+                            if result["mess"] != nil {
+                                
+                            }
+                        }
+                        dispatch_async(dispatch_get_main_queue()) {
+                            //self.displayMyAlertMessage(mess)
+                            self.mytableview.reloadData()
                         }
                     }
-                    dispatch_async(dispatch_get_main_queue()) {
-                        //self.displayMyAlertMessage(mess)
-                        self.mytableview.reloadData()
-                    }
-                    
                 } catch {
                     print(error)
                 }
@@ -357,6 +359,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         task2.resume()
         
     }
+    
+    
     
     @IBAction func freetimeStatus(sender: UISwitch) {
         let statust = switchButtonCheck(freetimeStatus)
@@ -579,9 +583,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 if self.fromID.count > 0 {
                     let indexPath = NSIndexPath(forItem: 0, inSection: 0)
                     
-                    if(self.mytableview.numberOfSections < 0){
-                         self.mytableview.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+                    if(self.mytableview.numberOfSections > 0){
+                        self.mytableview.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
                     }
+                }
+                
+                if self.loadingScreen == nil {
+                    self.loadingScreen = UIViewController.displaySpinner(self.view)
                 }
                 
                 self.reloadTimelineByMenuClick()
@@ -1346,6 +1354,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func deleteAlertMessage(userMessage:String){
+        
         let config = SYSTEM_CONFIG()
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: config.translate("button_delete"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
@@ -1353,7 +1362,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             let indexRow = self.indexInt
             
             self.deleteTimeline(id)
-            
+//
             let indexPath = NSIndexPath(forRow: indexRow, inSection: 0)
             self.mytableview.beginUpdates()
             self.userBody.removeAtIndex(indexPath.row)

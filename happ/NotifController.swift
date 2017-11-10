@@ -118,7 +118,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func getNotification(){
-        let config = SYSTEM_CONFIG()
         let firID = FIRAuth.auth()?.currentUser?.uid
         
         if currentKey == nil {
@@ -135,24 +134,25 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
                         
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-                            
-                            if let result = snapshot.value as? NSDictionary {
-                                
-                                if let userID = result.valueForKey("userId") as? String {
-                                    if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
-                                        result.setValue(photo, forKey: "photoUrl")
+                            if snapshot.exists(){
+                                if let result = snapshot.value as? NSDictionary {
+                                    
+                                    if let userID = result.valueForKey("userId") as? String {
+                                        if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
+                                            result.setValue(photo, forKey: "photoUrl")
+                                        }
+                                        if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
+                                            result.setValue(photo, forKey: "name")
+                                        }
                                     }
-                                    if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
-                                        result.setValue(photo, forKey: "name")
-                                    }
+                                    result.setValue(read, forKey: "read")
+                                    result.setValue(s.key, forKey: "key")
+                                    self.arrayData.insert(result, atIndex: 0)
                                 }
-                                result.setValue(read, forKey: "read")
-                                result.setValue(s.key, forKey: "key")
-                                self.arrayData.insert(result, atIndex: 0)
-                            }
-                            
-                            if self.arrayData.count == snap.children.allObjects.count {
-                                 self.tblView.reloadData()
+                                
+                                if self.arrayData.count == snap.children.allObjects.count {
+                                    self.tblView.reloadData()
+                                }
                             }
                         })
                     }
@@ -176,23 +176,25 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let read = s.value!["read"] as? Bool
                         
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-                            if let result = snapshot.value as? NSDictionary {
-                                if let userID = result.valueForKey("userId") as? String {
-                                    if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
-                                        result.setValue(photo, forKey: "photoUrl")
+                            if snapshot.exists() {
+                                if let result = snapshot.value as? NSDictionary {
+                                    if let userID = result.valueForKey("userId") as? String {
+                                        if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
+                                            result.setValue(photo, forKey: "photoUrl")
+                                        }
+                                        if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
+                                            result.setValue(photo, forKey: "name")
+                                        }
                                     }
-                                    if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
-                                        result.setValue(photo, forKey: "name")
-                                    }
+                                    
+                                    result.setValue(read, forKey: "read")
+                                    result.setValue(s.key, forKey: "key")
+                                    self.arrayData.insert(result, atIndex: index)
                                 }
                                 
-                                result.setValue(read, forKey: "read")
-                                result.setValue(s.key, forKey: "key")
-                                self.arrayData.insert(result, atIndex: index)
-                            }
-                            
-                            if (count + snap.children.allObjects.count - 1) == self.arrayData.count {
-                                self.tblView.reloadData()
+                                if (count + snap.children.allObjects.count - 1) == self.arrayData.count {
+                                    self.tblView.reloadData()
+                                }
                             }
                         })
                     }
