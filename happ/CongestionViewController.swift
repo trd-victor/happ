@@ -297,6 +297,13 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         return userIds.count
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.viewLoading.hidden = true
+        self.activityLoading.stopAnimating()
+    }
+    
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("UserCell", forIndexPath: indexPath) as! UserCollection
         

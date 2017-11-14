@@ -186,12 +186,10 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(8.0) {
-            self.activityIndicator.stopAnimating()
-            dispatch_async(dispatch_get_main_queue()){
-                self.dismissViewControllerAnimated(false, completion: nil)
-                self.gotoMainBoard()
-            }
+        self.activityIndicator.stopAnimating()
+        dispatch_async(dispatch_get_main_queue()){
+            self.dismissViewControllerAnimated(false, completion: nil)
+            self.gotoMainBoard()
         }
     }
     
@@ -205,43 +203,43 @@ class LaunchScreenViewController: UIViewController {
         let system = SYSTEM_CONFIG()
         
         let config = getSystemValue()
-        config.getKey()
-        config.getSkill()
-        getAllUserInfo()
         
-        let defaults = NSUserDefaults.standardUserDefaults()
-        
-        if let _ = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
-            if let lng = system.getSYS_VAL("AppLanguage") as? String{
-                print("hello ", lng)
-                self.delayLaunchScreen()
-            }else {
-                dispatch_async(dispatch_get_main_queue()){
-                    self.firstload()
-                }
-            }
-            return true
-        }else{
-            defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-
-            self.delay(6.0){
-                self.activityIndicator.stopAnimating()
-                do {
-                    try FIRAuth.auth()?.signOut()
+        config.getCallBackKey(){ (success: Bool) in
+            config.getCallbackSkill(){ (success: Bool) in
+                self.getCallbackUserInfo(){
+                    (success: Bool) in
+                    let defaults = NSUserDefaults.standardUserDefaults()
                     
-                    let sys = SYSTEM_CONFIG()
-                    sys.removeSYS_VAL("userID")
-                    globalUserId.userID = ""
-                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                } catch (let error) {
-                    print((error as NSError).code)
-                }
-                dispatch_async(dispatch_get_main_queue()){
-                    self.firstload()
+                    if let _ = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
+                        if let _ = system.getSYS_VAL("AppLanguage") as? String{
+                            self.delayLaunchScreen()
+                        }else {
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.firstload()
+                            }
+                        }
+                    }else{
+                        defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
+                        
+                        self.activityIndicator.stopAnimating()
+                        do {
+                            try FIRAuth.auth()?.signOut()
+                            
+                            let sys = SYSTEM_CONFIG()
+                            sys.removeSYS_VAL("userID")
+                            globalUserId.userID = ""
+                            UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                        } catch (let error) {
+                            print((error as NSError).code)
+                        }
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.firstload()
+                        }
+                    }
                 }
             }
-            return false
         }
+        return true
     }
         
     func getAllUserInfo() {
@@ -283,6 +281,57 @@ class LaunchScreenViewController: UIViewController {
                     }
                 } catch {
                     print(error)
+                }
+            }
+        }
+        task2.resume()
+    }
+    
+    func getCallbackUserInfo(completion: (success: Bool)-> Void) {
+        let config = SYSTEM_CONFIG()
+        
+        let parameters = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "user_search",
+            "d"           : "0",
+            "lang"        : "en"
+        ]
+        
+        let request1 = NSMutableURLRequest(URL: globalvar.API_URL)
+        let boundary1 = generateBoundaryString()
+        request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
+        request1.HTTPMethod = "POST"
+        request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
+        let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1) {
+            data1, response1, error1 in
+            if error1 != nil || data1 == nil{
+                self.getCallbackUserInfo(completion)
+            }else{
+                do {
+                    if let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if let info = json2["result"] as? NSArray {
+                            for profile in info {
+                                config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
+                                config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
+                                if let url = profile["icon"] as? String {
+                                    config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
+                                }else{
+                                    config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                                }
+                                config.setSYS_VAL(profile["skills"]!!, key: "user_skills_\(profile["user_id"]!!)")
+                                config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
+                            }
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue()){
+                            completion(success: true)
+                        }
+                    }else{
+                        self.getCallbackUserInfo(completion)
+                    }
+                } catch {
+                    self.getCallbackUserInfo(completion)
                 }
             }
         }

@@ -65,8 +65,8 @@
 		A39F828C1F9EDCBE0047730B /* TermsandConditionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39F828B1F9EDCBE0047730B /* TermsandConditionController.swift */; };
 		A3A343A51F09F8B600DC55FC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A343A41F09F8B600DC55FC /* AppDelegate.swift */; };
 		A3A343A71F09F8B600DC55FC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A343A61F09F8B600DC55FC /* ViewController.swift */; };
+		A3AE94651FBAD2670080078C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A3AE94641FBAD2670080078C /* GoogleService-Info.plist */; };
 		A3B046471F38E283003789CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3B046461F38E283003789CC /* Main.storyboard */; };
-		A3B4B7441FB0660B009620BB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A3B4B7431FB0660B009620BB /* GoogleService-Info.plist */; };
 		A3D387C11F21FD590011E323 /* UserTimelineViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D387C01F21FD590011E323 /* UserTimelineViewController.swift */; };
 		A3D90D9C1F49678800DB5624 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D90D9B1F49678800DB5624 /* Constants.swift */; };
 		A3E124AA1F40B9F30053B2CC /* MessageTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E124A91F40B9F30053B2CC /* MessageTableViewController.swift */; };
@@ -140,8 +140,8 @@
 		A3A343A61F09F8B600DC55FC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A3A343AB1F09F8B700DC55FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A3A343B01F09F8B700DC55FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A3AE94641FBAD2670080078C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Users/tokikawateppei/Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A3B046461F38E283003789CC /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		A3B4B7431FB0660B009620BB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../Users/tokikawateppei/Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A3D387C01F21FD590011E323 /* UserTimelineViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTimelineViewController.swift; sourceTree = "<group>"; };
 		A3D90D9B1F49678800DB5624 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A3D90D9D1F496B9E00DB5624 /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
@@ -285,7 +285,7 @@
 			children = (
 				3D26FEE41F8B7E8B00283095 /* CreateTimeline */,
 				3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */,
-				A3B4B7431FB0660B009620BB /* GoogleService-Info.plist */,
+				A3AE94641FBAD2670080078C /* GoogleService-Info.plist */,
 				A34FC1071F0CA6F1006BFA81 /* AccountViewController.swift */,
 				A33DECB11F2F1A2200275CAE /* AddPadding.swift */,
 				A3A343A41F09F8B600DC55FC /* AppDelegate.swift */,
@@ -428,7 +428,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3105B131F1CC2260067F069 /* Assets.xcassets in Resources */,
-				A3B4B7441FB0660B009620BB /* GoogleService-Info.plist in Resources */,
+				A3AE94651FBAD2670080078C /* GoogleService-Info.plist in Resources */,
 				A3B046471F38E283003789CC /* Main.storyboard in Resources */,
 				A31ABBF01F34147300994064 /* FirstLanguageStoryboard.storyboard in Resources */,
 			);
