@@ -33,7 +33,6 @@ extension UserProfileController {
         let httpRequest = HttpDataRequest(postData: param)
         let request = httpRequest.requestGet()
         
-        
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
@@ -43,14 +42,27 @@ extension UserProfileController {
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
                         self.getChatRoomID(){ (result: String) in
-                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true)
-                            if self.loadingScreen != nil {
-                                UIViewController.removeSpinner(self.loadingScreen)
-                                self.loadingScreen = nil
+                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true){
+                                (error, snapshot) in
+                                if error != nil {
+                                    FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false)
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                        self.loadingScreen = nil
+                                    }
+                                }else{
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                        self.loadingScreen = nil
+                                    }
+                                }
                             }
                         }
                     }else{
-                        self.blockUser()
+                        if self.loadingScreen != nil {
+                            UIViewController.removeSpinner(self.loadingScreen)
+                            self.loadingScreen = nil
+                        }
                     }
                 } catch {
                     self.blockUser()
@@ -83,7 +95,6 @@ extension UserProfileController {
         let httpRequest = HttpDataRequest(postData: param)
         let request = httpRequest.requestGet()
         
-        
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
@@ -93,14 +104,27 @@ extension UserProfileController {
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
                         self.getChatRoomID(){ (result: String) in
-                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false)
-                            if self.loadingScreen != nil {
-                                UIViewController.removeSpinner(self.loadingScreen)
-                                self.loadingScreen = nil
+                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false){
+                                (error, snapshot) in
+                                if error != nil {
+                                    FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false)
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                        self.loadingScreen = nil
+                                    }
+                                }else{
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                        self.loadingScreen = nil
+                                    }
+                                }
                             }
                         }
                     }else{
-                        self.unblockUser()
+                        if self.loadingScreen != nil {
+                            UIViewController.removeSpinner(self.loadingScreen)
+                            self.loadingScreen = nil
+                        }
                     }
                 } catch {
                     self.unblockUser()

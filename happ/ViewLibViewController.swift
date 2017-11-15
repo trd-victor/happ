@@ -267,6 +267,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         let mess = self.txtField.text!
         self.txtField.text = ""
+        self.txtField.textViewDidChange(txtField)
         var checkMessage: String = ""
         
         // check if no text on textfield

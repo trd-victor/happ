@@ -27,7 +27,6 @@ class MessageCellDisp : UITableViewCell {
     @IBOutlet var userMessage: UILabel!
     @IBOutlet var userTime: UILabel!
     @IBOutlet var separator: UIView!
-    
 }
 
 
@@ -60,8 +59,6 @@ class MessageTableViewController: UITableViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "showTabBarMenu:", name: "tabBarShow", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshLang:", name: "refreshMessage", object: nil)
         
-        self.getUserMessage()
-        
         preferredStatusBarStyle()
         
     }
@@ -87,6 +84,10 @@ class MessageTableViewController: UITableViewController {
         
         let config = SYSTEM_CONFIG()
         
+        if self.lastMessages.count == 0 {
+            self.getUserMessage()
+        }
+        
         self.title = config.translate("title:message")
         self.mytableview.reloadData()
     }
@@ -100,7 +101,7 @@ class MessageTableViewController: UITableViewController {
         
         let fireDB = (FIRAuth.auth()?.currentUser?.uid)!
         let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB).queryOrderedByChild("timestamp")
-        
+        details.removeAllObservers()
         //start of retrieving messages on every user
         details.observeEventType(.Value, withBlock: { (snap) in
             self.lastMessages.removeAll()

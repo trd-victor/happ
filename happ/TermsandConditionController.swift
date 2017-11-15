@@ -655,7 +655,6 @@ class TermsandConditionController: UIViewController {
         self.navbar.setItems([navItem], animated: false)
         self.navbar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
         
-        
         if let language = config.getSYS_VAL("AppLanguage") {
             lang = language as! String
         }
@@ -797,8 +796,8 @@ class TermsandConditionController: UIViewController {
             self.lblArticle13.text = "第13条（準拠法・裁判管轄）"
             self.lblArticle13Desc1.text = "\u{25CF} 本規約の解釈にあたっては，日本法を準拠法とします。"
             self.lblArticle13Desc2.text = "\u{25CF} 本サービスに関して紛争が生じた場合には，当社の本店所在地を管轄する裁判所を専属的合意管轄とします。"
-
         }
+        
     }
     
     func estimateFrameForText(text: String) -> CGRect {
@@ -815,8 +814,7 @@ class TermsandConditionController: UIViewController {
         let last_height: CGFloat = lblArticle13Desc2.frame.size.height
         
         let contentSize = last_origin_y + last_height
-        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, contentSize + 100)
-        
+        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, contentSize + 40)
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
