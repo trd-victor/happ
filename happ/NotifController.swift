@@ -571,23 +571,23 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                             }
                                         }
                                     }
-                                    if count == result.count {
-                                        let pushdetail = [
-                                            "name": String(name),
-                                            "photoUrl": String(photoUrl),
-                                            "id": id,
-                                            "timestamp": timestamp,
-                                            "type": type,
-                                            "userId": firID!,
-                                            "skills": timeline_post_skills.selectedSkills.flatMap({String($0)}).joinWithSeparator(","),
-                                            "messageEN": config.getTranslate("notif_timeline_mess", lang: "en"),
-                                            "messageJP": config.getTranslate("notif_timeline_mess", lang: "jp"),
-                                            "firIDs": firIDs.joinWithSeparator(",")
-                                        ]
-                                        
-                                        let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
-                                        pushTimelineDB.setValue(pushdetail)
-                                    }
+//                                    if count == result.count {
+//                                        let pushdetail = [
+//                                            "name": String(name),
+//                                            "photoUrl": String(photoUrl),
+//                                            "id": id,
+//                                            "timestamp": timestamp,
+//                                            "type": type,
+//                                            "userId": firID!,
+//                                            "skills": timeline_post_skills.selectedSkills.flatMap({String($0)}).joinWithSeparator(","),
+//                                            "messageEN": config.getTranslate("notif_timeline_mess", lang: "en"),
+//                                            "messageJP": config.getTranslate("notif_timeline_mess", lang: "jp"),
+//                                            "firIDs": firIDs.joinWithSeparator(",")
+//                                        ]
+//                                        
+//                                        let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
+//                                        pushTimelineDB.setValue(pushdetail)
+//                                    }
                                 }// end of loop
                             }// end of if
                         })// end of observation

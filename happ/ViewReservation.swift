@@ -203,9 +203,17 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
                     let time = cellTime[indexPath.section][roomData[indexPath.section]]![indexPath.row - 3]
 
                     if lang != "en" {
-                        cell.textLabel?.text = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日   \(time)"
+                        cell.date.text = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日"
+                        cell.time.text = "\(time)"
+                        
+                        cell.date.hidden = false
+                        cell.time.hidden = false
                     }else{
-                        cell.textLabel?.text = "\(date)   \(time)"
+                        cell.date.text = "\(date)"
+                        cell.time.text = "\(time)"
+                        
+                        cell.date.hidden = false
+                        cell.time.hidden = false
                     }
                     return cell
                 }
@@ -656,6 +664,22 @@ class ViewReservationCell: UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    let date: UILabel = {
+        let lbl = UILabel()
+        lbl.hidden = true
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.textAlignment = .Right
+        return lbl
+    }()
+    
+    let time: UILabel = {
+        let lbl = UILabel()
+        lbl.hidden = true
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        lbl.textAlignment = .Right
+        return lbl
+    }()
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -667,6 +691,19 @@ class ViewReservationCell: UITableViewCell {
         super.init(style: .Subtitle, reuseIdentifier: reuseIdentifier)
 
         addSubview(separator)
+        addSubview(date)
+        addSubview(time)
+        
+        date.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -120).active = true
+        date.heightAnchor.constraintEqualToAnchor(self.heightAnchor).active = true
+        date.leftAnchor.constraintEqualToAnchor(self.leftAnchor).active = true
+        date.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor).active = true
+        
+        time.widthAnchor.constraintEqualToConstant(120).active = true
+        time.heightAnchor.constraintEqualToAnchor(self.heightAnchor).active = true
+        time.leftAnchor.constraintEqualToAnchor(self.date.rightAnchor, constant: -10).active = true
+        time.centerYAnchor.constraintEqualToAnchor(self.centerYAnchor).active = true
+        
         separator.widthAnchor.constraintEqualToAnchor(self.widthAnchor).active = true
         separator.bottomAnchor.constraintEqualToAnchor(self.bottomAnchor, constant: -1).active = true
         separator.heightAnchor.constraintEqualToConstant(1).active = true

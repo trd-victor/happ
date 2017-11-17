@@ -476,7 +476,13 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     "language"  : self.language
                 ]
                 //insert to users
-                db.setValue(userDetails)
+                db.setValue(userDetails){(error, snap) in
+                    if error != nil {
+                        print("fail")
+                    }else{
+                        print("success")
+                    }
+                }
                 
                 let launch = LaunchScreenViewController()
                 launch.getAllUserInfo()

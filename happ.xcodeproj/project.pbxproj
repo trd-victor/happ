@@ -42,7 +42,7 @@
 		A31CEAA11F274F9900F386FC /* MailChangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31CEAA01F274F9900F386FC /* MailChangeViewController.swift */; };
 		A31CEAA31F27501700F386FC /* ChangeNewPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31CEAA21F27501700F386FC /* ChangeNewPasswordViewController.swift */; };
 		A31CEAA51F2750AE00F386FC /* ChangeLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31CEAA41F2750AE00F386FC /* ChangeLanguageViewController.swift */; };
-		A31F2FD71FBC164300DF0FCD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A31F2FD61FBC164300DF0FCD /* GoogleService-Info.plist */; };
+		A31F2FD91FBC3E8C00DF0FCD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A31F2FD81FBC3E8C00DF0FCD /* GoogleService-Info.plist */; };
 		A331ADB91F0A3B5F00CA50AC /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A331ADB81F0A3B5F00CA50AC /* SignupViewController.swift */; };
 		A332F2281F3865B7009BF3CC /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = A332F2271F3865B7009BF3CC /* Error.swift */; };
 		A33893781F31A60D0094F983 /* FirstLaunchLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33893771F31A60D0094F983 /* FirstLaunchLanguage.swift */; };
@@ -114,7 +114,7 @@
 		A31CEAA01F274F9900F386FC /* MailChangeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MailChangeViewController.swift; sourceTree = "<group>"; };
 		A31CEAA21F27501700F386FC /* ChangeNewPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeNewPasswordViewController.swift; sourceTree = "<group>"; };
 		A31CEAA41F2750AE00F386FC /* ChangeLanguageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeLanguageViewController.swift; sourceTree = "<group>"; };
-		A31F2FD61FBC164300DF0FCD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		A31F2FD81FBC3E8C00DF0FCD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "/Users/tokikawateppei/Desktop/bakcup/DEVGoogleServicePLIST/GoogleService-Info.plist"; sourceTree = "<absolute>"; };
 		A331ADB81F0A3B5F00CA50AC /* SignupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		A332F2271F3865B7009BF3CC /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		A33893771F31A60D0094F983 /* FirstLaunchLanguage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstLaunchLanguage.swift; sourceTree = "<group>"; };
@@ -286,8 +286,8 @@
 				3D26FEE41F8B7E8B00283095 /* CreateTimeline */,
 				3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */,
 				A34FC1071F0CA6F1006BFA81 /* AccountViewController.swift */,
+				A31F2FD81FBC3E8C00DF0FCD /* GoogleService-Info.plist */,
 				A33DECB11F2F1A2200275CAE /* AddPadding.swift */,
-				A31F2FD61FBC164300DF0FCD /* GoogleService-Info.plist */,
 				A3A343A41F09F8B600DC55FC /* AppDelegate.swift */,
 				A3A343AB1F09F8B700DC55FC /* Assets.xcassets */,
 				A31CEAA41F2750AE00F386FC /* ChangeLanguageViewController.swift */,
@@ -428,7 +428,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3105B131F1CC2260067F069 /* Assets.xcassets in Resources */,
-				A31F2FD71FBC164300DF0FCD /* GoogleService-Info.plist in Resources */,
+				A31F2FD91FBC3E8C00DF0FCD /* GoogleService-Info.plist in Resources */,
 				A3B046471F38E283003789CC /* Main.storyboard in Resources */,
 				A31ABBF01F34147300994064 /* FirstLanguageStoryboard.storyboard in Resources */,
 			);

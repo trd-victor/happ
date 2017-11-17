@@ -58,93 +58,143 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
 
 });
 
-exports.timelinePushNotif = functions.database.ref('/notifications/push-notification/timeline')
-    .onWrite(event => {
+exports.timelinePushNotif = functions.https.onRequest((req, res) => {
+    if (req.body.message === undefined && req.body.firid === undefined) {
+        console.log("Failed: ", req.body.message ," FIRID", req.body.firid)
+        res.status(400).send('No message defined!');
+    } else {
+        var message = req.body.message;
+        var name = req.body.name;
+        var fid = req.body.firid;
 
-    // return new Promise((res,rej) => {
-    //     return resolve(200);
-    // })
-    var valueObject = event.data.val();
+        const payload = {
+            data: {
+                "title": "H",
+                "body": name + " " + message,
+                "author_id": fid
+            },
+            notification: {
+                body: name + " " + message,
+                sound: "default"
+            }
+        };
 
-    var message = "" 
+        const options = {
+            content_available: true,
+            collapse_key: name,
+            priority: "high"
+        }
 
-    console.log('Name ' +valueObject.name);
-    var firIDs = []
-    if(valueObject.firIDs != ""){
-        var count = 0
-        firIDs = valueObject.firIDs.split(",")
-        return new Promise((resolve, reject) => {
-            firIDs.forEach(function(id){
-                admin.database().ref().child("users").child(id).once('value').then(function(snapshot){
-                    let result = snapshot.val()
-
-                    if(result["language"] != null){
-                        if(result["language"] == "en"){
-                            message = valueObject.messageEN
-                        }else if (result["language"] == "jp"){
-                             message = valueObject.messageJP    
-                        }else{
-                             message = valueObject.messageJP
-                        }
-                    } else{
-                         message = valueObject.messageJP
-                    }
-
-                    const payload = {
-                        data: {
-                            "title": "H",
-                            "body": valueObject.name + " " + message,
-                            "skills": valueObject.skills,
-                            "author_id": valueObject.userId
-                        },
-                        notification: {
-                            // title: valueObject.name,
-                            body: valueObject.name + " " + message,
-                            sound: "default"
-                        }
-                    };
-
-                    const options = {
-                        content_available: true,
-                        collapse_key: valueObject.name,
-                        priority: "high"
-                    }
-
-                    admin.database().ref('user-badge').child("timeline").child(id).once('value', function(snap){
-                        var count = snap.val();
-
-                        if (count != null && count != 0 ){
-                            var total = count + 1;
-                            admin.database().ref('user-badge').child("timeline").child(id).set(total);
-                        }else{
-                            admin.database().ref('user-badge').child("timeline").child(id).set(1);
-                        }
-                    })
-
-
-                    admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
-                        var token = snap.val();
-                        count++;
-                       
-                            if (count == snapshot.numChildren()){
-                                if(token != "" && token != null){
-                                    admin.messaging().sendToDevice(token, payload, options);
-                                }
-                                return resolve(200);
-                            }else{
-                                if(token != "" && token != null){
-                                    admin.messaging().sendToDevice(token, payload, options);
-                                }
-                            }
-                        
-                    },function (errorObject) {
-                        console.log("Error getting data: " + errorObject.code);
-                    })
-                })
-            })
+        admin.database().ref('user-badge').child("timeline").child(fid).once('value', function(snap){
+            var count = snap.val();
+            if (count != null && count != 0 ){
+                var total = count + 1;
+                admin.database().ref('user-badge').child("timeline").child(fid).set(total);
+            }else{
+                admin.database().ref('user-badge').child("timeline").child(fid).set(1);
+            }
         });
+
+        admin.database().ref('registration-token/' + fid + '/token').once('value', function(snap){
+            var token = snap.val();
+           
+            if(token != "" && token != null){
+                admin.messaging().sendToDevice(token, payload, options);
+            }
+        },function (errorObject) {
+            console.log("Error getting data: " + errorObject.code);
+        })
+        res.status(200).end();
     }
 });
+
+// exports.timelinePushNotif = functions.database.ref('/notifications/push-notification/timeline')
+//     .onWrite(event => {
+
+//     // return new Promise((res,rej) => {
+//     //     return resolve(200);
+//     // })
+//     var valueObject = event.data.val();
+
+//     var message = "" 
+
+//     console.log('Name ' +valueObject.name);
+//     var firIDs = []
+//     if(valueObject.firIDs != ""){
+//         var count = 0
+//         firIDs = valueObject.firIDs.split(",")
+//         return new Promise((resolve, reject) => {
+//             firIDs.forEach(function(id){
+//                 admin.database().ref().child("users").child(id).once('value').then(function(snapshot){
+//                     let result = snapshot.val()
+
+//                     if(result["language"] != null){
+//                         if(result["language"] == "en"){
+//                             message = valueObject.messageEN
+//                         }else if (result["language"] == "jp"){
+//                              message = valueObject.messageJP    
+//                         }else{
+//                              message = valueObject.messageJP
+//                         }
+//                     } else{
+//                          message = valueObject.messageJP
+//                     }
+
+//                     const payload = {
+//                         data: {
+//                             "title": "H",
+//                             "body": valueObject.name + " " + message,
+//                             "skills": valueObject.skills,
+//                             "author_id": valueObject.userId
+//                         },
+//                         notification: {
+//                             // title: valueObject.name,
+//                             body: valueObject.name + " " + message,
+//                             sound: "default"
+//                         }
+//                     };
+
+//                     const options = {
+//                         content_available: true,
+//                         collapse_key: valueObject.name,
+//                         priority: "high"
+//                     }
+
+//                     admin.database().ref('user-badge').child("timeline").child(id).once('value', function(snap){
+//                         var count = snap.val();
+
+//                         if (count != null && count != 0 ){
+//                             var total = count + 1;
+//                             admin.database().ref('user-badge').child("timeline").child(id).set(total);
+//                         }else{
+//                             admin.database().ref('user-badge').child("timeline").child(id).set(1);
+//                         }
+//                     })
+
+
+//                     admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
+//                         var token = snap.val();
+//                         count++;
+                       
+//                             if (count == snapshot.numChildren()){
+//                                 if(token != "" && token != null){
+//                                     admin.messaging().sendToDevice(token, payload, options);
+//                                 }
+//                                 return resolve(200);
+//                             }else{
+//                                 if(token != "" && token != null){
+//                                     admin.messaging().sendToDevice(token, payload, options);
+//                                 }
+//                             }
+                        
+//                     },function (errorObject) {
+//                         console.log("Error getting data: " + errorObject.code);
+//                     })
+//                 })
+//             })
+//         });
+//     }
+// });
 
 exports.freeTimePushNotif = functions.database.ref('/notifications/push-notification/free-time')
     .onWrite(event => {
