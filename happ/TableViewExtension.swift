@@ -268,9 +268,11 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
+            
+             cell.indicator.startAnimating()
             cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
                 (result: Bool) in
-                
+                 cell.indicator.stopAnimating()
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
@@ -324,6 +326,14 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        if !loadingData && indexPath.row == self.fromID.count - 1 && noData == false {
+            self.getOlderTimeline()
+            self.loadingData = true
+            btmRefresh.startAnimating()
+        }
+    }
+    
     func dateTransform(date: String) -> String {
         var dateArr = date.characters.split{$0 == " "}.map(String.init)
         var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
@@ -336,7 +346,6 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
         }
         return date
     }
-    
     
     func tapImage(sender: UITapGestureRecognizer){
         viewDetail(sender)

@@ -327,30 +327,13 @@ extension UserProfileController {
                                 }
                                 self.getTimelineUser()
                                 
-                                let userdb = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(user_id)
-                                
-                                userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-                                    let userData = snapshot.value as? NSDictionary
-                                    
-                                    if(userData != nil) {
-                                        for (key, value) in userData! {
-                                            let dataVal = value as? NSDictionary
-                                            
-                                            if dataVal != nil {
-                                                let dataID =  dataVal!["id"] as? Int
-                                                let wpID = user_id as? Int
-                                                if dataID != nil && wpID != nil{
-                                                    if dataID! == wpID! {
-                                                        chatVar.chatmateId = key as! String
-                                                        chatVar.Indicator = "Search"
-                                                        chatVar.name = self.userName.text!
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                })
-                            }
+                                if let fid = json["result"]!["firebase_id"] as? String {
+                                    print(fid)
+                                    chatVar.chatmateId = fid
+                                    chatVar.Indicator = "Search"
+                                    chatVar.name = self.userName.text!
+                                }
+                             }
                         }
                     }else{
                         self.loadUserinfo(sender)
@@ -463,6 +446,14 @@ extension UserProfileController {
                                 self.postID = tmppostID
                                 self.postDate = tmppostDate
                                 
+                                if self.loadingData {
+                                    self.loadingData = false
+                                }
+                                
+                                if self.noData {
+                                    self.noData = false
+                                }
+                                
                                 self.tblProfile.reloadData()
                                 self.topReload.stopAnimating()
                                 
@@ -478,6 +469,117 @@ extension UserProfileController {
         }
         task.resume()
         
+    }
+    
+    func getOlderTimeline(){
+        self.page += 1
+        
+        let parameters = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "get_timeline",
+            "d"           : "0",
+            "lang"        : "en",
+            "user_id"     : "\(globalUserId.userID)",
+            "from_id"     : "\(UserProfile.id)",
+            "page"        : "\(page)",
+            "count"       : "5"
+        ]
+        
+        let request = NSMutableURLRequest(URL: self.baseUrl)
+        let boundary = generateBoundaryString()
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil || data == nil{
+                self.getOlderTimeline()
+            }else {
+                
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if let resultArray = json.valueForKey("result") as? NSArray {
+                            let config = SYSTEM_CONFIG()
+                           
+                            if resultArray.count == 0 {
+                                self.noData = true
+                                self.btmRefresh.stopAnimating()
+                            }
+                            
+                            for item in resultArray {
+                                if let resultDict = item as? NSDictionary {
+                                    if let postContent = resultDict.valueForKey("fields")  {
+                                        
+                                        if let from_user_id = postContent.valueForKey("from_user_id") as? String{
+                                            if let _ = config.getSYS_VAL("username_\(from_user_id)") as? String {
+                                                
+                                                if let userPostId = resultDict.valueForKey("ID") {
+                                                    self.postID.append(userPostId as! Int)
+                                                }
+                                                
+                                                if let userPostModied = resultDict.valueForKey("post_modified") {
+                                                    self.postDate.append(userPostModied as! String)
+                                                }
+                                                
+                                                if postContent["images"] != nil {
+                                                    if let images = postContent.valueForKey("images") as? NSArray {
+                                                        for index in 1...images.count {
+                                                            if let img = images[index - 1].valueForKey("image"){
+                                                                if index == 1 {
+                                                                    self.img1.append(img["url"] as! String)
+                                                                }
+                                                                if index == 2 {
+                                                                    self.img2.append(img["url"] as! String)
+                                                                }
+                                                                if index == 3 {
+                                                                    self.img3.append(img["url"] as! String)
+                                                                }
+                                                            }
+                                                        }
+                                                        if images.count < 2 {
+                                                            self.img2.append("null")
+                                                        }
+                                                        if images.count < 3 {
+                                                            self.img3.append("null")
+                                                        }
+                                                    }else{
+                                                        self.img1.append("null")
+                                                        self.img2.append("null")
+                                                        self.img3.append("null")
+                                                    }
+                                                }
+                                                if let body = postContent.valueForKey("body") {
+                                                    if let textStr = body as? String {
+                                                        self.userBody.append(textStr.stringByDecodingHTMLEntities)
+                                                    }
+                                                }
+                                                if let body = postContent.valueForKey("from_user_id") {
+                                                    self.fromID.append(body as! String)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    dispatch_async(dispatch_get_main_queue()){
+                        if self.loadingData {
+                            self.loadingData = false
+                        }
+                        self.btmRefresh.stopAnimating()
+                        
+                        self.tblProfile.reloadData()
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+            
+        }
+        task.resume()
     }
     
     // Delete Own Timeline

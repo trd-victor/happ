@@ -301,39 +301,52 @@ extension UserTimelineViewController {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                         dispatch_async(dispatch_get_main_queue()){
                             if let _ = json["success"] as? Bool {
-                                if let result = json["result"] as? NSArray {
-                                    var check = false
-                                    var count = 0
-                                    if result.count > 0 {
-                                        for(value) in result {
-                                            count++
-                                            if let field = value["fields"] as? NSDictionary {
-                                                if let userid = field["user_id"] as? String {
-                                                    
-                                                    if let _ = config.getSYS_VAL("username_\(userid)"){
-                                                        let existsUser = notifDetail.user_ids.contains(Int(userid)!)
-                                                        if !existsUser {
-                                                            notifDetail.user_ids.append(Int(userid)!)
+                                if let result = json["result"] as? NSDictionary {
+                                    if let blockid = result["blockid"] as? [String] {
+                                        if blockid.count > 0 {
+                                            notifDetail.block_ids = blockid
+                                        }
+                                    }
+                                    
+                                    if let freetime = result["freetime"] as? NSArray {
+                                        var check = false
+                                        var count = 0
+                                        print(freetime.count)
+                                        if freetime.count > 0 {
+                                            for(value) in freetime {
+                                                if let field = value["fields"] as? NSDictionary {
+                                                    if let userid = field["user_id"] as? String {
+                                                        
+                                                        if let _ = config.getSYS_VAL("username_\(userid)"){
+                                                            count++
+                                                            let existsUser = notifDetail.user_ids.contains(Int(userid)!)
+                                                            
+                                                            if !existsUser {
+                                                                notifDetail.user_ids.append(Int(userid)!)
+                                                            }
+                                                        }else{
+                                                            count++
                                                         }
+                                                        
+                                                        if userid == globalUserId.userID {
+                                                            check = true
+                                                        }
+                                                        
+                                                        if count == freetime.count{
+                                                            if check {
+                                                                let notif = NotifController()
+                                                                notif.saveNotificationMessage(0, type: "free-time")
+                                                            }else{
+                                                                self.freetimeStatus.setOn(false, animated: true)
+                                                            }
+
+                                                            if self.loadingScreen != nil {
+                                                                UIViewController.removeSpinner(self.loadingScreen)
+                                                                self.loadingScreen = nil
+                                                            }
+                                                        }
+                                                        
                                                     }
-                                                    
-                                                    if userid == globalUserId.userID {
-                                                        check = true
-                                                    }
-                                                }
-                                            }
-                                            
-                                            if count == result.count{
-                                                print(notifDetail.user_ids)
-                                                if check {
-                                                    let notif = NotifController()
-                                                    notif.saveNotificationMessage(0, type: "free-time")
-                                                }else{
-                                                    self.freetimeStatus.setOn(false, animated: true)
-                                                }
-                                                if self.loadingScreen != nil {
-                                                    UIViewController.removeSpinner(self.loadingScreen)
-                                                    self.loadingScreen = nil
                                                 }
                                             }
                                         }
@@ -341,6 +354,8 @@ extension UserTimelineViewController {
                                 }
                             }
                         }
+                    }else{
+                        self.updateFreeTimeStatus()
                     }
                 }catch{
                     self.updateFreeTimeStatus()

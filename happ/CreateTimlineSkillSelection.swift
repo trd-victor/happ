@@ -456,14 +456,13 @@ class CreateTimelineSkillSelection: UIViewController {
     
     func savePost(parameters: [String: String]?) {
 
-        var mess: Bool!
+        var mess: Bool = false
         let config = SYSTEM_CONFIG()
         
         let request1 = NSMutableURLRequest(URL: globalvar.API_URL)
         let boundary1 = generateBoundaryString()
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
         request1.HTTPMethod = "POST"
-        
         
         request1.HTTPBody = createBodyWithParameters2(parameters, boundary: boundary1)
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
@@ -473,26 +472,32 @@ class CreateTimelineSkillSelection: UIViewController {
                 self.savePost(parameters)
             }else {
                 do {
-                    let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    dispatch_async(dispatch_get_main_queue()) {
-                        if json3!["success"] != nil {
-                            mess = json3!["success"] as! Bool
-                            let postID = json3!["result"] as? Int
+                    if let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            if json3["success"] != nil {
+                                mess = json3["success"] as! Bool
+                                if let result = json3["result"] as? NSDictionary {
+                                    if let blocks = result["blocks"] as? [String] {
+                                        if blocks.count > 0 {
+                                            notifDetail.block_ids = blocks
+                                        }
+                                    }
+                                    if let post_id = result["post_id"] as? Int {
+                                        let notif = NotifController()
+                                        notif.saveNotificationMessage(post_id, type: "timeline")
+                                    }
+                                }
+                            }
                             
-                            let notif = NotifController()
-                            notif.saveNotificationMessage(postID!, type: "timeline")
-                        }
-                        
-                        if mess != nil && mess == true {
-                            NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
-                            self.displayMyAlertMessage(config.translate("saved_post"))
+                            if mess == true {
+                                NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
+                                self.displayMyAlertMessage(config.translate("saved_post"))
+                            }
                         }
                     }
-                    
                 } catch {
                     print(error)
                 }
-                
             }
             
         }

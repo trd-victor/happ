@@ -59,142 +59,82 @@ exports.pushNotification = functions.database.ref('/chat/message-notif/{userId}'
 });
 
 exports.timelinePushNotif = functions.https.onRequest((req, res) => {
-    if (req.body.message === undefined && req.body.firid === undefined) {
-        console.log("Failed: ", req.body.message ," FIRID", req.body.firid)
+    if (req.body.receiver === undefined && req.body.name === undefined) {
+        console.log("Failed: ", req.body.receiver ," Name: ", req.body.name)
         res.status(400).send('No message defined!');
     } else {
-        var message = req.body.message;
+        var receiver = JSON.parse(req.body.receiver);
         var name = req.body.name;
-        var fid = req.body.firid;
-
-        const payload = {
-            data: {
-                "title": "H",
-                "body": name + " " + message,
-                "author_id": fid
-            },
-            notification: {
-                body: name + " " + message,
-                sound: "default"
-            }
-        };
-
-        const options = {
-            content_available: true,
-            collapse_key: name,
-            priority: "high"
+        var count = 0;
+        if(receiver){
+            send_push_timeline(receiver, name).then(function(){
+                res.status(200).end(); 
+            })
         }
-
-        admin.database().ref('user-badge').child("timeline").child(fid).once('value', function(snap){
-            var count = snap.val();
-            if (count != null && count != 0 ){
-                var total = count + 1;
-                admin.database().ref('user-badge').child("timeline").child(fid).set(total);
-            }else{
-                admin.database().ref('user-badge').child("timeline").child(fid).set(1);
-            }
-        });
-
-        admin.database().ref('registration-token/' + fid + '/token').once('value', function(snap){
-            var token = snap.val();
-           
-            if(token != "" && token != null){
-                admin.messaging().sendToDevice(token, payload, options);
-            }
-        },function (errorObject) {
-            console.log("Error getting data: " + errorObject.code);
-        })
-        res.status(200).end();
-    }
+    } 
 });
 
-// exports.timelinePushNotif = functions.database.ref('/notifications/push-notification/timeline')
-//     .onWrite(event => {
+function send_push_timeline(receiver, name){
+    var count = 0;
+    return new Promise(function(res, rej){
+        if(receiver.length > 0) {
+            receiver.forEach(function(data){
+                var fid = data["fid"];
+                if(fid != ""){
+                    const payload = {
+                        data: {
+                            "title": "H",
+                            "body": name + " " + data["message"],
+                            "author_id": fid
+                        },
+                        notification: {
+                            body: name + " " + data["message"],
+                            sound: "default"
+                        }
+                    };
 
-//     // return new Promise((res,rej) => {
-//     //     return resolve(200);
-//     // })
-//     var valueObject = event.data.val();
+                    const options = {
+                        content_available: true,
+                        collapse_key: name,
+                        priority: "high"
+                    }
 
-//     var message = "" 
+                    // addBadgeTimeline(fid);
+                    send_to_device(fid, payload, options).then(function(){
+                        count++;
+                        if(count == receiver.length){
+                            res(200)
+                        }
+                    })
+                }else{
+                    count++;
+                    if(count == receiver.length){
+                        res(200)
+                    }
+                }
+            })
+        }else{
+            res(200)
+        }
+    })
+}
 
-//     console.log('Name ' +valueObject.name);
-//     var firIDs = []
-//     if(valueObject.firIDs != ""){
-//         var count = 0
-//         firIDs = valueObject.firIDs.split(",")
-//         return new Promise((resolve, reject) => {
-//             firIDs.forEach(function(id){
-//                 admin.database().ref().child("users").child(id).once('value').then(function(snapshot){
-//                     let result = snapshot.val()
-
-//                     if(result["language"] != null){
-//                         if(result["language"] == "en"){
-//                             message = valueObject.messageEN
-//                         }else if (result["language"] == "jp"){
-//                              message = valueObject.messageJP    
-//                         }else{
-//                              message = valueObject.messageJP
-//                         }
-//                     } else{
-//                          message = valueObject.messageJP
-//                     }
-
-//                     const payload = {
-//                         data: {
-//                             "title": "H",
-//                             "body": valueObject.name + " " + message,
-//                             "skills": valueObject.skills,
-//                             "author_id": valueObject.userId
-//                         },
-//                         notification: {
-//                             // title: valueObject.name,
-//                             body: valueObject.name + " " + message,
-//                             sound: "default"
-//                         }
-//                     };
-
-//                     const options = {
-//                         content_available: true,
-//                         collapse_key: valueObject.name,
-//                         priority: "high"
-//                     }
-
-//                     admin.database().ref('user-badge').child("timeline").child(id).once('value', function(snap){
-//                         var count = snap.val();
-
-//                         if (count != null && count != 0 ){
-//                             var total = count + 1;
-//                             admin.database().ref('user-badge').child("timeline").child(id).set(total);
-//                         }else{
-//                             admin.database().ref('user-badge').child("timeline").child(id).set(1);
-//                         }
-//                     })
-
-
-//                     admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
-//                         var token = snap.val();
-//                         count++;
-                       
-//                             if (count == snapshot.numChildren()){
-//                                 if(token != "" && token != null){
-//                                     admin.messaging().sendToDevice(token, payload, options);
-//                                 }
-//                                 return resolve(200);
-//                             }else{
-//                                 if(token != "" && token != null){
-//                                     admin.messaging().sendToDevice(token, payload, options);
-//                                 }
-//                             }
-                        
-//                     },function (errorObject) {
-//                         console.log("Error getting data: " + errorObject.code);
-//                     })
-//                 })
-//             })
-//         });
-//     }
-// });
+function send_to_device(fid, payload, options){
+    return new Promise(function(res, rej){
+        admin.database().ref('registration-token/' + fid + '/token').once('value', function(snap){
+            if(snap.exists()){
+                var token = snap.val();
+                if(token != "" && token != null){
+                    admin.messaging().sendToDevice(token, payload, options);
+                }
+            }
+            res(200)
+        },function (errorObject) {
+            res(200)
+            console.log("Error getting data: " + errorObject.code);
+        })
+    })
+}
 
 exports.freeTimePushNotif = functions.database.ref('/notifications/push-notification/free-time')
     .onWrite(event => {
@@ -203,26 +143,6 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
 
     if(valueObject.firIDs != null && valueObject.firIDs != "") { 
         var firIDs = valueObject.firIDs.split(",");
-        
-        admin.database().ref().child("users").once('value').then(function(snapshot){
-            if(snapshot.numChildren() > 0){
-                snapshot.forEach(function(childSnapshot){
-                    let fid = childSnapshot.key;
-                    if (valueObject.userId != fid){
-                        admin.database().ref('user-badge').child("freetime").child(fid).once('value', function(snap){
-                            var count = snap.val();
-
-                            if (count != null && count != 0 ){
-                                var total = count + 1;
-                                admin.database().ref('user-badge').child("freetime").child(fid).set(total);
-                            }else{
-                                admin.database().ref('user-badge').child("freetime").child(fid).set(1);
-                            }
-                        })
-                    }            
-                })
-            }
-        })
 
         if (firIDs.length > 0){
             var count = 0;
@@ -282,9 +202,50 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                 })
             })
         }else{
-            return new Promise(function(res,rej){
-                console.log("FIR IDS 0 length")
-                return res(400);
+            return new Promise((res, rej)=>{
+                admin.database().ref().child("users").child(firIDs).once('value').then(function(snapshot){ 
+                    var value = snapshot.val();
+                    var body = "";
+                    if(value["language"] === undefined || value["language"] == ""){
+                        value["language"] = "jp";
+                    }
+
+                    if(value["language"] == "en"){
+                        body = valueObject.messageEN;
+                    }else if(value["language"] == "jp"){
+                        body = valueObject.messageJP;
+                    }
+
+                    var payload = {
+                        data: {
+                            "title": "H",
+                            "body": valueObject.name + " " + body,
+                            "author_id": valueObject.userId
+                        },
+                        notification: {
+                            body: valueObject.name + " " + body,
+                            sound: "default"
+                        }
+                    };
+
+                    var options = {
+                        content_available: true,
+                        collapse_key: valueObject.name,
+                        priority: "high"
+                    }
+
+                    admin.database().ref('registration-token/' + firIDs + '/token').once('value', function(snap){
+                        var token = snap.val();
+                           
+                        if(token != "" && token != null){
+                            admin.messaging().sendToDevice(token, payload, options);
+                        }  
+
+                        return res(200);
+                    },function (errorObject) {
+                        console.log("Error getting data: " + errorObject.code);
+                    })
+                });
             })
         }
     }else{
@@ -628,21 +589,10 @@ function deleteUserData(userId) {
             }
         }
     });
-
-    // database.ref('notifications').child('app-notification').child('notification-all').orderByChild("userId").equalTo(userId).on('value').then(function(snap){
-    //     if (snap.exists()) {
-    //         if (snap.numChildren() > 0) {
-    //             snap.forEach(function(data) {
-    //                 var notif_key = data.key;
-    //                 deleteNotif(notif_key);
-    //             })
-    //         }
-    //     }
-    // });
 }
 
 function deleteNotif(notif_key){
-
+    var database = admin.database();
     database.ref('notifications').child('app-notification').child('notification-user').on('value').then(function(snap){
 
         if (snap.exists()){
@@ -664,8 +614,30 @@ exports.updateUser = functions.https.onRequest((req, res) => {
         var userId = req.body.uid;
         var newPassword = req.body.password;
         var newEmail = req.body.email;
+       
+        var name = req.body.name;
+        var skills = req.body.skills;
+        var icon = req.body.icon;
+        var lang = req.body.lang;
+        var wp_id = req.body.id;
+        var action = req.body.action;
 
-        console.log("Email: " ,  newEmail , " Password: ", newPassword);
+        if(action == "updateuser" && wp_id && wp_id != "" && newEmail && newEmail != ""){
+            admin.database().ref('users').child(userId).once("value").then(function(snapshot){
+                if(snapshot.exists()){
+                    var updated_data = {
+                        "email" : newEmail,
+                        "id" : wp_id,
+                        "language" : lang,
+                        "name" : name,
+                        "photoUrl" : icon,
+                        "skills" : skills,
+                    }
+                    console.log(updated_data)
+                    admin.database().ref('users').child(userId).set(updated_data);
+                }
+            });
+        }
 
         if((newPassword == "" || newPassword == null) && newEmail != ""){
             //prepare user update

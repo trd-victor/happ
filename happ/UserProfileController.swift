@@ -30,6 +30,16 @@ class UserProfileController: UIViewController {
     var firstLoad: Bool = false
     var loadingScreen: UIView!
     let baseUrl: NSURL = globalvar.API_URL
+    var noData: Bool = false
+    var loadingData: Bool = false
+    
+    let btmRefresh: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        view.color = UIColor.grayColor()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     let ProfileView: UIView = {
         let view = UIView()
@@ -122,6 +132,8 @@ class UserProfileController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         btnMessage.addTarget(self, action: Selector("openMessage"), forControlEvents: .TouchUpInside)
         
         tblProfile.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
@@ -139,6 +151,7 @@ class UserProfileController: UIViewController {
             self.loadUserinfo(UserProfile.id)
         }
         
+        tblProfile.addSubview(btmRefresh)
         tblProfile.addSubview(ProfileView)
         tblProfile.addSubview(topReload)
         tblProfile.bringSubviewToFront(topReload)
@@ -221,6 +234,10 @@ class UserProfileController: UIViewController {
             if scrollView.contentOffset.y < -440 {
                 self.page = 1
                 didScroll = true
+                if self.loadingData {
+                    self.loadingData = false
+                }
+                
                 topReload.startAnimating()
                 for var i = 5; i < self.fromID.count; i++ {
                     let indexPath = NSIndexPath(forRow: i, inSection: 0)

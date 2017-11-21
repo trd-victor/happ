@@ -618,14 +618,14 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             }
                             if json!["success"] != nil {
                                 
-                                let uid = FIRAuth.auth()?.currentUser?.uid
-                                FIRDatabase.database().reference().child("users").child(uid!).child("name").setValue(name)
-                                
-                                if reg_user.selectedSkills.count > 0 {
-                                    FIRDatabase.database().reference().child("users").child(uid!).child("skills").setValue("," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ",")
-                                }else{
-                                    FIRDatabase.database().reference().child("users").child(uid!).child("skills").setValue("")
-                                }
+//                                let uid = FIRAuth.auth()?.currentUser?.uid
+//                                FIRDatabase.database().reference().child("users").child(uid!).child("name").setValue(name)
+//                                
+//                                if reg_user.selectedSkills.count > 0 {
+//                                    FIRDatabase.database().reference().child("users").child(uid!).child("skills").setValue("," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ",")
+//                                }else{
+//                                    FIRDatabase.database().reference().child("users").child(uid!).child("skills").setValue("")
+//                                }
                                 
                                 //updating image url on firebase
                                 self.setImageToFirebaseUser(message)

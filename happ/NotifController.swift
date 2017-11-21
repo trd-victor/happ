@@ -12,6 +12,7 @@ import FirebaseInstanceID
 
 struct notifDetail {
     static var user_ids = [Int]()
+    static var block_ids = [String]()
 }
 
 class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -409,7 +410,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func getUserDetail(id: String){
         let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
-        
+        let config = SYSTEM_CONFIG()
         userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             if let result = snapshot.value as? NSDictionary{
                 if result["id"] != nil {
@@ -417,20 +418,83 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     dispatch_async(dispatch_get_main_queue()){
                         UserProfile.id = String(result["id"]!)
                         
-                        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                        let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
-                        let transition = CATransition()
-                        
-                        transition.duration = 0.40
-                        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-                        transition.type = kCATransitionPush
-                        transition.subtype = kCATransitionFromRight
-                        self.view.window!.layer.addAnimation(transition, forKey: nil)
-                        self.presentViewController(vc, animated: false, completion: nil)
+                        self.getBlockIds(){
+                            (result: Bool) in
+                            if result {
+                                self.displayMessage(config.translate("not_allowed_to_view"));
+                            }else{
+                                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                                let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
+                                let transition = CATransition()
+                                
+                                transition.duration = 0.40
+                                transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                                transition.type = kCATransitionPush
+                                transition.subtype = kCATransitionFromRight
+                                self.view.window!.layer.addAnimation(transition, forKey: nil)
+                                self.presentViewController(vc, animated: false, completion: nil)
+                            }
+                        }
                     }
                 }
             }
         })
+    }
+    
+    func displayMessage(mess: String){
+        
+        let myAlert = UIAlertController(title: "", message: mess, preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func getBlockIds(completion: (result: Bool) -> Void){
+        var block = false
+        let param = [
+            "sercret"     : "jo8nefamehisd",
+            "action"      : "api",
+            "ac"          : "get_block_list",
+            "d"           : "0",
+            "lang"        : "jp",
+            "user_id"     : "\(UserProfile.id)"
+        ]
+        
+        let httpRequest = HttpDataRequest(postData: param)
+        let request = httpRequest.requestGet()
+        
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil || data == nil {
+                self.getBlockIds(completion)
+            }else{
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
+                        if json["result"] != nil {
+                            for data in (json["result"] as? NSArray)! {
+                                if let id = data["fields"]!!["block_user_id"]! as? String {
+                                    if id == globalUserId.userID {
+                                       block = true
+                                    }
+                                }
+                            }
+                            
+                            dispatch_async(dispatch_get_main_queue()){
+                                completion(result: block)
+                            }
+                        }
+                    }else{
+                        self.getBlockIds(completion)
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+        }
+        task.resume()
     }
     
     func getPostDetail(postid: Int) {
@@ -496,6 +560,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 
                 var count = 0
                 dispatch_async(dispatch_get_main_queue()){
+                    print(notifDetail.block_ids)
                     userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                         
                         if let result = snapshot.value as? NSDictionary {
@@ -503,8 +568,12 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 count++
                                 if let k = key as? String {
                                     if k != firID! {
-                                        self.addUserNotif(k, notif_all_key: notif_all_key)
-                                        self.countUnreadNotif(k)
+                                        if !notifDetail.block_ids.contains(k){
+                                            self.addUserNotif(k, notif_all_key: notif_all_key)
+                                            self.countUnreadNotif(k)
+                                            self.addFreetimeBadgeUser(k)
+                                        }
+                                        
                                     }
                                     
                                     if let data = value as? NSDictionary {
@@ -553,25 +622,30 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                         if let skills = valueData["skills"] as? String {
                                             if let userKey = key as? String {
                                                 if userKey != firID {
-                                                    if skills != "" {
-                                                        for c in timeline_post_skills.selectedSkills {
-                                                            if skills.containsString(String(c)){
-                                                                firIDs.append(userKey)
-                                                                self.addUserNotif(userKey, notif_all_key: notif_all_key)
-                                                                self.countUnreadNotif(userKey)
-                                                                break
+                                                    if !notifDetail.block_ids.contains(userKey){
+                                                        if skills != "" {
+                                                            for c in timeline_post_skills.selectedSkills {
+                                                                if skills.containsString(String(c)){
+                                                                    firIDs.append(userKey)
+                                                                    self.addUserNotif(userKey, notif_all_key: notif_all_key)
+                                                                    self.countUnreadNotif(userKey)
+                                                                    self.addTimelineBadgeUser(userKey)
+                                                                    break
+                                                                }
                                                             }
+                                                        }else{
+                                                            firIDs.append(userKey)
+                                                            self.addUserNotif(userKey, notif_all_key: notif_all_key)
+                                                            self.countUnreadNotif(userKey)
+                                                            self.addTimelineBadgeUser(userKey)
                                                         }
-                                                    }else{
-                                                        firIDs.append(userKey)
-                                                        self.addUserNotif(userKey, notif_all_key: notif_all_key)
-                                                        self.countUnreadNotif(userKey)
                                                     }
                                                 }
                                             }
                                         }
                                     }
-//                                    if count == result.count {
+                                    if count == result.count {
+                                        notifDetail.block_ids.removeAll()
 //                                        let pushdetail = [
 //                                            "name": String(name),
 //                                            "photoUrl": String(photoUrl),
@@ -587,7 +661,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
 //                                        
 //                                        let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
 //                                        pushTimelineDB.setValue(pushdetail)
-//                                    }
+                                    }
                                 }// end of loop
                             }// end of if
                         })// end of observation
@@ -604,6 +678,18 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func addTimelineBadgeUser(userKey: String){
         let badgeDB = FIRDatabase.database().reference().child("user-badge").child("timeline").child(userKey)
+        
+        badgeDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+            if let count = snap.value as? Int {
+                badgeDB.setValue(count + 1)
+            }else{
+                badgeDB.setValue(1)
+            }
+        })
+    }
+    
+    func addFreetimeBadgeUser(userKey: String){
+        let badgeDB = FIRDatabase.database().reference().child("user-badge").child("freetime").child(userKey)
         
         badgeDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
             if let count = snap.value as? Int {
