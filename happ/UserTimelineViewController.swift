@@ -1150,14 +1150,19 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                                     self.getChatmateID(self.fromID[index]){ (key: String) in
                                         self.getChatRoomID(key){
                                             (result: String) in
-                                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true)
                                             
-                                            if self.loadingScreen != nil {
-                                                UIViewController.removeSpinner(self.loadingScreen)
-                                                self.loadingScreen = nil
+                                            self.updateBlockFirebase(result){
+                                                (complete: Bool) in
+                                                
+                                                if complete {
+                                                    if self.loadingScreen != nil {
+                                                        UIViewController.removeSpinner(self.loadingScreen)
+                                                        self.loadingScreen = nil
+                                                    }
+                                                    self.displayMyAlertMessage(String(mess))
+                                                    self.reloadTableData()
+                                                }
                                             }
-                                            self.displayMyAlertMessage(String(mess))
-                                            self.reloadTableData()
                                         }
                                     }
                                 }
@@ -1172,6 +1177,18 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
         task.resume()
+    }
+    
+    func updateBlockFirebase(result: String, completion: (complete: Bool) -> Void){
+        FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true){
+            (error, snapshot) in
+        
+            if error != nil {
+                self.updateBlockFirebase(result, completion: completion)
+            }else{
+                completion(complete: true)
+            }
+        }
     }
     
     func getChatmateID(id: String, completion: (key: String) -> Void){

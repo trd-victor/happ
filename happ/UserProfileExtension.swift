@@ -15,7 +15,7 @@ extension UserProfileController {
     // Block User Profile
     //
     
-    func blockUser() {
+    func blockUser(completion: (done: Bool) -> Void) {
         if self.loadingScreen == nil {
             self.loadingScreen = UIViewController.displaySpinner(self.view)
         }
@@ -37,25 +37,14 @@ extension UserProfileController {
             data, response, error  in
             
             if error != nil || data == nil {
-                self.blockUser()
+                self.blockUser(completion)
             }else{
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
                         self.getChatRoomID(){ (result: String) in
-                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true){
-                                (error, snapshot) in
-                                if error != nil {
-                                    FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false)
-                                    if self.loadingScreen != nil {
-                                        UIViewController.removeSpinner(self.loadingScreen)
-                                        self.loadingScreen = nil
-                                    }
-                                }else{
-                                    if self.loadingScreen != nil {
-                                        UIViewController.removeSpinner(self.loadingScreen)
-                                        self.loadingScreen = nil
-                                    }
-                                }
+                            self.updateFirebaseBlock(result){
+                                (success: Bool) in
+                                completion(done: success)
                             }
                         }
                     }else{
@@ -65,7 +54,7 @@ extension UserProfileController {
                         }
                     }
                 } catch {
-                    self.blockUser()
+                    self.blockUser(completion)
                     print(error)
                 }
             }
@@ -73,11 +62,26 @@ extension UserProfileController {
         task.resume()
     }
     
+    func updateFirebaseBlock(result: String, completion: (success: Bool) -> Void){
+        FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true){
+            (error, snapshot) in
+            if error != nil {
+                self.updateFirebaseBlock(result, completion: completion)
+            }else{
+                completion(success: true)
+                if self.loadingScreen != nil {
+                    UIViewController.removeSpinner(self.loadingScreen)
+                    self.loadingScreen = nil
+                }
+            }
+        }
+    }
+    
     //
     // Unblock User Profile
     //
     
-    func unblockUser() {
+    func unblockUser(completion: (complete: Bool)-> Void) {
         if self.loadingScreen == nil {
             self.loadingScreen = UIViewController.displaySpinner(self.view)
         }
@@ -99,25 +103,14 @@ extension UserProfileController {
             data, response, error  in
             
             if error != nil || data == nil {
-                self.unblockUser()
+                self.unblockUser(completion)
             }else{
                 do {
                     if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
                         self.getChatRoomID(){ (result: String) in
-                            FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false){
-                                (error, snapshot) in
-                                if error != nil {
-                                    FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false)
-                                    if self.loadingScreen != nil {
-                                        UIViewController.removeSpinner(self.loadingScreen)
-                                        self.loadingScreen = nil
-                                    }
-                                }else{
-                                    if self.loadingScreen != nil {
-                                        UIViewController.removeSpinner(self.loadingScreen)
-                                        self.loadingScreen = nil
-                                    }
-                                }
+                            self.updateFirebaseUnblock(result){
+                                (success: Bool) in
+                                completion(complete: success)
                             }
                         }
                     }else{
@@ -127,12 +120,28 @@ extension UserProfileController {
                         }
                     }
                 } catch {
-                    self.unblockUser()
+                    self.unblockUser(completion)
                     print(error)
                 }
             }
         }
         task.resume()
+    }
+    
+    func updateFirebaseUnblock(result: String, completion: (success: Bool)-> Void){
+        
+        FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(false){
+            (error, snapshot) in
+            if error != nil {
+                self.updateFirebaseUnblock(result, completion: completion)
+            }else{
+                completion(success: true)
+                if self.loadingScreen != nil {
+                    UIViewController.removeSpinner(self.loadingScreen)
+                    self.loadingScreen = nil
+                }
+            }
+        }
     }
    
     func getChatRoomID(completion: (result: String)-> Void){

@@ -261,10 +261,16 @@ extension UserTimelineViewController {
                             }
                         }
                     }else{
-                        self.reloadTimelineByMenuClick()
+                        if self.loadingScreen != nil {
+                            UIViewController.removeSpinner(self.loadingScreen)
+                            self.loadingScreen = nil
+                        }
                     }
                 } catch {
-                    self.reloadTimelineByMenuClick()
+                    if self.loadingScreen != nil {
+                        UIViewController.removeSpinner(self.loadingScreen)
+                        self.loadingScreen = nil
+                    }
                 }
             }
         }
@@ -311,7 +317,6 @@ extension UserTimelineViewController {
                                     if let freetime = result["freetime"] as? NSArray {
                                         var check = false
                                         var count = 0
-                                        print(freetime.count)
                                         if freetime.count > 0 {
                                             for(value) in freetime {
                                                 if let field = value["fields"] as? NSDictionary {
@@ -349,8 +354,29 @@ extension UserTimelineViewController {
                                                     }
                                                 }
                                             }
+                                        }else{
+                                            if self.loadingScreen != nil {
+                                                UIViewController.removeSpinner(self.loadingScreen)
+                                                self.loadingScreen = nil
+                                            }
+                                            self.freetimeStatus.setOn(false, animated: true)
+                                        }
+                                    }else{
+                                        if self.loadingScreen != nil {
+                                            UIViewController.removeSpinner(self.loadingScreen)
+                                            self.loadingScreen = nil
                                         }
                                     }
+                                }else{
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                        self.loadingScreen = nil
+                                    }
+                                }
+                            }else{
+                                if self.loadingScreen != nil {
+                                    UIViewController.removeSpinner(self.loadingScreen)
+                                    self.loadingScreen = nil
                                 }
                             }
                         }

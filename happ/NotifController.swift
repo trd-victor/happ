@@ -137,15 +137,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             if snapshot.exists(){
                                 if let result = snapshot.value as? NSDictionary {
-                                    
-                                    if let userID = result.valueForKey("userId") as? String {
-                                        if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
-                                            result.setValue(photo, forKey: "photoUrl")
-                                        }
-                                        if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
-                                            result.setValue(photo, forKey: "name")
-                                        }
-                                    }
                                     result.setValue(read, forKey: "read")
                                     result.setValue(s.key, forKey: "key")
                                     self.arrayData.insert(result, atIndex: 0)
@@ -179,15 +170,6 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             if snapshot.exists() {
                                 if let result = snapshot.value as? NSDictionary {
-                                    if let userID = result.valueForKey("userId") as? String {
-                                        if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
-                                            result.setValue(photo, forKey: "photoUrl")
-                                        }
-                                        if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
-                                            result.setValue(photo, forKey: "name")
-                                        }
-                                    }
-                                    
                                     result.setValue(read, forKey: "read")
                                     result.setValue(s.key, forKey: "key")
                                     self.arrayData.insert(result, atIndex: index)
@@ -349,7 +331,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if type! == "timeline" || type! == "post-time" {
             self.postName = name!
             self.postPhotoUrl = photoUrl!
-            self.getPostDetail(post_id!)
+            self.getPostDetail(post_id!, id: user_id!)
         }else if type! == "free-time" {
             self.getUserDetail(user_id!)
         }else if type! == "reservation"{
@@ -418,7 +400,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                     dispatch_async(dispatch_get_main_queue()){
                         UserProfile.id = String(result["id"]!)
                         
-                        self.getBlockIds(){
+                        self.getBlockIds(UserProfile.id){
                             (result: Bool) in
                             if result {
                                 self.displayMessage(config.translate("not_allowed_to_view"));
@@ -450,7 +432,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
-    func getBlockIds(completion: (result: Bool) -> Void){
+    func getBlockIds(user_id: String, completion: (result: Bool) -> Void){
         var block = false
         let param = [
             "sercret"     : "jo8nefamehisd",
@@ -458,7 +440,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             "ac"          : "get_block_list",
             "d"           : "0",
             "lang"        : "jp",
-            "user_id"     : "\(UserProfile.id)"
+            "user_id"     : "\(user_id)"
         ]
         
         let httpRequest = HttpDataRequest(postData: param)
@@ -469,7 +451,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             data, response, error  in
             
             if error != nil || data == nil {
-                self.getBlockIds(completion)
+                self.getBlockIds(user_id, completion: completion)
             }else{
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
@@ -487,7 +469,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             }
                         }
                     }else{
-                        self.getBlockIds(completion)
+                        self.getBlockIds(user_id, completion: completion)
                     }
                 } catch {
                     print(error)
@@ -497,15 +479,26 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         task.resume()
     }
     
-    func getPostDetail(postid: Int) {
-        
-        UserDetails.username =  self.postName
-        UserDetails.userimageURL = self.postPhotoUrl
-        UserDetails.postID = String(postid)
-        
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
-        self.presentDetail(vc)
+    func getPostDetail(postid: Int, id: String) {
+        let config = SYSTEM_CONFIG()
+        if let id = globalvar.USER_IMG.valueForKey(id)?.valueForKey("id") as? Int {
+
+            self.getBlockIds(String(id)){
+                (result: Bool) in
+                
+                if result {
+                    self.displayMessage(config.translate("not_allowed_to_view"));
+                }else{
+                    UserDetails.username =  self.postName
+                    UserDetails.userimageURL = self.postPhotoUrl
+                    UserDetails.postID = String(postid)
+                    
+                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+                    self.presentDetail(vc)
+                }
+            }
+        }
     }
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
@@ -624,8 +617,9 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                                 if userKey != firID {
                                                     if !notifDetail.block_ids.contains(userKey){
                                                         if skills != "" {
+                                                            let skillArr = skills.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: ","))
                                                             for c in timeline_post_skills.selectedSkills {
-                                                                if skills.containsString(String(c)){
+                                                                if skillArr.contains(String(c)){
                                                                     firIDs.append(userKey)
                                                                     self.addUserNotif(userKey, notif_all_key: notif_all_key)
                                                                     self.countUnreadNotif(userKey)

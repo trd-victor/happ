@@ -215,15 +215,23 @@ class UserProfileController: UIViewController {
         let config = SYSTEM_CONFIG()
         
         if sender.tag == 0 {
-            blockUser()
-            btnBlock.backgroundColor = UIColor(hexString: "#E2041B")
-            btnBlock.setTitle(config.translate("button_unblock"), forState: .Normal)
-            btnBlock.tag = 1
+            self.blockUser(){
+                (done: Bool) in
+                if done {
+                    self.btnBlock.backgroundColor = UIColor(hexString: "#E2041B")
+                    self.btnBlock.setTitle(config.translate("button_unblock"), forState: .Normal)
+                    self.btnBlock.tag = 1
+                }
+            }
         }else{
-            unblockUser()
-            btnBlock.backgroundColor = UIColor(hexString: "#272727")
-            btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
-            btnBlock.tag = 0
+            unblockUser(){
+                (complete: Bool) in
+                if complete {
+                    self.btnBlock.backgroundColor = UIColor(hexString: "#272727")
+                    self.btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
+                    self.btnBlock.tag = 0
+                }
+            }
         }
     }
     

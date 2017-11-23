@@ -478,28 +478,28 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
             var imageUrl: String = ""
-            if let userid = mess_data["userId"] as? String{
-                if let photo = globalvar.USER_IMG.valueForKey(userid)?.valueForKey("photoUrl") as? String {
-                    imageUrl = photo
-                }
+            if let photoUrl = mess_data["photoUrl"] as? String{
+                imageUrl = photoUrl
             }
             
-            if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {
-                let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl) as! UIImage
-                cell.userPhoto.image = imgCache
-            }else{
-                cell.userPhoto.image = UIImage(named : "noPhoto")
-                let url = NSURL(string: imageUrl.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.userPhoto.image = UIImage(data: data)
+            if imageUrl != "" {
+                if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {
+                    let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl) as! UIImage
+                    cell.userPhoto.image = imgCache
+                }else{
+                    cell.userPhoto.image = UIImage(named : "noPhoto")
+                    let url = NSURL(string: imageUrl.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                        if let data = NSData(contentsOfURL: url!){
+                            dispatch_async(dispatch_get_main_queue()){
+                                cell.userPhoto.image = UIImage(data: data)
+                            }
+                            let tmpImg = UIImage(data: data)
+                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
                         }
-                        let tmpImg = UIImage(data: data)
-                        globalvar.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
-                    }
-                })
-                task.resume()
+                    })
+                    task.resume()
+                }
             }
             
             cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
@@ -514,10 +514,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.txtLbl.textColor = UIColor.blackColor()
             
             var imageUrl: String = ""
-            if let userid = mess_data["userId"] as? String{
-                if let photo = globalvar.USER_IMG.valueForKey(userid)?.valueForKey("photoUrl") as? String {
-                    imageUrl = photo
-                }
+            if let photoUrl = mess_data["photoUrl"] as? String{
+                imageUrl = photoUrl
             }
             
             if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {

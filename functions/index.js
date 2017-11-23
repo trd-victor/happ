@@ -70,6 +70,8 @@ exports.timelinePushNotif = functions.https.onRequest((req, res) => {
             send_push_timeline(receiver, name).then(function(){
                 res.status(200).end(); 
             })
+        }else{
+            res.status(200).end();
         }
     } 
 });
@@ -77,6 +79,7 @@ exports.timelinePushNotif = functions.https.onRequest((req, res) => {
 function send_push_timeline(receiver, name){
     var count = 0;
     return new Promise(function(res, rej){
+        console.log(receiver.length)
         if(receiver.length > 0) {
             receiver.forEach(function(data){
                 var fid = data["fid"];
@@ -149,14 +152,82 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
             return new Promise((res, rej)=>{
                 firIDs.forEach(function(id){
                     return admin.database().ref().child("users").child(id).once('value').then(function(snapshot){
-                        var value = snapshot.val();
+                        if(snapshot.exists()){
+                            var value = {}
+                            value = snapshot.val();
+                            var body = "";
+                            if(!value && value["language"] === undefined){
+                                value["language"] = "jp";
+                            }
+
+                            if(value["language"] == "en"){
+                                body = valueObject.messageEN;
+                            }else if(value["language"] == "jp"){
+                                body = valueObject.messageJP;
+                            }
+
+                            var payload = {
+                                data: {
+                                    "title": "H",
+                                    "body": valueObject.name + " " + body,
+                                    "author_id": valueObject.userId
+                                },
+                                notification: {
+                                    // title: valueObject.name,
+                                    body: valueObject.name + " " + body,
+                                    sound: "default"
+                                }
+                            };
+
+                            var options = {
+                                content_available: true,
+                                collapse_key: valueObject.name,
+                                priority: "high"
+                            }
+
+                            admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
+                                    var token = snap.val();
+                                    count++;
+                                   
+                                    if (count == firIDs.length){
+                                        if(token != "" && token != null){
+                                            admin.messaging().sendToDevice(token, payload, options);
+                                        }
+                                        return res(200);
+                                    }else{
+                                        if(token != "" && token != null){
+                                            admin.messaging().sendToDevice(token, payload, options);
+                                        }
+                                    }
+                            },function (errorObject) {
+                                count++;
+                                if (count == firIDs.length){
+                                    return res(200);
+                                }
+                                console.log("Error getting data: " + errorObject.code);
+                            })
+                        }else{
+                            count++;
+                            if (count == firIDs.length){
+                                return res(200);
+                            }
+                        }
+                    })
+                })
+            })
+        }else{
+            return new Promise((res, rej)=>{
+                admin.database().ref().child("users").child(firIDs).once('value').then(function(snapshot){ 
+                    if(snapshot.exists()){
+                        var value = {}
+                        value = snapshot.val();
                         var body = "";
                         if(value["language"] === undefined || value["language"] == ""){
                             value["language"] = "jp";
                         }
 
                         if(value["language"] == "en"){
-                                body = valueObject.messageEN;
+                            body = valueObject.messageEN;
                         }else if(value["language"] == "jp"){
                             body = valueObject.messageJP;
                         }
@@ -168,7 +239,6 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                                 "author_id": valueObject.userId
                             },
                             notification: {
-                                // title: valueObject.name,
                                 body: valueObject.name + " " + body,
                                 sound: "default"
                             }
@@ -180,71 +250,18 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                             priority: "high"
                         }
 
-                        admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
-                                var token = snap.val();
-                                count++;
+                        admin.database().ref('registration-token/' + firIDs + '/token').once('value', function(snap){
+                            var token = snap.val();
                                
-                                if (count == firIDs.length){
-                                    if(token != "" && token != null){
-                                        admin.messaging().sendToDevice(token, payload, options);
-                                    }
-                                    return res(200);
-                                }else{
-                                    if(token != "" && token != null){
-                                        admin.messaging().sendToDevice(token, payload, options);
-                                    }
-                                }
+                            if(token != "" && token != null){
+                                admin.messaging().sendToDevice(token, payload, options);
+                            }  
+
+                            return res(200);
                         },function (errorObject) {
-                            count++;
                             console.log("Error getting data: " + errorObject.code);
                         })
-                    })
-                })
-            })
-        }else{
-            return new Promise((res, rej)=>{
-                admin.database().ref().child("users").child(firIDs).once('value').then(function(snapshot){ 
-                    var value = snapshot.val();
-                    var body = "";
-                    if(value["language"] === undefined || value["language"] == ""){
-                        value["language"] = "jp";
                     }
-
-                    if(value["language"] == "en"){
-                        body = valueObject.messageEN;
-                    }else if(value["language"] == "jp"){
-                        body = valueObject.messageJP;
-                    }
-
-                    var payload = {
-                        data: {
-                            "title": "H",
-                            "body": valueObject.name + " " + body,
-                            "author_id": valueObject.userId
-                        },
-                        notification: {
-                            body: valueObject.name + " " + body,
-                            sound: "default"
-                        }
-                    };
-
-                    var options = {
-                        content_available: true,
-                        collapse_key: valueObject.name,
-                        priority: "high"
-                    }
-
-                    admin.database().ref('registration-token/' + firIDs + '/token').once('value', function(snap){
-                        var token = snap.val();
-                           
-                        if(token != "" && token != null){
-                            admin.messaging().sendToDevice(token, payload, options);
-                        }  
-
-                        return res(200);
-                    },function (errorObject) {
-                        console.log("Error getting data: " + errorObject.code);
-                    })
                 });
             })
         }
@@ -622,7 +639,14 @@ exports.updateUser = functions.https.onRequest((req, res) => {
         var wp_id = req.body.id;
         var action = req.body.action;
 
+        
+
         if(action == "updateuser" && wp_id && wp_id != "" && newEmail && newEmail != ""){
+
+            if(skills != ""){
+                skills = "," + skills + ",";
+            } 
+
             admin.database().ref('users').child(userId).once("value").then(function(snapshot){
                 if(snapshot.exists()){
                     var updated_data = {
