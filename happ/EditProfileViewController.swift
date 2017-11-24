@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var skillView: UIView!
@@ -22,11 +22,11 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     @IBOutlet var StatusItem: UIBarButtonItem!
     @IBOutlet var userImage: UIImageView!
     @IBOutlet var labelSkills: UILabel!
-    @IBOutlet var userDescription: UITextField!
     
     @IBOutlet var labelName: UILabel!
     @IBOutlet var userNamefield: UITextField!
     
+    let userDescription: UITextView = UITextView()
     let separatorLine: UIView = UIView()
     let selectContainer: UIView = UIView()
     let selectSkillLbl: UILabel = UILabel()
@@ -42,13 +42,13 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     var galleryPicker = UIImagePickerController()
     var loadingScreen: UIView!
     var firstLoad: Bool = false
-    //    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.scrollView.addSubview(self.happLbl)
         self.scrollView.addSubview(self.selectContainer)
+        self.scrollView.addSubview(self.userDescription)
         self.selectContainer.addSubview(self.selectSkillLbl)
         self.selectContainer.addSubview(self.goToSelectSkill)
         self.selectContainer.addSubview(self.separatorLine)
@@ -58,7 +58,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         self.selectContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectSkill"))
         
         //set delegate ..
-        userDescription.delegate = self
         userNamefield.delegate = self
         galleryPicker.delegate = self
         
@@ -80,15 +79,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         }
         
         self.navBackProfile.action = Selector("backToConfiguration:")
-        
-        //        //add it to the center...
-        //        myActivityIndicator.center = view.center
-        //
-        //        // If needed, you can prevent Acivity Indicator from hiding when stopAnimating() is called
-        //        myActivityIndicator.hidesWhenStopped = true
-        //        myActivityIndicator.frame = CGRectMake(0.0, 0.0, 40.0, 40.0)
-        //
-        //        view.addSubview(myActivityIndicator)
         
         //add clickable profile image
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action:Selector("openGallery"))
@@ -124,7 +114,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         self.selectSkillLbl.text = config.translate("select_skill")
         self.selectedSkillsLbl.text = config.translate("selected_skill")
-    
+        self.userDescription.addPlaceholder(config.translate("holder_profile_statement"))
         if reg_user.didUpdate {
             if reg_user.selectedSkills.count == 0{
                 self.listOfSkills.text = config.translate("empty_skills")
@@ -256,9 +246,9 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userDescription.topAnchor.constraintEqualToAnchor(separator2.bottomAnchor, constant: 5).active = true
         userDescription.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userDescription.heightAnchor.constraintEqualToConstant(100).active = true
-        userDescription.setRightPaddingPoints(10)
-        userDescription.setLeftPaddingPoints(10)
         userDescription.tintColor = UIColor.blackColor()
+        userDescription.font = UIFont.systemFontOfSize(15)
+        userDescription.tag = 200
         
         skillView.translatesAutoresizingMaskIntoConstraints = false
         skillView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
@@ -327,7 +317,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         StatusItem.title = config.translate("button_save")
         labelName.text = config.translate("text_name")
         userNamefield.placeholder = config.translate("holder_15_more_char")
-        userDescription.placeholder = config.translate("holder_profile_statement")
         labelSkills.text = config.translate("subtitle_skills")
     }
     
@@ -426,7 +415,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                 self.loadUserData()
             }else{
                 do {
-                    
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
@@ -494,6 +482,8 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                             
                            if let message = json!["result"]!["mess"] as? String {
                                 self.userDescription.text = message.stringByDecodingHTMLEntities
+                            
+                                self.userDescription.textViewDidChange(self.userDescription)
                             }
                             
                             if self.loadingScreen != nil {

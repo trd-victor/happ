@@ -176,6 +176,9 @@ extension UserTimelineViewController {
             
             if error != nil{
                 print(error?.localizedDescription)
+                if let httpResponse = response as? NSHTTPURLResponse {
+                    print(httpResponse.statusCode)
+                }
             }else if(data == nil) {
                 self.reloadTimelineByMenuClick()
             }else{

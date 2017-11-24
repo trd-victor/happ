@@ -288,21 +288,19 @@ extension UserProfileController {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
                         if json["result"] != nil {
                             dispatch_async(dispatch_get_main_queue()){
-                                let user_id = json["result"]!["user_id"]!
-                                do {
-                                    if let txtStr = json["result"]!["name"] as? String {
-                                        self.userName.text = txtStr.stringByDecodingHTMLEntities
-                                    }
-                                }catch{
-                                    self.userName.text = json["result"]!["name"] as? String
+//                                let user_id = json["result"]!["user_id"]!
+                                
+                                if let txtStr = json["result"]!["name"] as? String {
+                                    self.userName.text = txtStr.stringByDecodingHTMLEntities
                                 }
                                 
-                                do {
-                                    if let txtStr = json["result"]!["mess"] as? String {
-                                        self.msg.text = txtStr.stringByDecodingHTMLEntities
-                                    }
-                                }catch{
-                                    self.msg.text = json["result"]!["mess"] as? String
+                                if let txtStr = json["result"]!["mess"] as? String {
+                                    self.msg.text = txtStr.stringByDecodingHTMLEntities
+                                    self.msgContraint.constant = self.estimateFrameForText(self.msg.text!).height + 10
+                                    self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
+                                }else{
+                                    self.msgContraint.constant = 0
+                                    self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
                                 }
                                 
                                 self.h_id.text = json["result"]!["h_id"] as? String
@@ -320,7 +318,8 @@ extension UserProfileController {
                                                 skillstr += config.getSkillByID(String(value))
                                                 if count == all_skills.count {
                                                     self.skills.text = skillstr
-                                                    self.skills.sizeToFit()
+                                                    self.skillContraint.constant = self.estimateFrameForText(skillstr).height + 10
+                                                    self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
                                                 }else{
                                                     skillstr += ", "
                                                 }
@@ -328,7 +327,13 @@ extension UserProfileController {
                                         }
                                     }else{
                                         self.skills.text = ""
+                                        self.skillContraint.constant = 0
+                                        self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
                                     }
+                                }else{
+                                    self.skills.text = ""
+                                    self.skillContraint.constant = 0
+                                    self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
                                 }
                                 
                                 if let imgUrl = json["result"]!["icon"] as? String {
@@ -337,12 +342,18 @@ extension UserProfileController {
                                 self.getTimelineUser()
                                 
                                 if let fid = json["result"]!["firebase_id"] as? String {
-                                    print(fid)
                                     chatVar.chatmateId = fid
                                     chatVar.Indicator = "Search"
                                     chatVar.name = self.userName.text!
                                 }
-                             }
+                                
+                                if UserProfile.id == globalUserId.userID {
+                                    self.profileViewContraint.constant = self.profileViewContraint.constant - 67
+                                }
+                                
+                                self.tblProfile.contentInset = UIEdgeInsetsMake(self.profileViewContraint.constant, 0, 0, 0)
+                                self.topConstraint.constant = self.profileViewContraint.constant * -1
+                            }
                         }
                     }else{
                         self.loadUserinfo(sender)

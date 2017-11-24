@@ -454,7 +454,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         FIRAuth.auth()?.createUserWithEmail(userEmail, password: password, completion: { (user: FIRUser?, error) in
             if error == nil {
                 //connect to firebase db.
-                let db = FIRDatabase.database().reference().child("users").child((user?.uid)!)
+                
                 
                 if let token = FIRInstanceID.instanceID().token() {
                     //register token on firebase
@@ -467,7 +467,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 }
                 
                 //set users array to insert...
-                let userDetails: [String : AnyObject] = [
+                let userDetails = [
                     "email"     : userEmail,
                     "id"        : userID,
                     "name"      : name,
@@ -475,33 +475,43 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                     "skills"    : skills,
                     "language"  : self.language
                 ]
-                //insert to users
-                db.setValue(userDetails){(error, snap) in
-                    if error != nil {
-                        print("fail")
-                    }else{
-                        print("success")
-                    }
-                }
                 
-                let launch = LaunchScreenViewController()
-                launch.getAllUserInfo()
-                
-                self.updateWPFirebase(userEmail, password: password, firebase: (user?.uid)!)
-                
-                do {
-                    try FIRAuth.auth()?.signOut()
+                self.saveUserTBFirebase((user?.uid)!, details: userDetails) {
+                    (result: Bool) in
                     
-                    config.removeSYS_VAL("userID")
-                    globalUserId.userID = ""
-                } catch (let error) {
-                    print((error as NSError).code)
+                    if result {
+                        let launch = LaunchScreenViewController()
+                        launch.getAllUserInfo()
+                        
+                        reg_user.selectedSkills.removeAll()
+                        self.updateWPFirebase(userEmail, password: password, firebase: (user?.uid)!)
+                        
+                        do {
+                            try FIRAuth.auth()?.signOut()
+                            
+                            config.removeSYS_VAL("userID")
+                            globalUserId.userID = ""
+                        } catch (let error) {
+                            print((error as NSError).code)
+                        }
+                    }
                 }
             }else{
                 print(error)
                 self.displayMyAlertMessage(config.translate("email_regist"))
             }
         })
+    }
+    
+    func saveUserTBFirebase(uid: String, details: NSDictionary, completion: (success: Bool) -> Void){
+        let db = FIRDatabase.database().reference().child("users").child(uid)
+        db.setValue(details){(error, snap) in
+            if error != nil {
+                self.saveUserTBFirebase(uid, details: details, completion: completion)
+            }else{
+                completion(success: true)
+            }
+        }
     }
     
     func updateWPFirebase(email: String, password: String, firebase: String){
@@ -531,7 +541,6 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 }else{
                     do {
                         if let _ = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
-                            
                             dispatch_async(dispatch_get_main_queue()){
                                 self.successMessageAlert(self.mess)
                             }

@@ -895,13 +895,6 @@
                                 <rect key="frame" x="40" y="220" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" minimumFontSize="17" id="gAR-Aq-mrm">
-                                        <rect key="frame" x="-40" y="13" width="320" height="102"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <animations/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
                                     <view contentMode="scaleToFill" id="5Bk-wv-vh9">
                                         <rect key="frame" x="-40" y="49" width="320" height="31"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -997,7 +990,6 @@
                         <outlet property="separator" destination="GDP-aW-7oR" id="bMV-xc-uiz"/>
                         <outlet property="separator2" destination="Vgb-I6-S9f" id="1Az-gY-g7Q"/>
                         <outlet property="skillView" destination="5Bk-wv-vh9" id="Wrn-lz-1bW"/>
-                        <outlet property="userDescription" destination="gAR-Aq-mrm" id="bh4-7k-NXs"/>
                         <outlet property="userImage" destination="CHF-vP-mRm" id="VfR-WU-wEq"/>
                         <outlet property="userNamefield" destination="AIE-hb-lMR" id="fDW-qw-fdX"/>
                     </connections>
@@ -1376,7 +1368,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="CellDisplay" rowHeight="77" id="lqd-Oi-WpL" customClass="MessageCellDisp" customModule="H" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="320" height="77"/>
+                                <rect key="frame" x="0.0" y="92" width="320" height="77"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lqd-Oi-WpL" id="3Q3-ls-nLn">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="76"/>

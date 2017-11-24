@@ -84,6 +84,7 @@ class UserProfileController: UIViewController {
         label.textAlignment = .Center
         label.lineBreakMode = .ByWordWrapping
         label.sizeToFit()
+        label.textAlignment = .Justified
         return label
     }()
     
@@ -93,6 +94,8 @@ class UserProfileController: UIViewController {
         label.textColor = UIColor.blackColor()
         label.font = UIFont.systemFontOfSize(14)
         label.numberOfLines = 0
+        label.textAlignment = .Justified
+        label.lineBreakMode = .ByWordWrapping
         label.sizeToFit()
         return label
     }()
@@ -128,12 +131,12 @@ class UserProfileController: UIViewController {
     }()
     
     var topConstraint: NSLayoutConstraint = NSLayoutConstraint()
+    var skillContraint: NSLayoutConstraint = NSLayoutConstraint()
+    var msgContraint: NSLayoutConstraint = NSLayoutConstraint()
+    var profileViewContraint: NSLayoutConstraint = NSLayoutConstraint()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
         btnMessage.addTarget(self, action: Selector("openMessage"), forControlEvents: .TouchUpInside)
         
         tblProfile.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
@@ -236,34 +239,34 @@ class UserProfileController: UIViewController {
     }
     
     var didScroll:Bool = false
-    
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        if scrollView == tblProfile {
-            if scrollView.contentOffset.y < -440 {
-                self.page = 1
-                didScroll = true
-                if self.loadingData {
-                    self.loadingData = false
-                }
-                
-                topReload.startAnimating()
-                for var i = 5; i < self.fromID.count; i++ {
-                    let indexPath = NSIndexPath(forRow: i, inSection: 0)
-                    self.tblProfile.beginUpdates()
-                    self.tblProfile.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
-                    self.userBody.removeAtIndex(i)
-                    self.postDate.removeAtIndex(i)
-                    self.postID.removeAtIndex(i)
-                    self.fromID.removeAtIndex(i)
-                    self.img1.removeAtIndex(i)
-                    self.img2.removeAtIndex(i)
-                    self.img3.removeAtIndex(i)
-                    self.tblProfile.endUpdates()
-                }
-                reloadData()
-            }
-        }
-    }
+//    
+//    func scrollViewDidScroll(scrollView: UIScrollView) {
+//        if scrollView == tblProfile {
+//            if scrollView.contentOffset.y < -440 {
+//                self.page = 1
+//                didScroll = true
+//                if self.loadingData {
+//                    self.loadingData = false
+//                }
+//                
+//                topReload.startAnimating()
+//                for var i = 5; i < self.fromID.count; i++ {
+//                    let indexPath = NSIndexPath(forRow: i, inSection: 0)
+//                    self.tblProfile.beginUpdates()
+//                    self.tblProfile.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+//                    self.userBody.removeAtIndex(i)
+//                    self.postDate.removeAtIndex(i)
+//                    self.postID.removeAtIndex(i)
+//                    self.fromID.removeAtIndex(i)
+//                    self.img1.removeAtIndex(i)
+//                    self.img2.removeAtIndex(i)
+//                    self.img3.removeAtIndex(i)
+//                    self.tblProfile.endUpdates()
+//                }
+//                reloadData()
+//            }
+//        }
+//    }
     
     func translate(){
         let config = SYSTEM_CONFIG()
@@ -294,7 +297,9 @@ class UserProfileController: UIViewController {
         topConstraint.active = true
         ProfileView.centerXAnchor.constraintEqualToAnchor(tblProfile.centerXAnchor).active = true
         ProfileView.widthAnchor.constraintEqualToAnchor(tblProfile.widthAnchor).active = true
-        ProfileView.heightAnchor.constraintEqualToConstant(380).active = true
+        profileViewContraint = ProfileView.heightAnchor.constraintEqualToConstant(380)
+        profileViewContraint.active = true
+        
         ProfileView.backgroundColor = UIColor(hexString: "#E4D4B9")
         
         topReload.topAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: -50).active = true
@@ -318,14 +323,16 @@ class UserProfileController: UIViewController {
         h_id.heightAnchor.constraintEqualToConstant(15).active = true
         
         skills.topAnchor.constraintEqualToAnchor(h_id.bottomAnchor, constant: 5).active = true
-        skills.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
-        skills.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -40).active = true
-        skills.heightAnchor.constraintEqualToConstant(45).active = true
-        skills.textAlignment = .Justified
+        skills.leftAnchor.constraintEqualToAnchor(ProfileView.leftAnchor, constant: 10).active = true
+        skills.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -20).active = true
+        skillContraint = skills.heightAnchor.constraintEqualToConstant(10)
+        skillContraint.active = true
         
         msg.topAnchor.constraintEqualToAnchor(skills.bottomAnchor, constant: 5).active = true
-        msg.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
-        msg.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -40).active = true
+        msg.leftAnchor.constraintEqualToAnchor(ProfileView.leftAnchor, constant: 10).active = true
+        msg.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -20).active = true
+        msgContraint = msg.heightAnchor.constraintEqualToConstant(10)
+        msgContraint.active = true
         
         btnMessage.bottomAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: -20).active = true
         btnMessage.leftAnchor.constraintEqualToAnchor(ProfileView.leftAnchor, constant: 20).active = true
@@ -400,5 +407,11 @@ class UserProfileController: UIViewController {
         }))
         myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func estimateFrameForText(text: String) -> CGRect {
+        let size = CGSize(width: self.skills.frame.width, height: 1000)
+        let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
+        return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(14)], context: nil)
     }
 }

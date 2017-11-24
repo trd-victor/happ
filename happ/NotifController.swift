@@ -394,31 +394,35 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
         let config = SYSTEM_CONFIG()
         userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-            if let result = snapshot.value as? NSDictionary{
-                if result["id"] != nil {
-                    
-                    dispatch_async(dispatch_get_main_queue()){
-                        UserProfile.id = String(result["id"]!)
+            if snapshot.exists(){
+                if let result = snapshot.value as? NSDictionary{
+                    if result["id"] != nil {
                         
-                        self.getBlockIds(UserProfile.id){
-                            (result: Bool) in
-                            if result {
-                                self.displayMessage(config.translate("not_allowed_to_view"));
-                            }else{
-                                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                                let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
-                                let transition = CATransition()
-                                
-                                transition.duration = 0.40
-                                transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-                                transition.type = kCATransitionPush
-                                transition.subtype = kCATransitionFromRight
-                                self.view.window!.layer.addAnimation(transition, forKey: nil)
-                                self.presentViewController(vc, animated: false, completion: nil)
+                        dispatch_async(dispatch_get_main_queue()){
+                            UserProfile.id = String(result["id"]!)
+                            
+                            self.getBlockIds(UserProfile.id){
+                                (result: Bool) in
+                                if result {
+                                    self.displayMessage(config.translate("not_allowed_to_view"));
+                                }else{
+                                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                                    let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
+                                    let transition = CATransition()
+                                    
+                                    transition.duration = 0.40
+                                    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                                    transition.type = kCATransitionPush
+                                    transition.subtype = kCATransitionFromRight
+                                    self.view.window!.layer.addAnimation(transition, forKey: nil)
+                                    self.presentViewController(vc, animated: false, completion: nil)
+                                }
                             }
                         }
                     }
                 }
+            }else{
+                self.displayMessage(config.translate("not_allowed_to_view"));
             }
         })
     }
@@ -480,25 +484,30 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func getPostDetail(postid: Int, id: String) {
+        
+        let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
         let config = SYSTEM_CONFIG()
-        if let id = globalvar.USER_IMG.valueForKey(id)?.valueForKey("id") as? Int {
-
-            self.getBlockIds(String(id)){
-                (result: Bool) in
-                
-                if result {
-                    self.displayMessage(config.translate("not_allowed_to_view"));
-                }else{
-                    UserDetails.username =  self.postName
-                    UserDetails.userimageURL = self.postPhotoUrl
-                    UserDetails.postID = String(postid)
+        userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            if snapshot.exists(){
+                self.getBlockIds(String(id)){
+                    (result: Bool) in
                     
-                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                    let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
-                    self.presentDetail(vc)
+                    if result {
+                        self.displayMessage(config.translate("not_allowed_to_view"));
+                    }else{
+                        UserDetails.username =  self.postName
+                        UserDetails.userimageURL = self.postPhotoUrl
+                        UserDetails.postID = String(postid)
+                        
+                        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                        let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+                        self.presentDetail(vc)
+                    }
                 }
+            }else{
+                self.displayMessage(config.translate("not_allowed_to_view"));
             }
-        }
+        })
     }
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"

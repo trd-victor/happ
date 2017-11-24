@@ -182,6 +182,27 @@ extension UITextView: UITextViewDelegate {
         self.delegate = self
     }
     
+    func sizeOfString (string: String, constrainedToWidth width: Double, font: UIFont) -> CGSize {
+        return (string as NSString).boundingRectWithSize(CGSize(width: width, height: DBL_MAX),
+            options: NSStringDrawingOptions.UsesLineFragmentOrigin,
+            attributes: [NSFontAttributeName: font],
+            context: nil).size
+    }
+    
+    public func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        if textView.tag == 200 {
+            let newText = (textView.text as NSString).stringByReplacingCharactersInRange(range, withString: text)
+            var textWidth = CGRectGetWidth(UIEdgeInsetsInsetRect(textView.frame, textView.textContainerInset))
+            textWidth -= 2.0 * textView.textContainer.lineFragmentPadding;
+            
+            let boundingRect = sizeOfString(newText, constrainedToWidth: Double(textWidth), font: textView.font!)
+            let numberOfLines = boundingRect.height / textView.font!.lineHeight;
+            
+            return numberOfLines <= 7;
+        }else{
+            return true;
+        }
+    }
 }
 
 private let characterEntities : [ String : Character ] = [

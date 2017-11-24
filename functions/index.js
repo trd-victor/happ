@@ -639,9 +639,7 @@ exports.updateUser = functions.https.onRequest((req, res) => {
         var wp_id = req.body.id;
         var action = req.body.action;
 
-        
-
-        if(action == "updateuser" && wp_id && wp_id != "" && newEmail && newEmail != ""){
+        if(action == "updateuser" && wp_id !== undefined && wp_id != "" && newEmail && newEmail != ""){
 
             if(skills != ""){
                 skills = "," + skills + ",";
