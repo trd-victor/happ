@@ -27,7 +27,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var freeTimeMessage: String = ""
     var postTimelineMessage: String = ""
     var reservationMessage: String = ""
-    var loadingScreen: UIView?
+    var loadingScreen: UIView!
     let imgforProfileCache = NSCache()
     
     var count:UInt = 10
@@ -391,6 +391,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func getUserDetail(id: String){
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
         let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
         let config = SYSTEM_CONFIG()
         userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
@@ -406,6 +410,11 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                                 if result {
                                     self.displayMessage(config.translate("not_allowed_to_view"));
                                 }else{
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                         self.loadingScreen = nil
+                                    }
+                                    
                                     let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                                     let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
                                     let transition = CATransition()
@@ -420,6 +429,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                             }
                         }
                     }
+                }else{
+                    self.displayMessage(config.translate("not_allowed_to_view"));
                 }
             }else{
                 self.displayMessage(config.translate("not_allowed_to_view"));
@@ -428,6 +439,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func displayMessage(mess: String){
+        if self.loadingScreen != nil {
+           UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
         
         let myAlert = UIAlertController(title: "", message: mess, preferredStyle: UIAlertControllerStyle.Alert)
         myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
@@ -439,14 +454,13 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     func getBlockIds(user_id: String, completion: (result: Bool) -> Void){
         var block = false
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_block_list",
             "d"           : "0",
             "lang"        : "jp",
             "user_id"     : "\(user_id)"
         ]
-        
         let httpRequest = HttpDataRequest(postData: param)
         let request = httpRequest.requestGet()
         
@@ -484,25 +498,39 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func getPostDetail(postid: Int, id: String) {
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
         let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
         let config = SYSTEM_CONFIG()
         userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
             if snapshot.exists(){
-                self.getBlockIds(String(id)){
-                    (result: Bool) in
-                    
-                    if result {
-                        self.displayMessage(config.translate("not_allowed_to_view"));
-                    }else{
-                        UserDetails.username =  self.postName
-                        UserDetails.userimageURL = self.postPhotoUrl
-                        UserDetails.postID = String(postid)
-                        
-                        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                        let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
-                        self.presentDetail(vc)
+                if let result = snapshot.value as? NSDictionary{
+                    if let wp_id = result["id"] as? Int {
+                        self.getBlockIds(String(wp_id)){
+                            (result: Bool) in
+                            
+                            if result {
+                                self.displayMessage(config.translate("not_allowed_to_view"));
+                            }else{
+                                if self.loadingScreen != nil {
+                                    UIViewController.removeSpinner(self.loadingScreen)
+                                    self.loadingScreen = nil
+                                }
+                                
+                                UserDetails.username =  self.postName
+                                UserDetails.userimageURL = self.postPhotoUrl
+                                UserDetails.postID = String(postid)
+                                
+                                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                                let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+                                self.presentDetail(vc)
+                            }
+                        }
                     }
+                }else{
+                    self.displayMessage(config.translate("not_allowed_to_view"));
                 }
             }else{
                 self.displayMessage(config.translate("not_allowed_to_view"));

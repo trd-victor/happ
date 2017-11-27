@@ -259,7 +259,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
 
     func removeReservation(pid: String, index: Int,section: Int, date: String, indexRow: Int){
         let parameters = [
-            "sercret"             : "jo8nefamehisd",
+            "sercret"             : globalvar.secretKey,
             "action"              : "api",
             "ac"                  : "delete_resavation",
             "d"                   : "0",
@@ -369,7 +369,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
         activityLoading.startAnimating()
 
         let parameters = [
-            "sercret"          : "jo8nefamehisd",
+            "sercret"          : globalvar.secretKey,
             "action"           : "api",
             "ac"               : "get_office",
             "d"                : "0",
@@ -415,7 +415,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
 
     func get_meeting_room(){
         let parameters = [
-            "sercret"          : "jo8nefamehisd",
+            "sercret"          : globalvar.secretKey,
             "action"           : "api",
             "ac"               : "get_meeting_room",
             "d"                : "0",
@@ -470,7 +470,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
 
         if ReservationPrepareCreate.date != "" {
             parameters = [
-                "sercret"          : "jo8nefamehisd",
+                "sercret"          : globalvar.secretKey,
                 "action"           : "api",
                 "ac"               : "get_resavation",
                 "d"                : "0",
@@ -481,7 +481,7 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
             ]
         }else{
             parameters = [
-                "sercret"          : "jo8nefamehisd",
+                "sercret"          : globalvar.secretKey,
                 "action"           : "api",
                 "ac"               : "get_resavation",
                 "d"                : "0",

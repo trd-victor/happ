@@ -97,6 +97,8 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
         btnUpdate.layer.cornerRadius = 5
         btnUpdate.layer.borderWidth = 1
         
+        reg_user.selectedSkills.removeAll()
+        
         self.loadConfigure()
     }
     
@@ -380,7 +382,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
             }
             //set parameters...
             let param = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "user_update",
                 "d"           : "0",
@@ -519,7 +521,7 @@ class RegistController: UIViewController, UITextFieldDelegate, UIScrollViewDeleg
                 language = "jp"
             }
             let param = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "\(globalvar.LOGIN_ACTION)",
                 "d"           : "0",

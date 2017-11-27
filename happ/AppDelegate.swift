@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         Fabric.with([Crashlytics.self])
         
         FIRApp.configure()
-        //        UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber
+        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
         
         return true
     }

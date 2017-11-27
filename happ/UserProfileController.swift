@@ -327,12 +327,14 @@ class UserProfileController: UIViewController {
         skills.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -20).active = true
         skillContraint = skills.heightAnchor.constraintEqualToConstant(10)
         skillContraint.active = true
+        skills.textAlignment = .Center
         
         msg.topAnchor.constraintEqualToAnchor(skills.bottomAnchor, constant: 5).active = true
         msg.leftAnchor.constraintEqualToAnchor(ProfileView.leftAnchor, constant: 10).active = true
         msg.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -20).active = true
         msgContraint = msg.heightAnchor.constraintEqualToConstant(10)
         msgContraint.active = true
+        msg.textAlignment = .Center
         
         btnMessage.bottomAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: -20).active = true
         btnMessage.leftAnchor.constraintEqualToAnchor(ProfileView.leftAnchor, constant: 20).active = true
@@ -364,6 +366,28 @@ class UserProfileController: UIViewController {
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
+    }
+    
+    func displayMessage(mess: String){
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
+        
+        let myAlert = UIAlertController(title: "", message: mess, preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+            UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+            
+            let transition: CATransition = CATransition()
+            transition.duration = 0.40
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionPush
+            transition.subtype = kCATransitionFromLeft
+            self.view.window!.layer.addAnimation(transition, forKey: nil)
+            self.dismissViewControllerAnimated(false, completion: nil)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
     func clickMoreImage(sender: UIButton) {
@@ -408,6 +432,8 @@ class UserProfileController: UIViewController {
         myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
+    
+    
     
     func estimateFrameForText(text: String) -> CGRect {
         let size = CGSize(width: self.skills.frame.width, height: 1000)

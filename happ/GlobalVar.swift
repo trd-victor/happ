@@ -32,6 +32,7 @@ struct globalvar {
     static var SYSTEM_VALUE = [String : [String: String]]()
     static var USER_IMG = NSDictionary()
     static let imgforProfileCache = NSCache()
+    static let secretKey: String = "jo8nefamehisd"
     let config = SYSTEM_CONFIG()
     
     //DEV API

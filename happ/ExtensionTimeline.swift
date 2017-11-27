@@ -21,7 +21,7 @@ extension UserTimelineViewController {
         var tmppostID = [Int]()
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -153,7 +153,7 @@ extension UserTimelineViewController {
         var tmppostID = [Int]()
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -176,8 +176,11 @@ extension UserTimelineViewController {
             
             if error != nil{
                 print(error?.localizedDescription)
-                if let httpResponse = response as? NSHTTPURLResponse {
-                    print(httpResponse.statusCode)
+                
+                if let code = error?.code {
+                    if code == -1005 {
+                        self.reloadTimelineByMenuClick()
+                    }
                 }
             }else if(data == nil) {
                 self.reloadTimelineByMenuClick()
@@ -285,7 +288,7 @@ extension UserTimelineViewController {
         notifDetail.user_ids = []
         
         let parameters = [
-            "sercret"          : "jo8nefamehisd",
+            "sercret"          : globalvar.secretKey,
             "action"           : "api",
             "ac"               : "update_freetime_status",
             "d"                : "0",
@@ -397,7 +400,7 @@ extension UserTimelineViewController {
     
     func freeTimeStatusOff(){
         let parameters = [
-            "sercret"          : "jo8nefamehisd",
+            "sercret"          : globalvar.secretKey,
             "action"           : "api",
             "ac"               : "freetime_off",
             "d"                : "0",

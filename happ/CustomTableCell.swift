@@ -19,12 +19,10 @@ class NoImage: UITableViewCell {
         
         textLabel?.frame = CGRectMake(70, 22, textLabel!.frame.width, textLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(14)
-        
         detailTextLabel?.frame = CGRectMake(10, 55, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
-        detailTextLabel?.numberOfLines = 0
-        detailTextLabel?.lineBreakMode = .ByWordWrapping
-        detailTextLabel?.sizeToFit()
+        detailTextLabel?.numberOfLines = 7
+        detailTextLabel?.lineBreakMode = .ByTruncatingTail
     }
     
     let btnProfile: TimelineProfileImage = {
@@ -141,9 +139,8 @@ class SingleImage: UITableViewCell {
         
         detailTextLabel?.frame = CGRectMake(10, 70, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
-        detailTextLabel?.numberOfLines = 0
-        detailTextLabel?.lineBreakMode = .ByWordWrapping
-        detailTextLabel?.sizeToFit()
+        detailTextLabel?.numberOfLines = 7
+        detailTextLabel?.lineBreakMode = .ByTruncatingTail
     }
     
     let btnProfile: TimelineProfileImage = {
@@ -295,9 +292,8 @@ class DoubleImage: UITableViewCell {
         
         detailTextLabel?.frame = CGRectMake(10, 70, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
-        detailTextLabel?.numberOfLines = 0
-        detailTextLabel?.lineBreakMode = .ByWordWrapping
-        detailTextLabel?.sizeToFit()
+        detailTextLabel?.numberOfLines = 7
+        detailTextLabel?.lineBreakMode = .ByTruncatingTail
     }
     
     let btnProfile: TimelineProfileImage = {
@@ -479,9 +475,8 @@ class TripleImage: UITableViewCell {
         
         detailTextLabel?.frame = CGRectMake(10, 70, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
-        detailTextLabel?.numberOfLines = 0
-        detailTextLabel?.lineBreakMode = .ByWordWrapping
-        detailTextLabel?.sizeToFit()
+        detailTextLabel?.numberOfLines = 7
+        detailTextLabel?.lineBreakMode = .ByTruncatingTail
     }
     
     let btnProfile: TimelineProfileImage = {

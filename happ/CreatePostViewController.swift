@@ -40,7 +40,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     //get usertimeline parameters...
     var getTimeline = [
-        "sercret"     : "jo8nefamehisd",
+        "sercret"     : globalvar.secretKey,
         "action"      : "api",
         "ac"          : "get_timeline",
         "d"           : "0",
@@ -172,7 +172,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         self.content.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
         self.content.topAnchor.constraintEqualToAnchor(self.scrollView.topAnchor).active = true
         self.content.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
-        self.content.heightAnchor.constraintEqualToAnchor(self.scrollView.heightAnchor).active = true
+        self.content.heightAnchor.constraintEqualToConstant(200).active = true
         self.content.tintColor = UIColor.blackColor()
         
         self.separator.translatesAutoresizingMaskIntoConstraints = false
@@ -327,17 +327,17 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         self.content.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
         self.content.topAnchor.constraintEqualToAnchor(self.scrollView.topAnchor).active = true
         self.content.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
-        if calcHeight.height > 80 {
-            let height = Int(calcHeight.height)
-            self.content.heightAnchor.constraintEqualToConstant(CGFloat(height) + 20).active = true
-        }else{
-            if self.imgList.count != 0 {
-                self.content.heightAnchor.constraintEqualToConstant(100).active = true
-                self.content.frame.size = CGSizeMake(self.scrollView.frame.width, 100)
-            }else{
-                self.content.heightAnchor.constraintEqualToAnchor(self.scrollView.heightAnchor).active = true
-            }
-        }
+//        if calcHeight.height > 80 {
+//            let height = Int(calcHeight.height)
+//            self.content.heightAnchor.constraintEqualToConstant(CGFloat(height) + 20).active = true
+//        }else{
+//            if self.imgList.count != 0 {
+//                self.content.heightAnchor.constraintEqualToConstant(100).active = true
+//                self.content.frame.size = CGSizeMake(self.scrollView.frame.width, 100)
+//            }else{
+//                self.content.heightAnchor.constraintEqualToAnchor(self.scrollView.heightAnchor).active = true
+//            }
+//        }
         
         var svHeight: CGFloat = 200
         

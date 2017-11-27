@@ -13,7 +13,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
     func getTimelineUser() {
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -401,7 +401,13 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         var height: CGFloat = 90
         let textsize = calcTextHeight(self.userBody[indexPath.row], frame: tableView.frame.size, fontsize: 16)
-        height += textsize.height
+        
+        if textsize.height <= 133.65625 {
+            height += textsize.height
+        }else{
+            height += 133.65625
+        }
+        
         if self.img1[indexPath.row] != "null" {
             height += 320
         }
@@ -410,7 +416,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func calcTextHeight(text: String, frame: CGSize, fontsize: CGFloat) -> CGRect{
-        let size = CGSize(width: frame.width - 50, height: 1000)
+        let size = CGSize(width: frame.width - 30, height: 1000)
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }

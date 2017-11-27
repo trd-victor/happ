@@ -88,7 +88,7 @@ class SelectSkillViewController: UIViewController {
         request.HTTPMethod = "POST"
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_skill",
             "d"           : "0",

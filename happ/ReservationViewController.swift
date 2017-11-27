@@ -369,7 +369,7 @@ class ReservationViewController: UIViewController, UITableViewDelegate, UITableV
         Reservation.reserved.removeAll()
 
         let parameters = [
-            "sercret"          : "jo8nefamehisd",
+            "sercret"          : globalvar.secretKey,
             "action"           : "api",
             "ac"               : "get_resavation",
             "d"                : "0",

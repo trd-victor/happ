@@ -18,7 +18,7 @@ extension CongestionViewController {
         
         //set parameter for
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "\(globalvar.GET_CONGESTION_ACTION)",
             "d"           : "0",
@@ -78,7 +78,7 @@ extension CongestionViewController {
         self.userIds.removeAll()
         //set parameter for
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_freetime_status_for_me",
             "d"           : "0",

@@ -210,7 +210,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             }
             
             let param = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "\(globalvar.LOGIN_ACTION)",
                 "d"           : "0",
@@ -301,7 +301,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
     
     func saveFirebase(email: String, pass: String){
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "\(globalvar.LOGIN_ACTION)",
             "d"           : "0",

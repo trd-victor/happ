@@ -259,7 +259,7 @@ class TimelineDetail: UIViewController {
         }
         let baseUrl: NSURL = globalvar.API_URL
         let parameters = [
-                    "sercret"     : "jo8nefamehisd",
+                    "sercret"     : globalvar.secretKey,
                     "action"      : "api",
                     "ac"          : "get_timeline",
                     "d"           : "0",
@@ -582,7 +582,7 @@ class TimelineDetail: UIViewController {
     }
     
     private func calcTextHeight(text: String, frame: CGSize, fontsize: CGFloat) -> CGRect{
-        let size = CGSize(width: frame.width - 50, height: 1000)
+        let size = CGSize(width: frame.width - 30, height: 1000)
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }

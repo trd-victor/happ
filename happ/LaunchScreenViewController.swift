@@ -246,7 +246,7 @@ class LaunchScreenViewController: UIViewController {
         let config = SYSTEM_CONFIG()
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "user_search",
             "d"           : "0",
@@ -291,7 +291,7 @@ class LaunchScreenViewController: UIViewController {
         let config = SYSTEM_CONFIG()
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "user_search",
             "d"           : "0",

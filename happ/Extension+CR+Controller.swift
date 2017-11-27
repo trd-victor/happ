@@ -20,7 +20,7 @@ extension CreateReservation {
         officeNameJpData.removeAll()
         
         let parameters = [
-            "sercret"          : "jo8nefamehisd",
+            "sercret"          : globalvar.secretKey,
             "action"           : "api",
             "ac"               : "get_office",
             "d"                : "0",
@@ -99,7 +99,7 @@ extension CreateReservation {
             self.roomIdData.append("0")
         }else{
             let parameters = [
-                "sercret"          : "jo8nefamehisd",
+                "sercret"          : globalvar.secretKey,
                 "action"           : "api",
                 "ac"               : "get_meeting_room",
                 "d"                : "0",
@@ -181,7 +181,7 @@ extension CreateReservation {
         }
         
         let parameters = [
-            "sercret"                 : "jo8nefamehisd",
+            "sercret"                 : globalvar.secretKey,
             "action"                  : "api",
             "ac"                      : "update_resavation",
             "d"                       : "0",
@@ -259,7 +259,7 @@ extension CreateReservation {
         dataTime.removeAll()
         
         let parameters = [
-            "sercret"          : "jo8nefamehisd",
+            "sercret"          : globalvar.secretKey,
             "action"           : "api",
             "ac"               : "get_resavation",
             "d"                : "0",

@@ -142,7 +142,7 @@ class CreateTimelineSkillSelection: UIViewController {
         request.HTTPMethod = "POST"
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_skill",
             "d"           : "0",
@@ -368,7 +368,7 @@ class CreateTimelineSkillSelection: UIViewController {
             }
             
             let postTimeline = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "update_timeline",
                 "d"           : "0",

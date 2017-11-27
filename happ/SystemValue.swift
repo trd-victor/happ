@@ -15,7 +15,7 @@ struct systemvalue {
 class getSystemValue {
     
     let parameters = [
-        "sercret"   : "jo8nefamehisd",
+        "sercret"   : globalvar.secretKey,
         "action"    : "api",
         "ac"        : "\(globalvar.GET_SYSTEM_VALUE)",
         "d"         : "0",
@@ -132,7 +132,7 @@ class getSystemValue {
         request.HTTPMethod = "POST"
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_skill",
             "d"           : "0",
@@ -203,7 +203,7 @@ class getSystemValue {
         request.HTTPMethod = "POST"
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_skill",
             "d"           : "0",

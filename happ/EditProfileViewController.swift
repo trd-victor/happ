@@ -114,7 +114,7 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         
         self.selectSkillLbl.text = config.translate("select_skill")
         self.selectedSkillsLbl.text = config.translate("selected_skill")
-        self.userDescription.addPlaceholder(config.translate("holder_profile_statement"))
+        self.userDescription.textViewDidChange(self.userDescription)
         if reg_user.didUpdate {
             if reg_user.selectedSkills.count == 0{
                 self.listOfSkills.text = config.translate("empty_skills")
@@ -170,6 +170,7 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
             checkNewImage = true
             
         }
+        
         dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -318,6 +319,8 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         labelName.text = config.translate("text_name")
         userNamefield.placeholder = config.translate("holder_15_more_char")
         labelSkills.text = config.translate("subtitle_skills")
+        
+        self.userDescription.addPlaceholder(config.translate("holder_profile_statement"))
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -388,7 +391,7 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         //        }
         //        set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_userinfo",
             "d"           : "0",
@@ -558,7 +561,7 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
             
             //set parameters...
             let param = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "user_update",
                 "d"           : "0",
@@ -743,7 +746,7 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         
         //        set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_userinfo",
             "d"           : "0",

@@ -212,7 +212,7 @@ class CurrentSettingsViewController: UIViewController {
         
         //set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "user_update",
             "d"           : "0",
@@ -271,7 +271,7 @@ class CurrentSettingsViewController: UIViewController {
         
         //set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_userinfo",
             "d"           : "0",

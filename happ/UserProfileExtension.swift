@@ -21,7 +21,7 @@ extension UserProfileController {
         }
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "add_block",
             "d"           : "0",
@@ -87,7 +87,7 @@ extension UserProfileController {
         }
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "unlock_block",
             "d"           : "0",
@@ -212,7 +212,7 @@ extension UserProfileController {
     func getBlockIds(){
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_block_list",
             "d"           : "0",
@@ -265,7 +265,7 @@ extension UserProfileController {
         let config = SYSTEM_CONFIG()
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_userinfo",
             "d"           : "0",
@@ -286,74 +286,78 @@ extension UserProfileController {
             else{
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                        if json["result"] != nil {
-                            dispatch_async(dispatch_get_main_queue()){
-//                                let user_id = json["result"]!["user_id"]!
-                                
-                                if let txtStr = json["result"]!["name"] as? String {
-                                    self.userName.text = txtStr.stringByDecodingHTMLEntities
-                                }
-                                
-                                if let txtStr = json["result"]!["mess"] as? String {
-                                    self.msg.text = txtStr.stringByDecodingHTMLEntities
-                                    self.msgContraint.constant = self.estimateFrameForText(self.msg.text!).height + 10
-                                    self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
-                                }else{
-                                    self.msgContraint.constant = 0
-                                    self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
-                                }
-                                
-                                self.h_id.text = json["result"]!["h_id"] as? String
-                               
-                                if let skill = json["result"]!["skills"] as? String {
-                                    if skill != "" && skill != "null" {
-                                        let all_skills = skill.characters.split(",")
-                                        var skillstr = ""
-                                        var count = 0
-                                        if all_skills.count == 0 {
-                                            self.skills.text = skill
-                                        }else{
-                                            for (value) in all_skills {
-                                                count++
-                                                skillstr += config.getSkillByID(String(value))
-                                                if count == all_skills.count {
-                                                    self.skills.text = skillstr
-                                                    self.skillContraint.constant = self.estimateFrameForText(skillstr).height + 10
-                                                    self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
-                                                }else{
-                                                    skillstr += ", "
+                        if let _ = json["success"] as? Bool {
+                            if json["result"] != nil {
+                                dispatch_async(dispatch_get_main_queue()){
+                                    //                                let user_id = json["result"]!["user_id"]!
+                                    
+                                    if let txtStr = json["result"]!["name"] as? String {
+                                        self.userName.text = txtStr.stringByDecodingHTMLEntities
+                                    }
+                                    
+                                    if let txtStr = json["result"]!["mess"] as? String {
+                                        self.msg.text = txtStr.stringByDecodingHTMLEntities
+                                        self.msgContraint.constant = self.estimateFrameForText(self.msg.text!).height + 10
+                                        self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
+                                    }else{
+                                        self.msgContraint.constant = 0
+                                        self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
+                                    }
+                                    
+                                    self.h_id.text = json["result"]!["h_id"] as? String
+                                    
+                                    if let skill = json["result"]!["skills"] as? String {
+                                        if skill != "" && skill != "null" {
+                                            let all_skills = skill.characters.split(",")
+                                            var skillstr = ""
+                                            var count = 0
+                                            if all_skills.count == 0 {
+                                                self.skills.text = skill
+                                            }else{
+                                                for (value) in all_skills {
+                                                    count++
+                                                    skillstr += config.getSkillByID(String(value))
+                                                    if count == all_skills.count {
+                                                        self.skills.text = skillstr
+                                                        self.skillContraint.constant = self.estimateFrameForText(skillstr).height + 10
+                                                        self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
+                                                    }else{
+                                                        skillstr += ", "
+                                                    }
                                                 }
                                             }
+                                        }else{
+                                            self.skills.text = ""
+                                            self.skillContraint.constant = 0
+                                            self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
                                         }
                                     }else{
                                         self.skills.text = ""
                                         self.skillContraint.constant = 0
                                         self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
                                     }
-                                }else{
-                                    self.skills.text = ""
-                                    self.skillContraint.constant = 0
-                                    self.profileViewContraint.constant = self.msgContraint.constant + self.skillContraint.constant + 240
+                                    
+                                    if let imgUrl = json["result"]!["icon"] as? String {
+                                        self.ProfileImage.profileForCache(imgUrl)
+                                    }
+                                    self.getTimelineUser()
+                                    
+                                    if let fid = json["result"]!["firebase_id"] as? String {
+                                        chatVar.chatmateId = fid
+                                        chatVar.Indicator = "Search"
+                                        chatVar.name = self.userName.text!
+                                    }
+                                    
+                                    if UserProfile.id == globalUserId.userID {
+                                        self.profileViewContraint.constant = self.profileViewContraint.constant - 67
+                                    }
+                                    
+                                    self.tblProfile.contentInset = UIEdgeInsetsMake(self.profileViewContraint.constant, 0, 0, 0)
+                                    self.topConstraint.constant = self.profileViewContraint.constant * -1
                                 }
-                                
-                                if let imgUrl = json["result"]!["icon"] as? String {
-                                    self.ProfileImage.profileForCache(imgUrl)
-                                }
-                                self.getTimelineUser()
-                                
-                                if let fid = json["result"]!["firebase_id"] as? String {
-                                    chatVar.chatmateId = fid
-                                    chatVar.Indicator = "Search"
-                                    chatVar.name = self.userName.text!
-                                }
-                                
-                                if UserProfile.id == globalUserId.userID {
-                                    self.profileViewContraint.constant = self.profileViewContraint.constant - 67
-                                }
-                                
-                                self.tblProfile.contentInset = UIEdgeInsetsMake(self.profileViewContraint.constant, 0, 0, 0)
-                                self.topConstraint.constant = self.profileViewContraint.constant * -1
                             }
+                        }else{
+                            self.displayMessage(config.translate("not_allowed_to_view"));
                         }
                     }else{
                         self.loadUserinfo(sender)
@@ -380,7 +384,7 @@ extension UserProfileController {
         var tmppostID = [Int]()
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -495,7 +499,7 @@ extension UserProfileController {
         self.page += 1
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -612,7 +616,7 @@ extension UserProfileController {
         request1.HTTPMethod = "POST"
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "delete_timeline",
             "d"           : "0",

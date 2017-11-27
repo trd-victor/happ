@@ -320,7 +320,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         request1.HTTPMethod = "POST"
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "delete_timeline",
             "d"           : "0",
@@ -379,7 +379,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func getFreeTimeStatus(){
         let parameters = [
-            "sercret"          : "jo8nefamehisd",
+            "sercret"          : globalvar.secretKey,
             "action"           : "api",
             "ac"               : "get_freetime_status_for_me",
             "d"                : "0",
@@ -456,7 +456,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.page += 1
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -601,7 +601,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func getTimelineUser() {
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -975,18 +975,32 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func tapImage(sender: UITapGestureRecognizer){
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         viewDetail(sender)
     }
     
     func tapBody(sender: UITapGestureRecognizer){
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         viewDetail(sender)
     }
     
     func tapDate(sender: UITapGestureRecognizer){
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         viewDetail(sender)
     }
     
     func tapCell(sender: UITapGestureRecognizer){
+        
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
         viewDetail(sender)
     }
     
@@ -1005,6 +1019,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 UserDetails.img2 = self.img2[indexPath.row]
                 UserDetails.img3 = self.img3[indexPath.row]
                 UserDetails.postID = ""
+                
+                if self.loadingScreen != nil {
+                    UIViewController.removeSpinner(self.loadingScreen)
+                }
                 
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                 let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
@@ -1025,11 +1043,17 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         var height: CGFloat = 90
+        
         if self.userBody.indices.contains(indexPath.row) {
             let textsize = calcTextHeight(self.userBody[indexPath.row], frame: tableView.frame.size, fontsize: 16)
-            height += textsize.height
+            
+            if textsize.height <= 133.65625 {
+                height += textsize.height
+            }else{
+                height += 133.65625
+            }
         }
-        if self.img1.count != 0 {
+        if self.img1.count > 0 {
             if let image = self.img1[indexPath.row] as? String {
                 if image != "null" {
                     height += 320
@@ -1051,7 +1075,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     private func calcTextHeight(text: String, frame: CGSize, fontsize: CGFloat) -> CGRect{
-        let size = CGSize(width: frame.width - 50, height: 1000)
+        let size = CGSize(width: frame.width - 30, height: 1000)
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }
@@ -1109,9 +1133,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func blockUser(index: Int) {
         
-        if self.loadingScreen == nil {
-            self.loadingScreen = UIViewController.displaySpinner(self.view)
-        }
+      
         
         let config = SYSTEM_CONFIG()
         let lang = config.getSYS_VAL("AppLanguage") as! String
@@ -1122,61 +1144,66 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             param_lang = "jp"
         }
         
-        let param = [
-            "sercret"     : "jo8nefamehisd",
-            "action"      : "api",
-            "ac"          : "add_block",
-            "d"           : "0",
-            "lang"        : "\(param_lang)",
-            "user_id"     : "\(globalUserId.userID)",
-            "block_user_id" : "\(fromID[index])"
-        ]
-        
-        let httpRequest = HttpDataRequest(postData: param)
-        let request = httpRequest.requestGet()
-        
-        
-        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-            data, response, error  in
+        if globalUserId.userID != fromID[index] {
+            if self.loadingScreen == nil {
+                self.loadingScreen = UIViewController.displaySpinner(self.view)
+            }
             
-            if error != nil || data == nil {
-                self.blockUser(index)
-            }else{
-                do {
-                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
-                        if let data = json["result"] as? NSDictionary {
-                            if let mess = data["mess"] as? String {
-                                dispatch_async(dispatch_get_main_queue()){
-                                    self.getChatmateID(self.fromID[index]){ (key: String) in
-                                        self.getChatRoomID(key){
-                                            (result: String) in
-                                            
-                                            self.updateBlockFirebase(result){
-                                                (complete: Bool) in
+            let param = [
+                "sercret"     : globalvar.secretKey,
+                "action"      : "api",
+                "ac"          : "add_block",
+                "d"           : "0",
+                "lang"        : "\(param_lang)",
+                "user_id"     : "\(globalUserId.userID)",
+                "block_user_id" : "\(fromID[index])"
+            ]
+            
+            let httpRequest = HttpDataRequest(postData: param)
+            let request = httpRequest.requestGet()
+            
+            let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+                data, response, error  in
+                
+                if error != nil || data == nil {
+                    self.blockUser(index)
+                }else{
+                    do {
+                        if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
+                            if let data = json["result"] as? NSDictionary {
+                                if let mess = data["mess"] as? String {
+                                    dispatch_async(dispatch_get_main_queue()){
+                                        self.getChatmateID(self.fromID[index]){ (key: String) in
+                                            self.getChatRoomID(key){
+                                                (result: String) in
                                                 
-                                                if complete {
-                                                    if self.loadingScreen != nil {
-                                                        UIViewController.removeSpinner(self.loadingScreen)
-                                                        self.loadingScreen = nil
+                                                self.updateBlockFirebase(result){
+                                                    (complete: Bool) in
+                                                    
+                                                    if complete {
+                                                        if self.loadingScreen != nil {
+                                                            UIViewController.removeSpinner(self.loadingScreen)
+                                                            self.loadingScreen = nil
+                                                        }
+                                                        self.displayMyAlertMessage(String(mess))
+                                                        self.reloadTableData()
                                                     }
-                                                    self.displayMyAlertMessage(String(mess))
-                                                    self.reloadTableData()
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
+                        }else{
+                            self.blockUser(index)
                         }
-                    }else{
-                        self.blockUser(index)
+                    } catch {
+                        print(error)
                     }
-                } catch {
-                    print(error)
                 }
             }
+            task.resume()
         }
-        task.resume()
     }
     
     func updateBlockFirebase(result: String, completion: (complete: Bool) -> Void){
@@ -1287,7 +1314,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }
         
         let param = [
-            "sercret"           : "jo8nefamehisd",
+            "sercret"           : globalvar.secretKey,
             "action"            : "api",
             "ac"                : "add_report",
             "d"                 : "0",
