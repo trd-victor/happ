@@ -201,49 +201,44 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
             if let result = snapshot.value as? NSDictionary {
                 globalvar.USER_IMG = result
                 
-                dispatch_async(dispatch_get_main_queue()){
-                    let firID = FIRAuth.auth()?.currentUser?.uid
-                    if let data = globalvar.USER_IMG.valueForKey(firID!) {
-                        if let d = data as? NSDictionary {
-                            if let _  = d["id"] as? Int {
-                            }else{
-                                let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
-                                myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-                                    
-                                    do {
-                                        self.removeFIRObserver(firID!)
-                                        try FIRAuth.auth()?.signOut()
-                                        
-                                        config.removeSYS_VAL("userID")
-                                        globalUserId.userID = ""
-                                    } catch (let error) {
-                                        print((error as NSError).code)
-                                    }
-                                    self.dismissViewControllerAnimated(true, completion: nil)
-                                }))
-                                self.presentViewController(myAlert, animated: true, completion: nil)
-                            }
+                if let firID = FIRAuth.auth()?.currentUser?.uid {
+                    if let data = globalvar.USER_IMG.valueForKey(firID) {
+                        if let _ = data["id"] as? Int {
+                            
+                        }else{
+                            self.logoutMessage()
                         }
                     }else{
-                        let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
-                        myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
-                            
-                            do {
-                                self.removeFIRObserver(firID!)
-                                try FIRAuth.auth()?.signOut()
-                                
-                                config.removeSYS_VAL("userID")
-                                globalUserId.userID = ""
-                            } catch (let error) {
-                                print((error as NSError).code)
-                            }
-                            self.dismissViewControllerAnimated(true, completion: nil)
-                        }))
-                        self.presentViewController(myAlert, animated: true, completion: nil)
+                        self.logoutMessage()
                     }
+                }else{
+                    self.logoutMessage()
                 }
             }
         })
+    }
+    
+    func logoutMessage(){
+        let config = SYSTEM_CONFIG()
+        let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            
+            do {
+                
+                if let fid = FIRAuth.auth()?.currentUser?.uid {
+                    self.removeFIRObserver(fid)
+                }
+                
+                try FIRAuth.auth()?.signOut()
+                
+                config.removeSYS_VAL("userID")
+                globalUserId.userID = ""
+            } catch (let error) {
+                print((error as NSError).code)
+            }
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
     func removeFIRObserver(firID: String){

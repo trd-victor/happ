@@ -270,7 +270,14 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                                 
                                 var message: String!
                                 
-                                if error != nil || data == nil{
+                                if error != nil {
+                                    
+                                    if let code = error?.code {
+                                        if code == -1005 {
+                                            self.Save(sender)
+                                        }
+                                    }
+                                } else if  data == nil{
                                     self.Save(sender)
                                 }else {
                                     do {

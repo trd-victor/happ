@@ -51,6 +51,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //load starting config and layout
         autoLayout()
         loadConfig()
+        
+        currentKey = nil
         getNotification()
         
         self.tblView.delegate = self

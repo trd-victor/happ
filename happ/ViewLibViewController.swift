@@ -248,8 +248,12 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     func backToMenu(sender: UIBarButtonItem) -> () {
         
         NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
-        FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
-        chatVar.RoomID = ""
+      
+        if chatVar.RoomID != "" {
+            FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+            chatVar.RoomID = ""
+        }
+        
         self.presentBackDetail(MessageTableViewController())
     }
     

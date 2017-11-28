@@ -63,35 +63,59 @@ exports.timelinePushNotif = functions.https.onRequest((req, res) => {
         console.log("Failed: ", req.body.receiver ," Name: ", req.body.name)
         res.status(400).send('No message defined!');
     } else {
-        var receiver = JSON.parse(req.body.receiver);
+        var receiver = req.body.receiver;
         var name = req.body.name;
         var count = 0;
         if(receiver){
-            send_push_timeline(receiver, name).then(function(){
-                res.status(200).end(); 
-            })
+            if (receiver.length > 0) {
+                var data_server = {
+                    "receiver": receiver, 
+                    "name": name
+                }
+
+                admin.database().ref('notifications/push-notification/timeline').set(data_server).then(function(){
+                     res.status(200).end(); 
+                })
+
+            }else{
+                res.status(200).end();    
+            }   
         }else{
             res.status(200).end();
+            console.log('No receiver')
         }
     } 
 });
 
-function send_push_timeline(receiver, name){
-    var count = 0;
-    return new Promise(function(res, rej){
-        console.log(receiver.length)
-        if(receiver.length > 0) {
-            receiver.forEach(function(data){
-                var fid = data["fid"];
-                if(fid != ""){
+exports.timelinePushSend = functions.database.ref('/notifications/push-notification/timeline')
+    .onWrite(event => {
+
+    var valueObject = event.data.val();
+
+    if(valueObject.receiver === undefined || valueObject.receiver == ""){
+        return new Promise((res, rej)=> {
+           return res(400);
+        })
+    }else{
+        var receiver = JSON.parse(valueObject.receiver);
+        var name = valueObject.name; 
+
+        return new Promise((res, rej)=>{
+            if(receiver.length > 0){
+                var count = 0;
+
+                receiver.forEach(function(data){
+                    var fid = data.fid;
+                    var message = data.message;
+
                     const payload = {
                         data: {
                             "title": "H",
-                            "body": name + " " + data["message"],
+                            "body": name + " " + message,
                             "author_id": fid
                         },
                         notification: {
-                            body: name + " " + data["message"],
+                            body: name + " " + message,
                             sound: "default"
                         }
                     };
@@ -102,42 +126,54 @@ function send_push_timeline(receiver, name){
                         priority: "high"
                     }
 
-                    // addBadgeTimeline(fid);
-                    send_to_device(fid, payload, options).then(function(){
-                        count++;
-                        if(count == receiver.length){
-                            res(200)
+                    admin.database().ref('registration-token/' + fid + '/token').once('value', function(snap){
+                        if (snap.exists()){
+                            var token = snap.val();
+                            count++;
+                           
+                            if (count == receiver.length){
+                                if(token != "" && token != null){
+                                    admin.messaging().sendToDevice(token, payload, options).then(function (response) {
+                                        console.log("result: ", response);
+                                        res(200);
+                                    }).catch(function (error) {
+                                        res(200);
+                                        console.log("error", error);
+                                    }); 
+                                }else{
+                                    res(200);
+                                }
+                            }else{
+                                if(token != "" && token != null){
+                                    admin.messaging().sendToDevice(token, payload, options).then(function (response) {
+                                        console.log("result: ", response);
+                                    }).catch(function (error) {
+                                        console.log("error:", error);
+                                    });
+                                }
+                            }
+                        }else{
+                             count++;
+                            if (count == receiver.length){
+                                res(200);
+                            }
                         }
+                    },function (errorObject) {
+                        count++;
+                        if (count == receiver.length){
+                            res(200);
+                        }
+                        console.log("Error getting data: " + errorObject.code);
                     })
-                }else{
-                    count++;
-                    if(count == receiver.length){
-                        res(200)
-                    }
-                }
-            })
-        }else{
-            res(200)
-        }
-    })
-}
 
-function send_to_device(fid, payload, options){
-    return new Promise(function(res, rej){
-        admin.database().ref('registration-token/' + fid + '/token').once('value', function(snap){
-            if(snap.exists()){
-                var token = snap.val();
-                if(token != "" && token != null){
-                    admin.messaging().sendToDevice(token, payload, options);
-                }
+                })
+            }else{
+                res(200);
             }
-            res(200)
-        },function (errorObject) {
-            res(200)
-            console.log("Error getting data: " + errorObject.code);
         })
-    })
-}
+    }
+
+})
 
 exports.freeTimePushNotif = functions.database.ref('/notifications/push-notification/free-time')
     .onWrite(event => {
@@ -186,89 +222,63 @@ exports.freeTimePushNotif = functions.database.ref('/notifications/push-notifica
                             }
 
                             admin.database().ref('registration-token/' + id + '/token').once('value', function(snap){
+                                if (snap.exists()){
                                     var token = snap.val();
                                     count++;
                                    
                                     if (count == firIDs.length){
                                         if(token != "" && token != null){
-                                            admin.messaging().sendToDevice(token, payload, options);
+                                            admin.messaging().sendToDevice(token, payload, options).then(function (response) {
+                                                console.log("result: ", response);
+                                                res(200);
+                                            }).catch(function (error) {
+                                                console.log("error:", error);
+                                                res(200);
+                                            });
+                                        }else{
+                                           res(200);
                                         }
-                                        return res(200);
                                     }else{
                                         if(token != "" && token != null){
-                                            admin.messaging().sendToDevice(token, payload, options);
+                                            admin.messaging().sendToDevice(token, payload, options).then(function (response) {
+                                                console.log("result: ", response);
+                                            }).catch(function (error) {
+                                                console.log("error:", error);
+                                            });
                                         }
                                     }
+                                }else{
+                                    count++;
+                                    if (count == firIDs.length){
+                                        res(200);
+                                    }
+                                }
                             },function (errorObject) {
                                 count++;
                                 if (count == firIDs.length){
-                                    return res(200);
+                                    res(200);
                                 }
                                 console.log("Error getting data: " + errorObject.code);
                             })
                         }else{
                             count++;
                             if (count == firIDs.length){
-                                return res(200);
+                                res(200);
                             }
                         }
                     })
                 })
             })
         }else{
-            return new Promise((res, rej)=>{
-                admin.database().ref().child("users").child(firIDs).once('value').then(function(snapshot){ 
-                    if(snapshot.exists()){
-                        var value = {}
-                        value = snapshot.val();
-                        var body = "";
-                        if(value["language"] === undefined || value["language"] == ""){
-                            value["language"] = "jp";
-                        }
-
-                        if(value["language"] == "en"){
-                            body = valueObject.messageEN;
-                        }else if(value["language"] == "jp"){
-                            body = valueObject.messageJP;
-                        }
-
-                        var payload = {
-                            data: {
-                                "title": "H",
-                                "body": valueObject.name + " " + body,
-                                "author_id": valueObject.userId
-                            },
-                            notification: {
-                                body: valueObject.name + " " + body,
-                                sound: "default"
-                            }
-                        };
-
-                        var options = {
-                            content_available: true,
-                            collapse_key: valueObject.name,
-                            priority: "high"
-                        }
-
-                        admin.database().ref('registration-token/' + firIDs + '/token').once('value', function(snap){
-                            var token = snap.val();
-                               
-                            if(token != "" && token != null){
-                                admin.messaging().sendToDevice(token, payload, options);
-                            }  
-
-                            return res(200);
-                        },function (errorObject) {
-                            console.log("Error getting data: " + errorObject.code);
-                        })
-                    }
-                });
+            return new Promise(function(res,rej){
+                console.log("No FIR IDS")
+                res(400);
             })
         }
     }else{
         return new Promise(function(res,rej){
             console.log("No FIR IDS")
-            return res(400);
+            res(400);
         })
     }
 });
@@ -303,6 +313,8 @@ exports.reservation = functions.https.onRequest((req, res) => {
         }
 
         if (req.body.firstSend == true || req.body.firstSend == "true"){
+
+            writeReservationDetails(uid);
             admin.database().ref('user-badge').child("reservation").child(uid).once('value', function(snap){
                 var count = snap.val();
 
@@ -322,8 +334,6 @@ exports.reservation = functions.https.onRequest((req, res) => {
             const userToken = snapshot.val();
             if (userToken != null && userToken == token) {
                  // Save reservation details to db
-                 writeReservationDetails(uid);
-
                  return admin.messaging().sendToDevice(token, payload, options);
             } else {
                 console.log("Registration token does not exist");
@@ -353,15 +363,17 @@ exports.news = functions.https.onRequest((req, res) => {
 
         all_users.forEach(function(fid) {
             admin.database().ref().child("users").child(fid).once("value").then(function(snap){
-                let value = snap.val();
-                if (value["language"] != null){
-                    if (value["language"] == "en"){
-                        sendMessage(fid, messageEN, adminFID, admin_name);
-                    }else{
+                if(snap.exists()){
+                    let value = snap.val();
+                    if (value && value["language"] && value["language"] != null){
+                        if (value["language"] == "en"){
+                            sendMessage(fid, messageEN, adminFID, admin_name);
+                        }else{
+                            sendMessage(fid, messageJP, adminFID, admin_name);
+                        }
+                    }else {
                         sendMessage(fid, messageJP, adminFID, admin_name);
                     }
-                }else {
-                    sendMessage(fid, messageJP, adminFID, admin_name);
                 }  
             })
         })
@@ -381,14 +393,14 @@ function messageAllUser(req){
                 let fid = childSnapshot.key;
                 let value = childSnapshot.val();
 
-                if (value["language"] != null){
+                if (value && value["language"] && value["language"] != null){
                     if (value["language"] == "en"){
                         sendMessage(fid, messageEN, adminFID, admin_name);
                     }else{
                         sendMessage(fid, messageJP, adminFID, admin_name);
                     }
                 }else {
-                    sendMessage(fid, messageEN, adminFID, admin_name);
+                    sendMessage(fid, messageJP, adminFID, admin_name);
                 }                
             })
         }

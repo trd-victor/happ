@@ -283,15 +283,19 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
-                globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
                 
-                config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
-                
-                if let token = FIRInstanceID.instanceID().token(){
-                    let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
-                    registTokendb.child("token").setValue(token)
+                if let currentUser = FIRAuth.auth()?.currentUser {
+                    globalUserId.FirID = currentUser.uid
+                    config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+                    
+                    if let token = FIRInstanceID.instanceID().token(){
+                        let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
+                        registTokendb.child("token").setValue(token)
+                    }
+                    self.saveFirebase(email, pass: pass)
+                }else {
+                    self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                 }
-                self.saveFirebase(email, pass: pass)
             } else {
                 self.displayMyAlertMessage(config.translate("mess_fail_auth"))
             }

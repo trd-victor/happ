@@ -655,6 +655,39 @@ class TimelineImage: UIImageView {
             }
         }).resume()
     }
+    
+    func loadProfileImageUsingString(urlString: String, completion: (result: Bool) -> Void){
+        self.imageUrlString = urlString
+        let url = NSURL(string: urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+        
+        self.image = UIImage(named : "noPhoto")
+        
+        if let imgFromCache = globalvar.imgforProfileCache.objectForKey(urlString) as? UIImage{
+            self.image = imgFromCache
+            self.backgroundColor = UIColor.clearColor()
+            completion(result: true)
+            return
+        }
+        NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) in
+            if error != nil {
+                print(error?.localizedDescription)
+                completion(result: false)
+            }
+           
+            if let data = NSData(contentsOfURL: url!){
+                dispatch_async(dispatch_get_main_queue()){
+                    if self.imageUrlString! == urlString {
+                        self.image = UIImage(data: data)
+                    }
+                }
+                let tmpImg = UIImage(data: data)
+                globalvar.imgforProfileCache.setObject(tmpImg!, forKey: urlString)
+                completion(result: true)
+            }
+        }).resume()
+        
+    }
+    
 
 }
 

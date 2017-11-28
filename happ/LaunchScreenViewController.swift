@@ -160,25 +160,29 @@ class LaunchScreenViewController: UIViewController {
     func gotoMainBoard() {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         
-        if let firID = FIRAuth.auth()?.currentUser?.uid {
+        if let currentUser = FIRAuth.auth()?.currentUser {
             let config = SYSTEM_CONFIG()
             if let userid = config.getSYS_VAL("userID") as? String {
-                globalUserId.FirID = firID
-                globalUserId.userID = userid
-                config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
-                
-                if let token = FIRInstanceID.instanceID().token() {
-                    dispatch_async(dispatch_get_main_queue()){
-                        FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
+                if let fid = currentUser.uid as? String{
+                    globalUserId.FirID = fid
+                    globalUserId.userID = userid
+                    config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+                    if let token = FIRInstanceID.instanceID().token() {
+                        dispatch_async(dispatch_get_main_queue()){
+                            FIRDatabase.database().reference().child("registration-token").child(fid).child("token").setValue(token)
+                        }
                     }
+                    
+                    let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+                    self.presentViewController(userTimeLineController, animated:true, completion:nil)
+                }else{
+                    let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+                    self.presentViewController(mainViewController, animated:false, completion:nil)
                 }
-                
-                let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
-                self.presentViewController(userTimeLineController, animated:true, completion:nil)
             }else{
                 let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
                 self.presentViewController(mainViewController, animated:false, completion:nil)
-            }            
+            }
         }else {
             let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
             self.presentViewController(mainViewController, animated:false, completion:nil)

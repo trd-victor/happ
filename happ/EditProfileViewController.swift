@@ -797,6 +797,7 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
             (data: [FIRDataSnapshot]) in
             self.getMessageData(data, image: image, name: name, message: mess)
         })
+        self.getLastMessage(image, name: name)
     }
     
     
@@ -809,6 +810,46 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
                 completion(data: result)
             }
         })
+    }
+    
+    func getLastMessage(image: String, name: String){
+        let lbDB = FIRDatabase.database().reference().child("chat").child("last-message")
+        
+        
+        lbDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+            if snap.exists(){
+                if let result = snap.children.allObjects as? [FIRDataSnapshot] {
+                    
+                    for data in result {
+                        self.eachLastMessage(data.key, image: image, name: name)
+                    }
+                }
+            }
+        });
+    }
+    
+    func eachLastMessage(uid: String,image: String, name: String){
+        if let fid = FIRAuth.auth()?.currentUser?.uid {
+            let userLM = FIRDatabase.database().reference().child("chat").child("last-message").child(uid).queryOrderedByChild("chatmateId").queryEqualToValue(fid)
+            
+            userLM.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                if snap.exists(){
+                    if let result = snap.children.allObjects as? [FIRDataSnapshot] {
+                        for data in result {
+                            if let value = data.value as? NSDictionary {
+                                let key = data.key
+                                if let chatmateId = value["chatmateId"] as? String {
+                                    if chatmateId == fid {
+                                        FIRDatabase.database().reference().child("chat").child("last-message").child(uid).child(key).child("photoUrl").setValue(image)
+                                        FIRDatabase.database().reference().child("chat").child("last-message").child(uid).child(key).child("name").setValue(name)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
     
     func getMessageData(data: [FIRDataSnapshot], image: String, name: String, message: String){

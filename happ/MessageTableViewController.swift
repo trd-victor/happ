@@ -22,7 +22,7 @@ struct chatVar {
 
 class MessageCellDisp : UITableViewCell {
     
-    @IBOutlet var userImage: UIImageView!
+    @IBOutlet var userImage: TimelineImage!
     @IBOutlet var username: UILabel!
     @IBOutlet var userMessage: UILabel!
     @IBOutlet var userTime: UILabel!
@@ -110,7 +110,20 @@ class MessageTableViewController: UITableViewController {
                 for s in snap.children.allObjects as! [FIRDataSnapshot] {
                     if let data = s.value as? NSDictionary {
                         count++
-                        self.lastMessages.append(data)
+                        
+                        if let userID = data.valueForKey("chatmateId") as? String {
+                            if let _ = globalvar.USER_IMG.valueForKey(userID) {
+                                if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
+                                    data.setValue(photo, forKey: "photoUrl")
+                                }
+                                if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
+                                    data.setValue(photo, forKey: "name")
+                                    
+                                }
+                                self.lastMessages.append(data)
+                            }
+                        }
+                        
                         if count == Int(snap.childrenCount) {
                             dispatch_async(dispatch_get_main_queue()){
                                 self.lastMessages.sortInPlace({(message1, message2) -> Bool in
@@ -163,6 +176,7 @@ class MessageTableViewController: UITableViewController {
         cell.username.font = UIFont.boldSystemFontOfSize(17)
         cell.userMessage.font = UIFont.systemFontOfSize(15)
         
+        
         let radius = cell.userImage!.frame.width/2
         cell.userImage.contentMode = .ScaleAspectFill
         cell.userImage.layer.cornerRadius = radius
@@ -172,27 +186,21 @@ class MessageTableViewController: UITableViewController {
         let message = self.lastMessages[indexPath.row]
         let name = message["name"] as? String
         let lastMessage = message["lastMessage"] as? String
-        let imageUrl  = message["photoUrl"] as? String
+        
         let timestamp = message["timestamp"] as? NSNumber
         let readStatus = message["read"] as? Bool
         
-        if (globalvar.imgforProfileCache.objectForKey(imageUrl!) != nil) {
-            let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl!) as! UIImage
-            cell.userImage.image = imgCache
+        if let imageUrl  = message["photoUrl"] as? String {
+            if imageUrl == "null" || imageUrl == "" {
+                cell.userImage.image = UIImage(named : "noPhoto")
+            }else{
+                cell.userImage.image = UIImage(named : "noPhoto")
+                cell.userImage.loadProfileImageUsingString(imageUrl) {
+                    (result: Bool) in
+                }
+            }
         }else{
             cell.userImage.image = UIImage(named : "noPhoto")
-            let url = NSURL(string: imageUrl!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-            let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                if let data = NSData(contentsOfURL: url!){
-                    dispatch_async(dispatch_get_main_queue()){
-                        cell.userImage.image = UIImage(data: data)
-                    }
-                    let tmpImg = UIImage(data: data)
-                    globalvar.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl!)
-                }
-                
-            })
-            task.resume()
         }
         
         cell.userTime.text = dateFormatter(timestamp!)

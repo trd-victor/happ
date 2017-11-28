@@ -200,23 +200,32 @@ extension CreateReservation {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil || data == nil {
+            if error != nil{
+                if let code = error?.code {
+                    if code == -1005 {
+                         self.postReservation("null",sdate: sdate, edate: edate)
+                    }
+                }
+            }else if data == nil {
                 self.postReservation("null",sdate: sdate, edate: edate)
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json!["error"] == nil {
-                        dispatch_async(dispatch_get_main_queue()){
-                            let msg = self.config.translate("done_reservation")
-                            self.displayMyAlertMessage(msg,error: false)
-                        }
-                    }else{
-                        dispatch_async(dispatch_get_main_queue()){
-                            self.displayMyAlertMessage(String(json!["message"]!),error: true)
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        
+                        print(json)
+                        if json["error"] == nil {
+                            dispatch_async(dispatch_get_main_queue()){
+                                let msg = self.config.translate("done_reservation")
+                                self.displayMyAlertMessage(msg,error: false)
+                            }
+                        }else{
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.displayMyAlertMessage(String(json["message"]!),error: true)
+                            }
                         }
                     }
                 } catch {
+                    self.postReservation("null",sdate: sdate, edate: edate)
                     print(error)
                 }
             }
@@ -268,6 +277,7 @@ extension CreateReservation {
             "start"            : "\(CreateDetails.date) 00:00:00",
             "end"              : "\(CreateDetails.date) 23:59:59"
         ]
+        print(parameters)
         
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
@@ -277,7 +287,14 @@ extension CreateReservation {
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
             
-            if error != nil || data == nil {
+            if error != nil {
+                
+                if let code = error?.code {
+                    if code == -1005 {
+                        self.getReserved(roomId)
+                    }
+                }
+            }else if data == nil {
                 self.getReserved(roomId)
             }else{
                 do {
@@ -289,31 +306,93 @@ extension CreateReservation {
                             dispatch_async(dispatch_get_main_queue()){
                                 for data in fields {
                                     if let meeting_room = data.valueForKey("meeting_room_pid") as? NSDictionary {
-                                        if roomId == "4378" {
-                                                let start = String(data.valueForKey("start")!)
-                                                let dateArr = start.characters.split{$0 == " "}.map(String.init)
-                                                let timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
-                                                let end = String(data.valueForKey("end")!)
-                                                let dateArr2 = end.characters.split{$0 == " "}.map(String.init)
-                                                let timeArr2 = dateArr2[1].characters.split{$0 == ":"}.map(String.init)
+                                        
+                                        if roomId == "4378"{
+                                            let start = String(data.valueForKey("start")!)
+                                            let dateArr = start.characters.split{$0 == " "}.map(String.init)
+                                            let timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+                                            let end = String(data.valueForKey("end")!)
+                                            let dateArr2 = end.characters.split{$0 == " "}.map(String.init)
+                                            let timeArr2 = dateArr2[1].characters.split{$0 == ":"}.map(String.init)
                                             
-                                                if let id = meeting_room["ID"] as? Int {
-                                                    let strRoom = config.translate("label_room")
-                                                    if id == 82 {
-                                                        
-                                                        self.dataTime.append("\(strRoom) A \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])")
-                                                    }else if id == 84{
-                                                        self.dataTime.append("\(strRoom) B \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1]) ")
-                                                    }else{
-                                                        self.dataTime.append("\(strRoom) A+B \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1]) ")
-                                                    }
+                                            if let id = meeting_room["ID"] as? Int {
+                                                let strRoom = config.translate("label_room")
+                                                if id == 82 {
+                                                    
+                                                    self.dataTime.append("\(strRoom) A \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])")
+                                                }else if id == 84{
+                                                    self.dataTime.append("\(strRoom) B \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1]) ")
+                                                }else{
+                                                    self.dataTime.append("\(strRoom) A+B \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1]) ")
                                                 }
-//                                                if let title = meeting_room["post_name"] as? String {
-//                                                    self.dataTime.append("\(title) \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1]) ")
-//                                                }
-//                                                self.dataTime.append("\(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1]) ")
-                                                let userid = String(data.valueForKey("user_id")!)
-                                                self.dataUserId.append(userid)
+                                            }
+                                          
+                                            let userid = String(data.valueForKey("user_id")!)
+                                            self.dataUserId.append(userid)
+                                        }else if roomId == "82" {
+                                            if let id = meeting_room["ID"] as? Int {
+                                                if id == 82 {
+                                                    let start = String(data.valueForKey("start")!)
+                                                    let dateArr = start.characters.split{$0 == " "}.map(String.init)
+                                                    let timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+                                                    let end = String(data.valueForKey("end")!)
+                                                    let dateArr2 = end.characters.split{$0 == " "}.map(String.init)
+                                                    let timeArr2 = dateArr2[1].characters.split{$0 == ":"}.map(String.init)
+                                                    
+                                                    let strRoom = config.translate("label_room")
+                                                    
+                                                    self.dataTime.append("\(strRoom) A \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])")
+                                                    
+                                                    let userid = String(data.valueForKey("user_id")!)
+                                                    self.dataUserId.append(userid)
+                                                }else if id == 4378{
+                                                    let start = String(data.valueForKey("start")!)
+                                                    let dateArr = start.characters.split{$0 == " "}.map(String.init)
+                                                    let timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+                                                    let end = String(data.valueForKey("end")!)
+                                                    let dateArr2 = end.characters.split{$0 == " "}.map(String.init)
+                                                    let timeArr2 = dateArr2[1].characters.split{$0 == ":"}.map(String.init)
+                                                    
+                                                    let strRoom = config.translate("label_room")
+                                                    
+                                                     self.dataTime.append("\(strRoom) A+B \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1]) ")
+                                                    
+                                                    let userid = String(data.valueForKey("user_id")!)
+                                                    self.dataUserId.append(userid)
+                                                }
+                                            }
+                                        }else if roomId == "84" {
+                                            if let id = meeting_room["ID"] as? Int {
+                                                if id == 84 {
+                                                    let start = String(data.valueForKey("start")!)
+                                                    let dateArr = start.characters.split{$0 == " "}.map(String.init)
+                                                    let timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+                                                    let end = String(data.valueForKey("end")!)
+                                                    let dateArr2 = end.characters.split{$0 == " "}.map(String.init)
+                                                    let timeArr2 = dateArr2[1].characters.split{$0 == ":"}.map(String.init)
+                                                    
+                                                    let strRoom = config.translate("label_room")
+                                                    
+                                                    self.dataTime.append("\(strRoom) B \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1])")
+                                                    
+                                                    let userid = String(data.valueForKey("user_id")!)
+                                                    self.dataUserId.append(userid)
+                                                }else if id == 4378{
+                                                    let start = String(data.valueForKey("start")!)
+                                                    let dateArr = start.characters.split{$0 == " "}.map(String.init)
+                                                    let timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+                                                    let end = String(data.valueForKey("end")!)
+                                                    let dateArr2 = end.characters.split{$0 == " "}.map(String.init)
+                                                    let timeArr2 = dateArr2[1].characters.split{$0 == ":"}.map(String.init)
+                                                    
+                                                    let strRoom = config.translate("label_room")
+                                                    
+                                                    self.dataTime.append("\(strRoom) A+B \(timeArr[0]):\(timeArr[1])~\(timeArr2[0]):\(timeArr2[1]) ")
+                                                    
+                                                    let userid = String(data.valueForKey("user_id")!)
+                                                    self.dataUserId.append(userid)
+                                                }
+                                            }
                                         }else{
                                             if roomId == String(meeting_room["ID"]!) {
                                                 let start = String(data.valueForKey("start")!)

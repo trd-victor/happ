@@ -35,7 +35,14 @@ extension CongestionViewController {
             data, response, error  in
             
             
-            if error != nil || data == nil{
+            if error != nil {
+                
+                if let code = error?.code {
+                    if code == -1005 {
+                        self.getCongestion()
+                    }
+                }
+            } else if  data == nil{
                 self.getCongestion()
             }else{
                 do {
@@ -95,7 +102,13 @@ extension CongestionViewController {
             data, response, error  in
             
             
-            if error != nil || data == nil{
+            if error != nil{
+                if let code = error?.code {
+                    if code == -1005 {
+                        self.getCongestion()
+                    }
+                }
+            }else if data == nil{
                 self.getFreeStatus(percent)
             }else{
                 do {
