@@ -111,19 +111,7 @@ class MessageTableViewController: UITableViewController {
                     if let data = s.value as? NSDictionary {
                         count++
                         
-                        if let userID = data.valueForKey("chatmateId") as? String {
-                            if let _ = globalvar.USER_IMG.valueForKey(userID) {
-                                if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("photoUrl") as? String {
-                                    data.setValue(photo, forKey: "photoUrl")
-                                }
-                                if let photo = globalvar.USER_IMG.valueForKey(userID)?.valueForKey("name") as? String {
-                                    data.setValue(photo, forKey: "name")
-                                    
-                                }
-                                self.lastMessages.append(data)
-                            }
-                        }
-                        
+                        self.lastMessages.append(data)
                         if count == Int(snap.childrenCount) {
                             dispatch_async(dispatch_get_main_queue()){
                                 self.lastMessages.sortInPlace({(message1, message2) -> Bool in
@@ -181,7 +169,6 @@ class MessageTableViewController: UITableViewController {
         cell.userImage.contentMode = .ScaleAspectFill
         cell.userImage.layer.cornerRadius = radius
         cell.userImage.clipsToBounds = true
-        
         
         let message = self.lastMessages[indexPath.row]
         let name = message["name"] as? String

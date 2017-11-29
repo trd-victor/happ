@@ -17,7 +17,7 @@ extension UIImageView {
         
         let url = urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         
-        if let imgCache = globalvar.imgforProfileCache.objectForKey(url) as? UIImage {
+        if let imgCache = imgCache.objectForKey(url) as? UIImage {
             self.image = imgCache
             return
         }
@@ -31,7 +31,7 @@ extension UIImageView {
                 return
             } else {
                 if let downloadImage = UIImage(data: data!) {
-                    globalvar.imgforProfileCache.setObject(downloadImage, forKey: url)
+                    imgCache.setObject(downloadImage, forKey: url)
                     self.image = downloadImage
                     return
                 }

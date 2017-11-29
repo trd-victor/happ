@@ -677,8 +677,8 @@ class NotifCell: UITableViewCell {
         return view
     }()
     
-    let notifPhoto: UIImageView = {
-        let photo = UIImageView()
+    let notifPhoto: TimelineImage = {
+        let photo = TimelineImage()
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 23
         photo.contentMode = .ScaleAspectFill
@@ -765,8 +765,8 @@ class MessageCell: UICollectionViewCell {
         return view
     }()
     
-    let chatmatePhoto: UIImageView = {
-        let photo = UIImageView()
+    let chatmatePhoto: TimelineImage = {
+        let photo = TimelineImage()
         photo.image = UIImage(named: "noPhoto")
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 16
@@ -775,8 +775,8 @@ class MessageCell: UICollectionViewCell {
         return photo
     }()
     
-    let userPhoto: UIImageView = {
-        let photo = UIImageView()
+    let userPhoto: TimelineImage = {
+        let photo = TimelineImage()
         photo.image = UIImage(named: "noPhoto")
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 16

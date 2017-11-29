@@ -26,6 +26,8 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     var messagesData: [FIRDataSnapshot] = []
     var chatMatePhoto: String = ""
     var userPhoto: String = ""
+    var displayPhoto: String = ""
+    var checkPhoto: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -250,8 +252,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
       
         if chatVar.RoomID != "" {
-            FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
-            chatVar.RoomID = ""
+            if let _ =  FIRAuth.auth()?.currentUser?.uid {
+                FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+                chatVar.RoomID = ""
+            }
         }
         
         self.presentBackDetail(MessageTableViewController())
@@ -364,8 +368,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let messagesDb = FIRDatabase.database().reference().child("chat").child("messages").child(String(roomID)).queryOrderedByChild("timestamp")
         
         messagesDb.observeEventType(.Value, withBlock: {(snapshot)  in
-            self.messagesData.removeAll()
-            
             dispatch_async(dispatch_get_main_queue()){
                 if let result = snapshot.children.allObjects as? [FIRDataSnapshot] {
                     self.messagesData = result
@@ -486,23 +488,12 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 imageUrl = photoUrl
             }
             
-            if imageUrl != "" {
-                if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {
-                    let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl) as! UIImage
-                    cell.userPhoto.image = imgCache
-                }else{
-                    cell.userPhoto.image = UIImage(named : "noPhoto")
-                    let url = NSURL(string: imageUrl.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                        if let data = NSData(contentsOfURL: url!){
-                            dispatch_async(dispatch_get_main_queue()){
-                                cell.userPhoto.image = UIImage(data: data)
-                            }
-                            let tmpImg = UIImage(data: data)
-                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
-                        }
-                    })
-                    task.resume()
+            if imageUrl == "" || imageUrl == "null" {
+               cell.userPhoto.image = UIImage(named : "noPhoto")
+            }else{
+                cell.userPhoto.image = UIImage(named : "noPhoto")
+                cell.userPhoto.loadProfileImageUsingString(imageUrl){
+                    (result: Bool) in
                 }
             }
             
@@ -522,23 +513,18 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                 imageUrl = photoUrl
             }
             
-            if (globalvar.imgforProfileCache.objectForKey(imageUrl) != nil) {
-                let imgCache = globalvar.imgforProfileCache.objectForKey(imageUrl) as! UIImage
-                cell.chatmatePhoto.image = imgCache
+            if self.checkPhoto == false {
+                self.displayPhoto = imageUrl
+                self.checkPhoto = true
+            }
+            
+            if self.displayPhoto == "" || self.displayPhoto == "null" {
+                cell.chatmatePhoto.image = UIImage(named : "noPhoto")
             }else{
                 cell.chatmatePhoto.image = UIImage(named : "noPhoto")
-                let url = NSURL(string: imageUrl.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.chatmatePhoto.image = UIImage(data: data)
-                        }
-                        let tmpImg = UIImage(data: data)
-                        globalvar.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
-                    }
-                    
-                })
-                task.resume()
+                cell.chatmatePhoto.loadProfileImageUsingString(self.displayPhoto){
+                    (result: Bool) in
+                }
             }
             
             cell.bubbleViewRightAnchor?.active = false

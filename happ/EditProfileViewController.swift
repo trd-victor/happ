@@ -764,24 +764,26 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
                self.setImageToFirebaseUser(message)
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if json!["result"] != nil {
-                        var image: String!
-                        
-                        if let _ = json!["result"]!["icon"] as? NSNull {
-                            image = ""
-                        } else {
-                            image = json!["result"]!["icon"] as? String
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if json["result"] != nil {
+                            var image: String!
+                            
+                            if let _ = json["result"]!["icon"] as? NSNull {
+                                image = ""
+                            } else {
+                                image = json["result"]!["icon"] as? String
+                            }
+                            
+                            dispatch_async(dispatch_get_main_queue()){
+                                
+                                self.updateNotif(image){
+                                    (complete: Bool) in
+                                    self.updateData(image, mess: message)
+                                }
+                            }
                         }
-                        
-                        if self.checkNewImage {
-                            let uid = FIRAuth.auth()?.currentUser?.uid
-                            FIRDatabase.database().reference().child("users").child(uid!).child("photoUrl").setValue(image)
-                            self.checkNewImage = false
-                        }
-                        self.updateData(image, mess: message)
-                        self.updateNotif(image)
                     }
+                    
                 } catch {
                     print(error)
                 }
@@ -792,12 +794,15 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
     }
     
     func updateData(image: String, mess: String){
-        let name = userNamefield.text!
+        let name = self.userNamefield.text!
         self.getChatRoomID({
             (data: [FIRDataSnapshot]) in
-            self.getMessageData(data, image: image, name: name, message: mess)
+            self.getMessageData(data, image: image, name: name){
+                (result: Bool) in
+                
+                self.getLastMessage(image, name: name, mess: mess)
+            }
         })
-        self.getLastMessage(image, name: name)
     }
     
     
@@ -812,39 +817,24 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         })
     }
     
-    func getLastMessage(image: String, name: String){
-        let lbDB = FIRDatabase.database().reference().child("chat").child("last-message")
+    func getLastMessage(image: String, name: String, mess: String){
         
-        
-        lbDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
-            if snap.exists(){
-                if let result = snap.children.allObjects as? [FIRDataSnapshot] {
-                    
-                    for data in result {
-                        self.eachLastMessage(data.key, image: image, name: name)
-                    }
-                }
-            }
-        });
-    }
-    
-    func eachLastMessage(uid: String,image: String, name: String){
         if let fid = FIRAuth.auth()?.currentUser?.uid {
-            let userLM = FIRDatabase.database().reference().child("chat").child("last-message").child(uid).queryOrderedByChild("chatmateId").queryEqualToValue(fid)
             
-            userLM.observeSingleEventOfType(.Value, withBlock: {(snap) in
+            let lmDB = FIRDatabase.database().reference().child("chat").child("last-message").child(fid)
+            lmDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
                 if snap.exists(){
                     if let result = snap.children.allObjects as? [FIRDataSnapshot] {
                         for data in result {
                             if let value = data.value as? NSDictionary {
-                                let key = data.key
-                                if let chatmateId = value["chatmateId"] as? String {
-                                    if chatmateId == fid {
-                                        FIRDatabase.database().reference().child("chat").child("last-message").child(uid).child(key).child("photoUrl").setValue(image)
-                                        FIRDatabase.database().reference().child("chat").child("last-message").child(uid).child(key).child("name").setValue(name)
-                                    }
+                                if let mateID = value["chatmateId"] as? String {
+                                    self.eachLastMessage(data.key,chatmateID: mateID, image: image, name: name)
                                 }
                             }
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.displayMyAlertMessage(mess)
                         }
                     }
                 }
@@ -852,7 +842,18 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         }
     }
     
-    func getMessageData(data: [FIRDataSnapshot], image: String, name: String, message: String){
+    func eachLastMessage(roomID: String,chatmateID: String,image: String, name: String){
+        
+        if roomID == "" || chatmateID == "" {
+            return
+        }
+        let lmDB = FIRDatabase.database().reference().child("chat").child("last-message").child(chatmateID).child(roomID)
+        
+        lmDB.child("name").setValue(name)
+        lmDB.child("photoUrl").setValue(image)
+    }
+    
+    func getMessageData(data: [FIRDataSnapshot], image: String, name: String, completion: (result: Bool)->Void){
         let firID = FIRAuth.auth()?.currentUser?.uid
         
         if data.count > 0 {
@@ -883,11 +884,11 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         }
         
         dispatch_async(dispatch_get_main_queue()){
-            self.displayMyAlertMessage(message)
+            completion(result: true)
         }
     }
     
-    func updateNotif(image: String){
+    func updateNotif(image: String, completion: (complete: Bool)-> Void){
         let name = userNamefield.text!
         let firID = FIRAuth.auth()?.currentUser?.uid
         let notifDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
@@ -910,6 +911,9 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
                         }
                     }
                 }
+            }
+            dispatch_async(dispatch_get_main_queue()){
+                completion(complete: true)
             }
         })
     }

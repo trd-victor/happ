@@ -615,7 +615,7 @@ class TimelineImage: UIImageView {
     var imageUrlString: String?
     
     func loadImageUsingString(urlString: String, completion: (result: Bool) -> Void){
-                self.imageUrlString = urlString
+        self.imageUrlString = urlString
         
         let urlStr = urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         let urlData = NSURL(string: urlStr)
@@ -662,27 +662,31 @@ class TimelineImage: UIImageView {
         
         self.image = UIImage(named : "noPhoto")
         
-        if let imgFromCache = globalvar.imgforProfileCache.objectForKey(urlString) as? UIImage{
+        if let imgFromCache = imgCache.objectForKey(urlString) as? UIImage{
             self.image = imgFromCache
             self.backgroundColor = UIColor.clearColor()
             completion(result: true)
             return
         }
+        
         NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) in
             if error != nil {
                 print(error?.localizedDescription)
                 completion(result: false)
             }
            
-            if let data = NSData(contentsOfURL: url!){
+            if data != nil{
+                let tmpImg = UIImage(data: data!)
+                imgCache.setObject(tmpImg!, forKey: urlString)
+                
                 dispatch_async(dispatch_get_main_queue()){
                     if self.imageUrlString! == urlString {
-                        self.image = UIImage(data: data)
+                        self.image = UIImage(data: data!)
                     }
                 }
-                let tmpImg = UIImage(data: data)
-                globalvar.imgforProfileCache.setObject(tmpImg!, forKey: urlString)
                 completion(result: true)
+            }else{
+                completion(result: false)
             }
         }).resume()
         
@@ -698,9 +702,13 @@ class TimelineProfileImage: UIButton {
     
     func loadImageUsingString(urlString: String, completion: (result: Bool) -> Void){
         
-        if (globalvar.imgforProfileCache.objectForKey(urlString) != nil) {
-            let imgCache = globalvar.imgforProfileCache.objectForKey(urlString) as! UIImage
-            self.setImage(imgCache, forState: .Normal)
+        if (imgCache.objectForKey(urlString) != nil) {
+            
+            if let image = imgCache.objectForKey(urlString) as? UIImage {
+                let imgCache = image
+                self.setImage(imgCache, forState: .Normal)
+            }
+            
             completion(result: true)
         }else{
             self.setImage(UIImage(named : "noPhoto"), forState: .Normal)
@@ -715,7 +723,7 @@ class TimelineProfileImage: UIButton {
                         self.backgroundColor = UIColor.clearColor()
                     }
                     let tmpImg = UIImage(data: data)
-                    globalvar.imgforProfileCache.setObject(tmpImg!, forKey: urlString)
+                    imgCache.setObject(tmpImg!, forKey: urlString)
                     completion(result: true)
                 }
             })

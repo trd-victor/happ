@@ -134,7 +134,7 @@ exports.timelinePushSend = functions.database.ref('/notifications/push-notificat
                             if (count == receiver.length){
                                 if(token != "" && token != null){
                                     admin.messaging().sendToDevice(token, payload, options).then(function (response) {
-                                        console.log("result: ", response);
+                                        console.log("result: ", response.results);
                                         res(200);
                                     }).catch(function (error) {
                                         res(200);
@@ -146,7 +146,7 @@ exports.timelinePushSend = functions.database.ref('/notifications/push-notificat
                             }else{
                                 if(token != "" && token != null){
                                     admin.messaging().sendToDevice(token, payload, options).then(function (response) {
-                                        console.log("result: ", response);
+                                        console.log("result: ", response.results);
                                     }).catch(function (error) {
                                         console.log("error:", error);
                                     });

@@ -13,9 +13,9 @@ extension SearchController {
 
     func getSearchUser(value: String) {
         self.userData = []
-        user_id.removeAll()
+        self.user_id.removeAll()
         self.tblViewSearch.reloadData()
-        
+
         if task2 != nil {
             task2.cancel()
         }
@@ -44,8 +44,8 @@ extension SearchController {
             do {
                 if let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                     if let info = json2["result"] as? NSArray {
+                        self.userData = info
                         dispatch_async(dispatch_get_main_queue()){
-                            self.userData = info
                             self.tblViewSearch.reloadData()
                         }
                     }

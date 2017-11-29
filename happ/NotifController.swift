@@ -255,43 +255,25 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             if type == "timeline" || type == "post-timeline"{
                 cell.lblMessage.text = "\(name) \(self.postTimelineMessage)"
-                if (globalvar.imgforProfileCache.objectForKey(image!) != nil) {
-                    let imgCache = globalvar.imgforProfileCache.objectForKey(image!) as! UIImage
-                    cell.notifPhoto.image = imgCache
+                if image == "" || image == "null" {
+                    cell.notifPhoto.image = UIImage(named : "noPhoto")
                 }else{
                     cell.notifPhoto.image = UIImage(named : "noPhoto")
-                    let url = NSURL(string: image!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                        if let data = NSData(contentsOfURL: url!){
-                            dispatch_async(dispatch_get_main_queue()){
-                                cell.notifPhoto.image = UIImage(data: data)
-                            }
-                            let tmpImg = UIImage(data: data)
-                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: image!)
-                        }
-                        
-                    })
-                    task.resume()
+                    cell.notifPhoto.loadProfileImageUsingString(image!){
+                        (result: Bool) in
+                    }
                 }
+                
+                
             }else if type == "free-time" {
                 cell.lblMessage.text = "\(name) \(self.freeTimeMessage)"
-                if (globalvar.imgforProfileCache.objectForKey(image!) != nil) {
-                    let imgCache = globalvar.imgforProfileCache.objectForKey(image!) as! UIImage
-                    cell.notifPhoto.image = imgCache
+                if image == "" || image == "null" {
+                    cell.notifPhoto.image = UIImage(named : "noPhoto")
                 }else{
                     cell.notifPhoto.image = UIImage(named : "noPhoto")
-                    let url = NSURL(string: image!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                        if let data = NSData(contentsOfURL: url!){
-                            dispatch_async(dispatch_get_main_queue()){
-                                cell.notifPhoto.image = UIImage(data: data)
-                            }
-                            let tmpImg = UIImage(data: data)
-                            globalvar.imgforProfileCache.setObject(tmpImg!, forKey: image!)
-                        }
-                        
-                    })
-                    task.resume()
+                    cell.notifPhoto.loadProfileImageUsingString(image!){
+                        (result: Bool) in
+                    }
                 }
             }else if type == "reservation" {
                 cell.notifPhoto.image = UIImage(named: "oval")
