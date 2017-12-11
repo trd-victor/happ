@@ -659,7 +659,7 @@ class TimelineImage: UIImageView {
     func loadProfileImageUsingString(urlString: String, completion: (result: Bool) -> Void){
         self.imageUrlString = urlString
         let url = NSURL(string: urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-        
+//        print(urlString)
         self.image = UIImage(named : "noPhoto")
         
         if let imgFromCache = imgCache.objectForKey(urlString) as? UIImage{
@@ -677,14 +677,19 @@ class TimelineImage: UIImageView {
            
             if data != nil{
                 let tmpImg = UIImage(data: data!)
-                imgCache.setObject(tmpImg!, forKey: urlString)
-                
-                dispatch_async(dispatch_get_main_queue()){
-                    if self.imageUrlString! == urlString {
-                        self.image = UIImage(data: data!)
+                if tmpImg != nil {
+                    dispatch_async(dispatch_get_main_queue()){
+                        imgCache.setObject(tmpImg!, forKey: urlString)
+                        dispatch_async(dispatch_get_main_queue()){
+                            if self.imageUrlString! == urlString {
+                                self.image = UIImage(data: data!)
+                            }
+                        }
+                        completion(result: true)
                     }
+                }else{
+                    completion(result: false)
                 }
-                completion(result: true)
             }else{
                 completion(result: false)
             }

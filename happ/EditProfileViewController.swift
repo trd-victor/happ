@@ -373,7 +373,6 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         
         let config = SYSTEM_CONFIG()
         
-        
         //creating NSMutableURLRequest
         let request = NSMutableURLRequest(URL: globalvar.API_URL)
         
@@ -402,110 +401,156 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
         //adding the parameters to request body
         request.HTTPBody = createBodyWithParameters(param,  data: nil, boundary: boundary)
         
-        //             self.myActivityIndicator.startAnimating()
-        
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
 
             //user Data...
-            var name: String!
-            var hID: String!
-            var image: String!
+            var name: String = ""
+            var hID: String = ""
+            var image: String = ""
             var skills: String = ""
-            var message: String!
+            var message: String = ""
             
             if error != nil || data == nil{
                 self.loadUserData()
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
-                        if json!["result"] != nil {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        dispatch_async(dispatch_get_main_queue()){
                             
-                            name  = json!["result"]!["name"] as! String
-                            
-                            if let _ = json!["result"]!["icon"] as? NSNull {
-                                image = ""
-                            } else {
-                                image = json!["result"]!["icon"] as? String
-                            }
-                            
-                            hID = json!["result"]!["h_id"] as? String
-                            
-                            if let skill_data = json!["result"]!["skills"] as? String {
-                                let arrayData = skill_data.characters.split(",")
-                                reg_user.selectedSkills = []
-                                
-                                if arrayData.count == 0 {
-                                    self.listOfSkills.text = config.translate("empty_skills")
-                                    self.listOfSkills.textAlignment = .Center
-                                }else{
-                                    for var i = 0; i < arrayData.count; i++ {
-                                        let id = String(arrayData[i])
-                                        if (Int(id) != nil) {
-                                            reg_user.selectedSkills.append(Int(id)!)
-                                            
-                                            skills += config.getSkillByID(String(arrayData[i]))
-                                        }else{
-                                            skills += skills
-                                        }
+                            if json["success"] != nil {
+                                if json["result"] != nil {
+                                    if let user_name  = json["result"]!["name"] as? String {
+                                        name = user_name
+                                    }
+                                    
+                                    if let h_id = json["result"]!["h_id"] as? String {
+                                        hID = h_id
+                                    }
+                                    
+                                    if let skill_data = json["result"]!["skills"] as? String {
+                                        let arrayData = skill_data.characters.split(",")
+                                        reg_user.selectedSkills = []
                                         
-                                        if i == arrayData.count - 1 {
-                                            self.listOfSkills.text = skills
-                                            self.listOfSkills.textAlignment = .Justified
+                                        if arrayData.count == 0 {
+                                            self.listOfSkills.text = config.translate("empty_skills")
+                                            self.listOfSkills.textAlignment = .Center
                                         }else{
-                                            skills += ", "
+                                            for var i = 0; i < arrayData.count; i++ {
+                                                let id = String(arrayData[i])
+                                                if (Int(id) != nil) {
+                                                    reg_user.selectedSkills.append(Int(id)!)
+                                                    
+                                                    skills += config.getSkillByID(String(arrayData[i]))
+                                                }else{
+                                                    skills += skills
+                                                }
+                                                
+                                                if i == arrayData.count - 1 {
+                                                    self.listOfSkills.text = skills
+                                                    self.listOfSkills.textAlignment = .Justified
+                                                }else{
+                                                    skills += ", "
+                                                }
+                                            }
                                         }
                                     }
+                                    
+                                    if let icon = json["result"]!["icon"] as? String {
+                                        image = icon
+                                    } else {
+                                        image = ""
+                                    }
+                                    
+                                    let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+                                    let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
+                                    
+                                    dispatch_async(dispatch_get_main_queue()){
+                                        self.userNamefield.text = name
+                                        self.happLbl.text = hID
+                                        
+                                        if data != nil {
+                                            //save new photo on firebase database
+                                            if self.checkNewImage {
+                                                let uid = FIRAuth.auth()?.currentUser?.uid
+                                                FIRDatabase.database().reference().child("users").child(uid!).child("photoUrl").setValue(image)
+                                                self.checkNewImage = false
+                                            }
+                                            self.userImage.image = UIImage(data: data!)
+                                        } else {
+                                            self.userImage.image = UIImage(named: "noPhoto")
+                                        }
+                                        
+                                        if let message = json["result"]!["mess"] as? String {
+                                            self.userDescription.text = message.stringByDecodingHTMLEntities
+                                            
+                                            self.userDescription.textViewDidChange(self.userDescription)
+                                        }
+                                        
+                                        if self.loadingScreen != nil {
+                                            UIViewController.removeSpinner(self.loadingScreen)
+                                            self.loadingScreen = nil
+                                        }
+                                    }
+                                }else{
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                        self.loadingScreen = nil
+                                    }
+                                    
+                                    self.logoutMessage()
                                 }
+
+                            }else{
+                                if self.loadingScreen != nil {
+                                    UIViewController.removeSpinner(self.loadingScreen)
+                                    self.loadingScreen = nil
+                                }
+                                
+                                self.logoutMessage()
                             }
                         }
-                        
-                        let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-                        
-                        
-                        let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
-                        dispatch_async(dispatch_get_main_queue(), {() -> Void in
-                            
-                            self.userNamefield.text = name
-                            self.happLbl.text = hID
-                            
-                            if data != nil {
-                                //save new photo on firebase database
-                                if self.checkNewImage {
-                                    let uid = FIRAuth.auth()?.currentUser?.uid
-                                    FIRDatabase.database().reference().child("users").child(uid!).child("photoUrl").setValue(image)
-                                    self.checkNewImage = false
-                                }
-                                self.userImage.image = UIImage(data: data!)
-                            } else {
-                                self.userImage.image = UIImage(named: "noPhoto")
-                            }
-                            
-                           if let message = json!["result"]!["mess"] as? String {
-                                self.userDescription.text = message.stringByDecodingHTMLEntities
-                            
-                                self.userDescription.textViewDidChange(self.userDescription)
-                            }
-                            
-                            if self.loadingScreen != nil {
-                                UIViewController.removeSpinner(self.loadingScreen)
-                                self.loadingScreen = nil
-                            }
-                            
-                        })
-                    })
-                    
-                    
+                    }
                 } catch {
                     print(error)
                 }
-
             }
-            
         }
         task.resume()
+        
+    }
+    
+    func logoutMessage(){
+        let config = SYSTEM_CONFIG()
+        let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            
+            do {
+                try FIRAuth.auth()?.signOut()
+                
+                config.removeSYS_VAL("userID")
+                globalUserId.userID = ""
+            } catch (let error) {
+                print((error as NSError).code)
+            }
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func removeFIRObserver(firID: String){
+        FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue("")
+        FIRDatabase.database().reference().child("users").removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("freetime").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("timeline").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("reservation").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("chat").child("last-message").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("chat").child("last-message").child(firID).queryOrderedByChild("timestamp").removeAllObservers()
+        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("unread").removeAllObservers()
+        if chatVar.RoomID != "" {
+            FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+            FIRDatabase.database().reference().child("chat").child("messages").child(chatVar.RoomID).queryOrderedByChild("timestamp").removeAllObservers()
+        }
         
     }
     

@@ -10,8 +10,8 @@ import UIKit
 
 class SearchCustomCell: UITableViewCell {
     
-    let profileImg: UIImageView = {
-        let imgView = UIImageView()
+    let profileImg: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.image = UIImage(named: "noPhoto")
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.layer.cornerRadius = 35

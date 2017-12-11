@@ -214,27 +214,17 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
 
         if let imgString = self.userData[indexPath.row]["icon"] as? String {
-            if (imgforProfileCache.objectForKey(imgString) != nil) {
-                let imgCache = imgforProfileCache.objectForKey(imgString) as! UIImage
-                cell.profileImg.image = imgCache
-            }else{
+            if imgString == "" || imgString == "null" {
                 cell.profileImg.image = UIImage(named: "noPhoto")
-                let url = NSURL(string: imgString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.profileImg.image = UIImage(data: data)
-                            let tmpImg = UIImage(data: data)
-                            self.imgforProfileCache.setObject(tmpImg!, forKey: imgString)
-                        }
-                    }
-                    
-                })
-                task.resume()
+            }else{
+                cell.profileImg.loadProfileImageUsingString(imgString){
+                    (result: Bool) in
+                }
             }
         }else{
             cell.profileImg.image = UIImage(named: "noPhoto")
         }
+        
         if let id = self.userData[indexPath.row]["user_id"] as? Int {
             user_id.append(id)
         }

@@ -363,17 +363,19 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         }
     }
     
+    func observeUser(){
+        
+    }
+    
     func loadMessages(){
         let roomID = chatVar.RoomID
         let messagesDb = FIRDatabase.database().reference().child("chat").child("messages").child(String(roomID)).queryOrderedByChild("timestamp")
-        
         messagesDb.observeEventType(.Value, withBlock: {(snapshot)  in
-            dispatch_async(dispatch_get_main_queue()){
-                if let result = snapshot.children.allObjects as? [FIRDataSnapshot] {
+            if let result = snapshot.children.allObjects as? [FIRDataSnapshot] {
+                if self.messagesData.count != result.count && result.count != 0 {
                     self.messagesData = result
                     dispatch_async(dispatch_get_main_queue()){
                         self.myCollectionView!.reloadData()
-                        
                         if(self.messagesData.count > 1){
                             if Int(self.messagesData.count) != nil && self.messagesData.count != 0 {
                                 let lastItemIndex =  NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
