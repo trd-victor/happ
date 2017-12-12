@@ -365,6 +365,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     @IBAction func freetimeStatus(sender: UISwitch) {
         let statust = switchButtonCheck(freetimeStatus)
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         if loadingScreen == nil {
             loadingScreen = UIViewController.displaySpinner(self.view)
         }
@@ -378,6 +385,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     
     func getFreeTimeStatus(){
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let parameters = [
             "sercret"          : globalvar.secretKey,
             "action"           : "api",
@@ -1094,6 +1108,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     func alertMore(index: Int){
         let config = SYSTEM_CONFIG()
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let myAlert = UIAlertController(title: config.translate("more_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: config.translate("block_user"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.block_user(index)
@@ -1101,7 +1122,14 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         myAlert.addAction(UIAlertAction(title: config.translate("report_post"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             self.report_post(index)
         }))
-        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: { (action: UIAlertAction!) in
+            if menu_bar.sessionDeleted {
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+                menuController.logoutMessage(self)
+                return
+            }
+        }))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
@@ -1132,8 +1160,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func blockUser(index: Int) {
-        
-      
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         let config = SYSTEM_CONFIG()
         let lang = config.getSYS_VAL("AppLanguage") as! String
@@ -1303,6 +1335,12 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func reportPost(index: Int) {
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         let config = SYSTEM_CONFIG()
         let lang = config.getSYS_VAL("AppLanguage") as! String

@@ -177,6 +177,15 @@ class ChangeLanguageViewController: UIViewController {
         
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
+    }
     
     func backToConfiguration(sender: UIBarButtonItem) -> () {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -190,7 +199,6 @@ class ChangeLanguageViewController: UIViewController {
         self.view.layer.addAnimation(transition, forKey: "leftToRightTransition")
         self.presentDetail(vc)
     }
-
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

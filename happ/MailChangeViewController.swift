@@ -298,6 +298,16 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         return true
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
+    }
+    
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)
     }

@@ -210,6 +210,12 @@ extension UserProfileController {
     //
     
     func getBlockIds(){
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         let param = [
             "sercret"     : globalvar.secretKey,
@@ -261,6 +267,13 @@ extension UserProfileController {
     //
     
     func loadUserinfo(sender: String) {
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         let config = SYSTEM_CONFIG()
         
@@ -374,6 +387,12 @@ extension UserProfileController {
     // Reload User Profile Timeline
     
     func reloadData() {
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         var tmppostDate = [String]()
         var tmpimg1 = [String]()
@@ -496,6 +515,13 @@ extension UserProfileController {
     }
     
     func getOlderTimeline(){
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         self.page += 1
         
         let parameters = [
@@ -609,6 +635,12 @@ extension UserProfileController {
     // Delete Own Timeline
     
     func deleteTimeline(sender: String) {
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()

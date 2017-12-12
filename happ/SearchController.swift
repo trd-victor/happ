@@ -144,6 +144,11 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(hexString: "#0076FF")]
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
@@ -232,6 +237,16 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if menu_bar.sessionDeleted {
+            let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+            UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
         let transition = CATransition()

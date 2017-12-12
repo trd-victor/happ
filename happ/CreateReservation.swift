@@ -366,6 +366,13 @@ class CreateReservation: UIViewController {
     }
     
     @IBAction func navCreate(sender: AnyObject) {
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+
         viewLoading.hidden = false
         activityLoading.startAnimating()
         let sdate = "\(CreateDetails.date) \(startName.text!)"

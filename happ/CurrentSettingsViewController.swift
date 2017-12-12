@@ -191,6 +191,13 @@ class CurrentSettingsViewController: UIViewController {
             self.currentSettingslang.text = new_lang
         }
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         self.changeSysLang()
         
         //creating NSMutableURLRequest
@@ -340,6 +347,16 @@ class CurrentSettingsViewController: UIViewController {
         body.appendString("--\(boundary)--\r\n")
         
         return body
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     func displayMyAlertMessage(userMessage:String){

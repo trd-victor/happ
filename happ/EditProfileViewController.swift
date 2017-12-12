@@ -533,7 +533,16 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
             } catch (let error) {
                 print((error as NSError).code)
             }
-            self.dismissViewControllerAnimated(true, completion: nil)
+            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+            
+            let transition: CATransition = CATransition()
+            transition.duration = 0.40
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionPush
+            transition.subtype = kCATransitionFromBottom
+            self.view.window!.layer.addAnimation(transition, forKey: nil)
+            self.presentViewController(vc, animated: false, completion: nil)
         }))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
@@ -565,6 +574,13 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
     
     @IBAction func StatusItem(sender: AnyObject) {
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         if loadingScreen == nil {
             loadingScreen = UIViewController.displaySpinner(self.view)
         }
@@ -877,11 +893,10 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
                                 }
                             }
                         }
-                        
-                        dispatch_async(dispatch_get_main_queue()){
-                            self.displayMyAlertMessage(mess)
-                        }
                     }
+                }
+                dispatch_async(dispatch_get_main_queue()){
+                    self.displayMyAlertMessage(mess)
                 }
             });
         }
@@ -961,5 +976,5 @@ class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFie
                 completion(complete: true)
             }
         })
-    }
+    }    
 }

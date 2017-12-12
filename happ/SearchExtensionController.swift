@@ -12,6 +12,16 @@ import Firebase
 extension SearchController {
 
     func getSearchUser(value: String) {
+        if menu_bar.sessionDeleted {
+            let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+            UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         self.userData = []
         self.user_id.removeAll()
         self.tblViewSearch.reloadData()

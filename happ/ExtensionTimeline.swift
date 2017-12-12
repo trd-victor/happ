@@ -10,6 +10,12 @@ import Firebase
 extension UserTimelineViewController {
 
     func reloadTimeline() {
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         self.noData = false
         var tmppostDate = [String]()
@@ -137,6 +143,13 @@ extension UserTimelineViewController {
     func reloadTimelineByMenuClick() {
         if self.toReloadTimeline != nil {
             self.toReloadTimeline.cancel()
+        }
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
         }
         
         self.noData = false

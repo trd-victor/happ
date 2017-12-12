@@ -230,6 +230,16 @@ class SelectSkillViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
+    }
+    
     func loadConfig(){
         let config = SYSTEM_CONFIG()
         let navItem = UINavigationItem(title: config.translate("selection_skill"))

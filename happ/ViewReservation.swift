@@ -258,6 +258,13 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
 
     func removeReservation(pid: String, index: Int,section: Int, date: String, indexRow: Int){
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let parameters = [
             "sercret"             : globalvar.secretKey,
             "action"              : "api",
@@ -622,6 +629,14 @@ class ViewReservation: UIViewController, UITableViewDelegate, UITableViewDataSou
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let config = SYSTEM_CONFIG()
         self.navBar.topItem?.title = config.translate("title_reserved")
     }

@@ -210,12 +210,26 @@ class UserProfileController: UIViewController {
     }
     
     func openMessage(){
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let vc = ViewLibViewController()
         self.presentViewController(vc, animated: false, completion: nil)
     }
     
     func profileBlock(sender: UIButton!){
         let config = SYSTEM_CONFIG()
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         if sender.tag == 0 {
             self.blockUser(){
@@ -362,6 +376,12 @@ class UserProfileController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

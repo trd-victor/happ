@@ -218,6 +218,13 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
          let reEnterPass1 = reenterPassField.text!
 //         let origPass = originalPass.text!
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         if currentPass1 == "" || newPass1 == "" ||  reEnterPass1 == ""{
             self.displayMyAlertMessage(config.translate("mess_fill_missing_field"))
         }else if newPass1.characters.count < 6 {
@@ -235,83 +242,7 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
                 if error == nil {
                     FIRAuth.auth()?.currentUser?.updatePassword(newPass1, completion: {(error) in
                         if error == nil {
-                            //creating NSMutableURLRequest
-                            let request = NSMutableURLRequest(URL: globalvar.API_URL)
-                            
-                            //set boundary string..
-                            let boundary = self.generateBoundaryString()
-                            
-                            //set value for image upload
-                            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-                            
-                            //setting the method to post
-                            request.HTTPMethod = "POST"
-                            
-                            //set targeted string
-                            let targetedData: String = "passwd"
-                            
-                            //set parameters...
-                            let param = [
-                                "sercret"     : globalvar.secretKey,
-                                "action"      : "api",
-                                "ac"          : "user_update",
-                                "d"           : "0",
-                                "lang"        : "\(self.language)",
-                                "user_id"     : "\(self.userId)",
-                                "passwd"      : "\(newPass1)",
-                                "targets"     : "\(targetedData)"
-                            ]
-                            
-                            //adding the parameters to request body
-                            request.HTTPBody = self.createBodyWithParameters(param,  boundary: boundary)
-                            
-                            let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
-                                data, response, error  in
-                                
-                                var message: String!
-                                
-                                if error != nil {
-                                    
-                                    if let code = error?.code {
-                                        if code == -1005 {
-                                            self.Save(sender)
-                                        }
-                                    }
-                                } else if  data == nil{
-                                    self.Save(sender)
-                                }else {
-                                    do {
-                                        
-                                        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                                        
-                                        dispatch_async(dispatch_get_main_queue()) {
-                                            var errorMessage: Int
-                                            if json!["error"] != nil {
-                                                errorMessage = json!["error"] as! Int
-                                                if errorMessage == 1 {
-                                                    if json!["message"] != nil {
-                                                        message = json!["message"] as! String
-                                                    }
-                                                    self.displayMyAlertMessage(message)
-                                                }
-                                            }else{
-                                                if json!["result"] != nil {
-                                                    message = json!["result"]!["mess"] as! String
-                                                }
-                                                self.currentPassField.text = ""
-                                                self.newPassField.text = ""
-                                                self.reenterPassField.text = ""
-                                                self.displayMyAlertMessage(message)
-                                            }
-                                        }
-                                        
-                                    } catch {
-                                        print(error)
-                                    }
-                                }
-                                
-                            }
-                            task.resume()
+                            self.changeNewPass()
                         }else{
                             self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                         }
@@ -322,6 +253,82 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
             }
         }
 
+    }
+    
+    func changeNewPass(){
+        let config = SYSTEM_CONFIG()
+        let newPass1 = newPassField.text!
+        
+        //creating NSMutableURLRequest
+        let request = NSMutableURLRequest(URL: globalvar.API_URL)
+        
+        //set boundary string..
+        let boundary = self.generateBoundaryString()
+        
+        //set value for image upload
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        //setting the method to post
+        request.HTTPMethod = "POST"
+        
+        //set targeted string
+        let targetedData: String = "passwd"
+        
+        //set parameters...
+        let param = [
+            "sercret"     : globalvar.secretKey,
+            "action"      : "api",
+            "ac"          : "user_update",
+            "d"           : "0",
+            "lang"        : "\(self.language)",
+            "user_id"     : "\(self.userId)",
+            "passwd"      : "\(newPass1)",
+            "targets"     : "\(targetedData)"
+        ]
+        
+        //adding the parameters to request body
+        request.HTTPBody = self.createBodyWithParameters(param,  boundary: boundary)
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            var message: String!
+            
+            if error != nil || data == nil{
+                self.changeNewPass()
+            }else {
+                do {
+                    
+                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        var errorMessage: Int
+                        if json!["error"] != nil {
+                            errorMessage = json!["error"] as! Int
+                            if errorMessage == 1 {
+                                if json!["message"] != nil {
+                                    message = json!["message"] as! String
+                                }
+                                self.displayMyAlertMessage(message)
+                            }
+                        }else{
+                            if json!["result"] != nil {
+                                message = json!["result"]!["mess"] as! String
+                            }
+                            self.currentPassField.text = ""
+                            self.newPassField.text = ""
+                            self.reenterPassField.text = ""
+                            self.displayMyAlertMessage(message)
+                        }
+                    }
+                    
+                } catch {
+                    print(error)
+                }
+            }
+            
+        }
+        task.resume()
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -349,6 +356,15 @@ class ChangeNewPasswordViewController: UIViewController, UITextFieldDelegate {
         return body
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
+    }
     
     func displayMyAlertMessage(userMessage:String){
         if self.loadingScreen != nil {

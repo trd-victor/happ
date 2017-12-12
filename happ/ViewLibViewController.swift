@@ -285,6 +285,13 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             return
         }
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         if(checkMessage.characters.count <= 0){
             return
         }else{
@@ -473,7 +480,6 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         cell.bubbleWidthAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).width + 18
         cell.bubbleHeightAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).height + 10
 
-        
         return cell
     }
     

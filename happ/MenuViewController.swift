@@ -18,13 +18,15 @@ struct menu_bar {
     static var situation: UITabBarItem!
     static var timelineReloadCount: Bool!
     static var reloadScreen: UIView!
+    static var sessionDeleted: Bool = false
 }
 
 class MenuViewController: UITabBarController, UITabBarControllerDelegate {
 
     @IBOutlet var menuTabBar: UITabBar!
-     var reachability: Reachability!
+    var reachability: Reachability!
     var connectionMessage = UILabel()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +45,6 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
         preferredStatusBarStyle()
         
         autoLayout()
-        
         
         self.menuTabBar.items![0].tag = 1
         menu_bar.timeline = self.menuTabBar.items![0]
@@ -81,6 +82,10 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         
+        
+        if menu_bar.sessionDeleted {
+            self.logoutMessage(self)
+        }
         
         do {
             reachability = try Reachability.reachabilityForInternetConnection()
@@ -206,25 +211,29 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
                         if let _ = data["id"] as? Int {
                             
                         }else{
-                            self.logoutMessage()
+                            menu_bar.sessionDeleted = true
+                            self.logoutMessage(self)
                         }
                     }else{
-                        self.logoutMessage()
+                        menu_bar.sessionDeleted = true
+                        self.logoutMessage(self)
                     }
                 }else{
-                    self.logoutMessage()
+                    menu_bar.sessionDeleted = true
+                    self.logoutMessage(self)
                 }
             }
         })
     }
     
-    func logoutMessage(){
+    func logoutMessage(currentView: UIViewController){
         let config = SYSTEM_CONFIG()
         let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
         myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             
+            menu_bar.sessionDeleted = false
+
             do {
-                
                 if let fid = FIRAuth.auth()?.currentUser?.uid {
                     self.removeFIRObserver(fid)
                 }
@@ -236,9 +245,19 @@ class MenuViewController: UITabBarController, UITabBarControllerDelegate {
             } catch (let error) {
                 print((error as NSError).code)
             }
-            self.dismissViewControllerAnimated(true, completion: nil)
+            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+            
+            let transition: CATransition = CATransition()
+            transition.duration = 0.40
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionPush
+            transition.subtype = kCATransitionFromBottom
+            currentView.view.window!.layer.addAnimation(transition, forKey: nil)
+            currentView.presentViewController(vc, animated: false, completion: nil)
         }))
-        self.presentViewController(myAlert, animated: true, completion: nil)
+        
+        currentView.presentViewController(myAlert, animated: true, completion: nil)
     }
     
     func removeFIRObserver(firID: String){

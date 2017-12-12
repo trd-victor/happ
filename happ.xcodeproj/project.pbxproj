@@ -74,7 +74,7 @@
 		A3F378C41F500D8F003FD98D /* ViewLibViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */; };
 		A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */; };
 		A3F872E11F1D4927004C4BA5 /* RegistController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F872E01F1D4926004C4BA5 /* RegistController.swift */; };
-		A3FB8AB61FDE406E00110D89 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A3FB8AB51FDE406E00110D89 /* GoogleService-Info.plist */; };
+		A3FB8AB81FDE8AA400110D89 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A3FB8AB71FDE8AA400110D89 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -150,7 +150,7 @@
 		A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewLibViewController.swift; sourceTree = "<group>"; };
 		A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentSettingsViewController.swift; sourceTree = "<group>"; };
 		A3F872E01F1D4926004C4BA5 /* RegistController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistController.swift; sourceTree = "<group>"; };
-		A3FB8AB51FDE406E00110D89 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		A3FB8AB71FDE8AA400110D89 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -290,8 +290,8 @@
 				A3A343A41F09F8B600DC55FC /* AppDelegate.swift */,
 				A3A343AB1F09F8B700DC55FC /* Assets.xcassets */,
 				A31CEAA41F2750AE00F386FC /* ChangeLanguageViewController.swift */,
+				A3FB8AB71FDE8AA400110D89 /* GoogleService-Info.plist */,
 				A31CEAA21F27501700F386FC /* ChangeNewPasswordViewController.swift */,
-				A3FB8AB51FDE406E00110D89 /* GoogleService-Info.plist */,
 				A34FC1091F0CC8AE006BFA81 /* ChangePassViewController.swift */,
 				A31CEA9E1F27498600F386FC /* ConfigurationViewController.swift */,
 				A3E124AD1F40BA300053B2CC /* CongestionViewController.swift */,
@@ -428,7 +428,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3105B131F1CC2260067F069 /* Assets.xcassets in Resources */,
-				A3FB8AB61FDE406E00110D89 /* GoogleService-Info.plist in Resources */,
+				A3FB8AB81FDE8AA400110D89 /* GoogleService-Info.plist in Resources */,
 				A3B046471F38E283003789CC /* Main.storyboard in Resources */,
 				A31ABBF01F34147300994064 /* FirstLanguageStoryboard.storyboard in Resources */,
 			);

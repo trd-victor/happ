@@ -351,6 +351,13 @@ class CreateTimelineSkillSelection: UIViewController {
             return
         }
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let config = SYSTEM_CONFIG()
         let myAlert = UIAlertController(title: "", message: config.translate("mess_send_post_promt"), preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
@@ -503,6 +510,16 @@ class CreateTimelineSkillSelection: UIViewController {
         }
         task2.resume()
         
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     func createBodyWithParameters2(parameters: [String: String]?,  boundary: String) -> NSData {

@@ -247,6 +247,16 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         }
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
+    }
+    
     func textViewDidChange(textView: UITextView) {
         let calcHeight = calcTextHeight(self.content.text, frame: self.content.frame.size, fontsize: 14)
         if calcHeight.height > 80 {

@@ -293,6 +293,13 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let data = self.arrayData[indexPath.row] as? NSDictionary
       
         let type = data!["type"] as? String
@@ -479,6 +486,16 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             }
         }
         task.resume()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     func getPostDetail(postid: Int, id: String) {
