@@ -77,7 +77,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(myActivityIndicator)
         view.endEditing(true)
         
-        
         //load settings
         self.loadConfigure()
         autoLayout()
@@ -169,7 +168,7 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
         userEmailField.placeholder = config.translate("holder_ex.@xx.com")
         labelPassword.text = config.translate("label_Password")
-        userPasswordField.placeholder = config.translate("holder_4/more_char")
+        userPasswordField.placeholder = config.translate("holder_6_or_more_char")
         
         //setTitle
         btnLogin.setTitle(config.translate("title_login"), forState: .Normal)
@@ -211,14 +210,15 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
             }
             
             let param = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "\(globalvar.LOGIN_ACTION)",
                 "d"           : "0",
                 "lang"        : "jp",
                 "email"       : "\(userEmail)",
                 "passwd"      : "\(userPass)",
-                 "fcmtoken"    : "\(FCMtoken)"
+                "fcmtoken"    : "\(FCMtoken)",
+                "change_lang" : "\(language)"
             ]
             
             let httpRequest = HttpDataRequest(postData: param)
@@ -268,8 +268,6 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
                                 self.loginFirebase(userEmail, pass: userPass)
                             }
                         }
-
-
                     } catch {
                         print(error)
                     }
@@ -285,26 +283,59 @@ class SignupViewController: UIViewController, UITextFieldDelegate {
         
         FIRAuth.auth()?.signInWithEmail(email, password: pass) { (user, error) in
             if error == nil {
-                globalUserId.FirID = (FIRAuth.auth()?.currentUser?.uid)!
                 
-                config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
-                
-                let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
-                registTokendb.child("token").setValue(String(FIRInstanceID.instanceID().token()!))
-                
-                self.connectToFcm()
-                self.redirectLogin()
-                
-                if self.loadingScreen != nil {
-                    UIViewController.removeSpinner(self.loadingScreen)
-                    self.loadingScreen = nil
+                if let currentUser = FIRAuth.auth()?.currentUser {
+                    globalUserId.FirID = currentUser.uid
+                    config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+                    
+                    if let token = FIRInstanceID.instanceID().token(){
+                        let registTokendb = FIRDatabase.database().reference().child("registration-token").child((user?.uid)!)
+                        registTokendb.child("token").setValue(token)
+                    }
+                    self.saveFirebase(email, pass: pass)
+                }else {
+                    self.displayMyAlertMessage(config.translate("mess_fail_auth"))
                 }
-                
             } else {
                 self.displayMyAlertMessage(config.translate("mess_fail_auth"))
             }
             
         }
+    }
+    
+    func saveFirebase(email: String, pass: String){
+        let param = [
+            "sercret"     : globalvar.secretKey,
+            "action"      : "api",
+            "ac"          : "\(globalvar.LOGIN_ACTION)",
+            "d"           : "0",
+            "lang"        : "jp",
+            "email"       : email,
+            "passwd"      : pass,
+            "firebase"    : globalUserId.FirID
+        ]
+        let httpRequest = HttpDataRequest(postData: param)
+        let request = httpRequest.requestGet()
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil || data == nil{
+                self.saveFirebase(email, pass: pass)
+            }else{
+                dispatch_async(dispatch_get_main_queue()){
+                    self.connectToFcm()
+                    self.redirectLogin()
+                    
+                    if self.loadingScreen != nil {
+                        UIViewController.removeSpinner(self.loadingScreen)
+                        self.loadingScreen = nil
+                    }
+                }
+            }
+        }
+        
+        task.resume()
     }
     
     func connectToFcm(){

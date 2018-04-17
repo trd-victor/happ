@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
         Fabric.with([Crashlytics.self])
         
         FIRApp.configure()
-        //        UIApplication.sharedApplication().applicationIconBadgeNumber = self.badgeNumber
+        UIApplication.sharedApplication().applicationIconBadgeNumber = 0
         
         return true
     }
@@ -51,7 +51,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FIRMessagingDelegate {
                     UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber + 1
                 }
             }else{
-                self.addLocalNotification(userInfo)
                 UIApplication.sharedApplication().applicationIconBadgeNumber = UIApplication.sharedApplication().applicationIconBadgeNumber
             }
         }

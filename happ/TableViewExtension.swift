@@ -13,7 +13,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
     func getTimelineUser() {
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -80,7 +80,9 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
                                         }
                                     }
                                     if let body = postContent.valueForKey("body") {
-                                        self.userBody.append(body as! String)
+                                        if let textStr = body as? String {
+                                           self.userBody.append(textStr.stringByDecodingHTMLEntities)
+                                        }
                                     }
                                     if let id = postContent.valueForKey("from_user_id") {
                                         self.fromID.append(id as! String)
@@ -116,8 +118,16 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let config = SYSTEM_CONFIG()
-        let username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String
-        let userimageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as! String
+        var username = ""
+        var userimageURL = ""
+        
+        if let name = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as? String{
+            username = name
+        }
+        if let imageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as? String {
+            userimageURL = imageURL
+        }
+        
         let cellTap = UITapGestureRecognizer(target: self, action: "tapCell:")
         let bodyTap = UITapGestureRecognizer(target: self, action: "tapBody:")
         let imgTap = UITapGestureRecognizer(target: self, action: "tapImage:")
@@ -127,8 +137,6 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             
             cell.contentView.addGestureRecognizer(cellTap)
             
-            let imgView = UIImageView()
-            
             cell.btnUsername.setTitle(username, forState: .Normal)
 //            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
@@ -136,23 +144,42 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
             if userimageURL == "null" {
-                imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(UIImage(named: "noPhoto"), forState: .Normal)
             }else {
-                imgView.profileForCache(userimageURL)
+                cell.btnProfile.loadImageUsingString(userimageURL){
+                    (result: Bool) in
+                    
+                }
             }
-            cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
 //            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
             cell.profileImg.tag = Int(self.fromID[indexPath.row])!
-            cell.postDate.text = self.postDate[indexPath.row]
+            cell.postDate.text = self.dateTransform(self.postDate[indexPath.row])
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            cell.imgView1.imgForCache(self.img1[indexPath.row])
-            cell.imgView2.imgForCache(self.img2[indexPath.row])
-            cell.imgView3.imgForCache(self.img3[indexPath.row])
+            
+            cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
+                cell.indicator.stopAnimating()
+            }
+            
+            cell.indicator2.startAnimating()
+            cell.imgView2.loadImageUsingString(self.img2[indexPath.row]){
+                (result: Bool) in
+                cell.indicator2.stopAnimating()
+            }
+            
+            cell.indicator3.startAnimating()
+            cell.imgView3.loadImageUsingString(self.img3[indexPath.row]){
+                (result: Bool) in
+                cell.indicator3.stopAnimating()
+            }
+            
             cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
@@ -168,8 +195,6 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             
             cell.contentView.addGestureRecognizer(cellTap)
             
-            let imgView = UIImageView()
-            
             cell.btnUsername.setTitle(username, forState: .Normal)
 //            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
@@ -177,23 +202,35 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
             if userimageURL == "null" {
-                imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(UIImage(named: "noPhoto"), forState: .Normal)
             }else {
-                imgView.profileForCache(userimageURL)
+                cell.btnProfile.loadImageUsingString(userimageURL){
+                    (result: Bool) in
+                    
+                }
             }
-            cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
 //            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
-            cell.postDate.text = self.postDate[indexPath.row]
+            cell.postDate.text = self.dateTransform(self.postDate[indexPath.row])
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            cell.imgView1.imgForCache(self.img1[indexPath.row])
-            cell.imgView2.imgForCache(self.img2[indexPath.row])
-            cell.imgContainer.addGestureRecognizer(imgTap)
             
+            cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
+                cell.indicator.stopAnimating()
+            }
+             cell.indicator2.startAnimating()
+            cell.imgView2.loadImageUsingString(self.img2[indexPath.row]){
+                (result: Bool) in
+                cell.indicator2.stopAnimating()
+            }
+
+            cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
                 cell.btnDelete.hidden = false
@@ -208,8 +245,6 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             
             cell.contentView.addGestureRecognizer(cellTap)
             
-            let imgView = UIImageView()
-            
             cell.btnUsername.setTitle(username, forState: .Normal)
 //            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
@@ -217,20 +252,29 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
             if userimageURL == "null" {
-                imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(UIImage(named: "noPhoto"), forState: .Normal)
             }else {
-                imgView.profileForCache(userimageURL)
+                cell.btnProfile.loadImageUsingString(userimageURL){
+                    (result: Bool) in
+                    
+                }
             }
-            cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
 //            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
-            cell.postDate.text = self.postDate[indexPath.row]
+            cell.postDate.text = self.dateTransform(self.postDate[indexPath.row])
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            cell.imgView1.imgForCache(self.img1[indexPath.row])
+            
+             cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
+                 cell.indicator.stopAnimating()
+            }
+            
             cell.imgContainer.addGestureRecognizer(imgTap)
             
             if self.fromID[indexPath.row] == globalUserId.userID {
@@ -246,8 +290,6 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             
             cell.contentView.addGestureRecognizer(cellTap)
             
-            let imgView = UIImageView()
-            
             cell.btnUsername.setTitle(username, forState: .Normal)
 //            cell.btnUsername.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             cell.btnUsername.tag = Int(self.fromID[indexPath.row])!
@@ -255,15 +297,18 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
             if userimageURL == "null" {
-                imgView.image = UIImage(named: "noPhoto")
+                cell.btnProfile.setImage(UIImage(named: "noPhoto"), forState: .Normal)
             }else {
-                imgView.profileForCache(userimageURL)
+                cell.btnProfile.loadImageUsingString(userimageURL){
+                    (result: Bool) in
+                    
+                }
             }
-            cell.btnProfile.setImage(imgView.image, forState: .Normal)
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
 //            cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
-            cell.postDate.text = self.postDate[indexPath.row]
+            cell.postDate.text = self.dateTransform(self.postDate[indexPath.row])
             cell.btnDelete.setTitle(String(self.postID[indexPath.row]), forState: .Normal)
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
@@ -281,6 +326,26 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        if !loadingData && indexPath.row == self.fromID.count - 1 && noData == false {
+            self.getOlderTimeline()
+            self.loadingData = true
+            btmRefresh.startAnimating()
+        }
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
+    }
     
     func tapImage(sender: UITapGestureRecognizer){
         viewDetail(sender)
@@ -336,7 +401,13 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         var height: CGFloat = 90
         let textsize = calcTextHeight(self.userBody[indexPath.row], frame: tableView.frame.size, fontsize: 16)
-        height += textsize.height
+        
+        if textsize.height <= 133.65625 {
+            height += textsize.height
+        }else{
+            height += 133.65625
+        }
+        
         if self.img1[indexPath.row] != "null" {
             height += 320
         }
@@ -345,7 +416,7 @@ extension UserProfileController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func calcTextHeight(text: String, frame: CGSize, fontsize: CGFloat) -> CGRect{
-        let size = CGSize(width: frame.width - 50, height: 1000)
+        let size = CGSize(width: frame.width - 30, height: 1000)
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }

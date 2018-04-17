@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 struct UserDetails {
     static var user_id: String!
@@ -26,11 +27,19 @@ class TimelineDetail: UIViewController {
     let scrollView: UIScrollView = UIScrollView()
     var loadingScreen: UIView!
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
+        btn.clipsToBounds = true
+        return btn
+    }()
+    
+    let btnMessage: UIButton = {
+        let btn = UIButton()
+        btn.contentMode = .ScaleAspectFill
+        btn.translatesAutoresizingMaskIntoConstraints = false
         btn.clipsToBounds = true
         return btn
     }()
@@ -146,6 +155,7 @@ class TimelineDetail: UIViewController {
         view.addSubview(btnUsername)
         view.addSubview(postDate)
         view.addSubview(scrollView)
+        view.addSubview(btnMessage)
         scrollView.addSubview(body)
         scrollView.addSubview(view1)
         scrollView.addSubview(view2)
@@ -166,29 +176,49 @@ class TimelineDetail: UIViewController {
         
         if UserDetails.userimageURL == "null" {
             imgView.image = UIImage(named: "noPhoto")
+            self.btnProfile.setImage(imgView.image, forState: .Normal)
         }else {
-            imgView.profileForCache(UserDetails.userimageURL)
+            self.btnProfile.loadImageUsingString(UserDetails.userimageURL, completion: {(result: Bool) in
+                
+            })
         }
         
-        btnProfile.setImage(imgView.image, forState: .Normal)
+        if UserDetails.userimageURL == "null" || UserDetails.userimageURL == ""{
+            imgView.image = UIImage(named: "noPhoto")
+             btnProfile.setImage(imgView.image, forState: .Normal)
+        }else {
+            imgView.profileForCache(UserDetails.userimageURL)
+             btnProfile.setImage(imgView.image, forState: .Normal)
+        }
+        
         btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
         
         if UserDetails.postID == nil || UserDetails.postID == ""{
             btnUsername.tag = Int(UserDetails.fromID)!
             btnProfile.tag = Int(UserDetails.fromID)!
             postDate.text = self.dateTransform(UserDetails.postDate)
-            body.text = UserDetails.body
+            
+            if UserDetails.fromID == globalUserId.userID {
+                self.btnMessage.hidden = true
+            }else{
+                self.btnMessage.hidden = false
+            }
+            
+            self.body.text = UserDetails.body.stringByDecodingHTMLEntities
             self.postDetail()
         }else{
+            self.btnMessage.hidden = false
             self.getDetail()
         }
         
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
     }
     
     func postDetail(){
         var contentHeight: CGFloat = 0
-        
-        
         if UserDetails.img1 != "null" {
             self.imgView1.imgForCache(UserDetails.img1)
             dispatch_async(dispatch_get_main_queue()){
@@ -219,7 +249,6 @@ class TimelineDetail: UIViewController {
             contentHeight += self.imgHeight1
             contentHeight += self.imgHeight2
             contentHeight += self.imgHeight3
-            self.scrollView.contentSize = CGSizeMake(self.view.frame.width,contentHeight + 210)
             self.autoLayout()
         }
     }
@@ -230,7 +259,7 @@ class TimelineDetail: UIViewController {
         }
         let baseUrl: NSURL = globalvar.API_URL
         let parameters = [
-                    "sercret"     : "jo8nefamehisd",
+                    "sercret"     : globalvar.secretKey,
                     "action"      : "api",
                     "ac"          : "get_timeline",
                     "d"           : "0",
@@ -251,61 +280,63 @@ class TimelineDetail: UIViewController {
                         self.getDetail()
                     }else {
                         do {
-                            let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                            let config = SYSTEM_CONFIG()
-                            dispatch_async(dispatch_get_main_queue()){
-                                if json!["success"] != nil {
-                                    if let resultArray = json!.valueForKey("result") as? NSArray {
-                                        if resultArray.count != 0 {
-                                            
-                                            UserDetails.postDate = resultArray[0]["post_modified"] as! String
-                                            UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
-                                            UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
-                                            
-                                            self.btnUsername.tag = Int(UserDetails.fromID)!
-                                            self.btnProfile.tag = Int(UserDetails.fromID)!
-                                            self.postDate.text = self.dateTransform(UserDetails.postDate)
-                                            self.body.text = UserDetails.body
-                                            
-                                            dispatch_async(dispatch_get_main_queue()){
-                                                if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
-                                                    let images = resultArray[0]["fields"]!!["images"] as! NSArray
-                                                    
-                                                    if images.count == 3 {
-                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
-                                                        UserDetails.img3 = images[2]["image"]!!["url"] as! String
-                                                    }else if images.count == 2 {
-                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
-                                                        UserDetails.img2 = images[1]["image"]!!["url"] as! String
-                                                        UserDetails.img3 = "null"
-                                                    }else if images.count == 1 {
-                                                        UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                            if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                                let config = SYSTEM_CONFIG()
+                                dispatch_async(dispatch_get_main_queue()){
+                                    if json["success"] != nil {
+                                        if let resultArray = json.valueForKey("result") as? NSArray {
+                                            if resultArray.count != 0 {
+                                                
+                                                UserDetails.postDate = resultArray[0]["post_modified"] as! String
+                                                UserDetails.fromID = resultArray[0]["fields"]!!["from_user_id"]!! as! String
+                                                UserDetails.body = resultArray[0]["fields"]!!["body"]!! as! String
+                                                
+                                                self.btnUsername.tag = Int(UserDetails.fromID)!
+                                                self.btnProfile.tag = Int(UserDetails.fromID)!
+                                                self.postDate.text = self.dateTransform(UserDetails.postDate)
+                                                
+                                                self.body.text = UserDetails.body.stringByDecodingHTMLEntities
+                                                
+                                                dispatch_async(dispatch_get_main_queue()){
+                                                    if resultArray[0]["fields"]!!["images"] as? NSArray  != nil {
+                                                        let images = resultArray[0]["fields"]!!["images"] as! NSArray
+                                                        
+                                                        if images.count == 3 {
+                                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                            UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                                            UserDetails.img3 = images[2]["image"]!!["url"] as! String
+                                                        }else if images.count == 2 {
+                                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                            UserDetails.img2 = images[1]["image"]!!["url"] as! String
+                                                            UserDetails.img3 = "null"
+                                                        }else if images.count == 1 {
+                                                            UserDetails.img1 = images[0]["image"]!!["url"] as! String
+                                                            UserDetails.img2 = "null"
+                                                            UserDetails.img3 = "null"
+                                                        }
+                                                    }else{
+                                                        UserDetails.img1 = "null"
                                                         UserDetails.img2 = "null"
                                                         UserDetails.img3 = "null"
                                                     }
-                                                }else{
-                                                    UserDetails.img1 = "null"
-                                                    UserDetails.img2 = "null"
-                                                    UserDetails.img3 = "null"
+                                                    
+                                                    UserDetails.postID = ""
+                                                    self.postDetail()
                                                 }
                                                 
-                                                UserDetails.postID = ""
-                                                self.postDetail()
+                                                if self.loadingScreen != nil {
+                                                    UIViewController.removeSpinner(self.loadingScreen)
+                                                    self.loadingScreen = nil
+                                                }
+                                            }else{
+                                                self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
                                             }
                                             
-                                            if self.loadingScreen != nil {
-                                                UIViewController.removeSpinner(self.loadingScreen)
-                                                self.loadingScreen = nil
-                                            }
                                         }else{
                                             self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
                                         }
                                         
-                                    }else{
-                                        self.displayMyAlertMessage(config.translate("already_deleted_post_mess"))
                                     }
-
                                 }
                             }
                         } catch {
@@ -340,10 +371,15 @@ class TimelineDetail: UIViewController {
         var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
         let config = SYSTEM_CONFIG()
         let lang = config.getSYS_VAL("AppLanguage") as! String
-        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
-        if lang != "en" {
-            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
-            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        
+        var date:String = ""
+        if dateArr.count >= 0 {
+            if lang != "en" {
+                dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+                date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+            }else{
+                date = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+            }
         }
         return date
     }
@@ -412,6 +448,7 @@ class TimelineDetail: UIViewController {
     }
     
     func autoLayout(){
+        let config = SYSTEM_CONFIG()
         
         view1.topAnchor.constraintEqualToAnchor(body.bottomAnchor,constant: 25).active = true
         view1.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
@@ -443,6 +480,87 @@ class TimelineDetail: UIViewController {
         imgView3.widthAnchor.constraintEqualToAnchor(view3.widthAnchor).active = true
         imgView3.heightAnchor.constraintEqualToAnchor(view3.heightAnchor).active = true
         
+        btnMessage.topAnchor.constraintEqualToAnchor(view3.bottomAnchor, constant: 20).active = true
+        btnMessage.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
+        btnMessage.heightAnchor.constraintEqualToConstant(44).active = true
+        btnMessage.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor, multiplier: 1/2, constant: -30).active = true
+        btnMessage.setImage(UIImage(named: "msg"), forState: .Normal)
+        btnMessage.backgroundColor = UIColor(hexString: "#272727")
+        btnMessage.setTitle(config.translate("menu_message"), forState: .Normal)
+        btnMessage.addTarget(self, action: Selector("goToMessage"), forControlEvents: .TouchUpInside)
+        
+        self.view.layoutIfNeeded()
+        
+        let last_origin_y: CGFloat = btnMessage.frame.origin.y
+        let last_height: CGFloat = btnMessage.frame.size.height
+        
+        let contentSize = last_origin_y + last_height
+        self.scrollView.contentSize = CGSizeMake(self.view.frame.size.width, contentSize + 100)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+       if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
+    }
+    
+    func goToMessage(){
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
+        let user_id = Int(UserDetails.fromID)
+        let userdb = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(user_id)
+        
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
+        userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            let userData = snapshot.value as? NSDictionary
+            
+            if(userData != nil) {
+                for (key, value) in userData! {
+                    if let dataVal = value as? NSDictionary {
+                        if let dataID =  dataVal["id"] as? Int {
+                           
+                            if dataID == user_id {
+                                chatVar.chatmateId = key as! String
+                                chatVar.Indicator = "Search"
+                                
+                                if let name = globalvar.USER_IMG.valueForKey(chatVar.chatmateId)?.valueForKey("name") as? String{
+                                    chatVar.name = name
+                                }
+                                
+                                if self.loadingScreen != nil {
+                                    UIViewController.removeSpinner(self.loadingScreen)
+                                    self.loadingScreen = nil
+                                }
+                                
+                                dispatch_async(dispatch_get_main_queue()){
+                                    let vc = ViewLibViewController()
+                                    
+                                    let transition = CATransition()
+                                    transition.duration = 0.40
+                                    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                                    transition.type = kCATransitionPush
+                                    transition.subtype = kCATransitionFromRight
+                                    self.view.window!.layer.addAnimation(transition, forKey: "leftToRightTransition")
+                                    self.presentViewController(vc, animated: false, completion: nil)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
     
     func viewProfile(sender: UIButton!){
@@ -470,8 +588,18 @@ class TimelineDetail: UIViewController {
         self.dismissViewControllerAnimated(false, completion: nil)
     }
     
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
+    
     private func calcTextHeight(text: String, frame: CGSize, fontsize: CGFloat) -> CGRect{
-        let size = CGSize(width: frame.width - 50, height: 1000)
+        let size = CGSize(width: frame.width - 30, height: 1000)
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }
@@ -497,3 +625,135 @@ class TimelineDetail: UIViewController {
     }
     
 }
+
+
+class TimelineImage: UIImageView {
+    
+    var imageUrlString: String?
+    
+    func loadImageUsingString(urlString: String, completion: (result: Bool) -> Void){
+        self.imageUrlString = urlString
+        
+        let urlStr = urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+        let urlData = NSURL(string: urlStr)
+        
+        self.image = nil
+        self.backgroundColor = UIColor.lightGrayColor()
+        
+        if let imgFromCache = imgCache.objectForKey(urlString) as? UIImage{
+            self.image = imgFromCache
+            self.backgroundColor = UIColor.clearColor()
+            completion(result: true)
+            return
+        }
+        
+        NSURLSession.sharedSession().dataTaskWithURL(urlData!, completionHandler: {(data, responses, error) in
+            
+            if error != nil {
+                print(error?.localizedDescription)
+                completion(result: false)
+            }
+            
+            if data != nil {
+                let imageToCache = UIImage(data: data!)
+                if imageToCache != nil {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        () -> Void in
+                        imgCache.setObject(imageToCache!, forKey: urlString)
+                        dispatch_async(dispatch_get_main_queue()){
+                            if self.imageUrlString! == urlString {
+                                self.backgroundColor = UIColor.clearColor()
+                                self.image = imageToCache
+                                completion(result: true)
+                            }
+                        }
+                    })
+                }
+            }
+        }).resume()
+    }
+    
+    func loadProfileImageUsingString(urlString: String, completion: (result: Bool) -> Void){
+        self.imageUrlString = urlString
+        let url = NSURL(string: urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+//        print(urlString)
+        self.image = UIImage(named : "noPhoto")
+        
+        if let imgFromCache = imgCache.objectForKey(urlString) as? UIImage{
+            self.image = imgFromCache
+            self.backgroundColor = UIColor.clearColor()
+            completion(result: true)
+            return
+        }
+        
+        NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) in
+            if error != nil {
+                print(error?.localizedDescription)
+                completion(result: false)
+            }
+           
+            if data != nil{
+                let tmpImg = UIImage(data: data!)
+                if tmpImg != nil {
+                    dispatch_async(dispatch_get_main_queue()){
+                        imgCache.setObject(tmpImg!, forKey: urlString)
+                        dispatch_async(dispatch_get_main_queue()){
+                            if self.imageUrlString! == urlString {
+                                self.image = UIImage(data: data!)
+                            }
+                        }
+                        completion(result: true)
+                    }
+                }else{
+                    completion(result: false)
+                }
+            }else{
+                completion(result: false)
+            }
+        }).resume()
+        
+    }
+    
+
+}
+
+
+class TimelineProfileImage: UIButton {
+    
+    var imageUrlString: String?
+    
+    func loadImageUsingString(urlString: String, completion: (result: Bool) -> Void){
+        
+        if (imgCache.objectForKey(urlString) != nil) {
+            
+            if let image = imgCache.objectForKey(urlString) as? UIImage {
+                let imgCache = image
+                self.setImage(imgCache, forState: .Normal)
+            }
+            
+            completion(result: true)
+        }else{
+            self.setImage(UIImage(named : "noPhoto"), forState: .Normal)
+            self.backgroundColor = UIColor.lightGrayColor()
+            self.contentMode = .Center
+            let url = NSURL(string: urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
+                if let data = NSData(contentsOfURL: url!){
+                    dispatch_async(dispatch_get_main_queue()){
+                        self.setImage(UIImage(data: data), forState: .Normal)
+                        self.contentMode = .ScaleAspectFill
+                        self.backgroundColor = UIColor.clearColor()
+                    }
+                    let tmpImg = UIImage(data: data)
+                    imgCache.setObject(tmpImg!, forKey: urlString)
+                    completion(result: true)
+                }
+            })
+            task.resume()
+        }
+    
+    
+    }
+    
+}
+

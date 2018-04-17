@@ -12,20 +12,34 @@ import Firebase
 extension SearchController {
 
     func getSearchUser(value: String) {
-        user_id.removeAll()
+        if menu_bar.sessionDeleted {
+            let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+            UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
+        self.userData = []
+        self.user_id.removeAll()
+        self.tblViewSearch.reloadData()
+
         if task2 != nil {
             task2.cancel()
         }
 //        let config = SYSTEM_CONFIG()
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "user_search",
             "d"           : "0",
             "lang"        : "en",
             "name"        : "\(value)",
-            "h_id"        : "\(value)"
+            "h_id"        : "\(value)",
+            "user_id_for_block" : globalUserId.userID
         ]
         let request1 = NSMutableURLRequest(URL: self.baseUrl)
         let boundary1 = generateBoundaryString()
@@ -38,11 +52,12 @@ extension SearchController {
                 return
             }
             do {
-                let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                if let info = json2!["result"] as? NSArray {
-                    dispatch_async(dispatch_get_main_queue()){
+                if let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                    if let info = json2["result"] as? NSArray {
                         self.userData = info
-                        self.tblViewSearch.reloadData()
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.tblViewSearch.reloadData()
+                        }
                     }
                 }
             } catch {

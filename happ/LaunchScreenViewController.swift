@@ -35,23 +35,50 @@ class SYSTEM_CONFIG {
      * System Language
      **/
     internal func translate(key: String) -> String {
-        var lang = self.getSYS_VAL("AppLanguage") as! String
-        let textTranslate = self.getSYS_VAL("SYSTM_VAL")
-        
-        if lang == "ja" {
-            lang = "jp"
-        }else if lang == "en"{
-            lang = "en"
-        }else{
-            lang = "jp"
-        }
-        
-        if textTranslate![key] != nil {
-            return textTranslate![key]!![lang]!! as! String
+        if var lang = self.getSYS_VAL("AppLanguage") as? String {
+            if let textTranslate = self.getSYS_VAL("SYSTM_VAL") {
+                if lang == "ja" {
+                    lang = "jp"
+                }else if lang == "en"{
+                    lang = "en"
+                }else{
+                    lang = "jp"
+                }
+                
+                if let translate = textTranslate[key] as? NSDictionary {
+                    if let text = translate[lang] as? String {
+                        return text
+                    }else{
+                        return ""
+                    }
+                }else{
+                    return ""
+                }
+            }else{
+                return ""
+            }
         }else{
             return ""
         }
     }
+    
+    internal func getTranslate(key: String, lang: String) -> String {
+        if let textTranslate = self.getSYS_VAL("SYSTM_VAL") as? NSDictionary {
+            
+            if let key_text = textTranslate[key] as? NSDictionary{
+                if let text = key_text[lang] as? String {
+                    return text
+                }else{
+                    return ""
+                }
+            }else{
+                return ""
+            }
+        }else{
+            return ""
+        }
+    }
+
     
     internal func getSkillByID(id: String) -> String {
         var lang = self.getSYS_VAL("AppLanguage") as? String
@@ -99,8 +126,6 @@ class LaunchScreenViewController: UIViewController {
         logo.translatesAutoresizingMaskIntoConstraints = false
         logo.centerYAnchor.constraintEqualToAnchor(view.centerYAnchor).active = true
         logo.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
-        logo.widthAnchor.constraintEqualToConstant(240).active = true
-        logo.heightAnchor.constraintEqualToConstant(130).active = true
         
         logo.image = UIImage(named: "logo")
         activityIndicator.topAnchor.constraintEqualToAnchor(logo.bottomAnchor, constant: 5).active = true
@@ -135,18 +160,29 @@ class LaunchScreenViewController: UIViewController {
     func gotoMainBoard() {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         
-        if let firID = FIRAuth.auth()?.currentUser?.uid {
-            globalUserId.FirID = firID
+        if let currentUser = FIRAuth.auth()?.currentUser {
             let config = SYSTEM_CONFIG()
-            globalUserId.userID = config.getSYS_VAL("userID") as! String
-            config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
-            
-            if let token = FIRInstanceID.instanceID().token() {
-                FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue(token)
+            if let userid = config.getSYS_VAL("userID") as? String {
+                if let fid = currentUser.uid as? String{
+                    globalUserId.FirID = fid
+                    globalUserId.userID = userid
+                    config.setSYS_VAL(globalUserId.FirID, key: "FirebaseID")
+                    if let token = FIRInstanceID.instanceID().token() {
+                        dispatch_async(dispatch_get_main_queue()){
+                            FIRDatabase.database().reference().child("registration-token").child(fid).child("token").setValue(token)
+                        }
+                    }
+                    
+                    let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+                    self.presentViewController(userTimeLineController, animated:true, completion:nil)
+                }else{
+                    let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+                    self.presentViewController(mainViewController, animated:false, completion:nil)
+                }
+            }else{
+                let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+                self.presentViewController(mainViewController, animated:false, completion:nil)
             }
-            
-            let userTimeLineController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
-            self.presentViewController(userTimeLineController, animated:true, completion:nil)
         }else {
             let mainViewController = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
             self.presentViewController(mainViewController, animated:false, completion:nil)
@@ -154,12 +190,10 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func delayLaunchScreen() {
-        self.delay(6.0) {
-            self.activityIndicator.stopAnimating()
-            dispatch_async(dispatch_get_main_queue()){
-                self.dismissViewControllerAnimated(false, completion: nil)
-                self.gotoMainBoard()
-            }
+        self.activityIndicator.stopAnimating()
+        dispatch_async(dispatch_get_main_queue()){
+            self.dismissViewControllerAnimated(false, completion: nil)
+            self.gotoMainBoard()
         }
     }
     
@@ -170,49 +204,53 @@ class LaunchScreenViewController: UIViewController {
     }
     
     func isAppAlreadyLaunchedOnce()->Bool{
+        let system = SYSTEM_CONFIG()
         
         let config = getSystemValue()
-        config.getKey()
-        config.getSkill()
-        getAllUserInfo()
         
-        let defaults = NSUserDefaults.standardUserDefaults()
-        
-        if let _ = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
-            //self.dismissViewControllerAnimated(true, completion: nil)
-            self.delayLaunchScreen()
-            return true
-        }else{
-            defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
-
-            self.delay(6.0){
-                self.activityIndicator.stopAnimating()
-                do {
-                    try FIRAuth.auth()?.signOut()
+        config.getCallBackKey(){ (success: Bool) in
+            config.getCallbackSkill(){ (success: Bool) in
+                self.getCallbackUserInfo(){
+                    (success: Bool) in
+                    let defaults = NSUserDefaults.standardUserDefaults()
                     
-                    let sys = SYSTEM_CONFIG()
-                    sys.removeSYS_VAL("userID")
-                    globalUserId.userID = ""
-                    UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                    FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
-                    FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
-                } catch (let error) {
-                    print((error as NSError).code)
-                }
-                dispatch_async(dispatch_get_main_queue()){
-                    self.firstload()
+                    if let _ = defaults.stringForKey("isAppAlreadyLaunchedOnce"){
+                        if let _ = system.getSYS_VAL("AppLanguage") as? String{
+                            self.delayLaunchScreen()
+                        }else {
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.firstload()
+                            }
+                        }
+                    }else{
+                        defaults.setBool(true, forKey: "isAppAlreadyLaunchedOnce")
+                        
+                        self.activityIndicator.stopAnimating()
+                        do {
+                            try FIRAuth.auth()?.signOut()
+                            
+                            let sys = SYSTEM_CONFIG()
+                            sys.removeSYS_VAL("userID")
+                            globalUserId.userID = ""
+                            UIApplication.sharedApplication().applicationIconBadgeNumber = 0
+                        } catch (let error) {
+                            print((error as NSError).code)
+                        }
+                        dispatch_async(dispatch_get_main_queue()){
+                            self.firstload()
+                        }
+                    }
                 }
             }
-            return false
         }
+        return true
     }
         
     func getAllUserInfo() {
-        
         let config = SYSTEM_CONFIG()
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "user_search",
             "d"           : "0",
@@ -230,23 +268,74 @@ class LaunchScreenViewController: UIViewController {
                 self.getAllUserInfo()
             }else{
                 do {
-                    let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if let info = json2!["result"] as? NSArray {
-                        
-                        for profile in info {
-                            config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
-                            config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
-                            if let url = profile["icon"] as? String {
-                                config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
-                            }else{
-                                config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                    if let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if let info = json2["result"] as? NSArray {
+                            for profile in info {
+                                config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
+                                config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
+                                if let url = profile["icon"] as? String {
+                                    config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
+                                }else{
+                                    config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                                }
+                                config.setSYS_VAL(profile["skills"]!!, key: "user_skills_\(profile["user_id"]!!)")
+                                config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
                             }
-                            config.setSYS_VAL(profile["skills"]!!, key: "user_skills_\(profile["user_id"]!!)")
-                            config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
                         }
                     }
                 } catch {
                     print(error)
+                }
+            }
+        }
+        task2.resume()
+    }
+    
+    func getCallbackUserInfo(completion: (success: Bool)-> Void) {
+        let config = SYSTEM_CONFIG()
+        
+        let parameters = [
+            "sercret"     : globalvar.secretKey,
+            "action"      : "api",
+            "ac"          : "user_search",
+            "d"           : "0",
+            "lang"        : "en"
+        ]
+        
+        let request1 = NSMutableURLRequest(URL: globalvar.API_URL)
+        let boundary1 = generateBoundaryString()
+        request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
+        request1.HTTPMethod = "POST"
+        request1.HTTPBody = createBodyWithParameters(parameters, boundary: boundary1)
+        let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1) {
+            data1, response1, error1 in
+            if error1 != nil || data1 == nil{
+                self.getCallbackUserInfo(completion)
+            }else{
+                do {
+                    if let json2 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if let info = json2["result"] as? NSArray {
+                            for profile in info {
+                                config.setSYS_VAL(String(profile["user_id"]!!), key: "userid_\(profile["user_id"]!!)")
+                                config.setSYS_VAL(profile["name"]!!, key: "username_\(profile["user_id"]!!)")
+                                if let url = profile["icon"] as? String {
+                                    config.setSYS_VAL(url, key: "userimage_\(profile["user_id"]!!)")
+                                }else{
+                                    config.setSYS_VAL("null", key: "userimage_\(profile["user_id"]!!)")
+                                }
+                                config.setSYS_VAL(profile["skills"]!!, key: "user_skills_\(profile["user_id"]!!)")
+                                config.setSYS_VAL(profile["email"]!!, key: "useremail_\(profile["user_id"]!!)")
+                            }
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue()){
+                            completion(success: true)
+                        }
+                    }else{
+                        self.getCallbackUserInfo(completion)
+                    }
+                } catch {
+                    self.getCallbackUserInfo(completion)
                 }
             }
         }

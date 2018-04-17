@@ -38,6 +38,10 @@ class CreateTimelineSkillSelection: UIViewController {
         return view
     }()
     
+    let skillName: UILabel = UILabel()
+    let skillSwitch: UISwitch = UISwitch()
+    let separator: UIView = UIView()
+    
     let scrollView: UIScrollView = UIScrollView()
     let navBar: UINavigationBar = UINavigationBar()
     let categoryBox: UIView = UIView()
@@ -46,6 +50,7 @@ class CreateTimelineSkillSelection: UIViewController {
     
     var height = 48
     var loadingScreen: UIView!
+    var countSkill = 0
     
     override func viewDidLoad(){
         super.viewDidLoad()
@@ -62,10 +67,6 @@ class CreateTimelineSkillSelection: UIViewController {
         self.scrollView.scrollEnabled = true
         
         let skillBox: UIView = UIView(frame: CGRect(x: 0.0, y: 0, width: self.view.layer.frame.size.width, height: 48))
-        
-        let skillName: UILabel = UILabel()
-        let skillSwitch: UISwitch = UISwitch()
-        let separator: UIView = UIView()
         
         skillBox.addSubview(skillSwitch)
         skillBox.addSubview(skillName)
@@ -141,7 +142,7 @@ class CreateTimelineSkillSelection: UIViewController {
         request.HTTPMethod = "POST"
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_skill",
             "d"           : "0",
@@ -269,8 +270,6 @@ class CreateTimelineSkillSelection: UIViewController {
     }
     
     func switchBtnToggle(sender: UISwitch) {
-        
-        
         if sender.on {
             if sender.tag == 0 {
                 timeline_post_skills.selectedSkills.removeAll()
@@ -291,12 +290,13 @@ class CreateTimelineSkillSelection: UIViewController {
                     }
                 }
             }else{
+                skillSwitch.setOn(false, animated: true)
                 timeline_post_skills.selectedSkills.append(sender.tag)
                 sender.setOn(true, animated: true)
+                
             }
         }else{
             if sender.tag == 0 {
-                
                 for subviews in view.subviews {
                     if let scrollview = subviews as? UIScrollView {
                         for subsubviews in scrollview.subviews {
@@ -312,6 +312,7 @@ class CreateTimelineSkillSelection: UIViewController {
                 }
                 timeline_post_skills.selectedSkills.removeAll()
             }else{
+                skillSwitch.setOn(false, animated: true)
                 for var i = 0; i < timeline_post_skills.selectedSkills.count; i++ {
                     if timeline_post_skills.selectedSkills[i] == sender.tag {
                         timeline_post_skills.selectedSkills.removeAtIndex(i)
@@ -350,6 +351,13 @@ class CreateTimelineSkillSelection: UIViewController {
             return
         }
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let config = SYSTEM_CONFIG()
         let myAlert = UIAlertController(title: "", message: config.translate("mess_send_post_promt"), preferredStyle: UIAlertControllerStyle.ActionSheet)
         myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
@@ -367,13 +375,13 @@ class CreateTimelineSkillSelection: UIViewController {
             }
             
             let postTimeline = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "update_timeline",
                 "d"           : "0",
                 "lang"        : "en",
                 "user_id"     : "\(globalUserId.userID)",
-                "body"        : "\(body)",
+                "body"        : "\(body) ",
                 "skills"      : "\(skills)"
             ]
             
@@ -455,14 +463,13 @@ class CreateTimelineSkillSelection: UIViewController {
     
     func savePost(parameters: [String: String]?) {
 
-        var mess: Bool!
+        var mess: Bool = false
         let config = SYSTEM_CONFIG()
         
         let request1 = NSMutableURLRequest(URL: globalvar.API_URL)
         let boundary1 = generateBoundaryString()
         request1.setValue("multipart/form-data; boundary=\(boundary1)", forHTTPHeaderField: "Content-Type")
         request1.HTTPMethod = "POST"
-        
         
         request1.HTTPBody = createBodyWithParameters2(parameters, boundary: boundary1)
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
@@ -472,31 +479,47 @@ class CreateTimelineSkillSelection: UIViewController {
                 self.savePost(parameters)
             }else {
                 do {
-                    let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    dispatch_async(dispatch_get_main_queue()) {
-                        if json3!["success"] != nil {
-                            mess = json3!["success"] as! Bool
-                            let postID = json3!["result"] as? Int
+                    if let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            if json3["success"] != nil {
+                                mess = json3["success"] as! Bool
+                                if let result = json3["result"] as? NSDictionary {
+                                    if let blocks = result["blocks"] as? [String] {
+                                        if blocks.count > 0 {
+                                            notifDetail.block_ids = blocks
+                                        }
+                                    }
+                                    if let post_id = result["post_id"] as? Int {
+                                        let notif = NotifController()
+                                        notif.saveNotificationMessage(post_id, type: "timeline")
+                                    }
+                                }
+                            }
                             
-                            let notif = NotifController()
-                            notif.saveNotificationMessage(postID!, type: "timeline")
-                        }
-                        
-                        if mess != nil && mess == true {
-                            NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
-                            self.displayMyAlertMessage(config.translate("saved_post"))
+                            if mess == true {
+                                NSNotificationCenter.defaultCenter().postNotificationName("reloadTimeline", object: nil, userInfo: nil)
+                                self.displayMyAlertMessage(config.translate("saved_post"))
+                            }
                         }
                     }
-                    
                 } catch {
                     print(error)
                 }
-                
             }
             
         }
         task2.resume()
         
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     func createBodyWithParameters2(parameters: [String: String]?,  boundary: String) -> NSData {

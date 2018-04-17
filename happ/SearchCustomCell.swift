@@ -10,8 +10,8 @@ import UIKit
 
 class SearchCustomCell: UITableViewCell {
     
-    let profileImg: UIImageView = {
-        let imgView = UIImageView()
+    let profileImg: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.image = UIImage(named: "noPhoto")
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.layer.cornerRadius = 35
@@ -19,6 +19,15 @@ class SearchCustomCell: UITableViewCell {
         imgView.layer.masksToBounds = true
         return imgView
     }()
+    
+    let happId: UILabel = {
+        let lbl = UILabel()
+        lbl.font = UIFont.systemFontOfSize(14)
+        lbl.textColor = UIColor.grayColor()
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+
     
     let separator: UIView = {
         let view = UIView()
@@ -43,12 +52,18 @@ class SearchCustomCell: UITableViewCell {
         super.init(style: .Subtitle, reuseIdentifier: reuseIdentifier)
         
         addSubview(profileImg)
+        addSubview(happId)
         addSubview(separator)
         
         profileImg.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 10).active = true
         profileImg.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 10).active = true
         profileImg.widthAnchor.constraintEqualToConstant(70).active = true
         profileImg.heightAnchor.constraintEqualToConstant(70).active = true
+        
+        happId.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 16).active = true
+        happId.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -5).active = true
+        happId.widthAnchor.constraintEqualToConstant(100).active = true
+        happId.textAlignment = .Right
         
         separator.bottomAnchor.constraintEqualToAnchor(self.bottomAnchor).active = true
         separator.leftAnchor.constraintEqualToAnchor(self.leftAnchor, constant: 65).active = true

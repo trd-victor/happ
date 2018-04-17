@@ -24,7 +24,7 @@ class UserDetailsSearch {
     func getUserData(sender: String) {
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "\(globalvar.GET_USER_INFO_ACTION)",
             "d"           : "0",

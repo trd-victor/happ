@@ -34,31 +34,39 @@ extension CreateReservation {
         self.startTime.addTarget(self, action: "startPicker:", forControlEvents: .ValueChanged)
         self.endTime.addTarget(self, action: "endPicker:", forControlEvents: .ValueChanged)
         
+        let sdate = self.startTime.date
+        let edate = self.endTime.date
+        
+        let calendar = NSCalendar.currentCalendar()
+        var components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: sdate)
+        components.hour = 8
+        components.minute = 0
+        
+        self.startTime.setDate(calendar.dateFromComponents(components)!, animated: true)
+        components.hour = 23
+        components.minute = 0
+        self.endTime.setDate(calendar.dateFromComponents(components)!, animated: true)
+        
         self.facilitySelect.delegate = self
         self.facilitySelect.dataSource = self
         
         self.roomSelect.delegate = self
         self.roomSelect.dataSource = self
         
-        self.navCreate.title = config.translate("button_create")
-        self.roomSubtitle.text = config.translate("subtitle_room")
+        self.navCreate.title = config.translate("button_save")
+        self.roomSubtitle.text = config.translate("label_room")
         self.facilityLabel.text =  config.translate("lbl_facility")
         self.roomLabel.text = config.translate("label_room")
         self.makeReservation.text = config.translate("subtitle_make_reservation")
         self.startLabel.text = config.translate("label_start")
-        let sdate = self.startTime.date
         
-        let calendar = NSCalendar.currentCalendar()
-        var components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: sdate)
         
-        self.startName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
-        
-        let edate = self.endTime.date
+        self.startName.text = "\(String(format: "%02d", 8)):\(String(format: "%02d", 0))"
         
         components = calendar.components([NSCalendarUnit.Hour, NSCalendarUnit.Minute] , fromDate: edate)
         
         self.endLabel.text = config.translate("label_end")
-        self.endName.text = "\(String(format: "%02d",components.hour)):\(String(format: "%02d", components.minute))"
+        self.endName.text = "\(String(format: "%02d", 23)):\(String(format: "%02d", 0))"
         self.reservedLabel.text = config.translate("title_reserved")
         
         self.getOffice()
@@ -66,6 +74,14 @@ extension CreateReservation {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         lang = config.getSYS_VAL("AppLanguage") as! String
         let title = CreateDetails.date
         let tmpArr = title.characters.split{$0 == "-"}.map(String.init)
@@ -74,7 +90,6 @@ extension CreateReservation {
         }else{
             navTitle.title = "\(tmpArr[0])年\(tmpArr[1])月\(tmpArr[2])日 (\(CreateDetails.day))"
         }
-        
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {

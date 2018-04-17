@@ -10,6 +10,11 @@ import UIKit
 import Firebase
 import FirebaseInstanceID
 
+struct notifDetail {
+    static var user_ids = [Int]()
+    static var block_ids = [String]()
+}
+
 class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
@@ -21,7 +26,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     var postPhotoUrl: String = ""
     var freeTimeMessage: String = ""
     var postTimelineMessage: String = ""
-    var loadingScreen: UIView?
+    var reservationMessage: String = ""
+    var loadingScreen: UIView!
     let imgforProfileCache = NSCache()
     
     var count:UInt = 10
@@ -45,12 +51,30 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         //load starting config and layout
         autoLayout()
         loadConfig()
+        
+        currentKey = nil
         getNotification()
         
         self.tblView.delegate = self
         self.tblView.dataSource = self
         
         self.tblView.reloadData()
+        
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+        
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -79,6 +103,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         
         self.postTimelineMessage = config.translate("notif_timeline_mess")
         self.freeTimeMessage = config.translate("notif_freetime_mess")
+        self.reservationMessage = config.translate("notif_reservation_mess")
         
         let navItem = UINavigationItem(title: titlestr)
         let btnBack = UIBarButtonItem(image: UIImage(named: "Image"), style: .Plain, target: self, action: Selector("backToMenu:"))
@@ -96,11 +121,10 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func getNotification(){
-        let config = SYSTEM_CONFIG()
-        let firID = config.getSYS_VAL("FirebaseID") as! String
+        let firID = FIRAuth.auth()?.currentUser?.uid
         
         if currentKey == nil {
-            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryLimitedToLast(10)
+            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("notif-list").queryLimitedToLast(10)
             
             notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
                 let first = snap.children.allObjects.first as? FIRDataSnapshot
@@ -113,12 +137,16 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
                         
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-                            
-                            if let result = snapshot.value as? NSDictionary {
-                                result.setValue(read, forKey: "read")
-                                result.setValue(s.key, forKey: "key")
-                                self.arrayData.insert(result, atIndex: 0)
-                                self.tblView.reloadData()
+                            if snapshot.exists(){
+                                if let result = snapshot.value as? NSDictionary {
+                                    result.setValue(read, forKey: "read")
+                                    result.setValue(s.key, forKey: "key")
+                                    self.arrayData.insert(result, atIndex: 0)
+                                }
+                                
+                                if self.arrayData.count == snap.children.allObjects.count {
+                                    self.tblView.reloadData()
+                                }
                             }
                         })
                     }
@@ -126,8 +154,8 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 }
             })
         }else{
-            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("notif-list").queryOrderedByKey().queryEndingAtValue(self.currentKey).queryLimitedToLast(11)
-            
+            let notifUserDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("notif-list").queryOrderedByKey().queryEndingAtValue(self.currentKey).queryLimitedToLast(11)
+            let count = self.arrayData.count
             notifUserDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
                 
                 let first = snap.children.allObjects.first as? FIRDataSnapshot
@@ -136,23 +164,25 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
                 if snap.childrenCount > 0 {
                     var notifData = snap.children.allObjects as! [FIRDataSnapshot]
                     notifData.removeLast()
-                    
                     for s in notifData {
                         let notifAllDb = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all").child(s.key)
                         
                         let read = s.value!["read"] as? Bool
                         
                         notifAllDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-                            
-                            if let result = snapshot.value as? NSDictionary {
-                                result.setValue(read, forKey: "read")
-                                result.setValue(s.key, forKey: "key")
-                                self.arrayData.insert(result, atIndex: index)
-                                self.tblView.reloadData()
+                            if snapshot.exists() {
+                                if let result = snapshot.value as? NSDictionary {
+                                    result.setValue(read, forKey: "read")
+                                    result.setValue(s.key, forKey: "key")
+                                    self.arrayData.insert(result, atIndex: index)
+                                }
+                                
+                                if (count + snap.children.allObjects.count - 1) == self.arrayData.count {
+                                    self.tblView.reloadData()
+                                }
                             }
                         })
                     }
-                    
                     self.currentKey = first!.key
                 }
             })
@@ -225,34 +255,33 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             if type == "timeline" || type == "post-timeline"{
                 cell.lblMessage.text = "\(name) \(self.postTimelineMessage)"
+                if image == "" || image == "null" {
+                    cell.notifPhoto.image = UIImage(named : "noPhoto")
+                }else{
+                    cell.notifPhoto.image = UIImage(named : "noPhoto")
+                    cell.notifPhoto.loadProfileImageUsingString(image!){
+                        (result: Bool) in
+                    }
+                }
+                
+                
             }else if type == "free-time" {
                 cell.lblMessage.text = "\(name) \(self.freeTimeMessage)"
-            }else if type == "message" {
-                cell.lblMessage.text = "You have a message from \(name)."
+                if image == "" || image == "null" {
+                    cell.notifPhoto.image = UIImage(named : "noPhoto")
+                }else{
+                    cell.notifPhoto.image = UIImage(named : "noPhoto")
+                    cell.notifPhoto.loadProfileImageUsingString(image!){
+                        (result: Bool) in
+                    }
+                }
             }else if type == "reservation" {
-                cell.lblMessage.text = "Reservation"
+                cell.notifPhoto.image = UIImage(named: "oval")
+                cell.lblMessage.text = self.reservationMessage
             }
             
             cell.lblDate.text = self.dateFormatter(timestamp!)
             
-            if (imgforProfileCache.objectForKey(image!) != nil) {
-                let imgCache = imgforProfileCache.objectForKey(image!) as! UIImage
-                cell.notifPhoto.image = imgCache
-            }else{
-                cell.notifPhoto.image = UIImage(named : "noPhoto")
-                let url = NSURL(string: image!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.notifPhoto.image = UIImage(data: data)
-                        }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforProfileCache.setObject(tmpImg!, forKey: image!)
-                    }
-                    
-                })
-                task.resume()
-            }
         }
         
         return cell
@@ -264,6 +293,13 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let data = self.arrayData[indexPath.row] as? NSDictionary
       
         let type = data!["type"] as? String
@@ -277,17 +313,32 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         if !read! {
             let cell = tableView.cellForRowAtIndexPath(indexPath) as? NotifCell
             cell?.lblMessage.font = UIFont.systemFontOfSize(17)
-            FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(globalUserId.FirID).child("notif-list").child(key!).child("read").setValue(true)
+            let uid = FIRAuth.auth()?.currentUser?.uid
+            FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(uid!).child("notif-list").child(key!).child("read").setValue(true)
+            
+            self.arrayData[indexPath.row].setValue(true, forKey: "read")
         }
         
         if type! == "timeline" || type! == "post-time" {
             self.postName = name!
             self.postPhotoUrl = photoUrl!
-            self.getPostDetail(post_id!)
+            self.getPostDetail(post_id!, id: user_id!)
         }else if type! == "free-time" {
             self.getUserDetail(user_id!)
+        }else if type! == "reservation"{
+            dispatch_async(dispatch_get_main_queue()){
+                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                let vc = storyBoard.instantiateViewControllerWithIdentifier("ViewReservation") as! ViewReservation
+                let transition = CATransition()
+                
+                transition.duration = 0.40
+                transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                transition.type = kCATransitionPush
+                transition.subtype = kCATransitionFromRight
+                self.view.window!.layer.addAnimation(transition, forKey: nil)
+                self.presentViewController(vc, animated: false, completion: nil)
+            }
         }
-        
     }
     
     func dateFormatter(timestamp: NSNumber) -> String{
@@ -299,7 +350,20 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) \(time)"
+        return self.dateTransform("\(date) \(time)")
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
     }
     
     func setImageURL(imageURL: String)-> UIImage{
@@ -318,40 +382,161 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
     }
     
     func getUserDetail(id: String){
-        let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
+        let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
+        let config = SYSTEM_CONFIG()
         userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-            if let result = snapshot.value as? NSDictionary{
-                if result["id"] != nil {
-                    
-                    dispatch_async(dispatch_get_main_queue()){
-                        UserProfile.id = String(result["id"]!)
+            if snapshot.exists(){
+                if let result = snapshot.value as? NSDictionary{
+                    if result["id"] != nil {
                         
-                        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-                        let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
-                        let transition = CATransition()
-                        
-                        transition.duration = 0.40
-                        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
-                        transition.type = kCATransitionPush
-                        transition.subtype = kCATransitionFromRight
-                        self.view.window!.layer.addAnimation(transition, forKey: nil)
-                        self.presentViewController(vc, animated: false, completion: nil)
+                        dispatch_async(dispatch_get_main_queue()){
+                            UserProfile.id = String(result["id"]!)
+                            
+                            self.getBlockIds(UserProfile.id){
+                                (result: Bool) in
+                                if result {
+                                    self.displayMessage(config.translate("not_allowed_to_view"));
+                                }else{
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                         self.loadingScreen = nil
+                                    }
+                                    
+                                    let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                                    let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
+                                    let transition = CATransition()
+                                    
+                                    transition.duration = 0.40
+                                    transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+                                    transition.type = kCATransitionPush
+                                    transition.subtype = kCATransitionFromRight
+                                    self.view.window!.layer.addAnimation(transition, forKey: nil)
+                                    self.presentViewController(vc, animated: false, completion: nil)
+                                }
+                            }
+                        }
                     }
+                }else{
+                    self.displayMessage(config.translate("not_allowed_to_view"));
                 }
+            }else{
+                self.displayMessage(config.translate("not_allowed_to_view"));
             }
         })
     }
     
-    func getPostDetail(postid: Int) {
+    func displayMessage(mess: String){
+        if self.loadingScreen != nil {
+           UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
         
-        UserDetails.username =  self.postName
-        UserDetails.userimageURL = self.postPhotoUrl
-        UserDetails.postID = String(postid)
+        let myAlert = UIAlertController(title: "", message: mess, preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func getBlockIds(user_id: String, completion: (result: Bool) -> Void){
+        var block = false
+        let param = [
+            "sercret"     : globalvar.secretKey,
+            "action"      : "api",
+            "ac"          : "get_block_list",
+            "d"           : "0",
+            "lang"        : "jp",
+            "user_id"     : "\(user_id)"
+        ]
+        let httpRequest = HttpDataRequest(postData: param)
+        let request = httpRequest.requestGet()
         
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
-        self.presentDetail(vc)
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil || data == nil {
+                self.getBlockIds(user_id, completion: completion)
+            }else{
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
+                        if json["result"] != nil {
+                            for data in (json["result"] as? NSArray)! {
+                                if let id = data["fields"]!!["block_user_id"]! as? String {
+                                    if id == globalUserId.userID {
+                                       block = true
+                                    }
+                                }
+                            }
+                            
+                            dispatch_async(dispatch_get_main_queue()){
+                                completion(result: block)
+                            }
+                        }
+                    }else{
+                        self.getBlockIds(user_id, completion: completion)
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
+    }
+    
+    func getPostDetail(postid: Int, id: String) {
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
+        let userdb = FIRDatabase.database().reference().child("users").child("\(id)")
+        let config = SYSTEM_CONFIG()
+        userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            if snapshot.exists(){
+                if let result = snapshot.value as? NSDictionary{
+                    if let wp_id = result["id"] as? Int {
+                        self.getBlockIds(String(wp_id)){
+                            (result: Bool) in
+                            
+                            if result {
+                                self.displayMessage(config.translate("not_allowed_to_view"));
+                            }else{
+                                if self.loadingScreen != nil {
+                                    UIViewController.removeSpinner(self.loadingScreen)
+                                    self.loadingScreen = nil
+                                }
+                                
+                                UserDetails.username =  self.postName
+                                UserDetails.userimageURL = self.postPhotoUrl
+                                UserDetails.postID = String(postid)
+                                
+                                let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+                                let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
+                                self.presentDetail(vc)
+                            }
+                        }
+                    }
+                }else{
+                    self.displayMessage(config.translate("not_allowed_to_view"));
+                }
+            }else{
+                self.displayMessage(config.translate("not_allowed_to_view"));
+            }
+        })
     }
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
@@ -377,6 +562,7 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
 
         let config = SYSTEM_CONFIG()
        
+        var firIDs: [String] = []
         let name = config.getSYS_VAL("username_\(globalUserId.userID)")!
         let photoUrl = config.getSYS_VAL("userimage_\(globalUserId.userID)")!
         let firID = FIRAuth.auth()?.currentUser?.uid
@@ -398,102 +584,171 @@ class NotifController: UIViewController, UITableViewDelegate, UITableViewDataSou
             
             notifAllDB.setValue(detail)
             
-            if type == "free-time" {
-                let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
-                pushFreeTimeDB.setValue(detail)
-            }
-            
-            if type == "timeline"{
-                let pushdetail = [
-                    "name": String(name),
-                    "photoUrl": String(photoUrl),
-                    "id": id,
-                    "timestamp": timestamp,
-                    "type": type,
-                    "userId": firID!,
-                    "skills": timeline_post_skills.selectedSkills.flatMap({String($0)}).joinWithSeparator(",")
-                ]
-                
-                let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
-                pushTimelineDB.setValue(pushdetail)
-            }
-            
             // get user DB
             let userDB = FIRDatabase.database().reference().child("users")
             
             if type == "free-time" {
+                
+                var count = 0
                 dispatch_async(dispatch_get_main_queue()){
+                    print(notifDetail.block_ids)
                     userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                         
                         if let result = snapshot.value as? NSDictionary {
-                            for (key, _) in result {
-                                if key as! String != firID! {
-                                    // update notification user
-                                    FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
+                            for (key, value) in result {
+                                count++
+                                if let k = key as? String {
+                                    if k != firID! {
+                                        if !notifDetail.block_ids.contains(k){
+                                            self.addUserNotif(k, notif_all_key: notif_all_key)
+                                            self.countUnreadNotif(k)
+                                            self.addFreetimeBadgeUser(k)
+                                        }
+                                        
+                                    }
                                     
-                                    // get unread count on each user
-                                    let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
-                                    dispatch_async(dispatch_get_main_queue()){
-                                        readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
-                                            
-                                            if let result = snapCount.value as? NSDictionary {
-                                                if let count = result["count"] as? Int {
-                                                    readDB.child("count").setValue(count + 1)
-                                                }else{
-                                                    readDB.child("count").setValue(1)
+                                    if let data = value as? NSDictionary {
+                                        if let id = data["id"] as? Int {
+                                            if notifDetail.user_ids.contains(id) {
+                                                if id != Int(globalUserId.userID) {
+                                                    firIDs.append(k)
                                                 }
                                             }
-                                        })
+                                        }
                                     }
+                                }
+                                
+                                if count == result.count{
+                                    let freeTimeDetail = [
+                                        "firIDs": firIDs.joinWithSeparator(","),
+                                        "name": String(name),
+                                        "photoUrl": String(photoUrl),
+                                        "id": id,
+                                        "timestamp": timestamp,
+                                        "type": type,
+                                        "userId": firID!,
+                                        "messageEN": config.getTranslate("notif_freetime_mess", lang: "en"),
+                                        "messageJP": config.getTranslate("notif_freetime_mess", lang: "jp")
+                                    ]
+                                    self.addFreeTimeNotif(freeTimeDetail)
                                 }
                             }// end of loop
                         }// end of if
                     })// end of observation
                 }// dispatch end
-            }
+            }//end of if free time type
+          
             
             if type == "timeline" {
                 if timeline_post_skills.selectedSkills.count == 0 {
                     return
                 }else{
                     dispatch_async(dispatch_get_main_queue()){
+                        var count = 0
                         userDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
                             if let result = snapshot.value as? NSDictionary {
                                 for (key, value) in result {
+                                    count++
                                     if let valueData = value as? NSDictionary {
                                         if let skills = valueData["skills"] as? String {
-                                            if skills != "" {
-                                                for c in timeline_post_skills.selectedSkills {
-                                                    if skills.containsString(String(c)){
-                                                        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("notif-list").child(notif_all_key).child("read").setValue(false)
-                                                        let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key as! String).child("unread")
-                                                        dispatch_async(dispatch_get_main_queue()){
-                                                            readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
-                                                                
-                                                                if let result = snapCount.value as? NSDictionary {
-                                                                    if let count = result["count"] as? Int {
-                                                                        readDB.child("count").setValue(count + 1)
-                                                                    }else{
-                                                                        readDB.child("count").setValue(1)
-                                                                    }
+                                            if let userKey = key as? String {
+                                                if userKey != firID {
+                                                    if !notifDetail.block_ids.contains(userKey){
+                                                        if skills != "" {
+                                                            let skillArr = skills.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: ","))
+                                                            for c in timeline_post_skills.selectedSkills {
+                                                                if skillArr.contains(String(c)){
+                                                                    firIDs.append(userKey)
+                                                                    self.addUserNotif(userKey, notif_all_key: notif_all_key)
+                                                                    self.countUnreadNotif(userKey)
+                                                                    self.addTimelineBadgeUser(userKey)
+                                                                    break
                                                                 }
-                                                            })
+                                                            }
+                                                        }else{
+                                                            firIDs.append(userKey)
+                                                            self.addUserNotif(userKey, notif_all_key: notif_all_key)
+                                                            self.countUnreadNotif(userKey)
+                                                            self.addTimelineBadgeUser(userKey)
                                                         }
-                                                        break
                                                     }
                                                 }
                                             }
                                         }
                                     }
+                                    if count == result.count {
+                                        notifDetail.block_ids.removeAll()
+//                                        let pushdetail = [
+//                                            "name": String(name),
+//                                            "photoUrl": String(photoUrl),
+//                                            "id": id,
+//                                            "timestamp": timestamp,
+//                                            "type": type,
+//                                            "userId": firID!,
+//                                            "skills": timeline_post_skills.selectedSkills.flatMap({String($0)}).joinWithSeparator(","),
+//                                            "messageEN": config.getTranslate("notif_timeline_mess", lang: "en"),
+//                                            "messageJP": config.getTranslate("notif_timeline_mess", lang: "jp"),
+//                                            "firIDs": firIDs.joinWithSeparator(",")
+//                                        ]
+//                                        
+//                                        let pushTimelineDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("timeline")
+//                                        pushTimelineDB.setValue(pushdetail)
+                                    }
                                 }// end of loop
                             }// end of if
                         })// end of observation
-                        
                     }// dispatch end
-                }
-            }
-            
+                }// end of if count selectedskill
+            }// end of if type timeline
         }
     }
     
+    
+    func addUserNotif(key: String, notif_all_key: String) {
+        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key).child("notif-list").child(notif_all_key).child("read").setValue(false)
+    }
+    
+    func addTimelineBadgeUser(userKey: String){
+        let badgeDB = FIRDatabase.database().reference().child("user-badge").child("timeline").child(userKey)
+        
+        badgeDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+            if let count = snap.value as? Int {
+                badgeDB.setValue(count + 1)
+            }else{
+                badgeDB.setValue(1)
+            }
+        })
+    }
+    
+    func addFreetimeBadgeUser(userKey: String){
+        let badgeDB = FIRDatabase.database().reference().child("user-badge").child("freetime").child(userKey)
+        
+        badgeDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+            if let count = snap.value as? Int {
+                badgeDB.setValue(count + 1)
+            }else{
+                badgeDB.setValue(1)
+            }
+        })
+    }
+    
+    func addFreeTimeNotif(freeTimeDetail: NSDictionary){
+        let pushFreeTimeDB = FIRDatabase.database().reference().child("notifications").child("push-notification").child("free-time")
+        pushFreeTimeDB.setValue(freeTimeDetail)
+    }
+    
+    func countUnreadNotif(key: String){
+        let readDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(key).child("unread")
+        dispatch_async(dispatch_get_main_queue()){
+            readDB.observeSingleEventOfType(.Value, withBlock: {(snapCount) in
+                if let result = snapCount.value as? NSDictionary {
+                    if let count = result["count"] as? Int {
+                        readDB.child("count").setValue(count + 1)
+                    }else{
+                        readDB.child("count").setValue(1)
+                    }
+                }
+            })
+        }
+    }
 }

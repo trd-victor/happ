@@ -23,11 +23,11 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     var containerViewBottomAncher: NSLayoutConstraint?
     var collectioView: NSLayoutConstraint?
     
-    var messagesData: [NSDictionary] = []
+    var messagesData: [FIRDataSnapshot] = []
     var chatMatePhoto: String = ""
     var userPhoto: String = ""
-    let imgforProfileCache = NSCache()
-    
+    var displayPhoto: String = ""
+    var checkPhoto: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,11 +55,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         self.containerView.addSubview(self.txtField)
         self.containerView.addSubview(self.blockTextView)
         self.blockTextView.hidden = true
+        self.txtField.tintColor = UIColor.blackColor()
         autoLayout()
         loadConfig()
-        getUsersImage()
         setupKeyboard()
-        
         if(chatVar.Indicator == "MessageTable"){
             self.deleteMessage()
             self.loadMessages()
@@ -68,26 +67,54 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             self.deleteMessage()
             self.getChatRoomID()
         }
+        
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        if chatVar.RoomID != "" {
+            FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+            chatVar.RoomID = ""
+        }
+        
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     func addBlockObserver(){
-        let memberDB = FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID)
-        
-        memberDB.observeEventType(.Value, withBlock: {(snapshot) in
-            if let result = snapshot.value as? NSDictionary {
-                if let block = result["blocked"] as? Bool {
-                    if block {
-                        self.blockTextView.hidden = false
-                        self.txtField.hidden = true
-                        self.sendBtn.hidden = true
-                    }else{
-                        self.blockTextView.hidden = true
-                        self.txtField.hidden = false
-                        self.sendBtn.hidden = false
+        if chatVar.RoomID != "" {
+            let memberDB = FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID)
+            
+            memberDB.observeEventType(.Value, withBlock: {(snapshot) in
+                
+                if let result = snapshot.value as? NSDictionary {
+                    if let block = result["blocked"] as? Bool {
+                        if block {
+                            self.blockTextView.hidden = false
+                            self.txtField.hidden = true
+                            self.sendBtn.hidden = true
+                        }else{
+                            self.blockTextView.hidden = true
+                            self.txtField.hidden = false
+                            self.sendBtn.hidden = false
+                        }
                     }
                 }
-            }
-        })
+                
+                
+                if !snapshot.exists() {
+                    self.blockTextView.hidden = true
+                }
+            })
+        }
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -108,10 +135,9 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         containerViewBottomAncher?.constant = -keyboardFrame!.height
         collectioView?.constant = -112 + -keyboardFrame!.height
         
-       
-        
         if keyboardDuration != nil {
             UIView.animateWithDuration(keyboardDuration!){
+                self.view.layer.removeAllAnimations()
                 self.view.layoutIfNeeded()
                 
                 if self.messagesData.count > 0 {
@@ -130,31 +156,10 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         
         if keyboardDuration != nil {
             UIView.animateWithDuration(keyboardDuration!){
-                self.view.layoutIfNeeded()
+                self.containerViewBottomAncher?.constant = 0
+                self.collectioView?.constant = -112
             }
         }
-    }
-    
-    
-    func getUsersImage() {
-        let userid  = FIRAuth.auth()?.currentUser?.uid
-        let userDataDB = FIRDatabase.database().reference().child("users").child(userid!)
-        userDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-            
-            if let result = snapshot.value as? NSDictionary {
-                self.userPhoto = result["photoUrl"] as! String
-                self.myCollectionView?.reloadData()
-            }
-        })
-        
-        let chatmateDataDB = FIRDatabase.database().reference().child("users").child(chatVar.chatmateId)
-        
-        chatmateDataDB.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
-            if let result = snapshot.value as? NSDictionary {
-                self.chatMatePhoto = result["photoUrl"] as! String
-                self.myCollectionView?.reloadData()
-            }
-        })
     }
     
     func autoLayout(){
@@ -243,7 +248,16 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func backToMenu(sender: UIBarButtonItem) -> () {
+        
         NSNotificationCenter.defaultCenter().postNotificationName("refresh", object: nil, userInfo: nil)
+      
+        if chatVar.RoomID != "" {
+            if let _ =  FIRAuth.auth()?.currentUser?.uid {
+                FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+                chatVar.RoomID = ""
+            }
+        }
+        
         self.presentBackDetail(MessageTableViewController())
     }
     
@@ -258,12 +272,25 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     func handleSend(){
+        
         let mess = self.txtField.text!
         self.txtField.text = ""
+        self.txtField.textViewDidChange(txtField)
         var checkMessage: String = ""
         
         // check if no text on textfield
         checkMessage = mess.componentsSeparatedByString(" ").joinWithSeparator("")
+        
+        if chatVar.RoomID == "" {
+            return
+        }
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
         
         if(checkMessage.characters.count <= 0){
             return
@@ -276,6 +303,14 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             let roomID = chatVar.RoomID
             let chatmateID = chatVar.chatmateId
             let userID = FIRAuth.auth()?.currentUser?.uid
+            
+            if let photo = globalvar.USER_IMG.valueForKey(chatmateID)?.valueForKey("photoUrl") as? String {
+                self.chatMatePhoto = photo
+            }
+            
+            if let photo = globalvar.USER_IMG.valueForKey(userID!)?.valueForKey("photoUrl") as? String {
+                self.userPhoto = photo
+            }
             
             // save to message table on firebase using the roomID as child
             let messageDB = FIRDatabase.database().reference().child("chat").child("messages").child(roomID).childByAutoId()
@@ -335,20 +370,26 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         }
     }
     
+    func observeUser(){
+        
+    }
+    
     func loadMessages(){
         let roomID = chatVar.RoomID
-        let messagesDb = FIRDatabase.database().reference().child("chat").child("messages").child(String(roomID))
-        
-        messagesDb.observeEventType(.ChildAdded, withBlock: {(snapshot)  in
-            if let result = snapshot.value as? NSDictionary {
-                self.messagesData.append(result)
-                
-                dispatch_async(dispatch_get_main_queue()){
-                    self.myCollectionView!.reloadData()
+        let messagesDb = FIRDatabase.database().reference().child("chat").child("messages").child(String(roomID)).queryOrderedByChild("timestamp")
+        messagesDb.observeEventType(.Value, withBlock: {(snapshot)  in
+            if let result = snapshot.children.allObjects as? [FIRDataSnapshot] {
+                if self.messagesData.count != result.count && result.count != 0 {
+                    self.messagesData = result
                     dispatch_async(dispatch_get_main_queue()){
-                        if(self.messagesData.count > 0){
-                            let lastItemIndex = NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
-                            self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
+                        self.myCollectionView!.reloadData()
+                        if(self.messagesData.count > 1){
+                            if Int(self.messagesData.count) != nil && self.messagesData.count != 0 {
+                                let lastItemIndex =  NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
+                                if let _ = self.myCollectionView?.dataSource?.collectionView(self.myCollectionView!, cellForItemAtIndexPath: lastItemIndex){
+                                    self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
+                                }
+                            }
                         }
                     }
                 }
@@ -428,20 +469,21 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("Messagecell", forIndexPath: indexPath) as! MessageCell
         let data = self.messagesData[indexPath.row]
         
-        self.setupCell(cell, mess_data: data)
-        
-        if let message = data["message"] as? String {
-            cell.txtLbl.text = message
+        if let messData = data.value as? NSDictionary {
+            self.setupCell(cell, mess_data: messData)
+            
+            if let message = messData["message"] as? String {
+                cell.txtLbl.text = message
+            }
         }
         
         cell.bubbleWidthAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).width + 18
         cell.bubbleHeightAnchor?.constant = estimateFrameForText(cell.txtLbl.text!).height + 10
+
         return cell
     }
     
     func setupCell(cell: MessageCell, mess_data: NSDictionary){
-        let imageUrl = mess_data["photoUrl"] as! String
-        
         if FIRAuth.auth()?.currentUser?.uid == (mess_data["userId"] as! String){
             
             cell.bubbleView.backgroundColor = UIColor(hexString: "#E0E0E0")
@@ -449,24 +491,18 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             
             cell.bubbleViewLeftAnchor?.active = false
             cell.bubbleViewRightAnchor?.active = true
+            var imageUrl: String = ""
+            if let photoUrl = mess_data["photoUrl"] as? String{
+                imageUrl = photoUrl
+            }
             
-            if (imgforProfileCache.objectForKey(imageUrl) != nil) {
-                let imgCache = imgforProfileCache.objectForKey(imageUrl) as! UIImage
-                cell.userPhoto.image = imgCache
+            if imageUrl == "" || imageUrl == "null" {
+               cell.userPhoto.image = UIImage(named : "noPhoto")
             }else{
                 cell.userPhoto.image = UIImage(named : "noPhoto")
-                let url = NSURL(string: imageUrl.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.userPhoto.image = UIImage(data: data)
-                        }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
-                    }
-                    
-                })
-                task.resume()
+                cell.userPhoto.loadProfileImageUsingString(imageUrl){
+                    (result: Bool) in
+                }
             }
             
             cell.dateLblLeft.text = dateFormatter((mess_data["timestamp"] as? NSNumber)!)
@@ -480,23 +516,23 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
             cell.bubbleView.backgroundColor =  UIColor(hexString: "#E4D4B9")
             cell.txtLbl.textColor = UIColor.blackColor()
             
-            if (imgforProfileCache.objectForKey(imageUrl) != nil) {
-                let imgCache = imgforProfileCache.objectForKey(imageUrl) as! UIImage
-                cell.chatmatePhoto.image = imgCache
+            var imageUrl: String = ""
+            if let photoUrl = mess_data["photoUrl"] as? String{
+                imageUrl = photoUrl
+            }
+            
+            if self.checkPhoto == false {
+                self.displayPhoto = imageUrl
+                self.checkPhoto = true
+            }
+            
+            if self.displayPhoto == "" || self.displayPhoto == "null" {
+                cell.chatmatePhoto.image = UIImage(named : "noPhoto")
             }else{
                 cell.chatmatePhoto.image = UIImage(named : "noPhoto")
-                let url = NSURL(string: imageUrl.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.chatmatePhoto.image = UIImage(data: data)
-                        }
-                        let tmpImg = UIImage(data: data)
-                        self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl)
-                    }
-                    
-                })
-                task.resume()
+                cell.chatmatePhoto.loadProfileImageUsingString(self.displayPhoto){
+                    (result: Bool) in
+                }
             }
             
             cell.bubbleViewRightAnchor?.active = false
@@ -518,11 +554,12 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         var height: CGFloat = 80
+        let data = self.messagesData[indexPath.row] 
         
-        let data = self.messagesData[indexPath.row]
-        
-        if let message = data["message"] {
-            height = estimateFrameForText(message as! String).height + 30
+        if let value = data.value as? NSDictionary {
+            if let message = value["message"] {
+                height = estimateFrameForText(message as! String).height + 30
+            }
         }
         
         return CGSize(width: view.frame.width, height: height)
@@ -547,7 +584,20 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) \(time)"
+        return self.dateTransform("\(date) \(time)")
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
     }
 }
 extension UIColor {

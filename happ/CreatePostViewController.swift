@@ -40,7 +40,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
     
     //get usertimeline parameters...
     var getTimeline = [
-        "sercret"     : "jo8nefamehisd",
+        "sercret"     : globalvar.secretKey,
         "action"      : "api",
         "ac"          : "get_timeline",
         "d"           : "0",
@@ -143,6 +143,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         let btnTap3: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "removeImage3")
         self.btnRemove3.addGestureRecognizer(btnTap3)
         
+        
         loadConfigure()
         
         autoLayout()
@@ -171,7 +172,7 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         self.content.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
         self.content.topAnchor.constraintEqualToAnchor(self.scrollView.topAnchor).active = true
         self.content.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
-        self.content.heightAnchor.constraintEqualToAnchor(self.scrollView.heightAnchor).active = true
+        self.content.heightAnchor.constraintEqualToConstant(200).active = true
         self.content.tintColor = UIColor.blackColor()
         
         self.separator.translatesAutoresizingMaskIntoConstraints = false
@@ -246,6 +247,16 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         }
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
+    }
+    
     func textViewDidChange(textView: UITextView) {
         let calcHeight = calcTextHeight(self.content.text, frame: self.content.frame.size, fontsize: 14)
         if calcHeight.height > 80 {
@@ -285,16 +296,6 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }
-    
-//    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
-//        if(text == "\n") {
-//            textView.becomeFirstResponder()
-//            textView.text = NSString(format: "%@\n", textView.text) as String
-////            textView.resignFirstResponder()
-//            return false
-//        }
-//        return true
-//    }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         self.view.endEditing(true)
@@ -336,17 +337,17 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
         self.content.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
         self.content.topAnchor.constraintEqualToAnchor(self.scrollView.topAnchor).active = true
         self.content.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
-        if calcHeight.height > 80 {
-            let height = Int(calcHeight.height)
-            self.content.heightAnchor.constraintEqualToConstant(CGFloat(height) + 20).active = true
-        }else{
-            if self.imgList.count != 0 {
-                self.content.heightAnchor.constraintEqualToConstant(100).active = true
-                self.content.frame.size = CGSizeMake(self.scrollView.frame.width, 100)
-            }else{
-                self.content.heightAnchor.constraintEqualToAnchor(self.scrollView.heightAnchor).active = true
-            }
-        }
+//        if calcHeight.height > 80 {
+//            let height = Int(calcHeight.height)
+//            self.content.heightAnchor.constraintEqualToConstant(CGFloat(height) + 20).active = true
+//        }else{
+//            if self.imgList.count != 0 {
+//                self.content.heightAnchor.constraintEqualToConstant(100).active = true
+//                self.content.frame.size = CGSizeMake(self.scrollView.frame.width, 100)
+//            }else{
+//                self.content.heightAnchor.constraintEqualToAnchor(self.scrollView.heightAnchor).active = true
+//            }
+//        }
         
         var svHeight: CGFloat = 200
         
@@ -375,6 +376,8 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
                 self.subView1.centerXAnchor.constraintEqualToAnchor(self.scrollView.centerXAnchor).active = true
                 self.subView1.widthAnchor.constraintEqualToAnchor(self.scrollView.widthAnchor).active = true
                 self.subView1.heightAnchor.constraintEqualToConstant(250).active = true
+                
+                self.subView1.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "hideKeyboard"))
                 
                 self.imgView1.contentMode = .ScaleAspectFill
                 self.imgView1.clipsToBounds = true
@@ -463,6 +466,10 @@ class CreatePostViewController: UIViewController, UITextViewDelegate {
             
             scrollView.contentSize = CGSize(width: scrollView.frame.size.width,height: svHeight)
         }
+    }
+    
+    func hideKeyboard(){
+        self.content.resignFirstResponder();
     }
     
     func removeImage1(){

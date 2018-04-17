@@ -19,16 +19,14 @@ class NoImage: UITableViewCell {
         
         textLabel?.frame = CGRectMake(70, 22, textLabel!.frame.width, textLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(14)
-        
         detailTextLabel?.frame = CGRectMake(10, 55, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
-        detailTextLabel?.numberOfLines = 0
-        detailTextLabel?.lineBreakMode = .ByWordWrapping
-        detailTextLabel?.sizeToFit()
+        detailTextLabel?.numberOfLines = 7
+        detailTextLabel?.lineBreakMode = .ByTruncatingTail
     }
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
@@ -105,11 +103,11 @@ class NoImage: UITableViewCell {
         
         btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
         btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
-        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(120).active = true
         btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
-        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
+        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -30).active = true
         postDate.widthAnchor.constraintEqualToConstant(130).active = true
         postDate.heightAnchor.constraintEqualToConstant(34).active = true
         
@@ -141,13 +139,12 @@ class SingleImage: UITableViewCell {
         
         detailTextLabel?.frame = CGRectMake(10, 70, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
-        detailTextLabel?.numberOfLines = 0
-        detailTextLabel?.lineBreakMode = .ByWordWrapping
-        detailTextLabel?.sizeToFit()
+        detailTextLabel?.numberOfLines = 7
+        detailTextLabel?.lineBreakMode = .ByTruncatingTail
     }
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
@@ -212,8 +209,8 @@ class SingleImage: UITableViewCell {
         return view
     }()
     
-    let imgView1: UIImageView = {
-        let imgView = UIImageView()
+    let imgView1: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
@@ -248,11 +245,11 @@ class SingleImage: UITableViewCell {
         
         btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
         btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
-        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(120).active = true
         btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
-        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
+        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -30).active = true
         postDate.widthAnchor.constraintEqualToConstant(130).active = true
         postDate.heightAnchor.constraintEqualToConstant(34).active = true
         
@@ -295,13 +292,12 @@ class DoubleImage: UITableViewCell {
         
         detailTextLabel?.frame = CGRectMake(10, 70, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
-        detailTextLabel?.numberOfLines = 0
-        detailTextLabel?.lineBreakMode = .ByWordWrapping
-        detailTextLabel?.sizeToFit()
+        detailTextLabel?.numberOfLines = 7
+        detailTextLabel?.lineBreakMode = .ByTruncatingTail
     }
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
@@ -372,16 +368,16 @@ class DoubleImage: UITableViewCell {
         return view
     }()
     
-    let imgView1: UIImageView = {
-        let imgView = UIImageView()
+    let imgView1: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
         return imgView
     }()
     
-    let imgView2: UIImageView = {
-        let imgView = UIImageView()
+    let imgView2: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
@@ -419,11 +415,11 @@ class DoubleImage: UITableViewCell {
         
         btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
         btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
-        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(120).active = true
         btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
-        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
+        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -30).active = true
         postDate.widthAnchor.constraintEqualToConstant(130).active = true
         postDate.heightAnchor.constraintEqualToConstant(34).active = true
         
@@ -479,13 +475,12 @@ class TripleImage: UITableViewCell {
         
         detailTextLabel?.frame = CGRectMake(10, 70, detailTextLabel!.frame.width, detailTextLabel!.frame.height)
         detailTextLabel?.font = UIFont.systemFontOfSize(16)
-        detailTextLabel?.numberOfLines = 0
-        detailTextLabel?.lineBreakMode = .ByWordWrapping
-        detailTextLabel?.sizeToFit()
+        detailTextLabel?.numberOfLines = 7
+        detailTextLabel?.lineBreakMode = .ByTruncatingTail
     }
     
-    let btnProfile: UIButton = {
-        let btn = UIButton()
+    let btnProfile: TimelineProfileImage = {
+        let btn = TimelineProfileImage()
         btn.contentMode = .ScaleAspectFill
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.layer.cornerRadius = 20
@@ -556,16 +551,16 @@ class TripleImage: UITableViewCell {
         return view
     }()
     
-    let imgView1: UIImageView = {
-        let imgView = UIImageView()
+    let imgView1: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
         return imgView
     }()
     
-    let imgView2: UIImageView = {
-        let imgView = UIImageView()
+    let imgView2: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
@@ -578,8 +573,8 @@ class TripleImage: UITableViewCell {
         return view
     }()
     
-    let imgView3: UIImageView = {
-        let imgView = UIImageView()
+    let imgView3: TimelineImage = {
+        let imgView = TimelineImage()
         imgView.translatesAutoresizingMaskIntoConstraints = false
         imgView.clipsToBounds = true
         imgView.contentMode = .ScaleAspectFill
@@ -619,11 +614,11 @@ class TripleImage: UITableViewCell {
         
         btnUsername.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 9).active = true
         btnUsername.leftAnchor.constraintEqualToAnchor(btnProfile.rightAnchor, constant: 5).active = true
-        btnUsername.widthAnchor.constraintEqualToConstant(100).active = true
+        btnUsername.widthAnchor.constraintEqualToConstant(120).active = true
         btnUsername.heightAnchor.constraintEqualToConstant(40).active = true
         
         postDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 13).active = true
-        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -36).active = true
+        postDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: -30).active = true
         postDate.widthAnchor.constraintEqualToConstant(130).active = true
         postDate.heightAnchor.constraintEqualToConstant(34).active = true
         
@@ -682,8 +677,8 @@ class NotifCell: UITableViewCell {
         return view
     }()
     
-    let notifPhoto: UIImageView = {
-        let photo = UIImageView()
+    let notifPhoto: TimelineImage = {
+        let photo = TimelineImage()
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 23
         photo.contentMode = .ScaleAspectFill
@@ -730,16 +725,17 @@ class NotifCell: UITableViewCell {
         lblMessage.translatesAutoresizingMaskIntoConstraints = false
         lblMessage.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 5).active = true
         lblMessage.leftAnchor.constraintEqualToAnchor(self.notifPhoto.rightAnchor, constant: 5).active = true
-        lblMessage.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -52).active = true
+        lblMessage.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -55).active = true
         lblMessage.lineBreakMode = .ByWordWrapping
         lblMessage.numberOfLines = 0
         lblMessage.sizeToFit()
         
         lblDate.translatesAutoresizingMaskIntoConstraints = false
-        lblDate.rightAnchor.constraintEqualToAnchor(self.rightAnchor, constant: 20).active = true
+        lblDate.leftAnchor.constraintEqualToAnchor(self.notifPhoto.rightAnchor).active = true
         lblDate.topAnchor.constraintEqualToAnchor(self.topAnchor, constant: 50).active = true
-        lblDate.widthAnchor.constraintEqualToConstant(130).active = true
+        lblDate.widthAnchor.constraintEqualToAnchor(self.widthAnchor, constant: -65).active = true
         lblDate.sizeToFit()
+        lblDate.textAlignment = .Right
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -769,8 +765,8 @@ class MessageCell: UICollectionViewCell {
         return view
     }()
     
-    let chatmatePhoto: UIImageView = {
-        let photo = UIImageView()
+    let chatmatePhoto: TimelineImage = {
+        let photo = TimelineImage()
         photo.image = UIImage(named: "noPhoto")
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 16
@@ -779,8 +775,8 @@ class MessageCell: UICollectionViewCell {
         return photo
     }()
     
-    let userPhoto: UIImageView = {
-        let photo = UIImageView()
+    let userPhoto: TimelineImage = {
+        let photo = TimelineImage()
         photo.image = UIImage(named: "noPhoto")
         photo.translatesAutoresizingMaskIntoConstraints = false
         photo.layer.cornerRadius = 16
@@ -857,13 +853,15 @@ class MessageCell: UICollectionViewCell {
         
         dateLblLeft.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
         dateLblLeft.leftAnchor.constraintEqualToAnchor(self.bubbleView.leftAnchor).active = true
-        dateLblLeft.widthAnchor.constraintEqualToConstant(90).active = true
+        dateLblLeft.widthAnchor.constraintEqualToConstant(130).active = true
         dateLblLeft.heightAnchor.constraintEqualToConstant(15).active = true
+        dateLblLeft.textAlignment = .Left
         
         dateLblRight.topAnchor.constraintEqualToAnchor(self.bubbleView.bottomAnchor).active = true
         dateLblRight.rightAnchor.constraintEqualToAnchor(self.bubbleView.rightAnchor).active = true
-        dateLblRight.widthAnchor.constraintEqualToConstant(90).active = true
+        dateLblRight.widthAnchor.constraintEqualToConstant(130).active = true
         dateLblRight.heightAnchor.constraintEqualToConstant(15).active = true
+        dateLblRight.textAlignment = .Right
         
     }
     

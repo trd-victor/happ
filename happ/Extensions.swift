@@ -14,9 +14,10 @@ let imgCache = NSCache()
 extension UIImageView {
 
     func profileForCache(urlString: String) {
+        
         let url = urlString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
         
-        if let imgCache = profileImgCache.objectForKey(url) as? UIImage {
+        if let imgCache = imgCache.objectForKey(url) as? UIImage {
             self.image = imgCache
             return
         }
@@ -30,7 +31,7 @@ extension UIImageView {
                 return
             } else {
                 if let downloadImage = UIImage(data: data!) {
-                    profileImgCache.setObject(downloadImage, forKey: url)
+                    imgCache.setObject(downloadImage, forKey: url)
                     self.image = downloadImage
                     return
                 }
@@ -79,7 +80,7 @@ extension UIViewController {
         }
         
         return spinnerView
-          }
+    }
   
 
     class func removeSpinner(spinner :UIView) {
@@ -181,4 +182,108 @@ extension UITextView: UITextViewDelegate {
         self.delegate = self
     }
     
+    func sizeOfString (string: String, constrainedToWidth width: Double, font: UIFont) -> CGSize {
+        return (string as NSString).boundingRectWithSize(CGSize(width: width, height: DBL_MAX),
+            options: NSStringDrawingOptions.UsesLineFragmentOrigin,
+            attributes: [NSFontAttributeName: font],
+            context: nil).size
+    }
+    
+    public func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        if textView.tag == 200 {
+            let newText = (textView.text as NSString).stringByReplacingCharactersInRange(range, withString: text)
+            var textWidth = CGRectGetWidth(UIEdgeInsetsInsetRect(textView.frame, textView.textContainerInset))
+            textWidth -= 2.0 * textView.textContainer.lineFragmentPadding;
+            
+            let boundingRect = sizeOfString(newText, constrainedToWidth: Double(textWidth), font: textView.font!)
+            let numberOfLines = boundingRect.height / textView.font!.lineHeight;
+            
+            return numberOfLines <= 7;
+        }else{
+            return true;
+        }
+    }
+}
+
+private let characterEntities : [ String : Character ] = [
+    // XML predefined entities:
+    "&quot;"    : "\"",
+    "&amp;"     : "&",
+    "&apos;"    : "'",
+    "&lt;"      : "<",
+    "&gt;"      : ">",
+    
+    // HTML character entity references:
+    "&nbsp;"    : "\u{00a0}",
+    // ...
+    "&diams;"   : "♦",
+]
+
+
+extension String {
+    
+    /// Returns a new string made by replacing in the `String`
+    /// all HTML character entity references with the corresponding
+    /// character.
+    var stringByDecodingHTMLEntities : String {
+        
+        // ===== Utility functions =====
+        
+        // Convert the number in the string to the corresponding
+        // Unicode character, e.g.
+        //    decodeNumeric("64", 10)   --> "@"
+        //    decodeNumeric("20ac", 16) --> "€"
+        func decodeNumeric(string : String, base : Int32) -> Character? {
+            let code = UInt32(strtoul(string, nil, base))
+            return Character(UnicodeScalar(code))
+        }
+        
+        // Decode the HTML character entity to the corresponding
+        // Unicode character, return `nil` for invalid input.
+        //     decode("&#64;")    --> "@"
+        //     decode("&#x20ac;") --> "€"
+        //     decode("&lt;")     --> "<"
+        //     decode("&foo;")    --> nil
+        func decode(entity : String) -> Character? {
+            
+            if entity.hasPrefix("&#x") || entity.hasPrefix("&#X"){
+                return decodeNumeric(entity.substringFromIndex(entity.startIndex.advancedBy(3)), base: 16)
+            } else if entity.hasPrefix("&#") {
+                return decodeNumeric(entity.substringFromIndex(entity.startIndex.advancedBy(2)), base: 10)
+            } else {
+                return characterEntities[entity]
+            }
+        }
+        
+        // ===== Method starts here =====
+        
+        var result = ""
+        var position = startIndex
+        
+        // Find the next '&' and copy the characters preceding it to `result`:
+        while let ampRange = self.rangeOfString("&", range: position ..< endIndex) {
+            result.appendContentsOf(self[position ..< ampRange.startIndex])
+            position = ampRange.startIndex
+            
+            // Find the next ';' and copy everything from '&' to ';' into `entity`
+            if let semiRange = self.rangeOfString(";", range: position ..< endIndex) {
+                let entity = self[position ..< semiRange.endIndex]
+                position = semiRange.endIndex
+                
+                if let decoded = decode(entity) {
+                    // Replace by decoded character:
+                    result.append(decoded)
+                } else {
+                    // Invalid entity, copy verbatim:
+                    result.appendContentsOf(entity)
+                }
+            } else {
+                // No matching ';'.
+                break
+            }
+        }
+        // Copy remaining characters to `result`:
+        result.appendContentsOf(self[position ..< endIndex])
+        return result
+    }
 }

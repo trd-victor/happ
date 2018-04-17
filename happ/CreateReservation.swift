@@ -183,6 +183,7 @@ class CreateReservation: UIViewController {
         let picker = UIDatePicker()
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.datePickerMode = .Time
+        picker.minuteInterval = 30
         picker.locale = NSLocale(localeIdentifier: "da_DK")
         return picker
     }()
@@ -198,6 +199,7 @@ class CreateReservation: UIViewController {
         let picker = UIDatePicker()
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.datePickerMode = .Time
+        picker.minuteInterval = 30
         picker.locale = NSLocale(localeIdentifier: "da_DK")
         return picker
     }()
@@ -256,6 +258,7 @@ class CreateReservation: UIViewController {
     var endTimeConstraint: NSLayoutConstraint = NSLayoutConstraint()
     
     @IBAction func navBar(sender: AnyObject) {
+        NSNotificationCenter.defaultCenter().postNotificationName("reloadCalendar", object: nil, userInfo: nil)
         self.dismissViewControllerAnimated(true, completion: nil)
     }
      
@@ -363,6 +366,13 @@ class CreateReservation: UIViewController {
     }
     
     @IBAction func navCreate(sender: AnyObject) {
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+
         viewLoading.hidden = false
         activityLoading.startAnimating()
         let sdate = "\(CreateDetails.date) \(startName.text!)"

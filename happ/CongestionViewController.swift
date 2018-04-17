@@ -181,8 +181,12 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         
     }
     
+    var viewBlackConstraint: NSLayoutConstraint = NSLayoutConstraint()
+    
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        viewBlackConstraint.constant = 0
+        percentage.text = "0%"
         getCongestion()
     }
     
@@ -246,6 +250,13 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
         percentView.heightAnchor.constraintEqualToConstant(146).active = true
         percentView.backgroundColor = UIColor.grayColor()
         
+        prcentViewBlack.topAnchor.constraintEqualToAnchor(self.percentView.topAnchor).active = true
+        prcentViewBlack.leftAnchor.constraintEqualToAnchor(self.percentView.leftAnchor).active = true
+        viewBlackConstraint = prcentViewBlack.widthAnchor.constraintEqualToConstant(0)
+        viewBlackConstraint.active = true
+        prcentViewBlack.heightAnchor.constraintEqualToConstant(146).active = true
+        prcentViewBlack.backgroundColor = UIColor(hexString: "#272727")
+        
         personImg1.translatesAutoresizingMaskIntoConstraints = false
         personImg1.topAnchor.constraintEqualToAnchor(percentView.topAnchor).active = true
         personImg1.centerXAnchor.constraintEqualToAnchor(percentView.centerXAnchor).active = true
@@ -284,6 +295,13 @@ class CongestionViewController: UIViewController, UICollectionViewDelegateFlowLa
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return userIds.count
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        self.viewLoading.hidden = true
+        self.activityLoading.stopAnimating()
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {

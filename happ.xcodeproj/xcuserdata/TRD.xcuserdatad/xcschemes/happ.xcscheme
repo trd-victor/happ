@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A3A343A01F09F8B500DC55FC"
-               BuildableName = "Happ.app"
+               BuildableName = "H.app"
                BlueprintName = "happ"
                ReferencedContainer = "container:happ.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A3A343A01F09F8B500DC55FC"
-            BuildableName = "Happ.app"
+            BuildableName = "H.app"
             BlueprintName = "happ"
             ReferencedContainer = "container:happ.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A3A343A01F09F8B500DC55FC"
-            BuildableName = "Happ.app"
+            BuildableName = "H.app"
             BlueprintName = "happ"
             ReferencedContainer = "container:happ.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A3A343A01F09F8B500DC55FC"
-            BuildableName = "Happ.app"
+            BuildableName = "H.app"
             BlueprintName = "happ"
             ReferencedContainer = "container:happ.xcodeproj">
          </BuildableReference>

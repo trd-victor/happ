@@ -68,8 +68,22 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         view.sendSubviewToBack(mainView)
         
         autoLayout()
+        
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
     }
     
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
+    }
     func autoLayout(){
         navBar.translatesAutoresizingMaskIntoConstraints = false
         navBar.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -107,16 +121,13 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
     }
     
     func loadConfigure() {
-        
         let config = SYSTEM_CONFIG()
         
-        navTitle.title = config.translate("title_e-mail_add_change")
+        navTitle.title = config.translate("label_e-mail_address_change")
         Save.title = config.translate("button_save")
         txtMail.placeholder = config.translate("holder_ex.@xx.com")
         labelMail.text = config.translate("label_email_address")
     }
-    
-
     
     @IBAction func Save(sender: AnyObject) {
         if userId != "" {
@@ -154,7 +165,7 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         
             //set parameters...
             let param = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "user_update",
                 "d"           : "0",
@@ -236,7 +247,7 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
         //        }
         //        set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_userinfo",
             "d"           : "0",
@@ -257,7 +268,6 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
                 self.loaduserEmail()
             }else{
                 do {
-                    
                     let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
                     
                     if json!["result"] != nil {
@@ -286,6 +296,16 @@ class MailChangeViewController: UIViewController, UITextFieldDelegate {
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {

@@ -22,12 +22,11 @@ struct chatVar {
 
 class MessageCellDisp : UITableViewCell {
     
-    @IBOutlet var userImage: UIImageView!
+    @IBOutlet var userImage: TimelineImage!
     @IBOutlet var username: UILabel!
     @IBOutlet var userMessage: UILabel!
     @IBOutlet var userTime: UILabel!
     @IBOutlet var separator: UIView!
-    
 }
 
 
@@ -60,8 +59,6 @@ class MessageTableViewController: UITableViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "showTabBarMenu:", name: "tabBarShow", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "refreshLang:", name: "refreshMessage", object: nil)
         
-        self.getUserMessage()
-        
         preferredStatusBarStyle()
         
     }
@@ -82,6 +79,19 @@ class MessageTableViewController: UITableViewController {
         self.title = config.translate("title:message")
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated);
+        
+        let config = SYSTEM_CONFIG()
+        
+        if self.lastMessages.count == 0 {
+            self.getUserMessage()
+        }
+        
+        self.title = config.translate("title:message")
+        self.mytableview.reloadData()
+    }
+    
     func refreshLang(notifcation: NSNotification){
         let config = SYSTEM_CONFIG()
         self.title = config.translate("title:message")
@@ -89,30 +99,34 @@ class MessageTableViewController: UITableViewController {
     
     func getUserMessage() {
         
-        let config = SYSTEM_CONFIG()
-        
-        let fireDB = config.getSYS_VAL("FirebaseID") as! String
-        let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB)
-        
+        let fireDB = (FIRAuth.auth()?.currentUser?.uid)!
+        let details = FIRDatabase.database().reference().child("chat").child("last-message").child(fireDB).queryOrderedByChild("timestamp")
+        details.removeAllObservers()
         //start of retrieving messages on every user
         details.observeEventType(.Value, withBlock: { (snap) in
             self.lastMessages.removeAll()
-            if let result = snap.value as? NSDictionary {
-                for (_, value) in result {
-                    self.lastMessages.append(value as! NSDictionary)
-                    self.lastMessages.sortInPlace({(message1, message2) -> Bool in
-                        return message1["timestamp"]?.intValue > message2["timestamp"]?.intValue
-                    })
-                    self.mytableview.reloadData()
+            var count = 0
+            if snap.childrenCount > 0 {
+                for s in snap.children.allObjects as! [FIRDataSnapshot] {
+                    if let data = s.value as? NSDictionary {
+                        count++
+                        
+                        self.lastMessages.append(data)
+                        if count == Int(snap.childrenCount) {
+                            dispatch_async(dispatch_get_main_queue()){
+                                self.lastMessages.sortInPlace({(message1, message2) -> Bool in
+                                    return message1["timestamp"] as? Double > message2["timestamp"] as? Double
+                                })
+                                self.mytableview.reloadData()
+                            }
+                        }
+                    }
                 }
             }
         })
     }
     
-    
-    
     func refreshTable(notification: NSNotification) {
-        
         self.getUserMessage()
     }
     
@@ -150,36 +164,30 @@ class MessageTableViewController: UITableViewController {
         cell.username.font = UIFont.boldSystemFontOfSize(17)
         cell.userMessage.font = UIFont.systemFontOfSize(15)
         
+        
         let radius = cell.userImage!.frame.width/2
         cell.userImage.contentMode = .ScaleAspectFill
         cell.userImage.layer.cornerRadius = radius
         cell.userImage.clipsToBounds = true
         
-        
         let message = self.lastMessages[indexPath.row]
         let name = message["name"] as? String
         let lastMessage = message["lastMessage"] as? String
-        let imageUrl  = message["photoUrl"] as? String
+        
         let timestamp = message["timestamp"] as? NSNumber
         let readStatus = message["read"] as? Bool
         
-        if (imgforProfileCache.objectForKey(imageUrl!) != nil) {
-            let imgCache = imgforProfileCache.objectForKey(imageUrl!) as! UIImage
-            cell.userImage.image = imgCache
+        if let imageUrl  = message["photoUrl"] as? String {
+            if imageUrl == "null" || imageUrl == "" {
+                cell.userImage.image = UIImage(named : "noPhoto")
+            }else{
+                cell.userImage.image = UIImage(named : "noPhoto")
+                cell.userImage.loadProfileImageUsingString(imageUrl) {
+                    (result: Bool) in
+                }
+            }
         }else{
             cell.userImage.image = UIImage(named : "noPhoto")
-            let url = NSURL(string: imageUrl!.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-            let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                if let data = NSData(contentsOfURL: url!){
-                    dispatch_async(dispatch_get_main_queue()){
-                        cell.userImage.image = UIImage(data: data)
-                    }
-                    let tmpImg = UIImage(data: data)
-                    self.imgforProfileCache.setObject(tmpImg!, forKey: imageUrl!)
-                }
-                
-            })
-            task.resume()
         }
         
         cell.userTime.text = dateFormatter(timestamp!)
@@ -241,7 +249,20 @@ class MessageTableViewController: UITableViewController {
         let time = formatter.stringFromDate(dateTimestamp)
         formatter.dateFormat = "yyyy-MM-dd"
         let date = formatter.stringFromDate(dateTimestamp)
-        return "\(date) \(time)"
+        return self.dateTransform("\(date) \(time)")
+    }
+    
+    func dateTransform(date: String) -> String {
+        var dateArr = date.characters.split{$0 == " "}.map(String.init)
+        var timeArr = dateArr[1].characters.split{$0 == ":"}.map(String.init)
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        var date:String = "\(dateArr[0]) \(timeArr[0]):\(timeArr[1])"
+        if lang != "en" {
+            dateArr = dateArr[0].characters.split{$0 == "-"}.map(String.init)
+            date = "\(dateArr[0])年\(dateArr[1])月\(dateArr[2])日 \(timeArr[0]):\(timeArr[1])"
+        }
+        return date
     }
     
     

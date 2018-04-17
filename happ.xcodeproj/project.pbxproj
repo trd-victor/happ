@@ -11,15 +11,11 @@
 		3D0A4C091F7A8F0A00D6D73D /* Extension+AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C081F7A8F0A00D6D73D /* Extension+AutoLayout.swift */; };
 		3D0A4C0B1F7A9A0000D6D73D /* Extension+Override.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C0A1F7A9A0000D6D73D /* Extension+Override.swift */; };
 		3D0A4C0D1F7A9A7900D6D73D /* Extension+CR+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C0C1F7A9A7900D6D73D /* Extension+CR+Controller.swift */; };
-		3D0A4C0F1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C0E1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift */; };
-		3D0A4C111F7B129400D6D73D /* Extension+VR+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0A4C101F7B129400D6D73D /* Extension+VR+CollectionView.swift */; };
 		3D26FEE61F8B7E9F00283095 /* CreateTimlineSkillSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D26FEE51F8B7E9F00283095 /* CreateTimlineSkillSelection.swift */; };
 		3D2D6BE51F7BAE5200F05BE6 /* NavigationMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */; };
 		3D42C2CB1F6B6F9200EBD674 /* CongestionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D42C2CA1F6B6F9200EBD674 /* CongestionExtension.swift */; };
 		3D4B3B211F80BC8400DE89A0 /* pickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4B3B201F80BC8400DE89A0 /* pickerController.swift */; };
 		3D544EF71F68E6370055019A /* TimelineDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D544EF61F68E6370055019A /* TimelineDetail.swift */; };
-		3D55DC541F8B29AB007670AE /* ExtensionViewReservationLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D55DC531F8B29AB007670AE /* ExtensionViewReservationLayout.swift */; };
-		3D55DC561F8B29E5007670AE /* pickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D55DC551F8B29E5007670AE /* pickerViewController.swift */; };
 		3D7AA5B11F63704F00E16CAC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B01F63704F00E16CAC /* Extensions.swift */; };
 		3D7AA5B41F63833500E16CAC /* CustomTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */; };
 		3D7AA5B71F653E1C00E16CAC /* ExtensionTimeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */; };
@@ -62,11 +58,11 @@
 		A366EB821F29851C000C574C /* TransitionRight.swift in Sources */ = {isa = PBXBuildFile; fileRef = A366EB811F29851C000C574C /* TransitionRight.swift */; };
 		A366EB841F2996EF000C574C /* TransitionDown.swift in Sources */ = {isa = PBXBuildFile; fileRef = A366EB831F2996EF000C574C /* TransitionDown.swift */; };
 		A36804B21F0B85490032BF49 /* RegisterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36804B11F0B85490032BF49 /* RegisterController.swift */; };
-		A36AD9E81F46CF4500620C05 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A36AD9E71F46CF4500620C05 /* GoogleService-Info.plist */; };
 		A38C2AB71F8B1A5C001BB58E /* SelectSkillViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38C2AB61F8B1A5C001BB58E /* SelectSkillViewController.swift */; };
 		A38E96F01F5525FE00AE3D66 /* SystemValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38E96EF1F5525FE00AE3D66 /* SystemValue.swift */; };
 		A38E96F41F55703D00AE3D66 /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A38E96F31F55703D00AE3D66 /* LaunchScreenViewController.swift */; };
 		A39EC1EE1F6BC04E00D9126D /* NotifController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39EC1ED1F6BC04E00D9126D /* NotifController.swift */; };
+		A39F828C1F9EDCBE0047730B /* TermsandConditionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39F828B1F9EDCBE0047730B /* TermsandConditionController.swift */; };
 		A3A343A51F09F8B600DC55FC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A343A41F09F8B600DC55FC /* AppDelegate.swift */; };
 		A3A343A71F09F8B600DC55FC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3A343A61F09F8B600DC55FC /* ViewController.swift */; };
 		A3B046471F38E283003789CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3B046461F38E283003789CC /* Main.storyboard */; };
@@ -78,6 +74,7 @@
 		A3F378C41F500D8F003FD98D /* ViewLibViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */; };
 		A3F845431F28ADF3009E50B7 /* CurrentSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */; };
 		A3F872E11F1D4927004C4BA5 /* RegistController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3F872E01F1D4926004C4BA5 /* RegistController.swift */; };
+		A3FB8AB81FDE8AA400110D89 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A3FB8AB71FDE8AA400110D89 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,15 +83,11 @@
 		3D0A4C081F7A8F0A00D6D73D /* Extension+AutoLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+AutoLayout.swift"; sourceTree = "<group>"; };
 		3D0A4C0A1F7A9A0000D6D73D /* Extension+Override.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+Override.swift"; sourceTree = "<group>"; };
 		3D0A4C0C1F7A9A7900D6D73D /* Extension+CR+Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+CR+Controller.swift"; sourceTree = "<group>"; };
-		3D0A4C0E1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+VR+CustomCell.swift"; sourceTree = "<group>"; };
-		3D0A4C101F7B129400D6D73D /* Extension+VR+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+VR+CollectionView.swift"; sourceTree = "<group>"; };
 		3D26FEE51F8B7E9F00283095 /* CreateTimlineSkillSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateTimlineSkillSelection.swift; sourceTree = "<group>"; };
 		3D2D6BE41F7BAE5200F05BE6 /* NavigationMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NavigationMessage.swift; path = ../NavigationMessage.swift; sourceTree = "<group>"; };
 		3D42C2CA1F6B6F9200EBD674 /* CongestionExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CongestionExtension.swift; sourceTree = "<group>"; };
 		3D4B3B201F80BC8400DE89A0 /* pickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerController.swift; sourceTree = "<group>"; };
 		3D544EF61F68E6370055019A /* TimelineDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineDetail.swift; sourceTree = "<group>"; };
-		3D55DC531F8B29AB007670AE /* ExtensionViewReservationLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionViewReservationLayout.swift; sourceTree = "<group>"; };
-		3D55DC551F8B29E5007670AE /* pickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerViewController.swift; sourceTree = "<group>"; };
 		3D7AA5B01F63704F00E16CAC /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3D7AA5B31F63833500E16CAC /* CustomTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTableCell.swift; sourceTree = "<group>"; };
 		3D7AA5B61F653E1C00E16CAC /* ExtensionTimeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtensionTimeline.swift; sourceTree = "<group>"; };
@@ -137,12 +130,12 @@
 		A366EB811F29851C000C574C /* TransitionRight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionRight.swift; sourceTree = "<group>"; };
 		A366EB831F2996EF000C574C /* TransitionDown.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionDown.swift; sourceTree = "<group>"; };
 		A36804B11F0B85490032BF49 /* RegisterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterController.swift; sourceTree = "<group>"; };
-		A36AD9E71F46CF4500620C05 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A38C2AB61F8B1A5C001BB58E /* SelectSkillViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectSkillViewController.swift; sourceTree = "<group>"; };
 		A38E96EF1F5525FE00AE3D66 /* SystemValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemValue.swift; sourceTree = "<group>"; };
 		A38E96F31F55703D00AE3D66 /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
 		A39EC1ED1F6BC04E00D9126D /* NotifController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotifController.swift; sourceTree = "<group>"; };
-		A3A343A11F09F8B500DC55FC /* Happ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Happ.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A39F828B1F9EDCBE0047730B /* TermsandConditionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermsandConditionController.swift; sourceTree = "<group>"; };
+		A3A343A11F09F8B500DC55FC /* H.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = H.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3A343A41F09F8B600DC55FC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A3A343A61F09F8B600DC55FC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A3A343AB1F09F8B700DC55FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -157,6 +150,7 @@
 		A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewLibViewController.swift; sourceTree = "<group>"; };
 		A3F845421F28ADF3009E50B7 /* CurrentSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentSettingsViewController.swift; sourceTree = "<group>"; };
 		A3F872E01F1D4926004C4BA5 /* RegistController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistController.swift; sourceTree = "<group>"; };
+		A3FB8AB71FDE8AA400110D89 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -213,10 +207,6 @@
 			isa = PBXGroup;
 			children = (
 				3DBE19A61F7A318B00ADACD3 /* ViewReservation.swift */,
-				3D0A4C0E1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift */,
-				3D0A4C101F7B129400D6D73D /* Extension+VR+CollectionView.swift */,
-				3D55DC531F8B29AB007670AE /* ExtensionViewReservationLayout.swift */,
-				3D55DC551F8B29E5007670AE /* pickerViewController.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -285,7 +275,7 @@
 		A3A343A21F09F8B500DC55FC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A3A343A11F09F8B500DC55FC /* Happ.app */,
+				A3A343A11F09F8B500DC55FC /* H.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -300,6 +290,7 @@
 				A3A343A41F09F8B600DC55FC /* AppDelegate.swift */,
 				A3A343AB1F09F8B700DC55FC /* Assets.xcassets */,
 				A31CEAA41F2750AE00F386FC /* ChangeLanguageViewController.swift */,
+				A3FB8AB71FDE8AA400110D89 /* GoogleService-Info.plist */,
 				A31CEAA21F27501700F386FC /* ChangeNewPasswordViewController.swift */,
 				A34FC1091F0CC8AE006BFA81 /* ChangePassViewController.swift */,
 				A31CEA9E1F27498600F386FC /* ConfigurationViewController.swift */,
@@ -313,7 +304,6 @@
 				A31ABBEF1F34147300994064 /* FirstLanguageStoryboard.storyboard */,
 				A33893771F31A60D0094F983 /* FirstLaunchLanguage.swift */,
 				A34A509C1F30982C00BAD1E2 /* GlobalVar.swift */,
-				A36AD9E71F46CF4500620C05 /* GoogleService-Info.plist */,
 				3DCFDECA1F5D537700E50EC0 /* Handler */,
 				3D7AA5AF1F63703B00E16CAC /* Helpers */,
 				A34A50981F30744400BAD1E2 /* HttpDataRequest.swift */,
@@ -329,8 +319,8 @@
 				3D8916D71F7A175C0007EC7E /* Reservation */,
 				3DCBCD8F1F6F88AE0010AE6C /* SearchController */,
 				A34A509A1F307BFC00BAD1E2 /* setParam.swift */,
-				A331ADB81F0A3B5F00CA50AC /* SignupViewController.swift */,
 				A38E96EF1F5525FE00AE3D66 /* SystemValue.swift */,
+				A331ADB81F0A3B5F00CA50AC /* SignupViewController.swift */,
 				3D7AA5B21F63831900E16CAC /* TableCell */,
 				A30364C21F25E3440083A495 /* TableController.swift */,
 				3D544EF61F68E6370055019A /* TimelineDetail.swift */,
@@ -345,6 +335,7 @@
 				A3A343A61F09F8B600DC55FC /* ViewController.swift */,
 				A3F378C31F500D8E003FD98D /* ViewLibViewController.swift */,
 				A38C2AB61F8B1A5C001BB58E /* SelectSkillViewController.swift */,
+				A39F828B1F9EDCBE0047730B /* TermsandConditionController.swift */,
 			);
 			path = happ;
 			sourceTree = "<group>";
@@ -386,7 +377,7 @@
 			);
 			name = happ;
 			productName = happ;
-			productReference = A3A343A11F09F8B500DC55FC /* Happ.app */;
+			productReference = A3A343A11F09F8B500DC55FC /* H.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -401,7 +392,7 @@
 				TargetAttributes = {
 					A3A343A01F09F8B500DC55FC = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = 8VY9SE4VLG;
+						DevelopmentTeam = V5BSE5DH4X;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -437,9 +428,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3105B131F1CC2260067F069 /* Assets.xcassets in Resources */,
+				A3FB8AB81FDE8AA400110D89 /* GoogleService-Info.plist in Resources */,
 				A3B046471F38E283003789CC /* Main.storyboard in Resources */,
 				A31ABBF01F34147300994064 /* FirstLanguageStoryboard.storyboard in Resources */,
-				A36AD9E81F46CF4500620C05 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,6 +483,7 @@
 				"${BUILT_PRODUCTS_DIR}/JSQMessagesViewController/JSQMessagesViewController.framework",
 				"${BUILT_PRODUCTS_DIR}/JSQSystemSoundPlayer/JSQSystemSoundPlayer.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/ReachabilitySwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -501,6 +493,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSQMessagesViewController.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JSQSystemSoundPlayer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReachabilitySwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -542,7 +535,6 @@
 				A30752391F37701600CB9CE8 /* MenuViewController.swift in Sources */,
 				A39EC1EE1F6BC04E00D9126D /* NotifController.swift in Sources */,
 				A302AA5C1F27007400D8FBA8 /* CustomCell.swift in Sources */,
-				3D0A4C0F1F7AFF2C00D6D73D /* Extension+VR+CustomCell.swift in Sources */,
 				A33893781F31A60D0094F983 /* FirstLaunchLanguage.swift in Sources */,
 				A38C2AB71F8B1A5C001BB58E /* SelectSkillViewController.swift in Sources */,
 				A366EB841F2996EF000C574C /* TransitionDown.swift in Sources */,
@@ -551,7 +543,6 @@
 				A34FC1081F0CA6F1006BFA81 /* AccountViewController.swift in Sources */,
 				3D8916DD1F7A17EC0007EC7E /* CalendarCustomCell.swift in Sources */,
 				A31CEAA51F2750AE00F386FC /* ChangeLanguageViewController.swift in Sources */,
-				3D55DC541F8B29AB007670AE /* ExtensionViewReservationLayout.swift in Sources */,
 				A34A509B1F307BFC00BAD1E2 /* setParam.swift in Sources */,
 				A3E124B01F40BDDA0053B2CC /* searchdetails.swift in Sources */,
 				3D2D6BE51F7BAE5200F05BE6 /* NavigationMessage.swift in Sources */,
@@ -564,7 +555,6 @@
 				3DCBCD911F6F88C10010AE6C /* SearchController.swift in Sources */,
 				3DBE19A71F7A318B00ADACD3 /* ViewReservation.swift in Sources */,
 				3DD40F801F70F58600968896 /* UserProfileExtension.swift in Sources */,
-				3D55DC561F8B29E5007670AE /* pickerViewController.swift in Sources */,
 				A3F378C41F500D8F003FD98D /* ViewLibViewController.swift in Sources */,
 				A31CEA9F1F27498600F386FC /* ConfigurationViewController.swift in Sources */,
 				3DCFDECC1F5D539400E50EC0 /* CreatePost+hanlder.swift in Sources */,
@@ -580,7 +570,7 @@
 				A31CEAA11F274F9900F386FC /* MailChangeViewController.swift in Sources */,
 				A339E7E71F2AE0B500FDD907 /* TrasitionLeft.swift in Sources */,
 				A366EB801F297A95000C574C /* Transitions.swift in Sources */,
-				3D0A4C111F7B129400D6D73D /* Extension+VR+CollectionView.swift in Sources */,
+				A39F828C1F9EDCBE0047730B /* TermsandConditionController.swift in Sources */,
 				3D0A4C0D1F7A9A7900D6D73D /* Extension+CR+Controller.swift in Sources */,
 				3DD40F7E1F70F57B00968896 /* UserProfileController.swift in Sources */,
 				A3F872E11F1D4927004C4BA5 /* RegistController.swift in Sources */,
@@ -697,8 +687,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				New_Setting = "";
-				PRODUCT_BUNDLE_IDENTIFIER = happ.jp.net.happ;
-				PRODUCT_NAME = Happ;
+				PRODUCT_BUNDLE_IDENTIFIER = happ.jp.net;
+				PRODUCT_NAME = H;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -718,8 +708,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				New_Setting = "";
-				PRODUCT_BUNDLE_IDENTIFIER = happ.jp.net.happ;
-				PRODUCT_NAME = Happ;
+				PRODUCT_BUNDLE_IDENTIFIER = happ.jp.net;
+				PRODUCT_NAME = H;
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;

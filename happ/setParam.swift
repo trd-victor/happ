@@ -11,7 +11,7 @@ import Foundation
 class setParameters{
     
     var param: [String: String]?
-    var sercret: String = "jo8nefamehisd"
+    var sercret: String = globalvar.secretKey
     var action: String = "api"
     var debug: String = "0"
     var lang: String = "jp"

@@ -52,7 +52,23 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         
         loadTranslation()
         autoLayout()
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
         
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+        
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     func loadTranslation(){
@@ -128,6 +144,11 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor(hexString: "#0076FF")]
         UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
@@ -171,11 +192,16 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
             cell.textLabel?.text = ""
         }
         
+        if let h_id = self.userData[indexPath.row]["h_id"] as? String {
+            cell.happId.text = h_id
+        }
+        
+        cell.detailTextLabel?.text = ""
         if let skills = self.userData[indexPath.row]["skills"] as? String {
+            var skill = ""
+            var count = 0
             if skills != "null" {
                 let all_skills = skills.characters.split(",")
-                var skill = ""
-                var count = 0
                 for (value) in all_skills {
                     count++
                     skill = skill + config.getSkillByID(String(value))
@@ -193,27 +219,17 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
         }
 
         if let imgString = self.userData[indexPath.row]["icon"] as? String {
-            if (imgforProfileCache.objectForKey(imgString) != nil) {
-                let imgCache = imgforProfileCache.objectForKey(imgString) as! UIImage
-                cell.profileImg.image = imgCache
-            }else{
+            if imgString == "" || imgString == "null" {
                 cell.profileImg.image = UIImage(named: "noPhoto")
-                let url = NSURL(string: imgString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.profileImg.image = UIImage(data: data)
-                            let tmpImg = UIImage(data: data)
-                            self.imgforProfileCache.setObject(tmpImg!, forKey: imgString)
-                        }
-                    }
-                    
-                })
-                task.resume()
+            }else{
+                cell.profileImg.loadProfileImageUsingString(imgString){
+                    (result: Bool) in
+                }
             }
         }else{
             cell.profileImg.image = UIImage(named: "noPhoto")
         }
+        
         if let id = self.userData[indexPath.row]["user_id"] as? Int {
             user_id.append(id)
         }
@@ -221,6 +237,16 @@ class SearchController: UIViewController, UITableViewDelegate, UITableViewDataSo
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        if menu_bar.sessionDeleted {
+            let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+            UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyBoard.instantiateViewControllerWithIdentifier("UserProfile") as! UserProfileController
         let transition = CATransition()

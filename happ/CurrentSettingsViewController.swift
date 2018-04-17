@@ -7,8 +7,7 @@
 //
 
 import UIKit
-
-
+import Firebase
 
 class CurrentSettingsViewController: UIViewController {
     
@@ -57,6 +56,21 @@ class CurrentSettingsViewController: UIViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "englishLang:", name: "changeLang", object: nil)
         autoLayout()
+        
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
@@ -94,6 +108,7 @@ class CurrentSettingsViewController: UIViewController {
         currentSettingslang.topAnchor.constraintEqualToAnchor(btnCurrentSettings.topAnchor).active = true
         currentSettingslang.widthAnchor.constraintEqualToConstant(100).active = true
         currentSettingslang.heightAnchor.constraintEqualToConstant(38).active = true
+        currentSettingslang.textColor = UIColor(hexString: "#8F8E94")
         
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.centerXAnchor.constraintEqualToAnchor(view.centerXAnchor).active = true
@@ -115,7 +130,7 @@ class CurrentSettingsViewController: UIViewController {
 
     func loadConfigure() {
         let config = SYSTEM_CONFIG()
-        btnCurrentSettings.setTitle(config.translate("label_current settings"), forState: .Normal)
+        btnCurrentSettings.setTitle(config.translate("current_settings"), forState: .Normal)
         navTitle.title = config.translate("title_language_settings")
         savelang.title = config.translate("button_save")
         
@@ -176,6 +191,13 @@ class CurrentSettingsViewController: UIViewController {
             self.currentSettingslang.text = new_lang
         }
         
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         self.changeSysLang()
         
         //creating NSMutableURLRequest
@@ -197,13 +219,13 @@ class CurrentSettingsViewController: UIViewController {
         
         //set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "user_update",
             "d"           : "0",
             "lang"        : "\(language)",
             "user_id"     : "\(userId)",
-            "change_lang" : "\(self.currentSettingslang.text!)",
+            "change_lang" : "\(language)",
             "targets"     : "\(targets)"
         ]
         
@@ -215,6 +237,12 @@ class CurrentSettingsViewController: UIViewController {
             
             if error != nil || data == nil {
                 self.saveLang(sender)
+            }else{
+                dispatch_async(dispatch_get_main_queue()){
+                    if let firID = FIRAuth.auth()?.currentUser?.uid {
+                        FIRDatabase.database().reference().child("users").child(firID).child("language").setValue(self.language)
+                    }
+                }
             }
         }
         task.resume()
@@ -250,7 +278,7 @@ class CurrentSettingsViewController: UIViewController {
         
         //set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_userinfo",
             "d"           : "0",
@@ -319,6 +347,16 @@ class CurrentSettingsViewController: UIViewController {
         body.appendString("--\(boundary)--\r\n")
         
         return body
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     func displayMyAlertMessage(userMessage:String){

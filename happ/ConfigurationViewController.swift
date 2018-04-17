@@ -251,7 +251,6 @@ class ConfigurationViewController: UIViewController {
     func refreshLang(notification: NSNotification) {
         
         let config = SYSTEM_CONFIG()
-        print(config.translate("test_value"))
         //set label text..
         navTitle.title = config.translate("menu_configuration")
         labelLogout.text = config.translate("label_logout")
@@ -263,6 +262,7 @@ class ConfigurationViewController: UIViewController {
         btnChangePass.setTitle(config.translate("label_change-password"), forState: .Normal)
         btnLanguageSettings.setTitle(config.translate("title_language_settings"), forState: .Normal)
         btnLogout.setTitle(config.translate("btn_logout"), forState: .Normal)
+        
         if let text = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"] as? String {
             versionLabel.text = config.translate("version_label") + ": \(text)"
         }
@@ -342,29 +342,44 @@ class ConfigurationViewController: UIViewController {
         myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             
             do {
-                try FIRAuth.auth()?.signOut()
+                if let firID = FIRAuth.auth()?.currentUser?.uid {
+                    FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue("")
+                    FIRDatabase.database().reference().child("users").removeAllObservers()
+                    FIRDatabase.database().reference().child("user-badge").child("freetime").child(firID).removeAllObservers()
+                    FIRDatabase.database().reference().child("user-badge").child("timeline").child(firID).removeAllObservers()
+                    FIRDatabase.database().reference().child("user-badge").child("reservation").child(firID).removeAllObservers()
+                    FIRDatabase.database().reference().child("chat").child("last-message").child(firID).removeAllObservers()
+                    FIRDatabase.database().reference().child("chat").child("last-message").child(firID).queryOrderedByChild("timestamp").removeAllObservers()
+                    FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("unread").removeAllObservers()
+                }
                 
-                FIRDatabase.database().reference().child("registration-token").child(globalUserId.FirID).child("token").setValue("")
+                if chatVar.RoomID != "" {
+                    FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+                    FIRDatabase.database().reference().child("chat").child("messages").child(chatVar.RoomID).queryOrderedByChild("timestamp").removeAllObservers()
+                }
+            
+                try FIRAuth.auth()?.signOut()
                 
                 config.removeSYS_VAL("userID")
                 globalUserId.userID = ""
                 UIApplication.sharedApplication().applicationIconBadgeNumber = 0
-                FIRMessaging.messaging().unsubscribeFromTopic("timeline-push-notification")
-                FIRMessaging.messaging().unsubscribeFromTopic("free-time-push-notification")
+                
             } catch (let error) {
                 print((error as NSError).code)
             }
+            
+            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
             
             let transition: CATransition = CATransition()
             transition.duration = 0.40
             transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
             transition.type = kCATransitionPush
-            transition.subtype = kCATransitionFromLeft
+            transition.subtype = kCATransitionFromBottom
             self.view.window!.layer.addAnimation(transition, forKey: nil)
-            self.dismissViewControllerAnimated(false, completion: nil)
+            self.presentViewController(vc, animated: false, completion: nil)
         }))
         myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
-    
 }

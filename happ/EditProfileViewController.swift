@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class EditProfileViewController: UIViewController, UITextViewDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet var navBar: UINavigationBar!
     @IBOutlet var skillView: UIView!
@@ -22,17 +22,18 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     @IBOutlet var StatusItem: UIBarButtonItem!
     @IBOutlet var userImage: UIImageView!
     @IBOutlet var labelSkills: UILabel!
-    @IBOutlet var userDescription: UITextField!
     
     @IBOutlet var labelName: UILabel!
     @IBOutlet var userNamefield: UITextField!
     
+    let userDescription: UITextView = UITextView()
     let separatorLine: UIView = UIView()
     let selectContainer: UIView = UIView()
     let selectSkillLbl: UILabel = UILabel()
     let goToSelectSkill: UIImageView = UIImageView()
     let selectedSkillsLbl: UILabel = UILabel()
     let listOfSkills: UILabel = UILabel()
+    let happLbl: UILabel = UILabel()
     
     var language: String!
     var userId: String = ""
@@ -41,12 +42,13 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     var galleryPicker = UIImagePickerController()
     var loadingScreen: UIView!
     var firstLoad: Bool = false
-    //    let myActivityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.scrollView.addSubview(self.happLbl)
         self.scrollView.addSubview(self.selectContainer)
+        self.scrollView.addSubview(self.userDescription)
         self.selectContainer.addSubview(self.selectSkillLbl)
         self.selectContainer.addSubview(self.goToSelectSkill)
         self.selectContainer.addSubview(self.separatorLine)
@@ -56,7 +58,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         self.selectContainer.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "selectSkill"))
         
         //set delegate ..
-        userDescription.delegate = self
         userNamefield.delegate = self
         galleryPicker.delegate = self
         
@@ -79,15 +80,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         self.navBackProfile.action = Selector("backToConfiguration:")
         
-        //        //add it to the center...
-        //        myActivityIndicator.center = view.center
-        //
-        //        // If needed, you can prevent Acivity Indicator from hiding when stopAnimating() is called
-        //        myActivityIndicator.hidesWhenStopped = true
-        //        myActivityIndicator.frame = CGRectMake(0.0, 0.0, 40.0, 40.0)
-        //
-        //        view.addSubview(myActivityIndicator)
-        
         //add clickable profile image
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action:Selector("openGallery"))
         userImage.userInteractionEnabled = true
@@ -98,6 +90,20 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         autoLayout()
         reg_user.didUpdate = false
         
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -108,7 +114,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         self.selectSkillLbl.text = config.translate("select_skill")
         self.selectedSkillsLbl.text = config.translate("selected_skill")
-    
+        self.userDescription.textViewDidChange(self.userDescription)
         if reg_user.didUpdate {
             if reg_user.selectedSkills.count == 0{
                 self.listOfSkills.text = config.translate("empty_skills")
@@ -164,6 +170,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             checkNewImage = true
             
         }
+        
         dismissViewControllerAnimated(true, completion: nil)
     }
     
@@ -200,9 +207,17 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         userImage.layer.cornerRadius = 37
         userImage.clipsToBounds = true
         
+        happLbl.translatesAutoresizingMaskIntoConstraints = false
+        happLbl.centerXAnchor.constraintEqualToAnchor(userNamefield.centerXAnchor).active = true
+        happLbl.topAnchor.constraintEqualToAnchor(userImage.bottomAnchor).active = true
+        happLbl.widthAnchor.constraintEqualToAnchor(userNamefield.widthAnchor).active = true
+        happLbl.heightAnchor.constraintEqualToConstant(38).active = true
+        happLbl.textAlignment = .Center
+        happLbl.textColor = UIColor.grayColor()
+        
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        separator.topAnchor.constraintEqualToAnchor(userImage.bottomAnchor, constant: 5).active = true
+        separator.topAnchor.constraintEqualToAnchor(happLbl.bottomAnchor, constant: 5).active = true
         separator.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         separator.heightAnchor.constraintEqualToConstant(1).active = true
         
@@ -229,12 +244,12 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         userDescription.translatesAutoresizingMaskIntoConstraints = false
         userDescription.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
-        userDescription.topAnchor.constraintEqualToAnchor(userNamefield.bottomAnchor, constant: 5).active = true
+        userDescription.topAnchor.constraintEqualToAnchor(separator2.bottomAnchor, constant: 5).active = true
         userDescription.widthAnchor.constraintEqualToAnchor(scrollView.widthAnchor).active = true
         userDescription.heightAnchor.constraintEqualToConstant(100).active = true
-        userDescription.setRightPaddingPoints(10)
-        userDescription.setLeftPaddingPoints(10)
         userDescription.tintColor = UIColor.blackColor()
+        userDescription.font = UIFont.systemFontOfSize(15)
+        userDescription.tag = 200
         
         skillView.translatesAutoresizingMaskIntoConstraints = false
         skillView.centerXAnchor.constraintEqualToAnchor(scrollView.centerXAnchor).active = true
@@ -302,9 +317,10 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         navTitle.title = config.translate("title_edit_profile")
         StatusItem.title = config.translate("button_save")
         labelName.text = config.translate("text_name")
-        userNamefield.placeholder = config.translate("holder_15_char/less")
-        userDescription.placeholder = config.translate("holder_profile_statement")
+        userNamefield.placeholder = config.translate("holder_15_more_char")
         labelSkills.text = config.translate("subtitle_skills")
+        
+        self.userDescription.addPlaceholder(config.translate("holder_profile_statement"))
     }
     
     func presentDetail(viewControllerToPresent: UIViewController) {
@@ -357,7 +373,6 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         let config = SYSTEM_CONFIG()
         
-        
         //creating NSMutableURLRequest
         let request = NSMutableURLRequest(URL: globalvar.API_URL)
         
@@ -375,7 +390,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         //        }
         //        set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_userinfo",
             "d"           : "0",
@@ -386,106 +401,165 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         //adding the parameters to request body
         request.HTTPBody = createBodyWithParameters(param,  data: nil, boundary: boundary)
         
-        //             self.myActivityIndicator.startAnimating()
-        
         let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
             data, response, error  in
 
             //user Data...
-            var name: String!
-            var image: String!
+            var name: String = ""
+            var hID: String = ""
+            var image: String = ""
             var skills: String = ""
-            var message: String!
+            var message: String = ""
             
             if error != nil || data == nil{
                 self.loadUserData()
             }else{
                 do {
-                    
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), {() -> Void in
-                        if json!["result"] != nil {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        dispatch_async(dispatch_get_main_queue()){
                             
-                            name    = json!["result"]!["name"] as! String
-                            
-                            if let _ = json!["result"]!["icon"] as? NSNull {
-                                image = ""
-                            } else {
-                                image = json!["result"]!["icon"] as? String
-                            }
-                            
-                            if let skill_data = json!["result"]!["skills"] as? String {
-                                let arrayData = skill_data.characters.split(",")
-                                reg_user.selectedSkills = []
-                                
-                                if arrayData.count == 0 {
-                                    self.listOfSkills.text = config.translate("empty_skills")
-                                    self.listOfSkills.textAlignment = .Center
-                                }else{
-                                    for var i = 0; i < arrayData.count; i++ {
-                                        let id = String(arrayData[i])
-                                        if (Int(id) != nil) {
-                                            reg_user.selectedSkills.append(Int(id)!)
-                                            
-                                            skills += config.getSkillByID(String(arrayData[i]))
-                                        }else{
-                                            skills += skills
-                                        }
+                            if json["success"] != nil {
+                                if json["result"] != nil {
+                                    if let user_name  = json["result"]!["name"] as? String {
+                                        name = user_name
+                                    }
+                                    
+                                    if let h_id = json["result"]!["h_id"] as? String {
+                                        hID = h_id
+                                    }
+                                    
+                                    if let skill_data = json["result"]!["skills"] as? String {
+                                        let arrayData = skill_data.characters.split(",")
+                                        reg_user.selectedSkills = []
                                         
-                                        if i == arrayData.count - 1 {
-                                            self.listOfSkills.text = skills
-                                            self.listOfSkills.textAlignment = .Justified
+                                        if arrayData.count == 0 {
+                                            self.listOfSkills.text = config.translate("empty_skills")
+                                            self.listOfSkills.textAlignment = .Center
                                         }else{
-                                            skills += ", "
+                                            for var i = 0; i < arrayData.count; i++ {
+                                                let id = String(arrayData[i])
+                                                if (Int(id) != nil) {
+                                                    reg_user.selectedSkills.append(Int(id)!)
+                                                    
+                                                    skills += config.getSkillByID(String(arrayData[i]))
+                                                }else{
+                                                    skills += skills
+                                                }
+                                                
+                                                if i == arrayData.count - 1 {
+                                                    self.listOfSkills.text = skills
+                                                    self.listOfSkills.textAlignment = .Justified
+                                                }else{
+                                                    skills += ", "
+                                                }
+                                            }
                                         }
                                     }
+                                    
+                                    if let icon = json["result"]!["icon"] as? String {
+                                        image = icon
+                                    } else {
+                                        image = ""
+                                    }
+                                    
+                                    let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+                                    let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
+                                    
+                                    dispatch_async(dispatch_get_main_queue()){
+                                        self.userNamefield.text = name
+                                        self.happLbl.text = hID
+                                        
+                                        if data != nil {
+                                            //save new photo on firebase database
+                                            if self.checkNewImage {
+                                                let uid = FIRAuth.auth()?.currentUser?.uid
+                                                FIRDatabase.database().reference().child("users").child(uid!).child("photoUrl").setValue(image)
+                                                self.checkNewImage = false
+                                            }
+                                            self.userImage.image = UIImage(data: data!)
+                                        } else {
+                                            self.userImage.image = UIImage(named: "noPhoto")
+                                        }
+                                        
+                                        if let message = json["result"]!["mess"] as? String {
+                                            self.userDescription.text = message.stringByDecodingHTMLEntities
+                                            
+                                            self.userDescription.textViewDidChange(self.userDescription)
+                                        }
+                                        
+                                        if self.loadingScreen != nil {
+                                            UIViewController.removeSpinner(self.loadingScreen)
+                                            self.loadingScreen = nil
+                                        }
+                                    }
+                                }else{
+                                    if self.loadingScreen != nil {
+                                        UIViewController.removeSpinner(self.loadingScreen)
+                                        self.loadingScreen = nil
+                                    }
+                                    
+                                    self.logoutMessage()
                                 }
+
+                            }else{
+                                if self.loadingScreen != nil {
+                                    UIViewController.removeSpinner(self.loadingScreen)
+                                    self.loadingScreen = nil
+                                }
+                                
+                                self.logoutMessage()
                             }
-                            message = json!["result"]!["mess"] as! String
                         }
-                        
-                        
-                        
-                        let url = image.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-                        
-                        
-                        let data = NSData(contentsOfURL: NSURL(string: "\(url)")!)
-                        dispatch_async(dispatch_get_main_queue(), {() -> Void in
-                            
-                            self.userNamefield.text = name
-                            
-                            if data != nil {
-                                //save new photo on firebase database
-                                if self.checkNewImage {
-                                    let uid = globalUserId.FirID
-                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
-                                    self.checkNewImage = false
-                                }
-                                self.userImage.image = UIImage(data: data!)
-                            } else {
-                                self.userImage.image = UIImage(named: "noPhoto")
-                            }
-                            
-                            self.userDescription.text = message
-                            
-                            if self.loadingScreen != nil {
-                                UIViewController.removeSpinner(self.loadingScreen)
-                                self.loadingScreen = nil
-                            }
-                            
-                        })
-                    })
-                    
-                    
+                    }
                 } catch {
                     print(error)
                 }
-
             }
-            
         }
         task.resume()
+        
+    }
+    
+    func logoutMessage(){
+        let config = SYSTEM_CONFIG()
+        let myAlert = UIAlertController(title: "", message: config.translate("message_account_deleted"), preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: config.translate("label_logout"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            
+            do {
+                try FIRAuth.auth()?.signOut()
+                
+                config.removeSYS_VAL("userID")
+                globalUserId.userID = ""
+            } catch (let error) {
+                print((error as NSError).code)
+            }
+            let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyBoard.instantiateViewControllerWithIdentifier("MainBoard") as! ViewController
+            
+            let transition: CATransition = CATransition()
+            transition.duration = 0.40
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionPush
+            transition.subtype = kCATransitionFromBottom
+            self.view.window!.layer.addAnimation(transition, forKey: nil)
+            self.presentViewController(vc, animated: false, completion: nil)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func removeFIRObserver(firID: String){
+        FIRDatabase.database().reference().child("registration-token").child(firID).child("token").setValue("")
+        FIRDatabase.database().reference().child("users").removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("freetime").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("timeline").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("user-badge").child("reservation").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("chat").child("last-message").child(firID).removeAllObservers()
+        FIRDatabase.database().reference().child("chat").child("last-message").child(firID).queryOrderedByChild("timestamp").removeAllObservers()
+        FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID).child("unread").removeAllObservers()
+        if chatVar.RoomID != "" {
+            FIRDatabase.database().reference().child("chat").child("members").child(chatVar.RoomID).removeAllObservers()
+            FIRDatabase.database().reference().child("chat").child("messages").child(chatVar.RoomID).queryOrderedByChild("timestamp").removeAllObservers()
+        }
         
     }
     
@@ -500,6 +574,13 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
     
     @IBAction func StatusItem(sender: AnyObject) {
         self.scrollView.setContentOffset(CGPointMake(0.0, 0.0), animated: true);
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         if loadingScreen == nil {
             loadingScreen = UIViewController.displaySpinner(self.view)
         }
@@ -541,7 +622,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             
             //set parameters...
             let param = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "user_update",
                 "d"           : "0",
@@ -590,19 +671,10 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
                                 }
                             }
                             if json!["success"] != nil {
-                                let uid = globalUserId.FirID
-                                FIRDatabase.database().reference().child("users").child("\(uid)").child("name").setValue(name)
-                                
-                                if reg_user.selectedSkills.count > 0 {
-                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("skills").setValue("," + reg_user.selectedSkills.flatMap({String($0)}).joinWithSeparator(",") + ",")
-                                }else{
-                                    FIRDatabase.database().reference().child("users").child("\(uid)").child("skills").setValue("")
-                                }
-                                
                                 //updating image url on firebase
-                                self.setImageToFirebaseUser()
+                                self.setImageToFirebaseUser(message)
                             }
-                            self.displayMyAlertMessage(message)
+                            
                         }
                         
                     } catch {
@@ -719,7 +791,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
-    func setImageToFirebaseUser(){
+    func setImageToFirebaseUser(message: String){
         
         //creating NSMutableURLRequest
         let request = NSMutableURLRequest(URL: globalvar.API_URL)
@@ -735,7 +807,7 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         
         //        set parameters...
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_userinfo",
             "d"           : "0",
@@ -750,25 +822,29 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
             data, response, error  in
             
             if error != nil || data == nil{
-               self.setImageToFirebaseUser()
+               self.setImageToFirebaseUser(message)
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if json!["result"] != nil {
-                        var image: String!
-                        
-                        if let _ = json!["result"]!["icon"] as? NSNull {
-                            image = ""
-                        } else {
-                            image = json!["result"]!["icon"] as? String
-                        }
-                        
-                        if self.checkNewImage {
-                            let uid = globalUserId.FirID
-                            FIRDatabase.database().reference().child("users").child("\(uid)").child("photoUrl").setValue(image)
-                            self.checkNewImage = false
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if json["result"] != nil {
+                            var image: String!
+                            
+                            if let _ = json["result"]!["icon"] as? NSNull {
+                                image = ""
+                            } else {
+                                image = json["result"]!["icon"] as? String
+                            }
+                            
+                            dispatch_async(dispatch_get_main_queue()){
+                                
+                                self.updateNotif(image){
+                                    (complete: Bool) in
+                                    self.updateData(image, mess: message)
+                                }
+                            }
                         }
                     }
+                    
                 } catch {
                     print(error)
                 }
@@ -778,4 +854,127 @@ class EditProfileViewController: UIViewController, UITextFieldDelegate, UIGestur
         task.resume()
     }
     
+    func updateData(image: String, mess: String){
+        let name = self.userNamefield.text!
+        self.getChatRoomID({
+            (data: [FIRDataSnapshot]) in
+            self.getMessageData(data, image: image, name: name){
+                (result: Bool) in
+                
+                self.getLastMessage(image, name: name, mess: mess)
+            }
+        })
+    }
+    
+    
+    func getChatRoomID(completion: (data: [FIRDataSnapshot])-> Void){
+        
+        let userid = FIRAuth.auth()?.currentUser?.uid
+        let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
+        membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            if let result =  snapshot.children.allObjects as? [FIRDataSnapshot] {
+                completion(data: result)
+            }
+        })
+    }
+    
+    func getLastMessage(image: String, name: String, mess: String){
+        
+        if let fid = FIRAuth.auth()?.currentUser?.uid {
+            
+            let lmDB = FIRDatabase.database().reference().child("chat").child("last-message").child(fid)
+            lmDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                if snap.exists(){
+                    if let result = snap.children.allObjects as? [FIRDataSnapshot] {
+                        for data in result {
+                            if let value = data.value as? NSDictionary {
+                                if let mateID = value["chatmateId"] as? String {
+                                    self.eachLastMessage(data.key,chatmateID: mateID, image: image, name: name)
+                                }
+                            }
+                        }
+                    }
+                }
+                dispatch_async(dispatch_get_main_queue()){
+                    self.displayMyAlertMessage(mess)
+                }
+            });
+        }
+    }
+    
+    func eachLastMessage(roomID: String,chatmateID: String,image: String, name: String){
+        
+        if roomID == "" || chatmateID == "" {
+            return
+        }
+        let lmDB = FIRDatabase.database().reference().child("chat").child("last-message").child(chatmateID).child(roomID)
+        
+        lmDB.child("name").setValue(name)
+        lmDB.child("photoUrl").setValue(image)
+    }
+    
+    func getMessageData(data: [FIRDataSnapshot], image: String, name: String, completion: (result: Bool)->Void){
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        
+        if data.count > 0 {
+            for s in data {
+                let key = s.key
+                let messageDB = FIRDatabase.database().reference().child("chat").child("messages").child(key)
+                
+                messageDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+                    if let result =  snap.children.allObjects as? [FIRDataSnapshot] {
+                        if result.count > 0 {
+                            for data in result {
+                                if let value = data.value as? NSDictionary {
+                                    if let user_id = value["userId"] as? String {
+                                        
+                                        if user_id == firID! {
+                                            let mess_key = data.key
+                                            
+                                            messageDB.child(mess_key).child("name").setValue(name)
+                                            messageDB.child(mess_key).child("photoUrl").setValue(image)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        }
+        
+        dispatch_async(dispatch_get_main_queue()){
+            completion(result: true)
+        }
+    }
+    
+    func updateNotif(image: String, completion: (complete: Bool)-> Void){
+        let name = userNamefield.text!
+        let firID = FIRAuth.auth()?.currentUser?.uid
+        let notifDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
+            .queryOrderedByChild("userId").queryEqualToValue(firID!)
+        
+        let notifAllDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-all")
+        
+        notifDB.observeSingleEventOfType(.Value, withBlock: {(snap) in
+            if let result =  snap.children.allObjects as? [FIRDataSnapshot] {
+                if result.count > 0 {
+                    for data in result {
+                        if let value = data.value as? NSDictionary {
+                            if let user_id = value["userId"] as? String {
+                                if user_id == firID! {
+                                    let mess_key = data.key
+                                    notifAllDB.child(mess_key).child("name").setValue(name)
+                                    notifAllDB.child(mess_key).child("photoUrl").setValue(image)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            dispatch_async(dispatch_get_main_queue()){
+                completion(complete: true)
+            }
+        })
+    }    
 }

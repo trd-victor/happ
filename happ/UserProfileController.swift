@@ -28,8 +28,18 @@ class UserProfileController: UIViewController {
     var postID = [Int]()
     var page: Int = 1
     var firstLoad: Bool = false
-    
+    var loadingScreen: UIView!
     let baseUrl: NSURL = globalvar.API_URL
+    var noData: Bool = false
+    var loadingData: Bool = false
+    
+    let btmRefresh: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView()
+        view.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.Gray
+        view.color = UIColor.grayColor()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     let ProfileView: UIView = {
         let view = UIView()
@@ -74,6 +84,7 @@ class UserProfileController: UIViewController {
         label.textAlignment = .Center
         label.lineBreakMode = .ByWordWrapping
         label.sizeToFit()
+        label.textAlignment = .Justified
         return label
     }()
     
@@ -83,6 +94,8 @@ class UserProfileController: UIViewController {
         label.textColor = UIColor.blackColor()
         label.font = UIFont.systemFontOfSize(14)
         label.numberOfLines = 0
+        label.textAlignment = .Justified
+        label.lineBreakMode = .ByWordWrapping
         label.sizeToFit()
         return label
     }()
@@ -118,10 +131,12 @@ class UserProfileController: UIViewController {
     }()
     
     var topConstraint: NSLayoutConstraint = NSLayoutConstraint()
+    var skillContraint: NSLayoutConstraint = NSLayoutConstraint()
+    var msgContraint: NSLayoutConstraint = NSLayoutConstraint()
+    var profileViewContraint: NSLayoutConstraint = NSLayoutConstraint()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         btnMessage.addTarget(self, action: Selector("openMessage"), forControlEvents: .TouchUpInside)
         
         tblProfile.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
@@ -139,6 +154,7 @@ class UserProfileController: UIViewController {
             self.loadUserinfo(UserProfile.id)
         }
         
+        tblProfile.addSubview(btmRefresh)
         tblProfile.addSubview(ProfileView)
         tblProfile.addSubview(topReload)
         tblProfile.bringSubviewToFront(topReload)
@@ -172,9 +188,35 @@ class UserProfileController: UIViewController {
         }
         
         autoLayout()
+        self.tblProfile.allowsSelection = false;
+        
+        let swipeRight: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "swipeBackTimeline:");
+        swipeRight.direction = .Right
+        
+        self.view.addGestureRecognizer(swipeRight)
+    }
+    
+    func swipeBackTimeline(sender: UISwipeGestureRecognizer){
+        let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+        UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+        
+        let transition: CATransition = CATransition()
+        transition.duration = 0.40
+        transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        transition.type = kCATransitionPush
+        transition.subtype = kCATransitionFromLeft
+        self.view.window!.layer.addAnimation(transition, forKey: nil)
+        self.dismissViewControllerAnimated(false, completion: nil)
     }
     
     func openMessage(){
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
         let vc = ViewLibViewController()
         self.presentViewController(vc, animated: false, completion: nil)
     }
@@ -182,48 +224,67 @@ class UserProfileController: UIViewController {
     func profileBlock(sender: UIButton!){
         let config = SYSTEM_CONFIG()
         
-        if sender.tag == 0 {
-            blockUser()
-            btnBlock.backgroundColor = UIColor(hexString: "#E2041B")
-            btnBlock.setTitle(config.translate("button_unblock"), forState: .Normal)
-            btnBlock.tag = 1
-        }else{
-            unblockUser()
-            btnBlock.backgroundColor = UIColor(hexString: "#272727")
-            btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
-            btnBlock.tag = 0
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
         }
-    }
-    
-    var didScroll:Bool = false
-    
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        if scrollView == tblProfile {
-            if scrollView.contentOffset.y < -440 {
-                self.page = 1
-                didScroll = true
-                topReload.startAnimating()
-                for var i = 5; i < self.fromID.count; i++ {
-                    let indexPath = NSIndexPath(forRow: i, inSection: 0)
-                    self.tblProfile.beginUpdates()
-                    self.tblProfile.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
-                    self.userBody.removeAtIndex(i)
-                    self.postDate.removeAtIndex(i)
-                    self.postID.removeAtIndex(i)
-                    self.fromID.removeAtIndex(i)
-                    self.img1.removeAtIndex(i)
-                    self.img2.removeAtIndex(i)
-                    self.img3.removeAtIndex(i)
-                    self.tblProfile.endUpdates()
+        
+        if sender.tag == 0 {
+            self.blockUser(){
+                (done: Bool) in
+                if done {
+                    self.btnBlock.backgroundColor = UIColor(hexString: "#E2041B")
+                    self.btnBlock.setTitle(config.translate("button_unblock"), forState: .Normal)
+                    self.btnBlock.tag = 1
                 }
-                reloadData()
+            }
+        }else{
+            unblockUser(){
+                (complete: Bool) in
+                if complete {
+                    self.btnBlock.backgroundColor = UIColor(hexString: "#272727")
+                    self.btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
+                    self.btnBlock.tag = 0
+                }
             }
         }
     }
     
+    var didScroll:Bool = false
+//    
+//    func scrollViewDidScroll(scrollView: UIScrollView) {
+//        if scrollView == tblProfile {
+//            if scrollView.contentOffset.y < -440 {
+//                self.page = 1
+//                didScroll = true
+//                if self.loadingData {
+//                    self.loadingData = false
+//                }
+//                
+//                topReload.startAnimating()
+//                for var i = 5; i < self.fromID.count; i++ {
+//                    let indexPath = NSIndexPath(forRow: i, inSection: 0)
+//                    self.tblProfile.beginUpdates()
+//                    self.tblProfile.deleteRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+//                    self.userBody.removeAtIndex(i)
+//                    self.postDate.removeAtIndex(i)
+//                    self.postID.removeAtIndex(i)
+//                    self.fromID.removeAtIndex(i)
+//                    self.img1.removeAtIndex(i)
+//                    self.img2.removeAtIndex(i)
+//                    self.img3.removeAtIndex(i)
+//                    self.tblProfile.endUpdates()
+//                }
+//                reloadData()
+//            }
+//        }
+//    }
+    
     func translate(){
         let config = SYSTEM_CONFIG()
-        btnMessage.setTitle(config.translate("title:message"), forState: .Normal)
+        btnMessage.setTitle(config.translate("menu_message"), forState: .Normal)
         btnBlock.setTitle(config.translate("to_block"), forState: .Normal)
     }
     
@@ -250,7 +311,9 @@ class UserProfileController: UIViewController {
         topConstraint.active = true
         ProfileView.centerXAnchor.constraintEqualToAnchor(tblProfile.centerXAnchor).active = true
         ProfileView.widthAnchor.constraintEqualToAnchor(tblProfile.widthAnchor).active = true
-        ProfileView.heightAnchor.constraintEqualToConstant(380).active = true
+        profileViewContraint = ProfileView.heightAnchor.constraintEqualToConstant(380)
+        profileViewContraint.active = true
+        
         ProfileView.backgroundColor = UIColor(hexString: "#E4D4B9")
         
         topReload.topAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: -50).active = true
@@ -274,14 +337,18 @@ class UserProfileController: UIViewController {
         h_id.heightAnchor.constraintEqualToConstant(15).active = true
         
         skills.topAnchor.constraintEqualToAnchor(h_id.bottomAnchor, constant: 5).active = true
-        skills.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
-        skills.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -40).active = true
-        skills.heightAnchor.constraintEqualToConstant(45).active = true
-        skills.textAlignment = .Justified
+        skills.leftAnchor.constraintEqualToAnchor(ProfileView.leftAnchor, constant: 10).active = true
+        skills.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -20).active = true
+        skillContraint = skills.heightAnchor.constraintEqualToConstant(10)
+        skillContraint.active = true
+        skills.textAlignment = .Center
         
         msg.topAnchor.constraintEqualToAnchor(skills.bottomAnchor, constant: 5).active = true
-        msg.centerXAnchor.constraintEqualToAnchor(ProfileView.centerXAnchor).active = true
-        msg.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -40).active = true
+        msg.leftAnchor.constraintEqualToAnchor(ProfileView.leftAnchor, constant: 10).active = true
+        msg.widthAnchor.constraintEqualToAnchor(ProfileView.widthAnchor, constant: -20).active = true
+        msgContraint = msg.heightAnchor.constraintEqualToConstant(10)
+        msgContraint.active = true
+        msg.textAlignment = .Center
         
         btnMessage.bottomAnchor.constraintEqualToAnchor(ProfileView.bottomAnchor, constant: -20).active = true
         btnMessage.leftAnchor.constraintEqualToAnchor(ProfileView.leftAnchor, constant: 20).active = true
@@ -309,10 +376,38 @@ class UserProfileController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+        }
     }
     
     override func  preferredStatusBarStyle()-> UIStatusBarStyle {
         return UIStatusBarStyle.LightContent
+    }
+    
+    func displayMessage(mess: String){
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
+        
+        let myAlert = UIAlertController(title: "", message: mess, preferredStyle: UIAlertControllerStyle.Alert)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            let cancelButtonAttributes: NSDictionary = [NSForegroundColorAttributeName: UIColor.whiteColor()]
+            UIBarButtonItem.appearance().setTitleTextAttributes(cancelButtonAttributes as? [String : AnyObject], forState: UIControlState.Normal)
+            
+            let transition: CATransition = CATransition()
+            transition.duration = 0.40
+            transition.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+            transition.type = kCATransitionPush
+            transition.subtype = kCATransitionFromLeft
+            self.view.window!.layer.addAnimation(transition, forKey: nil)
+            self.dismissViewControllerAnimated(false, completion: nil)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
     func clickMoreImage(sender: UIButton) {
@@ -354,7 +449,15 @@ class UserProfileController: UIViewController {
             
             self.tblProfile.reloadData()
         }))
-        myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    
+    
+    func estimateFrameForText(text: String) -> CGRect {
+        let size = CGSize(width: self.skills.frame.width, height: 1000)
+        let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
+        return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(14)], context: nil)
     }
 }

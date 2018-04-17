@@ -18,7 +18,7 @@ extension CongestionViewController {
         
         //set parameter for
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "\(globalvar.GET_CONGESTION_ACTION)",
             "d"           : "0",
@@ -35,14 +35,14 @@ extension CongestionViewController {
             data, response, error  in
             
             
-            if error != nil || data == nil{
+            if error != nil {
+                self.getCongestion()
+            } else if  data == nil{
                 self.getCongestion()
             }else{
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
-                        
-                        
-                        dispatch_async(dispatch_get_main_queue()) {
+                       dispatch_async(dispatch_get_main_queue()) {
                             if json["result"] != nil {
                                 let result = json["result"] as! NSArray
                                 
@@ -52,6 +52,8 @@ extension CongestionViewController {
                                         if let fields = resultData.valueForKey("fields") {
                                             if let percent = fields.valueForKey("persentage") {
                                                 retData = Int(percent as! String)!
+                                            }else{
+                                                retData = 0
                                             }
                                         }
                                         
@@ -64,6 +66,7 @@ extension CongestionViewController {
                     
                 } catch {
                     print(error)
+                    self.getCongestion()
                 }
             }
             
@@ -73,9 +76,11 @@ extension CongestionViewController {
     }
     
     func getFreeStatus(percent: Int){
+        let config = SYSTEM_CONFIG()
+        self.userIds.removeAll()
         //set parameter for
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_freetime_status_for_me",
             "d"           : "0",
@@ -85,7 +90,6 @@ extension CongestionViewController {
             "status_key"  : "freetime"
         ]
         
-        
         let httpRequest = HttpDataRequest(postData: param)
         let request = httpRequest.requestGet()
         
@@ -93,7 +97,9 @@ extension CongestionViewController {
             data, response, error  in
             
             
-            if error != nil || data == nil{
+            if error != nil{
+                self.getFreeStatus(percent)
+            }else if data == nil{
                 self.getFreeStatus(percent)
             }else{
                 do {
@@ -107,28 +113,35 @@ extension CongestionViewController {
                                     
                                     if let fields = resultData.valueForKey("fields") {
                                         if let id = fields.valueForKey("user_id") {
-                                            let existsUser = self.userIds.contains(Int(id as! String)!)
-                                            if !existsUser {
-                                                self.userIds.append(Int(id as! String)!)
+                                            if let _ = config.getSYS_VAL("username_\(id)"){
+                                                let existsUser = self.userIds.contains(Int(id as! String)!)
+                                                if !existsUser {
+                                                    self.userIds.append(Int(id as! String)!)
+                                                }
                                             }
                                         }
                                     }
-                                    
                                 }
                             }
                         }
                         
-                        self.widthPercentage = self.calculatePercentage(percent)
                         self.percentage.text = "\(percent)%"
-                        self.prcentViewBlack.topAnchor.constraintEqualToAnchor(self.percentView.topAnchor).active = true
-                        self.prcentViewBlack.leftAnchor.constraintEqualToAnchor(self.percentView.leftAnchor).active = true
-                        self.prcentViewBlack.widthAnchor.constraintEqualToConstant(self.widthPercentage).active = true
-                        self.prcentViewBlack.heightAnchor.constraintEqualToConstant(146).active = true
-                        self.prcentViewBlack.backgroundColor = UIColor(hexString: "#272727")
+                        self.viewBlackConstraint.constant = self.calculatePercentage(percent)
                         self.collectionView.reloadData()
+                        
+                        if  self.userIds.contains(Int(globalUserId.userID)!) {
+                            statusButton.freetimeStatus?.setOn(true, animated: true)
+                        }else{
+                            statusButton.freetimeStatus?.setOn(false, animated: true)
+                        }
                         
                         self.viewLoading.hidden = true
                         self.activityLoading.stopAnimating()
+                        
+                        let firID = FIRAuth.auth()?.currentUser?.uid
+                        
+                        FIRDatabase.database().reference().child("user-badge").child("freetime").child(firID!).setValue(0)
+                        menu_bar.situation.badgeValue = .None
                     }
                     
                 } catch {

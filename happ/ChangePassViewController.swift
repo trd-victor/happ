@@ -152,7 +152,7 @@ class ChangePassViewController: UIViewController, UITextFieldDelegate {
             }
             //set parameters...
             let param = [
-                "sercret"     : "jo8nefamehisd",
+                "sercret"     : globalvar.secretKey,
                 "action"      : "api",
                 "ac"          : "user_rest_pw",
                 "d"           : "0",

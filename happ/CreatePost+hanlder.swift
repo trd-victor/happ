@@ -17,6 +17,7 @@ extension CreatePostViewController: UIImagePickerControllerDelegate, UINavigatio
     
     func handlerGallery() {
         let picker = DKImagePickerController()
+        picker.assetType = .allPhotos
         
         switch(imgList.count){
         case 1:

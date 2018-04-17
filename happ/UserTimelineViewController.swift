@@ -11,6 +11,7 @@ import Firebase
 
 struct statusButton {
     static var status : String = ""
+    static var freetimeStatus: UISwitch!
 }
 
 class UserTimelineViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
@@ -37,7 +38,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     var userData: NSDictionary!
     var countData: NSArray = []
-    
+    var loadingScreen: UIView!
     
     //get user Id...
     var userId: String = ""
@@ -88,7 +89,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     var scrollLoad:Bool = false
     var firstLoad: Bool = false
-    
+    var toReloadTimeline: NSURLSessionDataTask!
     let refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         return control
@@ -118,6 +119,8 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector(("notifTimeline:")), name: "reloadTimeline", object: nil)
         
         self.mytableview.addSubview(self.refreshControl)
+        
+        statusButton.freetimeStatus = freetimeStatus
         
         self.mytableview.registerClass(NoImage.self, forCellReuseIdentifier: "NoImage")
         self.mytableview.registerClass(SingleImage.self, forCellReuseIdentifier: "SingleImage")
@@ -154,17 +157,23 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         view.addSubview(scrollview)
         
         //set switch on
-        self.setSwitchOnOff(self.freetimeStatus)
         autoLayout()
         
         self.mytableview.delegate = self
         self.mytableview.dataSource = self
         
         self.bellObserver()
+        
+        self.getFreeTimeStatus()
+        
+        let timer = NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("updateFunction"), userInfo: nil, repeats: true)
+    }
+    
+    func updateFunction(){
+        self.getFreeTimeStatus()
     }
     
     func bellObserver(){
-        
         let firID = FIRAuth.auth()?.currentUser?.uid
         let unreadDB = FIRDatabase.database().reference().child("notifications").child("app-notification").child("notification-user").child(firID!).child("unread")
         unreadDB.observeEventType(.Value, withBlock: {(snap) in
@@ -260,6 +269,20 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             ])
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if menu_bar.reloadScreen != nil {
+            UIViewController.removeSpinner(menu_bar.reloadScreen)
+            menu_bar.reloadScreen = nil
+        }
+        
+        if self.loadingScreen != nil {
+            UIViewController.removeSpinner(self.loadingScreen)
+            self.loadingScreen = nil
+        }
+    }
+    
     func refreshTimelineTable() {
         self.mytableview.reloadData()
     }
@@ -297,14 +320,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         request1.HTTPMethod = "POST"
         
         let param = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "delete_timeline",
             "d"           : "0",
             "lang"        : "en",
             "pid"         : "\(sender)"
         ]
-        
         
         request1.HTTPBody = createBodyWithParameters(param, boundary: boundary1)
         let task2 = NSURLSession.sharedSession().dataTaskWithRequest(request1){
@@ -314,42 +336,123 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 self.deleteTimeline(sender)
             }else {
                 do {
-                    let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    
-                    if json3!["message"] != nil {
-                    }
-                    if json3!["result"] != nil {
-                        if json3!["result"]!["mess"] != nil {
+                    if let json3 = try NSJSONSerialization.JSONObjectWithData(data1!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if json3["message"] != nil {
+                        
+                        }
+                        
+                        if let result = json3["result"] as? NSDictionary {
+                            if result["mess"] != nil {
+                                
+                            }
+                        }
+                        dispatch_async(dispatch_get_main_queue()) {
+                            //self.displayMyAlertMessage(mess)
+                            self.mytableview.reloadData()
                         }
                     }
-                    dispatch_async(dispatch_get_main_queue()) {
-                        //self.displayMyAlertMessage(mess)
-                        self.mytableview.reloadData()
-                    }
-                    
                 } catch {
                     print(error)
                 }
             }
-            
         }
         task2.resume()
         
     }
     
+    
+    
     @IBAction func freetimeStatus(sender: UISwitch) {
         let statust = switchButtonCheck(freetimeStatus)
-        let defaults = NSUserDefaults.standardUserDefaults()
-        defaults.setObject(statust, forKey: "Freetime")
-        defaults.synchronize()
         
-        if statust == "On" {
-            let notif = NotifController()
-            notif.saveNotificationMessage(0, type: "free-time")
-            updateFreeTimeStatus()
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
         }
         
+        if loadingScreen == nil {
+            loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         
+        if statust == "On" {
+            updateFreeTimeStatus()
+        }else{
+            freeTimeStatusOff()
+        }
+    }
+    
+    
+    func getFreeTimeStatus(){
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
+        let parameters = [
+            "sercret"          : globalvar.secretKey,
+            "action"           : "api",
+            "ac"               : "get_freetime_status_for_me",
+            "d"                : "0",
+            "lang"             : "jp",
+            "user_id"          : "\(globalUserId.userID)",
+            "office_id"        : "32",
+            "status_key"       : "freetime"
+        ]
+        
+        let request = NSMutableURLRequest(URL: self.baseUrl)
+        let boundary = generateBoundaryString()
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        request.HTTPBody = createBodyWithParameters(parameters, boundary: boundary)
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil || data == nil{
+                self.getFreeTimeStatus()
+            }else{
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        dispatch_async(dispatch_get_main_queue()){
+                            if let _ = json["success"] as? Bool {
+                                if let result = json["result"] as? NSArray {
+                                    var check = false
+                                    var count = 0
+                                    if result.count > 0 {
+                                        for(value) in result {
+                                            count++
+                                            if let field = value["fields"] as? NSDictionary {
+                                                if let userid = field["user_id"] as? String {
+                                                    if userid == globalUserId.userID {
+                                                        check = true
+                                                    }
+                                                }
+                                            }
+                                            
+                                            if count == result.count{
+                                                if check {
+                                                    self.freetimeStatus.setOn(true, animated: true)
+                                                }else{
+                                                    self.freetimeStatus.setOn(false, animated: true)
+                                                }
+                                            }
+                                        }
+                                    }else{
+                                        self.freetimeStatus.setOn(false, animated: true)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }catch{
+                    print(error)
+                }
+            }
+        }
+        task.resume()
     }
     
     @IBAction func btnViewNotif(sender: UIBarButtonItem) {
@@ -367,7 +470,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.page += 1
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -379,8 +482,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "skills"     : "\(globalUserId.skills)",
             "origin"     : "timeline"
         ]
-        
-        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -390,12 +491,13 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             data, response, error  in
             
             if error != nil || data == nil{
-                self.getTimelineUser()
+                self.getOlderPostTimeline()
             }else {
+                
                 do {
                     if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
                         if let resultArray = json.valueForKey("result") as? NSArray {
-                            
+                            let config = SYSTEM_CONFIG()
                             if resultArray.count == 0 {
                                 self.noData = true
                                 self.btmRefresh.stopAnimating()
@@ -403,47 +505,55 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                             
                             for item in resultArray {
                                 if let resultDict = item as? NSDictionary {
-                                    if let userPostId = resultDict.valueForKey("ID") {
-                                        self.postID.append(userPostId as! Int)
-                                    }
-                                    
-                                    if let userPostModied = resultDict.valueForKey("post_modified") {
-                                        self.postDate.append(userPostModied as! String)
-                                    }
-                                    
                                     if let postContent = resultDict.valueForKey("fields")  {
-                                        if postContent["images"] != nil {
-                                            if let images = postContent.valueForKey("images") as? NSArray {
-                                                for index in 1...images.count {
-                                                    if let img = images[index - 1].valueForKey("image"){
-                                                        if index == 1 {
-                                                            self.img1.append(img["url"] as! String)
+                                        
+                                        if let from_user_id = postContent.valueForKey("from_user_id") as? String{
+                                            if let _ = config.getSYS_VAL("username_\(from_user_id)") as? String {
+                                                
+                                                if let userPostId = resultDict.valueForKey("ID") {
+                                                    self.postID.append(userPostId as! Int)
+                                                }
+                                                
+                                                if let userPostModied = resultDict.valueForKey("post_modified") {
+                                                    self.postDate.append(userPostModied as! String)
+                                                }
+                                                
+                                                if postContent["images"] != nil {
+                                                    if let images = postContent.valueForKey("images") as? NSArray {
+                                                        for index in 1...images.count {
+                                                            if let img = images[index - 1].valueForKey("image"){
+                                                                if index == 1 {
+                                                                    self.img1.append(img["url"] as! String)
+                                                                }
+                                                                if index == 2 {
+                                                                    self.img2.append(img["url"] as! String)
+                                                                }
+                                                                if index == 3 {
+                                                                    self.img3.append(img["url"] as! String)
+                                                                }
+                                                            }
                                                         }
-                                                        if index == 2 {
-                                                            self.img2.append(img["url"] as! String)
+                                                        if images.count < 2 {
+                                                            self.img2.append("null")
                                                         }
-                                                        if index == 3 {
-                                                            self.img3.append(img["url"] as! String)
+                                                        if images.count < 3 {
+                                                            self.img3.append("null")
                                                         }
+                                                    }else{
+                                                        self.img1.append("null")
+                                                        self.img2.append("null")
+                                                        self.img3.append("null")
                                                     }
                                                 }
-                                                if images.count < 2 {
-                                                    self.img2.append("null")
+                                                if let body = postContent.valueForKey("body") {
+                                                    if let textStr = body as? String {
+                                                        self.userBody.append(textStr.stringByDecodingHTMLEntities)
+                                                    }
                                                 }
-                                                if images.count < 3 {
-                                                    self.img3.append("null")
+                                                if let body = postContent.valueForKey("from_user_id") {
+                                                    self.fromID.append(body as! String)
                                                 }
-                                            }else{
-                                                self.img1.append("null")
-                                                self.img2.append("null")
-                                                self.img3.append("null")
                                             }
-                                        }
-                                        if let body = postContent.valueForKey("body") {
-                                            self.userBody.append(body as! String)
-                                        }
-                                        if let body = postContent.valueForKey("from_user_id") {
-                                            self.fromID.append(body as! String)
                                         }
                                     }
                                 }
@@ -480,10 +590,32 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
     
+    func updateTimeline(){
+        
+        if let willReload = menu_bar.timelineReloadCount {
+            if willReload {
+                if self.fromID.count > 0 {
+                    let indexPath = NSIndexPath(forItem: 0, inSection: 0)
+                    
+                    if(self.mytableview.numberOfSections > 0){
+                        self.mytableview.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Top, animated: true)
+                    }
+                }
+                
+                if self.loadingScreen == nil {
+                    self.loadingScreen = UIViewController.displaySpinner(self.view)
+                }
+                
+                self.reloadTimelineByMenuClick()
+                menu_bar.timelineReloadCount = false
+            }
+        }
+    }
+    
     func getTimelineUser() {
         
         let parameters = [
-            "sercret"     : "jo8nefamehisd",
+            "sercret"     : globalvar.secretKey,
             "action"      : "api",
             "ac"          : "get_timeline",
             "d"           : "0",
@@ -495,7 +627,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             "skills"     : "\(globalUserId.skills)",
             "origin"      : "timeline"
         ]
-        
         let request = NSMutableURLRequest(URL: self.baseUrl)
         let boundary = generateBoundaryString()
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
@@ -508,70 +639,74 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 self.getTimelineUser()
             }else{
                 do {
-                    let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary
-                    if let resultArray = json!.valueForKey("result") as? NSArray {
-                        
-                        self.myResultArr = resultArray
-                        
-                        for item in resultArray {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments) as? NSDictionary {
+                        if let resultArray = json.valueForKey("result") as? NSArray {
                             
-                            if let resultDict = item as? NSDictionary {
-                                if let userPostId = resultDict.valueForKey("ID") {
-                                    self.postID.append(userPostId as! Int)
-                                }
-                                
-                                if let userPostModied = resultDict.valueForKey("post_modified") {
-                                    self.postDate.append(userPostModied as! String)
-                                }
-                                
-                                if let postContent = resultDict.valueForKey("fields")  {
-                                    if postContent["images"] != nil {
-                                        if let images = postContent.valueForKey("images") as? NSArray {
-                                            for index in 1...images.count {
-                                                if let img = images[index - 1].valueForKey("image"){
-                                                    let imgView = UIImageView()
-                                                    if index == 1 {
-                                                        self.img1.append(img["url"] as! String)
-                                                        imgView.imgForCache(img["url"] as! String)
-                                                        self.image1.append(imgView)
-                                                    }
-                                                    if index == 2 {
-                                                        self.img2.append(img["url"] as! String)
-                                                    }
-                                                    if index == 3 {
-                                                        self.img3.append(img["url"] as! String)
+                            self.myResultArr = resultArray
+                            for item in resultArray {
+                                if let resultDict = item as? NSDictionary {
+                                    if let postContent = resultDict.valueForKey("fields")  {
+                                        if let userPostId = resultDict.valueForKey("ID") {
+                                            self.postID.append(userPostId as! Int)
+                                        }
+                                        
+                                        if let userPostModied = resultDict.valueForKey("post_modified") {
+                                            self.postDate.append(userPostModied as! String)
+                                        }
+                                        
+                                        if postContent["images"] != nil {
+                                            if let images = postContent.valueForKey("images") as? NSArray {
+                                                for index in 1...images.count {
+                                                    if let img = images[index - 1].valueForKey("image"){
+                                                        let imgView = UIImageView()
+                                                        if index == 1 {
+                                                            self.img1.append(img["url"] as! String)
+//                                                            imgView.imgForCache(img["url"] as! String)
+                                                            self.image1.append(imgView)
+                                                        }
+                                                        if index == 2 {
+                                                            self.img2.append(img["url"] as! String)
+                                                        }
+                                                        if index == 3 {
+                                                            self.img3.append(img["url"] as! String)
+                                                        }
                                                     }
                                                 }
-                                            }
-                                            if images.count < 2 {
+                                                if images.count < 2 {
+                                                    self.img2.append("null")
+                                                }
+                                                if images.count < 3 {
+                                                    self.img3.append("null")
+                                                }
+                                            }else{
+                                                self.img1.append("null")
                                                 self.img2.append("null")
-                                            }
-                                            if images.count < 3 {
                                                 self.img3.append("null")
                                             }
-                                        }else{
-                                            self.img1.append("null")
-                                            self.img2.append("null")
-                                            self.img3.append("null")
+                                        }
+                                        if let body = postContent.valueForKey("body") {
+                                            if let textStr = body as? String {
+                                                self.userBody.append(textStr.stringByDecodingHTMLEntities)
+                                            }
+                                        }
+                                        if let id = postContent.valueForKey("from_user_id") {
+                                            self.fromID.append(id as! String)
                                         }
                                     }
-                                    if let body = postContent.valueForKey("body") {
-                                        self.userBody.append(body as! String)
-                                    }
-                                    if let id = postContent.valueForKey("from_user_id") {
-                                        self.fromID.append(id as! String)
-                                    }
                                 }
+                                
                             }
+                        }
+                        dispatch_async(dispatch_get_main_queue()){
+                            if self.refreshControl.refreshing {
+                                self.refreshControl.endRefreshing()
+                                self.mytableview.contentOffset = CGPoint(x: 0,y: 0)
+                            }
+                            self.mytableview.reloadData()
                             
+                            let uid = FIRAuth.auth()?.currentUser?.uid
+                            FIRDatabase.database().reference().child("user-badge").child("timeline").child(uid!).setValue(0)
                         }
-                    }
-                    dispatch_async(dispatch_get_main_queue()){
-                        if self.refreshControl.refreshing {
-                            self.refreshControl.endRefreshing()
-                            self.mytableview.contentOffset = CGPoint(x: 0,y: 0)
-                        }
-                        self.mytableview.reloadData()
                     }
                 } catch {
                     print(error)
@@ -579,6 +714,21 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
         task.resume()
+    }
+    
+    func convertSpecialCharacters(string: String) -> String {
+        var newString = string
+        let char_dictionary = [
+            "&amp;": "&",
+            "&lt;": "<",
+            "&gt;": ">",
+            "&quot;": "\"",
+            "&apos;": "'"
+        ];
+        for (escaped_char, unescaped_char) in char_dictionary {
+            newString = newString.stringByReplacingOccurrencesOfString(escaped_char, withString: unescaped_char, options: NSStringCompareOptions.RegularExpressionSearch, range: nil)
+        }
+        return newString
     }
     
     func refreshTable() {
@@ -591,31 +741,23 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
         self.getTimelineUser()
     }
     
-    func setSwitchOnOff(sender : UISwitch) {
-        
-        let userFreetime = NSUserDefaults.standardUserDefaults().objectForKey("Freetime") as? String
-        if userFreetime == "On" {
-            sender.on = true
-        } else {
-            sender.on = false
-        }
-    }
-    
     var scrollOffset: CGFloat = 0
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         self.scrollOffset = scrollView.contentOffset.y
         if scrollView == self.mytableview {
             if scrollView.contentOffset.y < -80 && self.scrollLoad == false {
-                refreshControl.beginRefreshing()
-                self.page = 1
-                self.scrollLoad = true
-                self.reloadTimeline()
+                reloadTableData()
             }
         }
     }
     
-    
+    func reloadTableData(){
+        refreshControl.beginRefreshing()
+        self.page = 1
+        self.scrollLoad = true
+        self.reloadTimeline()
+    }
     
     func notifTimeline(notification: NSNotification){
         self.page = 1
@@ -641,10 +783,18 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        
         let config = SYSTEM_CONFIG()
-        let username = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as! String
-        let userimageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as! String
+        var username = ""
+        var userimageURL = ""
+        
+        if let name = config.getSYS_VAL("username_\(self.fromID[indexPath.row])") as? String {
+            username = name
+        }
+        
+        if let imageURL = config.getSYS_VAL("userimage_\(self.fromID[indexPath.row])") as? String {
+            userimageURL = imageURL
+        }
+        
         let cellTap = UITapGestureRecognizer(target: self, action: "tapCell:")
         let bodyTap = UITapGestureRecognizer(target: self, action: "tapBody:")
         let imgTap = UITapGestureRecognizer(target: self, action: "tapImage:")
@@ -662,32 +812,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
-            if userimageURL == "null" {
+            if userimageURL == "null" || userimageURL == ""{
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                if (imgforPostCache.objectForKey(userimageURL) != nil) {
-                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
-                    cell.btnProfile.setImage(imgCache, forState: .Normal)
-                }else{
-                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
-                    cell.btnProfile.contentMode = .Center
-                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                        if let data = NSData(contentsOfURL: url!){
-                            dispatch_async(dispatch_get_main_queue()){
-                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-                                cell.btnProfile.contentMode = .ScaleAspectFill
-                            }
-                            let tmpImg = UIImage(data: data)
-                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
-                        }
-                        
-                    })
-                    task.resume()
-                }
+                cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
+                    
+                })
             }
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -697,83 +830,26 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
-                cell.imgView1.image = imgCache
-            }else{
-                cell.imgView1.image = nil
-                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
-                            cell.indicator.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img1.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
-            }
-            if (imgforPostCache.objectForKey(self.img2[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img2[indexPath.row]) as! UIImage
-                cell.imgView2.image = imgCache
-            }else{
-                cell.imgView2.image = nil
-                cell.imgView2.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator2.startAnimating()
-                let url = NSURL(string: self.img2[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView2.image = UIImage(data: data)
-                            cell.indicator2.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img2.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
-            }
-            if (imgforPostCache.objectForKey(self.img3[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img3[indexPath.row]) as! UIImage
-                cell.imgView3.image = imgCache
-            }else{
-                cell.imgView3.image = nil
-                cell.imgView3.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator3.startAnimating()
-                let url = NSURL(string: self.img3[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView3.image = UIImage(data: data)
-                            cell.indicator3.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img3.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img3[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
-            }
-            cell.imgContainer.addGestureRecognizer(imgTap)
             
-            if self.fromID[indexPath.row] == globalUserId.userID {
-                cell.btnDelete.hidden = false
-            } else {
-                cell.btnDelete.hidden = true
-                
+            cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
+                cell.indicator.stopAnimating()
             }
+            
+            cell.indicator2.startAnimating()
+            cell.imgView2.loadImageUsingString(self.img2[indexPath.row]){
+                (result: Bool) in
+                cell.indicator2.stopAnimating()
+            }
+            
+            cell.indicator3.startAnimating()
+            cell.imgView3.loadImageUsingString(self.img3[indexPath.row]){
+                (result: Bool) in
+                cell.indicator3.stopAnimating()
+            }
+            
+            cell.imgContainer.addGestureRecognizer(imgTap)
             
             return cell
         }else if self.img2[indexPath.row] != "null" {
@@ -789,32 +865,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.detailTextLabel?.addGestureRecognizer(bodyTap)
             cell.detailTextLabel?.text = String(self.userBody[indexPath.row])
             
-            if userimageURL == "null" {
+            if userimageURL == "null" || userimageURL == ""{
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                if (imgforPostCache.objectForKey(userimageURL) != nil) {
-                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
-                    cell.btnProfile.setImage(imgCache, forState: .Normal)
-                }else{
-                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
-                    cell.btnProfile.contentMode = .Center
-                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                        if let data = NSData(contentsOfURL: url!){
-                            dispatch_async(dispatch_get_main_queue()){
-                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-                                cell.btnProfile.contentMode = .ScaleAspectFill
-                            }
-                            let tmpImg = UIImage(data: data)
-                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
-                        }
-                        
-                    })
-                    task.resume()
-                }
+                cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
+                    
+                })
             }
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -823,60 +882,22 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
-                cell.imgView1.image = imgCache
-            }else{
-                cell.imgView1.image = nil
-                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
-                            cell.indicator.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img1.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
-            }
-            if (imgforPostCache.objectForKey(self.img2[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img2[indexPath.row]) as! UIImage
-                cell.imgView2.image = imgCache
-            }else{
-                cell.imgView2.image = nil
-                cell.imgView2.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator2.startAnimating()
-                let url = NSURL(string: self.img2[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView2.image = UIImage(data: data)
-                            cell.indicator2.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img2.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img2[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
-            }
-            cell.imgContainer.addGestureRecognizer(imgTap)
             
-            if self.fromID[indexPath.row] == globalUserId.userID {
-                cell.btnDelete.hidden = false
-            } else {
-                cell.btnDelete.hidden = true
+            cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
                 
+                cell.indicator.stopAnimating()
             }
+            
+            cell.indicator2.startAnimating()
+            cell.imgView2.loadImageUsingString(self.img2[indexPath.row]){
+                (result: Bool) in
+                
+                cell.indicator2.stopAnimating()
+            }
+            
+            cell.imgContainer.addGestureRecognizer(imgTap)
             
             return cell
         }else if self.img1[indexPath.row] != "null" {
@@ -896,27 +917,9 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                if (imgforPostCache.objectForKey(userimageURL) != nil) {
-                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
-                    cell.btnProfile.setImage(imgCache, forState: .Normal)
-                }else{
-                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
-                    cell.btnProfile.contentMode = .Center
-                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                        if let data = NSData(contentsOfURL: url!){
-                            dispatch_async(dispatch_get_main_queue()){
-                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-                                cell.btnProfile.contentMode = .ScaleAspectFill
-                            }
-                            let tmpImg = UIImage(data: data)
-                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
-                        }
-                        
-                    })
-                    task.resume()
-                }
+                cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
+                    
+                })
             }
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
@@ -926,40 +929,14 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            //            cell.imgView1.imgForCache(self.img1[indexPath.row])
-            
-            if (imgforPostCache.objectForKey(self.img1[indexPath.row]) != nil) {
-                let imgCache = imgforPostCache.objectForKey(self.img1[indexPath.row]) as! UIImage
-                cell.imgView1.image = imgCache
-            }else{
-                cell.imgView1.image = nil
-                cell.imgView1.backgroundColor = UIColor.lightGrayColor()
-                cell.indicator.startAnimating()
-                let url = NSURL(string: self.img1[indexPath.row].stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                    if let data = NSData(contentsOfURL: url!){
-                        dispatch_async(dispatch_get_main_queue()){
-                            cell.imgView1.image = UIImage(data: data)
-                            cell.indicator.stopAnimating()
-                            let tmpImg = UIImage(data: data)
-                            if self.img1.indices.contains(indexPath.row) {
-                                self.imgforPostCache.setObject(tmpImg!, forKey: self.img1[indexPath.row])
-                            }
-                        }
-                    }
-                    
-                })
-                task.resume()
+            //            //            cell.imgView1.imgForCache(self.img1[indexPath.row])
+            cell.indicator.startAnimating()
+            cell.imgView1.loadImageUsingString(self.img1[indexPath.row]){
+                (result: Bool) in
+                cell.indicator.stopAnimating()
             }
             
             cell.imgContainer.addGestureRecognizer(imgTap)
-            
-            if self.fromID[indexPath.row] == globalUserId.userID {
-                cell.btnDelete.hidden = false
-            } else {
-                cell.btnDelete.hidden = true
-                
-            }
             
             return cell
         }else{
@@ -979,28 +956,11 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 imgView.image = UIImage(named: "noPhoto")
                 cell.btnProfile.setImage(imgView.image, forState: .Normal)
             }else {
-                if (imgforPostCache.objectForKey(userimageURL) != nil) {
-                    let imgCache = imgforPostCache.objectForKey(userimageURL) as! UIImage
-                    cell.btnProfile.setImage(imgCache, forState: .Normal)
-                }else{
-                    cell.btnProfile.setImage(UIImage(named : "noPhoto"), forState: .Normal)
-                    cell.btnProfile.backgroundColor = UIColor.lightGrayColor()
-                    cell.btnProfile.contentMode = .Center
-                    let url = NSURL(string: userimageURL.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!)
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(url!, completionHandler: { (data, response, error) -> Void in
-                        if let data = NSData(contentsOfURL: url!){
-                            dispatch_async(dispatch_get_main_queue()){
-                                cell.btnProfile.setImage(UIImage(data: data), forState: .Normal)
-                                cell.btnProfile.contentMode = .ScaleAspectFill
-                            }
-                            let tmpImg = UIImage(data: data)
-                            self.imgforPostCache.setObject(tmpImg!, forKey: userimageURL)
-                        }
-                        
-                    })
-                    task.resume()
-                }
+                cell.btnProfile.loadImageUsingString(userimageURL, completion: {(result: Bool) in
+                    
+                })
             }
+            
             cell.btnProfile.tag = Int(self.fromID[indexPath.row])!
             cell.btnProfile.addTarget(self, action: "viewProfile:", forControlEvents: .TouchUpInside)
             
@@ -1009,13 +969,6 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             cell.btnDelete.setImage(UIImage(named: "blackMore"), forState: .Normal)
             cell.btnDelete.addTarget(self, action: "clickMoreImage:", forControlEvents: .TouchUpInside)
             cell.btnDelete.tag = indexPath.row
-            
-            if self.fromID[indexPath.row] == globalUserId.userID {
-                cell.btnDelete.hidden = false
-            } else {
-                cell.btnDelete.hidden = true
-                
-            }
             
             return cell
             
@@ -1036,18 +989,32 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func tapImage(sender: UITapGestureRecognizer){
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         viewDetail(sender)
     }
     
     func tapBody(sender: UITapGestureRecognizer){
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         viewDetail(sender)
     }
     
     func tapDate(sender: UITapGestureRecognizer){
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
         viewDetail(sender)
     }
     
     func tapCell(sender: UITapGestureRecognizer){
+        
+        if self.loadingScreen == nil {
+            self.loadingScreen = UIViewController.displaySpinner(self.view)
+        }
+        
         viewDetail(sender)
     }
     
@@ -1066,6 +1033,10 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
                 UserDetails.img2 = self.img2[indexPath.row]
                 UserDetails.img3 = self.img3[indexPath.row]
                 UserDetails.postID = ""
+                
+                if self.loadingScreen != nil {
+                    UIViewController.removeSpinner(self.loadingScreen)
+                }
                 
                 let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
                 let vc = storyBoard.instantiateViewControllerWithIdentifier("TimelineDetail") as! TimelineDetail
@@ -1086,12 +1057,22 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         var height: CGFloat = 90
+        
         if self.userBody.indices.contains(indexPath.row) {
             let textsize = calcTextHeight(self.userBody[indexPath.row], frame: tableView.frame.size, fontsize: 16)
-            height += textsize.height
+            
+            if textsize.height <= 133.65625 {
+                height += textsize.height
+            }else{
+                height += 133.65625
+            }
         }
-        if self.img1[indexPath.row] != "null" {
-            height += 320
+        if self.img1.count > 0 {
+            if let image = self.img1[indexPath.row] as? String {
+                if image != "null" {
+                    height += 320
+                }
+            }
         }
         
         return height
@@ -1108,21 +1089,313 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     private func calcTextHeight(text: String, frame: CGSize, fontsize: CGFloat) -> CGRect{
-        let size = CGSize(width: frame.width - 50, height: 1000)
+        let size = CGSize(width: frame.width - 30, height: 1000)
         let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
         return NSString(string: text).boundingRectWithSize(size, options: options, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(fontsize)], context: nil)
     }
     
     
     func clickMoreImage(sender: UIButton) {
-        let senderTag = sender.tag
-        let title = sender.titleLabel!.text!
-        self.deletePost(title, index: senderTag)
+        if fromID[sender.tag] != globalUserId.userID {
+            alertMore(sender.tag)
+        }else{
+            let senderTag = sender.tag
+            let title = sender.titleLabel!.text!
+            self.deletePost(title, index: senderTag)
+        }
+    }
+    
+    func alertMore(index: Int){
+        let config = SYSTEM_CONFIG()
+        
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
+        let myAlert = UIAlertController(title: config.translate("more_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: config.translate("block_user"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.block_user(index)
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("report_post"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.report_post(index)
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: { (action: UIAlertAction!) in
+            if menu_bar.sessionDeleted {
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+                menuController.logoutMessage(self)
+                return
+            }
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func block_user(index: Int){
+        let config = SYSTEM_CONFIG()
+        
+        let myAlert = UIAlertController(title: config.translate("block_user_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.blockUser(index)
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: { (action: UIAlertAction!) in
+            self.alertMore(index)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func report_post(index: Int){
+        let config = SYSTEM_CONFIG()
+        
+        let myAlert = UIAlertController(title: config.translate("report_post_title"), message: "", preferredStyle: UIAlertControllerStyle.ActionSheet)
+        myAlert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+            self.reportPost(index)
+        }))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: { (action: UIAlertAction!) in
+            self.alertMore(index)
+        }))
+        self.presentViewController(myAlert, animated: true, completion: nil)
+    }
+    
+    func blockUser(index: Int) {
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        
+        var param_lang = lang
+        
+        if lang != "en" {
+            param_lang = "jp"
+        }
+        
+        if globalUserId.userID != fromID[index] {
+            if self.loadingScreen == nil {
+                self.loadingScreen = UIViewController.displaySpinner(self.view)
+            }
+            
+            let param = [
+                "sercret"     : globalvar.secretKey,
+                "action"      : "api",
+                "ac"          : "add_block",
+                "d"           : "0",
+                "lang"        : "\(param_lang)",
+                "user_id"     : "\(globalUserId.userID)",
+                "block_user_id" : "\(fromID[index])"
+            ]
+            
+            let httpRequest = HttpDataRequest(postData: param)
+            let request = httpRequest.requestGet()
+            
+            let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+                data, response, error  in
+                
+                if error != nil || data == nil {
+                    self.blockUser(index)
+                }else{
+                    do {
+                        if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
+                            if let data = json["result"] as? NSDictionary {
+                                if let mess = data["mess"] as? String {
+                                    dispatch_async(dispatch_get_main_queue()){
+                                        self.getChatmateID(self.fromID[index]){ (key: String) in
+                                            self.getChatRoomID(key){
+                                                (result: String) in
+                                                
+                                                self.updateBlockFirebase(result){
+                                                    (complete: Bool) in
+                                                    
+                                                    if complete {
+                                                        if self.loadingScreen != nil {
+                                                            UIViewController.removeSpinner(self.loadingScreen)
+                                                            self.loadingScreen = nil
+                                                        }
+                                                        self.displayMyAlertMessage(String(mess))
+                                                        self.reloadTableData()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }else{
+                            self.blockUser(index)
+                        }
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    func updateBlockFirebase(result: String, completion: (complete: Bool) -> Void){
+        FIRDatabase.database().reference().child("chat").child("members").child(result).child("blocked").setValue(true){
+            (error, snapshot) in
+        
+            if error != nil {
+                self.updateBlockFirebase(result, completion: completion)
+            }else{
+                completion(complete: true)
+            }
+        }
+    }
+    
+    func getChatmateID(id: String, completion: (key: String) -> Void){
+        let user_id = Int(id)
+        let userdb = FIRDatabase.database().reference().child("users").queryOrderedByChild("id").queryEqualToValue(user_id)
+        
+        userdb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            let userData = snapshot.value as? NSDictionary
+            
+            if(userData != nil) {
+                for (key, value) in userData! {
+                    if let dataVal = value as? NSDictionary {
+                        if let dataID =  dataVal["id"] as? Int {
+                            
+                            if dataID == user_id {
+                                completion(key: key as! String)
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+    
+    func getChatRoomID(userID: String, completion: (result: String) -> Void){
+        
+        let userid = FIRAuth.auth()?.currentUser?.uid
+        
+        let chatmateID = userID
+        let membersDb = FIRDatabase.database().reference().child("chat").child("members").queryOrderedByChild(String(userid!)).queryEqualToValue(true)
+        
+        membersDb.observeSingleEventOfType(.Value, withBlock: {(snapshot) in
+            var count = 0
+            
+            if let result =  snapshot.value as? [String: AnyObject] {
+                for (key, value) in result {
+                    count++
+                    let dataVal = value as? NSDictionary
+                    
+                    let firstUser = dataVal![String(chatmateID)] as? Int
+                    let secondUser = dataVal![String(userid!)] as? Int
+                    
+                    if firstUser != nil && secondUser != nil {
+                        chatVar.RoomID = key
+                    }
+                    
+                    if(count == snapshot.value?.count!){
+                        if chatVar.RoomID != "" {
+                            completion(result: chatVar.RoomID)
+                        }else{
+                            let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                            dispatch_async(dispatch_get_main_queue()){
+                                var roomDetail: NSDictionary
+                                roomDetail = [
+                                    String(chatmateID) : true,
+                                    String(userid!) : true,
+                                    "blocked" : true
+                                ]
+                                
+                                roomDB.setValue(roomDetail)
+                                chatVar.RoomID = roomDB.key
+                                completion(result: chatVar.RoomID)
+                            }
+                        }
+                    }
+                }
+            }else{
+                let roomDB = FIRDatabase.database().reference().child("chat").child("members").childByAutoId()
+                dispatch_async(dispatch_get_main_queue()){
+                    var roomDetail: NSDictionary
+                    
+                    roomDetail = [
+                        String(chatmateID) : true,
+                        String(userid!) : true,
+                        "blocked" : true
+                    ]
+                    roomDB.setValue(roomDetail)
+                    chatVar.RoomID = roomDB.key
+                    completion(result: chatVar.RoomID)
+                }
+            }
+        })
+        
+        
+    }
+    
+    func reportPost(index: Int) {
+        if menu_bar.sessionDeleted {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let menuController = storyBoard.instantiateViewControllerWithIdentifier("Menu") as! MenuViewController
+            menuController.logoutMessage(self)
+            return
+        }
+        
+        let config = SYSTEM_CONFIG()
+        let lang = config.getSYS_VAL("AppLanguage") as! String
+        
+        var param_lang = lang
+        
+        if lang != "en" {
+            param_lang = "jp"
+        }
+        
+        let param = [
+            "sercret"           : globalvar.secretKey,
+            "action"            : "api",
+            "ac"                : "add_report",
+            "d"                 : "0",
+            "lang"              : "\(param_lang)",
+            "user_id"           : "\(globalUserId.userID)",
+            "from_id"           : "\(fromID[index])",
+            "report_post_id"    : "\(postID[index])"
+        ]
+        
+        let httpRequest = HttpDataRequest(postData: param)
+        let request = httpRequest.requestGet()
+        
+        
+        let task = NSURLSession.sharedSession().dataTaskWithRequest(request){
+            data, response, error  in
+            
+            if error != nil || data == nil {
+                self.reportPost(index)
+            }else{
+                do {
+                    if let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers ) as? NSDictionary {
+                        if json["result"] != nil {
+                            if json["result"]!["mess"] != nil {
+                                dispatch_async(dispatch_get_main_queue()){
+                                    self.displayMyAlertMessage(String(json["result"]!["mess"]!!))
+                                }
+                            }
+                        }
+                    }else{
+                        self.reportPost(index)
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+        }
+        task.resume()
     }
     
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().UUIDString)"
     }
+    
     
     func createBodyWithParameters(parameters: [String: String]?,  boundary: String) -> NSData {
         let body = NSMutableData();
@@ -1163,13 +1436,15 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func deleteAlertMessage(userMessage:String){
+        
+        let config = SYSTEM_CONFIG()
         let myAlert = UIAlertController(title: "", message: userMessage, preferredStyle: UIAlertControllerStyle.ActionSheet)
-        myAlert.addAction(UIAlertAction(title: "Delete", style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
+        myAlert.addAction(UIAlertAction(title: config.translate("button_delete"), style: UIAlertActionStyle.Default, handler: { (action: UIAlertAction!) in
             let id = self.userpostID
             let indexRow = self.indexInt
             
             self.deleteTimeline(id)
-            
+//
             let indexPath = NSIndexPath(forRow: indexRow, inSection: 0)
             self.mytableview.beginUpdates()
             self.userBody.removeAtIndex(indexPath.row)
@@ -1185,7 +1460,7 @@ class UserTimelineViewController: UIViewController, UITableViewDelegate, UITable
             self.mytableview.reloadData()
             
         }))
-        myAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil))
+        myAlert.addAction(UIAlertAction(title: config.translate("btn_cancel"), style: UIAlertActionStyle.Cancel, handler: nil))
         self.presentViewController(myAlert, animated: true, completion: nil)
     }
     
