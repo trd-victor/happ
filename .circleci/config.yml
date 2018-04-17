@@ -1,0 +1,17 @@
+jobs:
+  build:
+    docker:
+      - image: debian:stretch
+    steps:
+      - checkout
+      - run:
+          name: Print the Current Time
+          command: date
+
+machine:
+  xcode:
+    version: 7.3
+
+test:
+  override:
+    - swift test
