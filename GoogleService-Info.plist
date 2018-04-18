@@ -7,21 +7,21 @@
 	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
 	<string>ca-app-pub-3940256099942544/4411468910</string>
 	<key>CLIENT_ID</key>
-	<string>678338391444-vkcqr1gk5gghvgst5gijvaj09pj9jhhm.apps.googleusercontent.com</string>
+	<string>943877997352-49s7d1qn20acrceqt2bntajtggj3u050.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.678338391444-vkcqr1gk5gghvgst5gijvaj09pj9jhhm</string>
+	<string>com.googleusercontent.apps.943877997352-49s7d1qn20acrceqt2bntajtggj3u050</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAjPKvQ1kh365H8OnQd20sqqN7P900eEIM</string>
+	<string>AIzaSyAfbdVDeJ9o54WrTIQznRrbynvmp85X3ns</string>
 	<key>GCM_SENDER_ID</key>
-	<string>678338391444</string>
+	<string>943877997352</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>happ.jp.net</string>
 	<key>PROJECT_ID</key>
-	<string>happ-c8883</string>
+	<string>dev-h-app</string>
 	<key>STORAGE_BUCKET</key>
-	<string>happ-c8883.appspot.com</string>
+	<string>dev-h-app.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<true></true>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -33,8 +33,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:678338391444:ios:22f8558fd988efc3</string>
+	<string>1:943877997352:ios:22f8558fd988efc3</string>
 	<key>DATABASE_URL</key>
-	<string>https://happ-c8883.firebaseio.com</string>
+	<string>https://dev-h-app.firebaseio.com</string>
 </dict>
 </plist>

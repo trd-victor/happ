@@ -25,7 +25,7 @@ struct globalvar {
     static var GET_SYSTEM_VALUE : String = "get_system_value_all"
     static var GET_SKILL: String = "get_skill"
     static var APP_LANGUANGE: String = ""
-    static var API_URL: NSURL = NSURL(string: "http://happ.biz/wp-admin/admin-ajax.php")!
+    static var API_URL: NSURL = NSURL(string: "http://happ.timeriver.asia/wp-admin/admin-ajax.php")!
     static var userTitle: String = ""
     static var badgeBellNumber: Int = 0
     static var badgeMessNumber: Int = 0
