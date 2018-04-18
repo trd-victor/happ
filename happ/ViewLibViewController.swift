@@ -384,7 +384,7 @@ class ViewLibViewController: UIViewController, UICollectionViewDataSource, UICol
                     dispatch_async(dispatch_get_main_queue()){
                         self.myCollectionView!.reloadData()
                         if(self.messagesData.count > 1){
-                            if Int(self.messagesData.count) != nil && self.messagesData.count != 0 {
+                            if self.messagesData.count != 0 {
                                 let lastItemIndex =  NSIndexPath(forItem: self.messagesData.count - 1, inSection: 0)
                                 if let _ = self.myCollectionView?.dataSource?.collectionView(self.myCollectionView!, cellForItemAtIndexPath: lastItemIndex){
                                     self.myCollectionView!.scrollToItemAtIndexPath(lastItemIndex, atScrollPosition: .Bottom, animated: false)
